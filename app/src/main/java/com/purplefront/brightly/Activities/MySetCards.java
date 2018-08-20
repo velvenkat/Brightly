@@ -14,6 +14,7 @@ import android.view.View;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.ViewPagerAdapter;
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
 import com.purplefront.brightly.R;
@@ -22,6 +23,8 @@ import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -30,28 +33,45 @@ public class MySetCards extends BaseActivity {
     // Declare Variables
     ViewPager viewPager_Cards;
     PagerAdapter cardsPagerAdapter;
-    List<CardsListModel> cardsListModels = new ArrayList<>();
+    ArrayList<CardsListModel> cardsListModels = new ArrayList<>();
+
+    Realm realm;
+    RealmResults<RealmModel> realmModel;
 
     String userId;
     String channel_id = "";
     String set_description = "";
     String set_name = "";
     String set_id = "";
+    String card_name = "";
+    String card_id = "";
+    String card_description = "";
+    String card_ImgUrl= "";
+    String image_name;
+    int Cur_PagrPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_set_cards);
+
+     /*   realm = Realm.getDefaultInstance();
+        realmModel = realm.where(RealmModel.class).findAllAsync();
+        realmModel.load();
+        for(RealmModel model:realmModel){
+            userId = model.getUser_Id();
+        }*/
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        userId = getIntent().getStringExtra("userId");
         channel_id = getIntent().getStringExtra("channel_id");
         set_description = getIntent().getStringExtra("set_description");
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
-        userId = getIntent().getStringExtra("userId");
         setTitle(set_name);
 
         // Locate the ViewPager in viewpager_main.xml
@@ -73,7 +93,7 @@ public class MySetCards extends BaseActivity {
 
                             if (cardsListResponse != null && cardsListResponse.getImages() != null && cardsListResponse.getImages().size() != 0) {
 
-                                cardsListModels = cardsListResponse.getImages();
+                                cardsListModels = new ArrayList<>(cardsListResponse.getImages());
                                 dismissProgress();
 
                             } else {
@@ -116,6 +136,22 @@ public class MySetCards extends BaseActivity {
         // Binds the Adapter to the ViewPager
         viewPager_Cards.setAdapter(cardsPagerAdapter);
         cardsPagerAdapter.notifyDataSetChanged();
+        viewPager_Cards.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+               Cur_PagrPosition=position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
 
@@ -149,7 +185,26 @@ public class MySetCards extends BaseActivity {
 
             case R.id.cardInfo_Edit:
 
-                return true;
+                if(cardsListModels != null)
+                {
+                    Intent intent1 = new Intent(MySetCards.this, EditCardInfo.class);
+                    Bundle bundle=new Bundle();
+                    bundle.putString("userId", userId);
+                    bundle.putString("set_id", set_id);
+                    bundle.putString("set_name", set_name);
+                    bundle.putParcelable("Card_Dtls", cardsListModels.get(Cur_PagrPosition));
+                    intent1.putExtra("my_card_bundle",bundle);
+                    startActivity(intent1);
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+
+                    return true;
+                }
+                else
+                {
+                    showLongToast(MySetCards.this, "Data not available");
+                }
+
+
 
             case R.id.card_reorder:
 

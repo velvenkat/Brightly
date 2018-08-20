@@ -54,7 +54,7 @@ public class CreateCards extends BaseActivity {
     String card_description = "";
     String encoded_string = "";
     String image_name = "";
-    String type = "image";
+    String type = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +191,7 @@ public class CreateCards extends BaseActivity {
                     encoded_string = getStringImage(bitmap);
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                     image_name = sdf.format(new Date());
+                    type = "image";
                    /* if (bitmap != null) {
                         RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
                         drawable.setCircular(true);

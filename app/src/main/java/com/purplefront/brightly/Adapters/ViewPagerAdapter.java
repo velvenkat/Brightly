@@ -35,6 +35,8 @@ public class ViewPagerAdapter extends PagerAdapter {
     String set_id;
     String userId;
     String set_name;
+    String image_name;
+    String image_id;
 
 
     public ViewPagerAdapter(MySetCards mySetCards, List<CardsListModel> cardsListModels, String set_id, String userId, String set_name) {
@@ -56,6 +58,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         return view == ((ScrollView) object);
     }
 
+
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
@@ -75,9 +78,6 @@ public class ViewPagerAdapter extends PagerAdapter {
                 TextView text_cardName;
                 TextView text_cardDescription;
                 ImageView image_cardImage;
-
-                String image_name;
-                String image_id;
 
                 // Locate the TextViews in viewpager_item.xml
                 text_cardName = (TextView) itemView.findViewById(R.id.text_cardName);
@@ -121,10 +121,8 @@ public class ViewPagerAdapter extends PagerAdapter {
                             .into(image_cardImage);
                 }
 
-
                 // Add viewpager_item.xml to ViewPager
                 ((ViewPager) container).addView(itemView);
-
                 return itemView;
 
         }
@@ -164,6 +162,8 @@ public class ViewPagerAdapter extends PagerAdapter {
 
         }
     }
+
+
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {

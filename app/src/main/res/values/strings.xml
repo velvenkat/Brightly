@@ -38,5 +38,8 @@
     <string name="card_info_edit">Card Info/Edit</string>
     <string name="reorder">Reorder</string>
     <string name="edit_set">Edit Set</string>
+    <string name="edit_card">Edit Card</string>
+    <string name="card_name">Card Name</string>
+    <string name="card_description">Card Description</string>
 
 </resources>
