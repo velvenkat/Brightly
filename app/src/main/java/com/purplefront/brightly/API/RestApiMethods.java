@@ -51,7 +51,7 @@ public interface RestApiMethods {
 
     //SetList
     @POST("sets/list_set.php")
-    Call<SetListResponse> getMySetsList(@Query("channel_id") String channel_id);
+    Call<SetListResponse> getMySetsList(@Query("user_id") String user_id,@Query("channel_id") String channel_id);
 
     //Add Sets
     @POST("sets/add_set.php")
@@ -73,5 +73,11 @@ public interface RestApiMethods {
     @POST("images/add_card.php")
     @FormUrlEncoded
     Call<AddMessageResponse> getAddCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
+
+
+    //Set_Reorder
+    @POST("sets/display_setorder.php?")
+    Call<AddMessageResponse> set_reorder_set(@Query("user_id") String user_id,  @Query("set_id") String set_id);
+
 
 }

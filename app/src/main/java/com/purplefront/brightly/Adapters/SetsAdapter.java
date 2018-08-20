@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,14 +35,22 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
     RealmResults<RealmModel> realmModel;
     String userId;
     String channel_id;
+    Set_long_clicked_interface mListener;
+    boolean isSelToDel=false;
 
 
-    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels, String channel_id) {
+    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels, String channel_id,Set_long_clicked_interface listenr) {
 
         this.context = myChannelsSet;
         this.setsListModels = setsListModels;
         this.channel_id = channel_id;
         inflater = (LayoutInflater.from(context));
+        mListener=listenr;
+    }
+
+    public void set_SelToDel(boolean value){
+        isSelToDel=value;
+
     }
 
     @NonNull
@@ -68,7 +77,19 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
 
         SetsListModel setsListModel = setsListModels.get(position);
         holder.textView_setName.setText(setsListModel.getSet_name());
+        if(isSelToDel){
+            holder.chkbx_del_set.setVisibility(View.VISIBLE);
+        }
+        else{
+            holder.chkbx_del_set.setVisibility(View.INVISIBLE);
+        }
+        if(setsListModel.isDelSel()){
+          holder.chkbx_del_set.setChecked(true);
 
+        }
+        else{
+            holder.chkbx_del_set.setChecked(false);
+        }
         if(!setsListModel.getThumbnail().isEmpty()) {
 
             Glide.with(context)
@@ -87,6 +108,14 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
                     .override(50, 50)*/
                     .into(holder.imageView_setImage);
         }
+
+        holder.channel_layout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+               mListener.onLongClicked(setsListModel.getSet_id());
+               return true;
+            }
+        });
 
         holder.channel_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,12 +146,18 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
         TextView textView_setName;
         ImageView imageView_setImage;
         CardView channel_layout;
+        CheckBox chkbx_del_set;
 
         public ViewHolder(View itemView) {
             super(itemView);
             channel_layout = itemView.findViewById(R.id.set_layout);
             imageView_setImage = itemView.findViewById(R.id.imageView_setImage);
             textView_setName = itemView.findViewById(R.id.textView_setName);
+            chkbx_del_set=itemView.findViewById(R.id.chk_set_sel);
         }
+    }
+
+    public interface Set_long_clicked_interface{
+        public void onLongClicked(String sel_id);
     }
 }

@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/set_layout"
-    android:layout_width="wrap_content"
+    android:layout_width="120dp"
     android:layout_height="150dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardBackgroundColor="@color/white"
@@ -12,31 +12,41 @@
     android:layout_marginRight="@dimen/dimen_4"
     android:layout_marginBottom="@dimen/dimen_8">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:weightSum="2"
-        android:orientation="vertical">
+>
+
 
     <ImageView
         android:id="@+id/imageView_setImage"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:src="@drawable/no_image_available"/>
 
+        android:layout_height="120dp"
+        android:src="@drawable/no_image_available"/>
+<CheckBox
+    android:layout_width="wrap_content"
+    android:id="@+id/chk_set_sel"
+    android:layout_alignParentRight="true"
+    android:visibility="invisible"
+    android:layout_alignParentTop="true"
+    android:layout_height="wrap_content" />
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.4dp"
+            android:layout_height="1dp"
+            android:id="@+id/view_line"
+            android:layout_below="@+id/imageView_setImage"
             android:background="@color/light_gery"/>
 
         <TextView
             android:id="@+id/textView_setName"
+
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_marginTop="@dimen/dimen_1"
             android:layout_gravity="center"
             android:text="No Channels Available"
+            android:layout_below="@+id/view_line"
             android:gravity="center"
             android:lines="1"
             android:maxLines="1"
@@ -46,5 +56,5 @@
             android:visibility="visible"
             />
 
-    </LinearLayout>
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

@@ -21,6 +21,15 @@ public class SetsListModel {
     @Expose
     private String thumbnail;
 
+    public boolean isDelSel() {
+        return isDelSel;
+    }
+
+    public void setDelSel(boolean delSel) {
+        isDelSel = delSel;
+    }
+
+    private boolean isDelSel=false;
     public SetsListModel(String set_id, String set_name, String description, String thumbnail) {
         this.set_id = set_id;
         this.set_name = set_name;
