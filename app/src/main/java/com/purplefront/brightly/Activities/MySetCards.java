@@ -112,7 +112,7 @@ public class MySetCards extends BaseActivity {
     private void setAdapter(List<CardsListModel> cardsListModels) {
 
         // Pass results to ViewPagerAdapter Class
-        cardsPagerAdapter = new ViewPagerAdapter(MySetCards.this, cardsListModels, set_id, userId);
+        cardsPagerAdapter = new ViewPagerAdapter(MySetCards.this, cardsListModels, set_id, userId, set_name);
         // Binds the Adapter to the ViewPager
         viewPager_Cards.setAdapter(cardsPagerAdapter);
         cardsPagerAdapter.notifyDataSetChanged();

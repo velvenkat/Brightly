@@ -49,6 +49,7 @@ public class CreateCards extends BaseActivity {
 
     String userId;
     String set_id;
+    String set_name;
     String card_name = "";
     String card_description = "";
     String encoded_string = "";
@@ -67,6 +68,7 @@ public class CreateCards extends BaseActivity {
 
         userId = getIntent().getStringExtra("userId");
         set_id = getIntent().getStringExtra("set_id");
+        set_name = getIntent().getStringExtra("set_name");
 
         image_cardImage = (SimpleDraweeView) findViewById(R.id.image_cardImage);
         create_cardName = (EditText) findViewById(R.id.create_cardName);
@@ -299,6 +301,7 @@ public class CreateCards extends BaseActivity {
         {
             Intent intent = new Intent(CreateCards.this, MySetCards.class);
             intent.putExtra("set_id", set_id);
+            intent.putExtra("set_name", set_name);
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);

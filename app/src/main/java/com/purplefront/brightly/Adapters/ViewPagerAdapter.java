@@ -34,13 +34,15 @@ public class ViewPagerAdapter extends PagerAdapter {
     LayoutInflater inflater;
     String set_id;
     String userId;
+    String set_name;
 
 
-    public ViewPagerAdapter(MySetCards mySetCards, List<CardsListModel> cardsListModels, String set_id, String userId) {
+    public ViewPagerAdapter(MySetCards mySetCards, List<CardsListModel> cardsListModels, String set_id, String userId, String set_name) {
         this.context = mySetCards;
         this.cardsListModels = cardsListModels;
         this.set_id = set_id;
         this.userId = userId;
+        this.set_name = set_name;
         inflater = (LayoutInflater.from(context));
     }
 
@@ -149,6 +151,7 @@ public class ViewPagerAdapter extends PagerAdapter {
                             Intent intent = new Intent(context, CreateCards.class);
                             intent.putExtra("userId", userId);
                             intent.putExtra("set_id", set_id);
+                            intent.putExtra("set_name", set_name);
                             context.startActivity(intent);
                             context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
                         }

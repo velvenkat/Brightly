@@ -79,6 +79,7 @@ public class MyChannelsSet extends BaseActivity {
                 Intent intent = new Intent(MyChannelsSet.this, CreateSet.class);
                 intent.putExtra("userId", userId);
                 intent.putExtra("channel_id", channel_id);
+                intent.putExtra("channel_name", channel_name);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }

@@ -28,6 +28,7 @@ public class CreateSet extends BaseActivity {
     String channel_id;
     String set_name = "";
     String set_description = "";
+    String channel_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,7 @@ public class CreateSet extends BaseActivity {
 
         userId = getIntent().getStringExtra("userId");
         channel_id = getIntent().getStringExtra("channel_id");
+        channel_name = getIntent().getStringExtra("channel_name");
 
         create_setName = (EditText) findViewById(R.id.create_setName);
         create_setDescription = (EditText) findViewById(R.id.create_setDescription);
@@ -129,6 +131,7 @@ public class CreateSet extends BaseActivity {
         if(message.equals("success"))
         {
             Intent intent = new Intent(CreateSet.this, MyChannelsSet.class);
+            intent.putExtra("channel_name", channel_name);
             intent.putExtra("channel_id", channel_id);
             startActivity(intent);
             finish();
