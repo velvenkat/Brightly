@@ -1,0 +1,124 @@
+package com.purplefront.brightly.Adapters;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.purplefront.brightly.Activities.EditChannelInfo;
+import com.purplefront.brightly.Activities.MyChannel;
+import com.purplefront.brightly.Activities.MyChannelsSet;
+import com.purplefront.brightly.Application.RealmModel;
+import com.purplefront.brightly.Modules.ChannelListModel;
+import com.purplefront.brightly.R;
+
+import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
+
+public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.ViewHolder>{
+
+    List<ChannelListModel> channelListModels;
+    Activity context;
+    LayoutInflater inflater;
+    Realm realm;
+    RealmResults<RealmModel> realmModel;
+    String userId;
+
+
+    public MyChannelsAdapter(MyChannel myChannel, List<ChannelListModel> channelListModels) {
+
+        this.context = myChannel;
+        this.channelListModels = channelListModels;
+        inflater = (LayoutInflater.from(context));
+    }
+
+    @NonNull
+    @Override
+    public MyChannelsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        Context context = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(context);
+        // Inflate the custom layout
+        View contactView = inflater.inflate(R.layout.items_channel_lists, parent, false);
+        // Return a new holder instance
+        return new ViewHolder(contactView);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull MyChannelsAdapter.ViewHolder holder, int position) {
+
+        realm = Realm.getDefaultInstance();
+        realmModel = realm.where(RealmModel.class).findAllAsync();
+        realmModel.load();
+        for(RealmModel model:realmModel){
+            userId = model.getUser_Id();
+        }
+
+        ChannelListModel channelListModel = channelListModels.get(position);
+        holder.textView_channelName.setText(channelListModel.getChannel_name());
+
+        if(!channelListModel.getCover_image().isEmpty()) {
+
+            Glide.with(context)
+                    .load(channelListModel.getCover_image())
+                    .centerCrop()
+                    /*.transform(new CircleTransform(HomeActivity.this))
+                    .override(50, 50)*/
+                    .into(holder.imageView_channelImage);
+        }
+        else
+        {
+            Glide.with(context)
+                    .load(R.drawable.no_image_available)
+                    .centerCrop()
+                    /*.transform(new CircleTransform(HomeActivity.this))
+                    .override(50, 50)*/
+                    .into(holder.imageView_channelImage);
+        }
+
+        holder.channel_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(context, MyChannelsSet.class);
+                intent.putExtra("channel_id", channelListModel.getChannel_id());
+                intent.putExtra("channel_name", channelListModel.getChannel_name());
+                intent.putExtra("channel_description", channelListModel.getDescription());
+                intent.putExtra("encoded_string", channelListModel.getCover_image());
+                intent.putExtra("image_name", channelListModel.getImage_name());
+                context.startActivity(intent);
+                context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+            }
+        });
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return channelListModels.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView textView_channelName;
+        ImageView imageView_channelImage;
+        CardView channel_layout;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            channel_layout = itemView.findViewById(R.id.channel_layout);
+            imageView_channelImage = itemView.findViewById(R.id.imageView_channelImage);
+            textView_channelName = itemView.findViewById(R.id.textView_channelName);
+        }
+    }
+}

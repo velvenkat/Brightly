@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--The dimens for the text sizes.-->
+    <dimen name="nanotextSize">10sp</dimen>
+    <dimen name="microtextSize">12sp</dimen>
+    <dimen name="smalltextSize">14sp</dimen>
+    <dimen name="mediumtextsize">16sp</dimen>
+    <dimen name="sub_title">18sp</dimen>
+    <dimen name="title">22sp</dimen>
+    <dimen name="largetextSize">26sp</dimen>
+    <dimen name="largertextSize">28sp</dimen>
+
+    <dimen name="dimen_1">1dp</dimen>
+    <dimen name="dimen_2">2dp</dimen>
+    <dimen name="dimen_4">4dp</dimen>
+    <dimen name="dimen_5">5dp</dimen>
+    <dimen name="dimen_6">6dp</dimen>
+    <dimen name="dimen_8">8dp</dimen>
+    <dimen name="dimen10">10dp</dimen>
+    <dimen name="dimen_12">12dp</dimen>
+    <dimen name="dimen_10">10dp</dimen>
+    <dimen name="dimen_14">14dp</dimen>
+    <dimen name="dimen_16">16dp</dimen>
+    <dimen name="dimen_18">18dp</dimen>
+    <dimen name="dimen_20">20dp</dimen>
+    <dimen name="dimen_21">21dp</dimen>
+    <dimen name="dimen_25">25dp</dimen>
+    <dimen name="dimen_30">30dp</dimen>
+    <dimen name="dimen_37">37dp</dimen>
+    <dimen name="dimen_75">75dp</dimen>
+
+    <dimen name="font_20">20sp</dimen>
+    <dimen name="font_18">18sp</dimen>
+    <dimen name="font_15.3">15.3sp</dimen>
+    <dimen name="font_16">16sp</dimen>
+    <dimen name="font_16.7">16.7sp</dimen>
+    <dimen name="font_14">14sp</dimen>
+    <dimen name="font_11">11sp</dimen>
+    <dimen name="font_12">12sp</dimen>
+    <dimen name="font_10">10sp</dimen>
+
+    <dimen name="tab_padding_bottom">16dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="nav_header_height_ulternate">126dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+
+</resources>

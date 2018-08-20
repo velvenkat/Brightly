@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Brightly</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login">Login</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="newUser">Don\'t have a account?</string>
+    <string name="oldUser">Already have an account?</string>
+    <string name="signup">Sign Up</string>
+    <string name="signin">Sign In</string>
+    <string name="registration">Registration</string>
+    <string name="user_name">Name</string>
+    <string name="user_companyname">Company Name</string>
+    <string name="user_emial">Email Id</string>
+    <string name="channel_name">Channel Name</string>
+    <string name="create_channel">Create Channel</string>
+    <string name="channel_description">Channel Description</string>
+    <string name="title_activity_my_channel">MyChannel</string>
+
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Your Name</string>
+    <string name="nav_header_subtitle">Your Mail Id</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="edit_channel">Edit Channel</string>
+    <string name="no_channels_available">No Channels Available</string>
+    <string name="setmenu">SetMenu</string>
+    <string name="info_edit">Channel Info/Edit</string>
+    <string name="delete">Delete</string>
+    <string name="no_sets_available">No Sets Available</string>
+    <string name="create_set">Create Set</string>
+    <string name="set_name">Set Name</string>
+    <string name="set_description">Set Description</string>
+    <string name="set_info_edit">Set Info/Edit</string>
+    <string name="card_info_edit">Card Info/Edit</string>
+    <string name="reorder">Reorder</string>
+    <string name="edit_set">Edit Set</string>
+
+</resources>

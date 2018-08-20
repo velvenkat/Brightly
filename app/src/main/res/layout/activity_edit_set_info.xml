@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Activities.EditSetInfo">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/action_bar"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/dimen_20"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edit_setName"
+            android:singleLine="true"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:layout_marginBottom="@dimen/dimen_5"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:inputType="textCapSentences"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center_vertical"
+            android:hint="@string/set_name"
+            android:maxLength="25"
+            android:padding="@dimen/dimen_4"
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize" />
+
+        <EditText
+            android:id="@+id/edit_setDescription"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="@dimen/dimen_20"
+            android:layout_marginBottom="@dimen/dimen_10"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:inputType="textCapSentences"
+            android:background="@drawable/edit_text_background"
+            android:gravity="start"
+            android:hint="@string/set_description"
+            android:padding="@dimen/dimen_4"
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_editSet"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/login_btn_background"
+        android:padding="3dp"
+        android:text="@string/edit_set"
+        android:textColor="@color/white"
+        android:textSize="@dimen/mediumtextsize"
+        />
+
+
+</LinearLayout>
