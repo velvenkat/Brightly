@@ -3,10 +3,12 @@ package com.purplefront.brightly.Activities;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -21,6 +23,7 @@ import com.purplefront.brightly.R;
 public class BaseActivity extends AppCompatActivity {
 
     private ProgressDialog dialog;
+    alert_dlg_interface mListener;
     /**
      * @param context
      * @param activityClass  - target fragment
@@ -33,11 +36,55 @@ public class BaseActivity extends AppCompatActivity {
      * @param editText
      * @return check is fiels is empty  if empty request focus to that field
      */
+
+    public void setDlgListener(alert_dlg_interface listener){
+        mListener=listener;
+    }
+
     boolean isEmptyField(EditText editText) {
         boolean empty = TextUtils.isEmpty(getFieldText(editText));
         if (empty)
             editText.requestFocus();
         return empty;
+    }
+
+    public void showAlertDialog(String message,String Title,String Pos_Title,String Neg_Title)
+    {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(BaseActivity.this);
+
+        // Setting Dialog Title
+        alertDialog.setTitle(Title);
+
+        // Setting Dialog Message
+        //alertDialog.setMessage("You are about to delete the Set. All the information contained in the Sets will be lost. ");
+        alertDialog.setMessage(message);
+        // Setting Icon to Dialog
+        alertDialog.setIcon(R.drawable.error);
+
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton(Pos_Title, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+
+                dialog.dismiss();
+                mListener.postive_btn_clicked();
+                //getDeleteSet();
+                // Write your code here to invoke YES event
+//                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton(Neg_Title, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Write your code here to invoke NO event
+//                Toast.makeText(getApplicationContext(), "You clicked on NO", Toast.LENGTH_SHORT).show();
+                dialog.cancel();
+                mListener.negative_btn_clicked();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 
     String getFieldText(EditText editText) {
@@ -134,5 +181,8 @@ public class BaseActivity extends AppCompatActivity {
         }
         return result;
     }
-
+   public interface alert_dlg_interface{
+        public void postive_btn_clicked();
+        public void negative_btn_clicked();
+   }
 }
