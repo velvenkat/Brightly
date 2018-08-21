@@ -8,12 +8,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.purplefront.brightly.Activities.CardList;
 import com.purplefront.brightly.Modules.CardsListModel;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 
 import java.util.List;
@@ -27,13 +30,16 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     List<CardsListModel> cardsListModels;
     Activity context;
     LayoutInflater inflater;
+    Card_sel_interface mListener;
 
+    boolean isSelToDel=false;
 
-    public CardListAdapter(CardList cardList, List<CardsListModel> cardsListModels) {
+    public CardListAdapter(CardList cardList, List<CardsListModel> cardsListModels,Card_sel_interface listener) {
 
         this.context = cardList;
         this.cardsListModels = cardsListModels;
         inflater = (LayoutInflater.from(context));
+        mListener=listener;
     }
 
     @NonNull
@@ -45,6 +51,19 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         View contactView = inflater.inflate(R.layout.items_card_lists, parent, false);
         // Return a new holder instance
         return new ViewHolder(contactView);
+    }
+    public void set_SelToDel(boolean value) {
+        isSelToDel = value;
+
+    }
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
@@ -62,6 +81,19 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
         image_id = cardsListModel.getImage_id();
         image_name = cardsListModel.getImage_name();
+
+        if (isSelToDel) {
+            holder.chkbx_del_set.setVisibility(View.VISIBLE);
+        } else {
+            holder.chkbx_del_set.setVisibility(View.INVISIBLE);
+        }
+        if (cardsListModel.isDelSel()) {
+            holder.chkbx_del_set.setChecked(true);
+
+        } else {
+            holder.chkbx_del_set.setChecked(false);
+        }
+
 
         if (!cardsListModel.getImgUrl().isEmpty()) {
 
@@ -90,7 +122,30 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         }
 
 
-    }
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                isSelToDel = true;
+                mListener.onSelect(position, cardsListModel);
+                return true;
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+//                Toast.makeText(context, "Working", Toast.LENGTH_SHORT).show();
+
+                if (isSelToDel) {
+                    mListener.onSelect(position, cardsListModel);
+                }
+            }
+        });
+
+            }
+
+
 
     @Override
     public int getItemCount() {
@@ -102,6 +157,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         TextView text_cardName;
         TextView text_cardDescription;
         ImageView image_cardImage;
+        CheckBox chkbx_del_set;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -109,6 +165,12 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
             image_cardImage = itemView.findViewById(R.id.image_cardImage);
             text_cardName = itemView.findViewById(R.id.text_cardName);
             text_cardDescription = itemView.findViewById(R.id.text_cardDescription);
+            chkbx_del_set=itemView.findViewById(R.id.chk_card_sel);
         }
+    }
+
+    public interface Card_sel_interface {
+        public void onSelect(int position, CardsListModel modelObj);
+        //  public void onUnSelect(int position, SetsListModel modelObj);
     }
 }

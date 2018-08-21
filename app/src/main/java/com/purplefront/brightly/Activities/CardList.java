@@ -6,8 +6,13 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.purplefront.brightly.API.ApiCallback;
@@ -15,16 +20,18 @@ import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.CardListAdapter;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class CardList extends BaseActivity {
+public class CardList extends BaseActivity implements BaseActivity.alert_dlg_interface,CardListAdapter.Card_sel_interface {
 
     List<CardsListModel> cardsListModels = new ArrayList<>();
     CardListAdapter cardListAdapter;
@@ -33,6 +40,14 @@ public class CardList extends BaseActivity {
     String userId;
     String set_name = "";
     String set_id = "";
+    ArrayList<String> del_sel_id = new ArrayList<>();
+    RelativeLayout del_contr;
+    Button btn_cancel, btn_delete;
+    String strDelSelId = "";
+    TextView txtItemSel;
+    CheckBox chk_sel_all;
+    boolean is_on_set_chg_chk_status=false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +65,142 @@ public class CardList extends BaseActivity {
 
         view_nodata = (TextView) findViewById(R.id.view_nodata);
         card_listview = (RecyclerView) findViewById(R.id.card_listview);
+        del_contr = (RelativeLayout) findViewById(R.id.set_del_contr);
+        btn_cancel = (Button) findViewById(R.id.btn_cancel);
+        btn_delete = (Button) findViewById(R.id.btn_delete);
+        chk_sel_all = (CheckBox) findViewById(R.id.chk_sel_all);
+        txtItemSel = (TextView) findViewById(R.id.txtCntSelected);
+
+
+        setDlgListener(this);
+        chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(is_on_set_chg_chk_status){
+
+                    is_on_set_chg_chk_status=false;
+                }
+
+                else{
+                    del_sel_id=new ArrayList<>();
+                    if (isChecked) {
+                        chk_sel_all.setText("Unselect all");
+                        btn_delete.setEnabled(true);
+
+                        for(int i=0;i<cardsListModels.size();i++){
+                            CardsListModel modelObj=cardsListModels.get(i);
+                            modelObj.setDelSel(true);
+                            del_sel_id.add(modelObj.getImage_id());
+                            cardsListModels.remove(i);
+                            cardsListModels.add(i,modelObj);
+
+                        }
+                        txtItemSel.setText(del_sel_id.size() + " items selected");
+                    } else {
+                        chk_sel_all.setText("Select all");
+                        btn_delete.setEnabled(false);
+                        for(int i=0;i<cardsListModels.size();i++){
+                            CardsListModel modelObj=cardsListModels.get(i);
+                            modelObj.setDelSel(false);
+                            cardsListModels.remove(i);
+                            cardsListModels.add(i,modelObj);
+                        }
+                        txtItemSel.setText("");
+                    }
+                }
+                cardListAdapter.notifyDataSetChanged();
+            }
+        });
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                strDelSelId = android.text.TextUtils.join(",", del_sel_id);
+                showAlertDialog("You are about to delete the Set. All the information contained in the Sets will be lost.", "Confirm Delete...", "Delete", "Cancel");
+                // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            /*    getSupportActionBar().show();
+                del_contr.setVisibility(View.GONE);
+                del_sel_id=new ArrayList<>();
+                delete_count=0;
+                for(int i=0;i<setsListModelList.size();i++){
+                    SetsListModel modelObj=setsListModelList.get(i);
+                    if(modelObj.isDelSel()){
+                        modelObj.setDelSel(false);
+                        setsListModelList.remove(i);
+                        setsListModelList.add(i,modelObj);
+                    }
+                }
+                channelsSetAdapter.set_SelToDel(false);
+                channelsSetAdapter.notifyDataSetChanged();
+            */
+
+                reset_view();
+                for (int i = 0; i < cardsListModels.size(); i++) {
+                    CardsListModel modelObj = cardsListModels.get(i);
+                    if (modelObj.isDelSel()) {
+                        modelObj.setDelSel(false);
+                        cardsListModels.remove(i);
+                        cardsListModels.add(i, modelObj);
+                    }
+                }
+                cardListAdapter.set_SelToDel(false);
+                cardListAdapter.notifyDataSetChanged();
+            }
+        });
+
+
+
+        ItemTouchHelper.Callback _ithCallback = new ItemTouchHelper.Callback() {
+            //and in your imlpementaion of
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                // get the viewHolder's and target's positions in your adapter data, swap them
+                Collections.swap(cardsListModels, viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                // and notify the adapter that its dataset has changed
+                cardListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                //Toast.makeText(MyChannelsSet.this,"OnMoved",Toast.LENGTH_LONG).show();
+             //   call_set_reorder();
+                return true;
+            }
+
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                //TODO
+                //  Toast.makeText(MyChannelsSet.this,"OnSwiped",Toast.LENGTH_LONG).show();
+            }
+
+            //defines the enabled move directions in each state (idle, swiping, dragging).
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                //     Toast.makeText(MyChannelsSet.this,"Make Flag",Toast.LENGTH_LONG).show();
+                return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG,
+                        ItemTouchHelper.DOWN | ItemTouchHelper.UP | ItemTouchHelper.START | ItemTouchHelper.END);
+            }
+        };
+
+        // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
+        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
+        ith.attachToRecyclerView(card_listview);
+
+
 
         getCardsLists();
+    }
+    public void reset_view() {
+        getSupportActionBar().show();
+        del_contr.setVisibility(View.GONE);
+        del_sel_id = new ArrayList<>();
+
+        chk_sel_all.setVisibility(View.GONE);
+
     }
 
     public void getCardsLists() {
@@ -105,7 +254,7 @@ public class CardList extends BaseActivity {
 
     private void setAdapter(List<CardsListModel> cardsListModels) {
         card_listview.setLayoutManager(new LinearLayoutManager(CardList.this));
-        cardListAdapter = new CardListAdapter(CardList.this, cardsListModels);
+        cardListAdapter = new CardListAdapter(CardList.this, cardsListModels,this);
         card_listview.setAdapter(cardListAdapter);
 
     }
@@ -128,4 +277,62 @@ public class CardList extends BaseActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
     }
+
+    @Override
+    public void onSelect(int position, CardsListModel modelObj) {
+        getSupportActionBar().hide();
+        del_contr.setVisibility(View.VISIBLE);
+        if (modelObj.isDelSel()) {
+            modelObj.setDelSel(false);
+            int i = 0;
+            for (String sel_ID : del_sel_id) {
+                if (sel_ID.equals(modelObj.getImage_id())) {
+                    del_sel_id.remove(i);
+                    txtItemSel.setText(del_sel_id.size() + " items selected");
+                    break;
+                }
+                i++;
+            }
+            if (del_sel_id.size() == 0) {
+                btn_delete.setEnabled(false);
+                txtItemSel.setText("");
+                chk_sel_all.setText("Select all");
+                is_on_set_chg_chk_status=true;
+                chk_sel_all.setChecked(false);
+            }
+        } else {
+            modelObj.setDelSel(true);
+
+            chk_sel_all.setVisibility(View.VISIBLE);
+            del_sel_id.add(modelObj.getImage_id());
+            if(cardsListModels.size()==del_sel_id.size()){
+                chk_sel_all.setText("Unselect all");
+                is_on_set_chg_chk_status=true;
+                chk_sel_all.setChecked(true);
+            }
+            txtItemSel.setText(del_sel_id.size() + " items selected");
+            btn_delete.setEnabled(true);
+        }
+        cardsListModels.remove(position);
+
+        /*if (del_sel_id.equals("")) {
+            del_sel_id = modelObj.getSet_id();
+        } else
+            del_sel_id = del_sel_id + "," + modelObj.getSet_id();*/
+        cardsListModels.add(position, modelObj);
+        cardListAdapter.notifyDataSetChanged();
+        // Toast.makeText(MyChannelsSet.this,"Selected set id:"+Sel_id,Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void postive_btn_clicked() {
+//      Toast.makeText(MyChannelsSet.this,"Working",Toast.LENGTH_LONG).show();
+        //call_api_del_multi_set();
+    }
+
+    @Override
+    public void negative_btn_clicked() {
+
+    }
+
 }

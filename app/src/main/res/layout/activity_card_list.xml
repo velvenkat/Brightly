@@ -28,7 +28,40 @@
         android:visibility="gone"
         android:padding="50dp"
         android:src="@drawable/ic_no_datafound"/>-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@color/action_bar"
+        android:layout_below="@id/appbar"
+        android:id="@+id/set_del_contr"
+        android:visibility="gone"
 
+        android:layout_height="50dp">
+        <Button
+            android:layout_width="wrap_content"
+            android:id="@+id/btn_cancel"
+            android:text="Cancel"
+            android:layout_alignParentLeft="true"
+            android:textAllCaps="false"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/txtCntSelected"
+            android:layout_marginLeft="5dp"
+            android:layout_centerVertical="true"
+            android:maxLines="2"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_toRightOf="@+id/btn_cancel"
+            android:layout_toLeftOf="@+id/btn_delete"
+            android:layout_height="wrap_content" />
+        <Button
+            android:layout_width="wrap_content"
+            android:id="@+id/btn_delete"
+            android:text="Delete"
+            android:layout_alignParentRight="true"
+            android:textAllCaps="false"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
     <TextView
         android:id="@+id/view_nodata"
         android:layout_width="match_parent"
@@ -40,12 +73,20 @@
         android:textSize="@dimen/dimen_20"
         android:visibility="gone"
         />
-
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:id="@+id/chk_sel_all"
+        android:layout_alignParentRight="true"
+        android:text="Select All"
+        android:visibility="gone"
+        android:layout_below="@+id/set_del_contr"
+        android:layout_height="wrap_content" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/card_listview"
         android:layout_width="match_parent"
+
         android:layout_height="match_parent"
-        android:layout_below="@id/appbar"
+        android:layout_below="@id/chk_sel_all"
         android:visibility="visible"
         android:nestedScrollingEnabled="false"/>
 

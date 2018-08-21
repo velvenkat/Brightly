@@ -55,7 +55,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     ArrayList<String> del_sel_id = new ArrayList<>();
     String channel_id = "";
     RelativeLayout del_contr;
-    int delete_count = 0;
+
     Button btn_cancel, btn_delete;
     String strDelSelId = "";
     TextView txtItemSel;
@@ -321,7 +321,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         getSupportActionBar().show();
         del_contr.setVisibility(View.GONE);
         del_sel_id = new ArrayList<>();
-        delete_count = 0;
+
         chk_sel_all.setVisibility(View.GONE);
 
     }

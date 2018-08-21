@@ -28,6 +28,16 @@ public class CardsListModel implements Parcelable {
     @Expose
     private String image_name;
 
+    public boolean isDelSel() {
+        return isDelSel;
+    }
+
+    public void setDelSel(boolean delSel) {
+        isDelSel = delSel;
+    }
+
+    private boolean isDelSel=false;
+
     public CardsListModel(){
 
     }
