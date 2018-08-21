@@ -94,7 +94,7 @@ public class EditSetInfo extends BaseActivity {
         alertDialog.setTitle("Confirm Delete....");
 
         // Setting Dialog Message
-        alertDialog.setMessage("You are about to delete the Channel. All the information contained in the Sets & Cards will be lost. ");
+        alertDialog.setMessage("You are about to delete the Set. All the information contained in the Sets will be lost. ");
 
         // Setting Icon to Dialog
         alertDialog.setIcon(R.drawable.error);
@@ -103,7 +103,7 @@ public class EditSetInfo extends BaseActivity {
         alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int which) {
 
-                getDeleteChannel();
+                getDeleteSet();
                 // Write your code here to invoke YES event
 //                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
             }
@@ -149,7 +149,7 @@ public class EditSetInfo extends BaseActivity {
         }
     }
 
-    public void getDeleteChannel() {
+    public void getDeleteSet() {
         try {
 
             if (CheckNetworkConnection.isOnline(EditSetInfo.this)) {

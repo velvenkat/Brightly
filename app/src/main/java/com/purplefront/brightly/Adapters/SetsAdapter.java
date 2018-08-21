@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +27,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
+public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
     List<SetsListModel> setsListModels;
     Activity context;
@@ -35,21 +36,21 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
     RealmResults<RealmModel> realmModel;
     String userId;
     String channel_id;
-    Set_long_clicked_interface mListener;
-    boolean isSelToDel=false;
+    Set_sel_interface mListener;
+    boolean isSelToDel = false;
 
 
-    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels, String channel_id,Set_long_clicked_interface listenr) {
+    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels, String channel_id, Set_sel_interface listenr) {
 
         this.context = myChannelsSet;
         this.setsListModels = setsListModels;
         this.channel_id = channel_id;
         inflater = (LayoutInflater.from(context));
-        mListener=listenr;
+        mListener = listenr;
     }
 
-    public void set_SelToDel(boolean value){
-        isSelToDel=value;
+    public void set_SelToDel(boolean value) {
+        isSelToDel = value;
 
     }
 
@@ -66,31 +67,39 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull SetsAdapter.ViewHolder holder, int position) {
 
         realm = Realm.getDefaultInstance();
         realmModel = realm.where(RealmModel.class).findAllAsync();
         realmModel.load();
-        for(RealmModel model:realmModel){
+        for (RealmModel model : realmModel) {
             userId = model.getUser_Id();
         }
 
         SetsListModel setsListModel = setsListModels.get(position);
         holder.textView_setName.setText(setsListModel.getSet_name());
-        if(isSelToDel){
+        if (isSelToDel) {
             holder.chkbx_del_set.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             holder.chkbx_del_set.setVisibility(View.INVISIBLE);
         }
-        if(setsListModel.isDelSel()){
-          holder.chkbx_del_set.setChecked(true);
+        if (setsListModel.isDelSel()) {
+            holder.chkbx_del_set.setChecked(true);
 
-        }
-        else{
+        } else {
             holder.chkbx_del_set.setChecked(false);
         }
-        if(!setsListModel.getThumbnail().isEmpty()) {
+        if (!setsListModel.getThumbnail().isEmpty()) {
 
             Glide.with(context)
                     .load(setsListModel.getThumbnail())
@@ -98,9 +107,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
                     /*.transform(new CircleTransform(HomeActivity.this))
                     .override(50, 50)*/
                     .into(holder.imageView_setImage);
-        }
-        else
-        {
+        } else {
             Glide.with(context)
                     .load(R.drawable.no_image_available)
                     .centerCrop()
@@ -108,12 +115,20 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
                     .override(50, 50)*/
                     .into(holder.imageView_setImage);
         }
+        holder.chkbx_del_set.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(!isChecked){
 
+                }
+            }
+        });
         holder.channel_layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-               mListener.onLongClicked(setsListModel.getSet_id());
-               return true;
+                isSelToDel = true;
+                mListener.onSelect(position, setsListModel);
+                return true;
             }
         });
 
@@ -123,14 +138,20 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
 
 //                Toast.makeText(context, "Working", Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(context, MySetCards.class);
-                intent.putExtra("userId", userId);
-                intent.putExtra("set_id", setsListModel.getSet_id());
-                intent.putExtra("set_name", setsListModel.getSet_name());
-                intent.putExtra("set_description", setsListModel.getDescription());
-                intent.putExtra("channel_id", channel_id);
-                context.startActivity(intent);
-                context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                if (isSelToDel) {
+                    mListener.onSelect(position, setsListModel);
+                } else {
+
+
+                    Intent intent = new Intent(context, MySetCards.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("set_id", setsListModel.getSet_id());
+                    intent.putExtra("set_name", setsListModel.getSet_name());
+                    intent.putExtra("set_description", setsListModel.getDescription());
+                    intent.putExtra("channel_id", channel_id);
+                    context.startActivity(intent);
+                    context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                }
             }
         });
 
@@ -153,11 +174,12 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder>{
             channel_layout = itemView.findViewById(R.id.set_layout);
             imageView_setImage = itemView.findViewById(R.id.imageView_setImage);
             textView_setName = itemView.findViewById(R.id.textView_setName);
-            chkbx_del_set=itemView.findViewById(R.id.chk_set_sel);
+            chkbx_del_set = itemView.findViewById(R.id.chk_set_sel);
         }
     }
 
-    public interface Set_long_clicked_interface{
-        public void onLongClicked(String sel_id);
+    public interface Set_sel_interface {
+        public void onSelect(int position, SetsListModel modelObj);
+      //  public void onUnSelect(int position, SetsListModel modelObj);
     }
 }
