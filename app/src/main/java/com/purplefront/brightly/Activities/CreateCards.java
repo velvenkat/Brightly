@@ -278,6 +278,10 @@ public class CreateCards extends BaseActivity {
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
 
+                          if(message.equals("timeout"))
+                        {
+                            showLongToast(CreateCards.this, "Internet is slow, please try again.");
+                        }
                         dismissProgress();
                     }
                 });
@@ -307,6 +311,7 @@ public class CreateCards extends BaseActivity {
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);
         }
+
         else {
             showLongToast(CreateCards.this, message);
         }

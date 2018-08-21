@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -39,7 +40,7 @@ import java.util.Date;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class EditCardInfo extends BaseActivity {
+public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg_interface{
 
     EditText edit_cardName;
     EditText edit_cardDescription;
@@ -70,6 +71,8 @@ public class EditCardInfo extends BaseActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setTitle("Edit Card Info");
 
+        setDlgListener(this);
+
         userId = getIntent().getStringExtra("userId");
         set_id = getIntent().getStringExtra("set_id");
         set_name = getIntent().getStringExtra("set_name");
@@ -83,6 +86,10 @@ public class EditCardInfo extends BaseActivity {
 
         edit_cardName.setText(cardsListModels.getTitle());
         edit_cardDescription.setText(cardsListModels.getDescription());
+
+        card_id = cardsListModels.getImage_id();
+        encoded_string = cardsListModels.getImgUrl();
+
 
         if(!cardsListModels.getImgUrl().isEmpty() && cardsListModels != null) {
 
@@ -162,6 +169,14 @@ public class EditCardInfo extends BaseActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.delete, menu);
+        return true;
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -169,8 +184,80 @@ public class EditCardInfo extends BaseActivity {
                 this.finish();
                 overridePendingTransition(R.anim.left_enter, R.anim.right_out);
                 return true;
+
+            case R.id.delete:
+
+               showAlertDialog("Your about to delete the Card, the information contained in the Card will be lost", "Confirm Delete....", "Delete", "Cancel");
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void getDeleteCard() {
+        try {
+
+            if (CheckNetworkConnection.isOnline(EditCardInfo.this)) {
+                showProgress();
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(EditCardInfo.this).getDeleteCard(card_id);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(EditCardInfo.this) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        AddMessageResponse deleteSetResponse = response.body();
+                        if (isSuccess) {
+
+                            if (deleteSetResponse != null) {
+
+                                setDeleteCredentials(deleteSetResponse);
+                                dismissProgress();
+
+                            } else {
+                                dismissProgress();
+
+                            }
+
+                        } else {
+
+                            dismissProgress();
+                        }
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                    }
+                });
+            } else {
+
+                dismissProgress();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
+
+    }
+
+    private void setDeleteCredentials(AddMessageResponse deleteSetResponse) {
+
+        String message = deleteSetResponse.getMessage();
+
+        if(message.equals("success"))
+        {
+            Intent intent = new Intent(EditCardInfo.this, MySetCards.class);
+            intent.putExtra("set_id", set_id);
+            intent.putExtra("set_name", set_name);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+
+
+        }
+        else {
+            showLongToast(EditCardInfo.this, message);
         }
     }
 
@@ -308,6 +395,10 @@ public class EditCardInfo extends BaseActivity {
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
 
+                        if(message.equals("timeout"))
+                        {
+                            showLongToast(EditCardInfo.this, "Internet is slow, please try again.");
+                        }
                         dismissProgress();
                     }
                 });
@@ -347,6 +438,18 @@ public class EditCardInfo extends BaseActivity {
         super.onBackPressed();
         finish();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+    }
+
+
+
+    @Override
+    public void postive_btn_clicked() {
+        getDeleteCard();
+    }
+
+    @Override
+    public void negative_btn_clicked() {
+
     }
 }
 

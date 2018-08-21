@@ -54,6 +54,8 @@ public class MyChannel extends BaseActivity
     String userId;
     String userName;
     String userEmail;
+    String type = "all" ;
+    String Title = "All Channels";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,7 @@ public class MyChannel extends BaseActivity
         setContentView(R.layout.activity_my_channel);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle("My Channel");
+        setTitle(Title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -120,7 +122,7 @@ public class MyChannel extends BaseActivity
 
             if (CheckNetworkConnection.isOnline(MyChannel.this)) {
                 showProgress();
-                Call<ChannelListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).getMyChannelsList(userId, "my");
+                Call<ChannelListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).getMyChannelsList(userId, type);
                 callRegisterUser.enqueue(new ApiCallback<ChannelListResponse>(MyChannel.this) {
                     @Override
                     public void onApiResponse(Response<ChannelListResponse> response, boolean isSuccess, String message) {
@@ -129,8 +131,11 @@ public class MyChannel extends BaseActivity
 
                             if (channelListResponse != null && channelListResponse.getChannels() != null && channelListResponse.getChannels().size() != 0) {
 
+                                channelListModels.clear();
                                 channelListModels = channelListResponse.getChannels();
                                 setAdapter(channelListModels);
+                                channels_listview.setVisibility(View.VISIBLE);
+                                view_nodata.setVisibility(View.GONE);
                                 dismissProgress();
 
                             } else {
@@ -164,11 +169,11 @@ public class MyChannel extends BaseActivity
     }
 
     private void setAdapter(List<ChannelListModel> channelListModels) {
-
         channels_listview.setLayoutManager(new GridLayoutManager(MyChannel.this,3));
         myChannelsAdapter = new MyChannelsAdapter(MyChannel.this, channelListModels);
         channels_listview.setAdapter(myChannelsAdapter);
         myChannelsAdapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -214,7 +219,31 @@ public class MyChannel extends BaseActivity
             // Handle the camera action
         } else if (id == R.id.nav_mysubscription) {
 
-        } else if (id == R.id.nav_logout) {
+            type = "subscribe";
+            setTitle("My Subscriptions");
+            getChannelsLists();
+
+        }
+        else if (id == R.id.nav_myChannels) {
+
+            type = "my";
+            setTitle("My Channels");
+            getChannelsLists();
+
+        }
+        else if (id == R.id.nav_allChannels) {
+
+            type = "all";
+            setTitle("All Channels");
+            getChannelsLists();
+
+        }
+        else if (id == R.id.nav_about) {
+
+            showLongToast(MyChannel.this, "Comming Soon");
+
+        }
+        else if (id == R.id.nav_logout) {
 
             realm.beginTransaction();
 

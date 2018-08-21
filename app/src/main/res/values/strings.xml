@@ -42,5 +42,12 @@
     <string name="card_name">Card Name</string>
     <string name="card_description">Card Description</string>
     <string name="password">Password</string>
+    <string name="all_channels">All Channels</string>
+    <string name="my_channels">My Channels</string>
+    <string name="my_subscription">My Subscription</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    <string name="about_app">About App</string>
+    <string name="create_card">Create Card</string>
 
 </resources>

@@ -5,15 +5,29 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_profile"
-            android:title="Profile" />
+            android:id="@+id/nav_allChannels"
+            android:title="@string/all_channels" />
+
+        <item
+            android:id="@+id/nav_myChannels"
+            android:title="@string/my_channels" />
+
         <item
             android:id="@+id/nav_mysubscription"
-            android:title="My Subscription" />
+            android:title="@string/my_subscription" />
+
+        <item
+            android:id="@+id/nav_profile"
+            android:title="@string/profile" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:title="@string/about_app" />
 
         <item
             android:id="@+id/nav_logout"
-            android:title="Logout" />
+            android:title="@string/logout" />
+
         <!--<item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_camera"

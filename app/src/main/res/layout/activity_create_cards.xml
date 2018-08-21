@@ -87,7 +87,7 @@
         android:layout_weight="0.4"
         android:background="@drawable/login_btn_background"
         android:padding="3dp"
-        android:text="@string/create_channel"
+        android:text="@string/create_card"
         android:textColor="@color/white"
         android:textSize="@dimen/mediumtextsize"
         />

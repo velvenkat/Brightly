@@ -85,4 +85,8 @@ public interface RestApiMethods {
     @FormUrlEncoded
     Call<AddMessageResponse> getUpdateCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("image_id") String image_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
 
+
+    //Update Sets
+    @POST("images/delete_image.php")
+    Call<AddMessageResponse> getDeleteCard(@Query("image_id") String image_id);
 }

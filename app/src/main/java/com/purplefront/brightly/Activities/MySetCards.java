@@ -180,7 +180,7 @@ public class MySetCards extends BaseActivity {
 
             case R.id.cardInfo_Edit:
 
-                if(cardsListModels != null)
+                if(Cur_PagrPosition < cardsListModels.size() - 1)
                 {
                     Intent intent1 = new Intent(MySetCards.this, EditCardInfo.class);
                     Bundle bundle=new Bundle();
@@ -192,15 +192,15 @@ public class MySetCards extends BaseActivity {
                     startActivity(intent1);
                     overridePendingTransition(R.anim.right_enter, R.anim.left_out);
 
-                    return true;
+
                 }
                 else
                 {
-                    showLongToast(MySetCards.this, "Data not available");
+                    showLongToast(MySetCards.this, "No Card to Edit");
+
                 }
 
-
-
+                return true;
             case R.id.card_reorder:
 
                 Intent intent2 = new Intent(MySetCards.this, CardList.class);
