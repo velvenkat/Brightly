@@ -120,7 +120,7 @@ public class MyChannel extends BaseActivity
 
             if (CheckNetworkConnection.isOnline(MyChannel.this)) {
                 showProgress();
-                Call<ChannelListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).getMyChannelsList(userId);
+                Call<ChannelListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).getMyChannelsList(userId, "my");
                 callRegisterUser.enqueue(new ApiCallback<ChannelListResponse>(MyChannel.this) {
                     @Override
                     public void onApiResponse(Response<ChannelListResponse> response, boolean isSuccess, String message) {

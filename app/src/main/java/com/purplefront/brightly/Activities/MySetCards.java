@@ -43,11 +43,6 @@ public class MySetCards extends BaseActivity {
     String set_description = "";
     String set_name = "";
     String set_id = "";
-    String card_name = "";
-    String card_id = "";
-    String card_description = "";
-    String card_ImgUrl= "";
-    String image_name;
     int Cur_PagrPosition;
 
     @Override
@@ -76,10 +71,10 @@ public class MySetCards extends BaseActivity {
 
         // Locate the ViewPager in viewpager_main.xml
         viewPager_Cards = (ViewPager) findViewById(R.id.viewPager_Cards);
-        getSetLists();
+        getCardsLists();
     }
 
-    public void getSetLists() {
+    public void getCardsLists() {
         try {
 
             if (CheckNetworkConnection.isOnline(MySetCards.this)) {
@@ -207,6 +202,13 @@ public class MySetCards extends BaseActivity {
 
 
             case R.id.card_reorder:
+
+                Intent intent2 = new Intent(MySetCards.this, CardList.class);
+                intent2.putExtra("userId", userId);
+                intent2.putExtra("set_id", set_id);
+                intent2.putExtra("set_name", set_name);
+                startActivity(intent2);
+                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
 
                 return true;
 

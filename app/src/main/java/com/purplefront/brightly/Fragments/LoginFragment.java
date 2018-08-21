@@ -51,11 +51,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     private View view;
     private static FragmentManager fragmentManager;
     private EditText editText_phone;
+    private EditText editText_password;
     private Button btn_signIn;
     private TextView textView_signUp;
     private static Animation shakeAnimation;
 
     String getPhonenumber;
+    String getPassword;
     String User_ID;
     String UserName;
     String User_CompanyName;
@@ -86,6 +88,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         fragmentManager = getActivity().getSupportFragmentManager();
 
         editText_phone = (EditText) view.findViewById(R.id.login_phonenumber);
+        editText_password = (EditText) view.findViewById(R.id.login_password);
         btn_signIn = (Button) view.findViewById(R.id.loginBtn);
         textView_signUp = (TextView) view.findViewById(R.id.text_signup);
 
@@ -135,13 +138,21 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     private void checkValidation() {
         // Get phonenumber
         getPhonenumber = editText_phone.getText().toString();
+        getPassword = editText_password.getText().toString();
 
         // Check for phonenumber field is empty or not
-        if (getPhonenumber.equals("") || getPhonenumber.length() != 10) {
+        if (getPhonenumber.equals("") || getPhonenumber.length() != 10 )
+        {
             editText_phone.startAnimation(shakeAnimation);
             new CustomToast().Show_Toast(getActivity(), view,
                     "Enter Valid Phone Number.");
 
+        }
+        else if( getPassword.equals("") || getPassword.length() == 0)
+        {
+            editText_password.startAnimation(shakeAnimation);
+            new CustomToast().Show_Toast(getActivity(), view,
+                    "Enter Password.");
         }
             // Else do login and do your stuff
         else {
@@ -155,7 +166,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
-                Call<SignInResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignIn(getPhonenumber);
+                Call<SignInResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignIn(getPhonenumber, getPassword);
                 callRegisterUser.enqueue(new ApiCallback<SignInResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SignInResponse> response, boolean isSuccess, String message) {

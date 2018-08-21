@@ -11,13 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.purplefront.brightly.Activities.BaseActivity;
 import com.purplefront.brightly.Activities.CreateCards;
 import com.purplefront.brightly.Activities.MySetCards;
 import com.purplefront.brightly.Modules.CardsListModel;
@@ -72,7 +69,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
                 CardsListModel cardsListModel = cardsListModels.get(position);
                 // Inflate the custom layout
-                View itemView = inflater.inflate(R.layout.items_cards_list, container, false);
+                View itemView = inflater.inflate(R.layout.items_cards_pager, container, false);
 
                 // Declare Variables
                 TextView text_cardName;

@@ -27,12 +27,12 @@ public interface RestApiMethods {
 
     //SignIn
     @POST("users/newlogin.php")
-    Call<SignInResponse> getSignIn(@Query("mobile_no") String mobile_no);
+    Call<SignInResponse> getSignIn(@Query("mobile_no") String mobile_no, @Query("password") String password);
 
 
     //ChannelsList
     @POST("channels/list_channels.php")
-    Call<ChannelListResponse> getMyChannelsList(@Query("user_id") String user_id);
+    Call<ChannelListResponse> getMyChannelsList(@Query("user_id") String user_id, @Query("type") String type);
 
     //Add Channels
     @POST("channels/add_channel.php")

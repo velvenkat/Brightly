@@ -41,5 +41,6 @@
     <string name="edit_card">Edit Card</string>
     <string name="card_name">Card Name</string>
     <string name="card_description">Card Description</string>
+    <string name="password">Password</string>
 
 </resources>
