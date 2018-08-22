@@ -22,6 +22,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.R;
@@ -34,6 +35,8 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -60,11 +63,13 @@ public class CreateCards extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_cards);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setTitle("Create Cards");
+
 
         userId = getIntent().getStringExtra("userId");
         set_id = getIntent().getStringExtra("set_id");
@@ -307,6 +312,7 @@ public class CreateCards extends BaseActivity {
             Intent intent = new Intent(CreateCards.this, MySetCards.class);
             intent.putExtra("set_id", set_id);
             intent.putExtra("set_name", set_name);
+            intent.putExtra("userId", userId);
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);

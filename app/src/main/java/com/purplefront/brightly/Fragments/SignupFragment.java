@@ -42,7 +42,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     private View view;
     Context mContext;
     private static FragmentManager fragmentManager;
-    private EditText editText_name, editText_companyname, editText_email, editText_phone;
+    private EditText editText_name, editText_companyname, editText_email, editText_phone, reg_password, reg_confirmPassword;
     private Button btn_signUp;
     private TextView textView_signIn;
     private static Animation shakeAnimation;
@@ -51,6 +51,8 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     String getCompanyName;
     String getEmail;
     String getPhoneNumber;
+    String getPassword;
+    String getConfirmPassword;
     String message;
 
     Realm realm;
@@ -85,6 +87,8 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         editText_companyname = (EditText) view.findViewById(R.id.registration_companyname);
         editText_email = (EditText) view.findViewById(R.id.registration_email);
         editText_phone = (EditText) view.findViewById(R.id.registration_phonenumber);
+        reg_password = (EditText) view.findViewById(R.id.reg_password);
+        reg_confirmPassword = (EditText) view.findViewById(R.id.reg_confirmPassword);
 
         btn_signUp = (Button) view.findViewById(R.id.signupBtn);
         textView_signIn = (TextView) view.findViewById(R.id.text_signin);
@@ -134,6 +138,8 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         getCompanyName = editText_companyname.getText().toString();
         getEmail = editText_email.getText().toString();
         getPhoneNumber = editText_phone.getText().toString();
+        getPassword = reg_password.getText().toString();
+        getConfirmPassword = reg_confirmPassword.getText().toString();
 
         // Pattern match for email id
         Pattern p = Pattern.compile(Util.regEx);
@@ -143,16 +149,23 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         if (getName.equals("") || getName.length() == 0
                 || getCompanyName.equals("") || getCompanyName.length() == 0
                 || getEmail.equals("") || getEmail.length() == 0
-                || getPhoneNumber.equals("") || getPhoneNumber.length() == 0) {
+                || getPhoneNumber.equals("") || getPhoneNumber.length() == 0
+                || getPassword.equals("") || getPassword.length() == 0) {
 
             new CustomToast().Show_Toast(getActivity(), view,
                     "All fields are required.");
         }
 
             // Check if email id valid or not
-        else if (!m.find())
+        else if (!m.find()) {
             new CustomToast().Show_Toast(getActivity(), view,
                     "Your Email Id is Invalid.");
+        }
+        else if (!getPassword.equals(getConfirmPassword))
+        {
+            new CustomToast().Show_Toast(getActivity(), view,
+                    "Password didn't match");
+        }
 
             // Else do signup or do your stuff
         else
@@ -166,7 +179,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
-                Call<SignUpResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignup(getName, getEmail, getPhoneNumber, getCompanyName);
+                Call<SignUpResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignup(getName, getEmail, getPhoneNumber, getCompanyName, getPassword);
                 callRegisterUser.enqueue(new ApiCallback<SignUpResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SignUpResponse> response, boolean isSuccess, String message) {

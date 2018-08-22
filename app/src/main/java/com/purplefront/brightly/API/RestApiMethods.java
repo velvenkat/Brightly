@@ -23,7 +23,7 @@ public interface RestApiMethods {
     String CONTENT_TYPE = "content-type:application/json";
     //Register or SignUp
     @POST("users/newregister.php")
-    Call<SignUpResponse> getSignup(@Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name);
+    Call<SignUpResponse> getSignup(@Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Query("password") String password);
 
     //SignIn
     @POST("users/newlogin.php")
