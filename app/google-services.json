@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "110171540338",
+    "firebase_url": "https://brightlyinfoshare.firebaseio.com",
+    "project_id": "brightlyinfoshare",
+    "storage_bucket": "brightlyinfoshare.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:110171540338:android:76fa5c3c9a7e7f4d",
+        "android_client_info": {
+          "package_name": "com.purplefront.brightly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "110171540338-he54iq94mdsn9mhk8jeqaug2crrrs333.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.purplefront.brightly",
+            "certificate_hash": "d86a4bc1a6b9d01d34e98f15e6e4d06080a49cb0"
+          }
+        },
+        {
+          "client_id": "110171540338-c382si4jl6k2uiim981907r2m4pm579o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7-47IPgeXpVC_HXdFzpC7H-wGPrJAS90"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "110171540338-c382si4jl6k2uiim981907r2m4pm579o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
