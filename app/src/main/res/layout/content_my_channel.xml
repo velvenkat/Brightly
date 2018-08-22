@@ -39,10 +39,11 @@
 
     <ImageView
         android:id="@+id/image_createChannel"
-        android:layout_width="80dp"
+        android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_weight="2"
         android:layout_margin="@dimen/dimen_20"
+        android:background="@drawable/circular_image_drawable"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:src="@drawable/add_image_white"/>

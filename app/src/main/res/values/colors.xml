@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#2A8E6E</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#FF5722</color>
+    <color name="colorPrimaryDark">#E64A19</color>
+    <color name="colorAccent">#4CAF50</color>
 
     //colors
 
@@ -11,8 +11,8 @@
     <color name="white_greyish">#EEEEEE</color>
     <color name="light_gery">#9E9E9E</color>
 
-    <color name="btn_login">#F07342</color>
-    <color name="action_bar">#2A8E6E</color>
+    <color name="btn_login">#E64A19</color>
+    <color name="action_bar">#FF5722</color>
 
 
 </resources>
