@@ -62,6 +62,7 @@
             android:textAllCaps="false"
             android:layout_height="wrap_content" />
     </RelativeLayout>
+
     <TextView
         android:id="@+id/view_nodata"
         android:layout_width="match_parent"

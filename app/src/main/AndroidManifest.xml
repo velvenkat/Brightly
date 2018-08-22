@@ -69,7 +69,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.MySetCards"
-            android:screenOrientation="portrait" />
+             />
         <activity
             android:name=".Activities.EditSetInfo"
             android:screenOrientation="portrait" />

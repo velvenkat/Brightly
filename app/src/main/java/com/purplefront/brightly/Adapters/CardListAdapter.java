@@ -74,7 +74,6 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         if (cardsListModel.getTitle() != null) {
             holder.text_cardName.setText(cardsListModel.getTitle());
         }
-
         if (cardsListModel.getDescription() != null) {
             holder.text_cardDescription.setText(cardsListModel.getDescription());
         }

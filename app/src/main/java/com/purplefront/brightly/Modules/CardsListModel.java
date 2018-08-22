@@ -37,7 +37,6 @@ public class CardsListModel implements Parcelable {
     }
 
     private boolean isDelSel=false;
-
     public CardsListModel(){
 
     }

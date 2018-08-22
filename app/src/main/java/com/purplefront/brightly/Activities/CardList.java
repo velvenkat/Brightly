@@ -71,7 +71,6 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
         chk_sel_all = (CheckBox) findViewById(R.id.chk_sel_all);
         txtItemSel = (TextView) findViewById(R.id.txtCntSelected);
 
-
         setDlgListener(this);
         chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
