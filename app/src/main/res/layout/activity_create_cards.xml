@@ -23,74 +23,26 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs_creatCard"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:orientation="vertical">
-
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/image_cardImage"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:padding="2dp"
-            android:layout_marginTop="@dimen/dimen_10"
-            android:layout_marginBottom="@dimen/dimen_10"
-            android:layout_marginLeft="@dimen/dimen_20"
-            android:layout_marginRight="@dimen/dimen_20"
-            android:background="@drawable/edit_text_background"
-            />
-
-        <EditText
-            android:id="@+id/create_cardName"
-            android:singleLine="true"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.3"
-            android:layout_marginTop="@dimen/dimen_10"
-            android:layout_marginBottom="@dimen/dimen_5"
-            android:layout_marginLeft="@dimen/dimen_20"
-            android:layout_marginRight="@dimen/dimen_20"
-            android:inputType="textCapSentences"
-            android:background="@drawable/edit_text_background"
-            android:gravity="center_vertical"
-            android:hint="@string/card_name"
-            android:maxLength="25"
-            android:padding="@dimen/dimen_4"
-            android:textColor="@color/black"
-            android:textSize="@dimen/mediumtextsize" />
-
-        <EditText
-            android:id="@+id/create_cardDescription"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.8"
-            android:layout_marginTop="@dimen/dimen_5"
-            android:layout_marginBottom="@dimen/dimen_10"
-            android:layout_marginLeft="@dimen/dimen_20"
-            android:layout_marginRight="@dimen/dimen_20"
-            android:inputType="textCapSentences"
-            android:background="@drawable/edit_text_background"
-            android:gravity="start"
-            android:hint="@string/card_description"
-            android:padding="@dimen/dimen_4"
-            android:textColor="@color/black"
-            android:textSize="@dimen/mediumtextsize" />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btn_createCard"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.4"
-        android:background="@drawable/login_btn_background"
-        android:padding="3dp"
-        android:text="@string/create_card"
-        android:textColor="@color/white"
-        android:textSize="@dimen/mediumtextsize"
+        android:layout_height="50dp"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabPadding="2dp"
+        app:tabPaddingStart="8dp"
+        app:tabBackground="@color/btn_login"
+        app:tabSelectedTextColor="@color/btn_login"
+        app:tabIndicatorColor="@color/btn_login"
+        android:background="@color/btn_login"
         />
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_creatCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
 
 </LinearLayout>
