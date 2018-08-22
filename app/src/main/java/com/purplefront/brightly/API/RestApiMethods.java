@@ -65,7 +65,7 @@ public interface RestApiMethods {
     @POST("sets/delete_set.php")
     Call<AddMessageResponse> getDeleteSet(@Query("set_id") String set_id);
 
-    //SetList
+    //CardList
     @POST("images/list_image.php")
     Call<CardsListResponse> getCardsList(@Query("set_id") String set_id);
 
@@ -80,13 +80,18 @@ public interface RestApiMethods {
     Call<AddMessageResponse> set_reorder_set(@Query("user_id") String user_id,  @Query("set_id") String set_id);
 
 
-    //SetList
+    //Update Card
     @POST("images/update_image.php")
     @FormUrlEncoded
     Call<AddMessageResponse> getUpdateCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("image_id") String image_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
 
 
-    //Update Sets
+    //Delete Card
     @POST("images/delete_image.php")
     Call<AddMessageResponse> getDeleteCard(@Query("image_id") String image_id);
+
+    //Card_Reorder
+    @POST("images/display_order.php?")
+    Call<AddMessageResponse> card_reorder_set(@Query("user_id") String user_id,  @Query("image_id") String image_id);
+
 }

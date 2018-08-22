@@ -14,10 +14,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.CardListAdapter;
+import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
 import com.purplefront.brightly.Modules.SetsListModel;
@@ -116,7 +118,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
             public void onClick(View v) {
 
                 strDelSelId = android.text.TextUtils.join(",", del_sel_id);
-                showAlertDialog("You are about to delete the Set. All the information contained in the Sets will be lost.", "Confirm Delete...", "Delete", "Cancel");
+                showAlertDialog("You are about to delete selected Cards. All the information contained in the Cards will be lost.", "Confirm Delete...", "Delete", "Cancel");
                 // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
 
             }
@@ -165,7 +167,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
                 // and notify the adapter that its dataset has changed
                 cardListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 //Toast.makeText(MyChannelsSet.this,"OnMoved",Toast.LENGTH_LONG).show();
-             //   call_set_reorder();
+                call_card_reorder();
                 return true;
             }
 
@@ -193,6 +195,52 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
 
         getCardsLists();
     }
+
+    public void call_card_reorder() {
+        String cardId = "";
+        int i = 0;
+        for (CardsListModel cardModelObj : cardsListModels) {
+            if (i == 0) {
+                i = 1;
+            } else {
+                cardId = cardId + ",";
+            }
+            cardId = cardId + cardModelObj.getImage_id();
+        }
+        try {
+
+            if (CheckNetworkConnection.isOnline(CardList.this)) {
+                showProgress();
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(CardList.this).card_reorder_set(userId, cardId);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(CardList.this) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
+                        Toast.makeText(CardList.this, "Message:" + response.message(), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                    }
+                });
+            } /*else {
+
+                dismissProgress();
+            }*/ else {
+                Toast.makeText(CardList.this, "Check network connection", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
+
+    }
+
+
+
     public void reset_view() {
         getSupportActionBar().show();
         del_contr.setVisibility(View.GONE);
@@ -323,10 +371,54 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
         // Toast.makeText(MyChannelsSet.this,"Selected set id:"+Sel_id,Toast.LENGTH_LONG).show();
     }
 
+    public void call_api_del_multi_cards() {
+        try {
+
+            if (CheckNetworkConnection.isOnline(CardList.this)) {
+                showProgress();
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(CardList.this).getDeleteCard(strDelSelId);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(CardList.this) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        AddMessageResponse deleteSetResponse = response.body();
+                        dismissProgress();
+                        if (isSuccess) {
+
+                            if (deleteSetResponse != null) {
+
+                                if (deleteSetResponse.getMessage().equalsIgnoreCase("success")) {
+                                    reset_view();
+                                    getCardsLists();
+                                }
+
+
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                    }
+                });
+            } else {
+
+                dismissProgress();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
+
+    }
+
     @Override
     public void postive_btn_clicked() {
 //      Toast.makeText(MyChannelsSet.this,"Working",Toast.LENGTH_LONG).show();
-        //call_api_del_multi_set();
+        call_api_del_multi_cards();
     }
 
     @Override
