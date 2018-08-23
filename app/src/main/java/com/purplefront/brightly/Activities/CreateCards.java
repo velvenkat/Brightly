@@ -33,6 +33,7 @@ import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Application.UserInterface;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Fragments.AudioType;
+import com.purplefront.brightly.Fragments.FileType;
 import com.purplefront.brightly.Fragments.ImageType;
 import com.purplefront.brightly.Fragments.YoutubeType;
 import com.purplefront.brightly.Modules.AddMessageResponse;
@@ -97,20 +98,25 @@ public class CreateCards extends BaseActivity implements UserInterface{
     private void setupTabIcons() {
 
         final TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabOne.setText("Image Card");
+        tabOne.setText("Image");
         // tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_creatCard.getTabAt(0).setCustomView(tabOne);
 
         // Supplier id for free Version "RcJ1L4mWaZeIe2wRO3ejHOmcSxf2" =====
         final TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabTwo.setText("Video Card");
+        tabTwo.setText("Video");
         // tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_creatCard.getTabAt(1).setCustomView(tabTwo);
 
         final TextView tabThree = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabThree.setText("Audio Card");
+        tabThree.setText("Audio");
         // tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_creatCard.getTabAt(2).setCustomView(tabThree);
+
+        final TextView tabFour = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        tabFour.setText("File URL");
+        // tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
+        tabs_creatCard.getTabAt(3).setCustomView(tabFour);
     }
 
     private void setupViewPager(ViewPager viewpager_creatCard) {
@@ -120,6 +126,7 @@ public class CreateCards extends BaseActivity implements UserInterface{
         adapter.addFrag(new ImageType(), "image");
         adapter.addFrag(new YoutubeType(), "youtube");
         adapter.addFrag(new AudioType(), "audio");
+        adapter.addFrag(new FileType(), "file");
         viewpager_creatCard.setAdapter(adapter);
     }
 

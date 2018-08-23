@@ -304,15 +304,15 @@ public class EditChannelInfo extends BaseActivity {
                 try {
 
                     Uri picUri = imgImageChooser_crop.getPickImageResultUri(data);
-                    //           Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), picUri);
+                               Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditChannelInfo.this.getContentResolver(), picUri);
                     if (picUri != null) {
                        /* Intent intent = imgImageChooser_crop.performCrop(picUri, false, 150, 150);
                         startActivityForResult(intent, PIC_CROP);*/
                         // for fragment (DO NOT use `getActivity()`)
                         CropImage.activity(picUri)
                                 .setMinCropResultSize(500, 500)
-                                .setMaxCropResultSize(2000, 2000)
-                                .setAspectRatio(1, 1)
+                                .setMaxCropResultSize(bitmap.getWidth(), bitmap.getHeight())
+//                                .setAspectRatio(1, 1)
                                 .setCropShape(CropImageView.CropShape.RECTANGLE)
                                 .start(EditChannelInfo.this);
                     }
