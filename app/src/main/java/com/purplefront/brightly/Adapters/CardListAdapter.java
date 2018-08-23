@@ -78,8 +78,8 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
             holder.text_cardDescription.setText(cardsListModel.getDescription());
         }
 
-        image_id = cardsListModel.getImage_id();
-        image_name = cardsListModel.getImage_name();
+        image_id = cardsListModel.getCard_id();
+        image_name = cardsListModel.getName();
 
         if (isSelToDel) {
             holder.chkbx_del_set.setVisibility(View.VISIBLE);
@@ -94,7 +94,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         }
 
 
-        if (!cardsListModel.getImgUrl().isEmpty()) {
+        if (!cardsListModel.getUrl().isEmpty()) {
 
             dialog = new ProgressDialog(context);
             dialog.setMessage("Please wait...");
@@ -103,7 +103,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
             dialog.show();
 
             Glide.with(context)
-                    .load(cardsListModel.getImgUrl())
+                    .load(cardsListModel.getUrl())
                     .centerCrop()
                     /*.transform(new CircleTransform(HomeActivity.this))
                     .override(50, 50)*/

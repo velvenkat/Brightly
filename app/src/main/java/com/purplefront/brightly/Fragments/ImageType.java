@@ -92,10 +92,6 @@ public class ImageType extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view =  inflater.inflate(R.layout.fragment_image_type, container, false);
-        context =view.getContext();
-        /*realm = Realm.getDefaultInstance();
-        initViews();
-        setListeners();*/
         context = view.getContext();
 
         userId = userModule.getUserId();
@@ -158,12 +154,14 @@ public class ImageType extends BaseFragment {
         }
         else if(encoded_string.equals("") || encoded_string.length() == 0)
         {
-            new CustomToast().Show_Toast(getActivity(), image_cardImage,
-                    "Image is required.");
+           /* new CustomToast().Show_Toast(getActivity(), image_cardImage,
+                    "Image is required.");*/
+            type = "text";
         }
 
         // Else do signup or do your stuff
         else {
+            type = "image";
             getAddCards();
         }
     }
@@ -218,7 +216,6 @@ public class ImageType extends BaseFragment {
                     encoded_string = getStringImage(bitmap);
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                     image_name = sdf.format(new Date());
-                    type = "image";
                    /* if (bitmap != null) {
                         RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
                         drawable.setCircular(true);

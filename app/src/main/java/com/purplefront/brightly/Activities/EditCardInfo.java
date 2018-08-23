@@ -87,14 +87,14 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
         edit_cardName.setText(cardsListModels.getTitle());
         edit_cardDescription.setText(cardsListModels.getDescription());
 
-        card_id = cardsListModels.getImage_id();
-        encoded_string = cardsListModels.getImgUrl();
+        card_id = cardsListModels.getCard_id();
+        encoded_string = cardsListModels.getUrl();
 
 
-        if(!cardsListModels.getImgUrl().isEmpty() && cardsListModels != null) {
+        if(!cardsListModels.getUrl().isEmpty() && cardsListModels != null) {
 
             Glide.with(EditCardInfo.this)
-                    .load(cardsListModels.getImgUrl())
+                    .load(cardsListModels.getUrl())
                     .centerCrop()
                     /*.transform(new CircleTransform(HomeActivity.this))
                     .override(50, 50)*/

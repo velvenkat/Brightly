@@ -8,25 +8,30 @@ import com.google.gson.annotations.SerializedName;
 
 public class CardsListModel implements Parcelable {
 
-    @SerializedName("image_id")
+    @SerializedName("card_id")
     @Expose
-    private String image_id;
+    private String card_id;
 
     @SerializedName("title")
     @Expose
     private String title;
 
-    @SerializedName("imgUrl")
+    @SerializedName("url")
     @Expose
-    private String imgUrl;
+    private String url;
 
     @SerializedName("description")
     @Expose
     private String description;
 
-    @SerializedName("image_name")
+    @SerializedName("name")
     @Expose
-    private String image_name;
+    private String name;
+
+    @SerializedName("type")
+    @Expose
+    private String type;
+    private boolean isDelSel=false;
 
     public boolean isDelSel() {
         return isDelSel;
@@ -36,24 +41,26 @@ public class CardsListModel implements Parcelable {
         isDelSel = delSel;
     }
 
-    private boolean isDelSel=false;
     public CardsListModel(){
 
     }
-    public CardsListModel(String image_id, String title, String imgUrl, String description, String image_name) {
-        this.image_id = image_id;
+
+    public CardsListModel(String card_id, String title, String url, String description, String name, String type) {
+        this.card_id = card_id;
         this.title = title;
-        this.imgUrl = imgUrl;
+        this.url = url;
         this.description = description;
-        this.image_name = image_name;
+        this.name = name;
+        this.type = type;
     }
 
     protected CardsListModel(Parcel in) {
-        image_id = in.readString();
+        card_id = in.readString();
         title = in.readString();
-        imgUrl = in.readString();
+        url = in.readString();
         description = in.readString();
-        image_name = in.readString();
+        name = in.readString();
+        type = in.readString();
     }
 
     public static final Creator<CardsListModel> CREATOR = new Creator<CardsListModel>() {
@@ -68,12 +75,20 @@ public class CardsListModel implements Parcelable {
         }
     };
 
-    public String getImage_id() {
-        return image_id;
+    public String getType() {
+        return type;
     }
 
-    public void setImage_id(String image_id) {
-        this.image_id = image_id;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCard_id() {
+        return card_id;
+    }
+
+    public void setCard_id(String card_id) {
+        this.card_id = card_id;
     }
 
     public String getTitle() {
@@ -84,12 +99,12 @@ public class CardsListModel implements Parcelable {
         this.title = title;
     }
 
-    public String getImgUrl() {
-        return imgUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getDescription() {
@@ -100,12 +115,12 @@ public class CardsListModel implements Parcelable {
         this.description = description;
     }
 
-    public String getImage_name() {
-        return image_name;
+    public String getName() {
+        return name;
     }
 
-    public void setImage_name(String image_name) {
-        this.image_name = image_name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -115,10 +130,11 @@ public class CardsListModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(image_id);
+        parcel.writeString(card_id);
         parcel.writeString(title);
-        parcel.writeString(imgUrl);
+        parcel.writeString(url);
         parcel.writeString(description);
-        parcel.writeString(image_name);
+        parcel.writeString(name);
+        parcel.writeString(type);
     }
 }

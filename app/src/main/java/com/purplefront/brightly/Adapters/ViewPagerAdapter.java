@@ -71,6 +71,8 @@ public class ViewPagerAdapter extends PagerAdapter {
                 // Inflate the custom layout
                 View itemView = inflater.inflate(R.layout.items_cards_pager, container, false);
 
+                //file_type
+                String type = cardsListModel.getType();
                 // Declare Variables
                 TextView text_cardName;
                 TextView text_cardDescription;
@@ -89,10 +91,10 @@ public class ViewPagerAdapter extends PagerAdapter {
                     text_cardDescription.setText(cardsListModel.getDescription());
                 }
 
-                image_id = cardsListModel.getImage_id();
-                image_name = cardsListModel.getImage_name();
+                image_id = cardsListModel.getCard_id();
+                image_name = cardsListModel.getName();
 
-                if (!cardsListModel.getImgUrl().isEmpty()) {
+                if (!cardsListModel.getUrl().isEmpty() && cardsListModel.getUrl()!=null) {
 
                     dialog = new ProgressDialog(context);
                     dialog.setMessage("Please wait...");
@@ -101,7 +103,7 @@ public class ViewPagerAdapter extends PagerAdapter {
                     dialog.show();
 
                     Glide.with(context)
-                            .load(cardsListModel.getImgUrl())
+                            .load(cardsListModel.getUrl())
                             .centerCrop()
                             /*.transform(new CircleTransform(HomeActivity.this))
                             .override(50, 50)*/

@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
+        android:layout_weight="3.1"
         android:orientation="vertical">
 
         <com.facebook.drawee.view.SimpleDraweeView
@@ -19,8 +19,7 @@
             android:layout_height="0dp"
             android:layout_weight="2"
             android:padding="2dp"
-            android:layout_marginTop="@dimen/dimen_10"
-            android:layout_marginBottom="@dimen/dimen_10"
+            android:layout_marginBottom="@dimen/dimen_5"
             android:layout_marginLeft="@dimen/dimen_20"
             android:layout_marginRight="@dimen/dimen_20"
             android:background="@drawable/edit_text_background"
@@ -68,7 +67,6 @@
         android:id="@+id/btn_createCard"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:layout_weight="0"
         android:background="@drawable/login_btn_background"
         android:padding="3dp"
         android:text="@string/create_card"

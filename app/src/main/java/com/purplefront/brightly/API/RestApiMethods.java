@@ -88,7 +88,7 @@ public interface RestApiMethods {
 
     //Delete Card
     @POST("images/delete_image.php")
-    Call<AddMessageResponse> getDeleteCard(@Query("image_id") String image_id);
+    Call<AddMessageResponse> getDeleteCard(@Query("card_id") String card_id);
 
     //Card_Reorder
     @POST("images/display_order.php?")

@@ -92,7 +92,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
                         for(int i=0;i<cardsListModels.size();i++){
                             CardsListModel modelObj=cardsListModels.get(i);
                             modelObj.setDelSel(true);
-                            del_sel_id.add(modelObj.getImage_id());
+                            del_sel_id.add(modelObj.getCard_id());
                             cardsListModels.remove(i);
                             cardsListModels.add(i,modelObj);
 
@@ -205,7 +205,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
             } else {
                 cardId = cardId + ",";
             }
-            cardId = cardId + cardModelObj.getImage_id();
+            cardId = cardId + cardModelObj.getCard_id();
         }
         try {
 
@@ -333,7 +333,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
             modelObj.setDelSel(false);
             int i = 0;
             for (String sel_ID : del_sel_id) {
-                if (sel_ID.equals(modelObj.getImage_id())) {
+                if (sel_ID.equals(modelObj.getCard_id())) {
                     del_sel_id.remove(i);
                     txtItemSel.setText(del_sel_id.size() + " items selected");
                     break;
@@ -351,7 +351,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
             modelObj.setDelSel(true);
 
             chk_sel_all.setVisibility(View.VISIBLE);
-            del_sel_id.add(modelObj.getImage_id());
+            del_sel_id.add(modelObj.getCard_id());
             if(cardsListModels.size()==del_sel_id.size()){
                 chk_sel_all.setText("Unselect all");
                 is_on_set_chg_chk_status=true;
