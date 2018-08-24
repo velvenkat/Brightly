@@ -79,7 +79,8 @@
         <activity
             android:name=".Activities.EditCardInfo"
             android:screenOrientation="portrait" />
-        <activity android:name=".Activities.CardList"></activity>
+        <activity android:name=".Activities.CardList"
+            android:screenOrientation="portrait"/>
 
         <!-- [START firebase_service] -->
         <service android:name=".Firebase.MyFirebaseMessagingService">
