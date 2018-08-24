@@ -10,8 +10,17 @@ public class UserModule {
     String card_description = "";
     String encoded_string = "";
     String image_name = "";
+    String type = "";
 
     public UserModule() {
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getUserId() {

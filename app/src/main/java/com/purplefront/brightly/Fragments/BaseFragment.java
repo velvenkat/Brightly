@@ -1,9 +1,12 @@
 package com.purplefront.brightly.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,8 @@ import com.purplefront.brightly.R;
 
 public class BaseFragment extends Fragment {
 
+    Context context;
+    alert_dlg_interface mListener;
 
     @Override
     public void onStart() {
@@ -23,6 +28,49 @@ public class BaseFragment extends Fragment {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
+
+    public void setDlgListener(alert_dlg_interface listener){
+        mListener=listener;
+    }
+    public void showAlertDialog(String message,String Title,String Pos_Title,String Neg_Title)
+    {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+
+        // Setting Dialog Title
+        alertDialog.setTitle(Title);
+
+        // Setting Dialog Message
+        //alertDialog.setMessage("You are about to delete the Set. All the information contained in the Sets will be lost. ");
+        alertDialog.setMessage(message);
+        // Setting Icon to Dialog
+        alertDialog.setIcon(R.drawable.error);
+
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton(Pos_Title, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+
+                dialog.dismiss();
+                mListener.postive_btn_clicked();
+                //getDeleteSet();
+                // Write your code here to invoke YES event
+//                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton(Neg_Title, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Write your code here to invoke NO event
+//                Toast.makeText(getApplicationContext(), "You clicked on NO", Toast.LENGTH_SHORT).show();
+                dialog.cancel();
+                mListener.negative_btn_clicked();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
+    }
+
 
     /**
      * @param fragment fragment transaction for all fragments
@@ -110,6 +158,11 @@ public class BaseFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public interface alert_dlg_interface{
+        public void postive_btn_clicked();
+        public void negative_btn_clicked();
     }
 }
 
