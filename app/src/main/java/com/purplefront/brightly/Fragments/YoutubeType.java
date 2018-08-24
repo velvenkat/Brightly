@@ -3,6 +3,7 @@ package com.purplefront.brightly.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -85,6 +86,16 @@ public class YoutubeType extends BaseFragment {
             @Override
             public void onClick(View view) {
                 checkValidation();
+            }
+        });
+
+        image_youtube_link.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setPackage("com.google.android.youtube");
+                startActivity(intent);
             }
         });
 
