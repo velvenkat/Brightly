@@ -14,6 +14,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -62,31 +63,31 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if(remoteMessage.getData().get("body").startsWith("Warning"))
             {
                 Log.d("RYEMNDR","RYEMNDR");
-                /*Intent intent = new Intent(this, GasLeakage.class);
+                Intent intent = new Intent(this, NotificationHandler.class);
                 intent.putExtra("message_body",remoteMessage.getData().get("body"));
                 intent.putExtra("control_unit_sim_number",remoteMessage.getData().get("tag"));
                 intent.putExtra("base_unit_id",remoteMessage.getData().get("unit_id"));
                 intent.putExtra("title_name",remoteMessage.getData().get("title"));
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 *//* Request code *//*, intent,
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
                         PendingIntent.FLAG_ONE_SHOT);
 
 
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
 
-                MediaPlayer defaultSoundUri = MediaPlayer.create(this, R.raw.siren);
+           /*     MediaPlayer defaultSoundUri = MediaPlayer.create(this, R.raw.siren);
                 defaultSoundUri.setLooping(true);
                 defaultSoundUri.start();
 
 
                 media_player_object = defaultSoundUri;
-
+*/
 
 
 
                 NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.supramlogos)
+
                         .setContentTitle(message_title)
                         .setContentText(remoteMessage.getData().get("body"))
                         .setAutoCancel(true)
@@ -97,10 +98,42 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 NotificationManager notificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-                notificationManager.notify(1 *//* ID of notification *//*, notificationBuilder.build());
-*/
+                notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
+
 
             }
+            else
+            {
+                Log.d("RIDACKDFD","RIDACKDFD");
+                Intent intent = new Intent(this, NotificationHandler.class);
+                intent.putExtra("message_body",remoteMessage.getData().get("body"));
+                intent.putExtra("control_unit_sim_number",remoteMessage.getData().get("tag"));
+                intent.putExtra("base_unit_id",remoteMessage.getData().get("unit_id"));
+                intent.putExtra("title_name",remoteMessage.getData().get("title"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
+                        PendingIntent.FLAG_ONE_SHOT);
+
+                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                        .setContentTitle(message_title)
+                        .setContentText(remoteMessage.getData().get("body"))
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent);
+
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
+
+            }
+
+//            Intent lIntent=new Intent(MedConstants.CONFIG_PUSHNOTIFICATION);
+//            lIntent.putExtra("title",remoteMessage.getNotification().getTitle());
+//            lIntent.putExtra("body",remoteMessage.getNotification().getBody());
+//            LocalBroadcastManager.getInstance(this).sendBroadcast(lIntent);
+//            return;
 
 
 
@@ -114,19 +147,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         {
             if(remoteMessage.getData().get("body").startsWith("Warning"))
             {
-               /* Log.d("SERESER","SERESER");
-                Intent intent = new Intent(this, GasLeakage.class);
+                Log.d("SERESER","SERESER");
+                Intent intent = new Intent(this, NotificationHandler.class);
                 intent.putExtra("message_body",remoteMessage.getData().get("body"));
                 intent.putExtra("control_unit_sim_number",remoteMessage.getData().get("tag"));
                 intent.putExtra("base_unit_id",remoteMessage.getData().get("unit_id"));
                 intent.putExtra("title_name",remoteMessage.getData().get("title"));
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 *//* Request code *//*, intent,
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
                         PendingIntent.FLAG_ONE_SHOT);
 
 
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
+/*
 
                 MediaPlayer defaultSoundUri = MediaPlayer.create(this, R.raw.siren);
                 defaultSoundUri.setLooping(true);
@@ -136,10 +170,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 media_player_object = defaultSoundUri;
 
 
+*/
 
 
                 NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.supramlogos)
                         .setContentTitle(message_title)
                         .setContentText(remoteMessage.getData().get("body"))
                         .setAutoCancel(true)
@@ -150,9 +184,36 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 NotificationManager notificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-                notificationManager.notify(1 *//* ID of notification *//*, notificationBuilder.build());
+                notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
 
-*/
+
+            }
+            else
+            {
+                Log.d("DAFARE","DAFARE");
+                Intent intent = new Intent(this, NotificationHandler.class);
+
+                intent.putExtra("message_body",remoteMessage.getData().get("body"));
+                intent.putExtra("control_unit_sim_number",remoteMessage.getData().get("tag"));
+                intent.putExtra("base_unit_id",remoteMessage.getData().get("unit_id"));
+                intent.putExtra("title_name",remoteMessage.getData().get("title"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
+                        PendingIntent.FLAG_ONE_SHOT);
+
+                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                        .setContentTitle(message_title)
+                        .setContentText(remoteMessage.getData().get("body"))
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent);
+
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
+
             }
 
             Log.d("ONBCKGRUND","ONBCKGRUND");
@@ -225,25 +286,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendNotification(String messageBody) {
 
-/*
         Log.d("NOTIBODY","NOTIBODY"+messageBody);
 
         if(messageBody.startsWith("Hi"))
         {
 
-            Intent intent = new Intent(this, MessageDisplay.class);
+            Intent intent = new Intent(this, NotificationHandler.class);
             Log.d("MNSDKL","MNSDKL"+messageBody);
             Log.d("PASSMSG","PASSMSG"+messageBody);
             intent.putExtra("message_body",messageBody);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 */
-/* Request code *//*
-, intent,
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
 
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.supramlogos)
                     .setContentTitle(message_title)
                     .setContentText(messageBody)
                     .setAutoCancel(true)
@@ -253,9 +310,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            notificationManager.notify(1 */
-/* ID of notification *//*
-, notificationBuilder.build());
+            notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
         }
         else if(messageBody.startsWith("Warning"))
         {
@@ -263,19 +318,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d("DIREDAR","DIREDAR");
 
             // AlaramNotification.isgasNotificationAttendended = false;
-            Intent intent = new Intent(this, GasLeakage.class);
+            Intent intent = new Intent(this, NotificationHandler.class);
             Log.d("MNSDKL","MNSDKL"+messageBody);
             Log.d("PASSMSG","PASSMSG"+messageBody);
 
             intent.putExtra("message_body",messageBody);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 */
-/* Request code *//*
-, intent,
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
 
 
 
+/*
 
             MediaPlayer defaultSoundUri = MediaPlayer.create(this, R.raw.siren);
             defaultSoundUri.setLooping(true);
@@ -284,11 +338,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             media_player_object = defaultSoundUri;
 
+*/
 
 
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.supramlogos)
                     .setContentTitle(message_title)
                     .setContentText(messageBody)
                     .setAutoCancel(true)
@@ -299,13 +353,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            notificationManager.notify(1 */
-/* ID of notification *//*
-, notificationBuilder.build());
+            notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
 
         }
 
-*/
 
 
     }

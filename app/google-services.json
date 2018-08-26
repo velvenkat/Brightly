@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "110171540338",
-    "firebase_url": "https://brightlyinfoshare.firebaseio.com",
-    "project_id": "brightlyinfoshare",
-    "storage_bucket": "brightlyinfoshare.appspot.com"
+    "project_number": "172180339631",
+    "firebase_url": "https://brightly-22b12.firebaseio.com",
+    "project_id": "brightly-22b12",
+    "storage_bucket": "brightly-22b12.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:110171540338:android:76fa5c3c9a7e7f4d",
+        "mobilesdk_app_id": "1:172180339631:android:76fa5c3c9a7e7f4d",
         "android_client_info": {
           "package_name": "com.purplefront.brightly"
         }
       },
       "oauth_client": [
         {
-          "client_id": "110171540338-he54iq94mdsn9mhk8jeqaug2crrrs333.apps.googleusercontent.com",
+          "client_id": "172180339631-dam5j0r9ri5doijj9v97feems7n4fmtu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.purplefront.brightly",
@@ -23,13 +23,13 @@
           }
         },
         {
-          "client_id": "110171540338-c382si4jl6k2uiim981907r2m4pm579o.apps.googleusercontent.com",
+          "client_id": "172180339631-mqjbd9j07np1jlnlo5fqidkauun3t1vo.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA7-47IPgeXpVC_HXdFzpC7H-wGPrJAS90"
+          "current_key": "AIzaSyA65pFjLdZ79oPYzBCXZgT2H4p3BP7shhI"
         }
       ],
       "services": {
@@ -40,8 +40,16 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "110171540338-c382si4jl6k2uiim981907r2m4pm579o.apps.googleusercontent.com",
+              "client_id": "172180339631-mqjbd9j07np1jlnlo5fqidkauun3t1vo.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "172180339631-n1i15j7n0ltgdu3c1n929hhhjd0m6p5v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.purplefront.Brightly",
+                "app_store_id": "22102018"
+              }
             }
           ]
         },
