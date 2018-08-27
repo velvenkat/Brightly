@@ -31,6 +31,7 @@ import retrofit2.Response;
 public class MySetCards extends BaseActivity {
 
     // Declare Variables
+    
     ViewPager viewPager_Cards;
     PagerAdapter cardsPagerAdapter;
     ArrayList<CardsListModel> cardsListModels = new ArrayList<>();

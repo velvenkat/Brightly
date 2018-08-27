@@ -57,6 +57,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     @Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == ((ScrollView) object);
+
     }
 
 
@@ -131,8 +132,8 @@ public class ViewPagerAdapter extends PagerAdapter {
                 }
                 // Add viewpager_item.xml to ViewPager
                 ((ViewPager) container).addView(itemView);
-
                 return itemView;
+
             } else if (type.equals("video")) {
 
                 // Inflate the custom layout
@@ -163,13 +164,16 @@ public class ViewPagerAdapter extends PagerAdapter {
                 (context).getFragmentManager().beginTransaction().add(R.id.youtube_holder, youTubePlayerFragment).commit();
                 youTubePlayerFragment.initialize("AIzaSyDPwTq4xr0Fq-e1z0tDEBaj3qgAgi5VJ44", new YouTubePlayer.OnInitializedListener() {
                     @Override
-                    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
 //                            Utils.logDebug(TAG, "onInitializationSuccess");
 
+                        if (!wasRestored) {
+                            youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+                            youTubePlayer.loadVideo(image_name);
+                            youTubePlayer.setShowFullscreenButton(true);
+                            //                            youTubePlayer.play();
+                        }
 
-                        youTubePlayer.loadVideo(image_name);
-                        youTubePlayer.setShowFullscreenButton(true);
-//                            youTubePlayer.play();
                     }
 
                     @Override
@@ -179,6 +183,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
                     }
                 });
+
 
                 containerYouTubePlayer.setVisibility(View.VISIBLE);
                 // Add viewpager_item.xml to ViewPager
@@ -222,6 +227,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
         }
         return container;
+
     }
 
 
