@@ -14,19 +14,11 @@
         android:layout_margin="@dimen/dimen_2"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/image_cardImage"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:scaleType="fitXY"
-            android:visibility="visible"
-            android:src="@drawable/no_image_available"/>
-
         <FrameLayout
             android:id="@+id/youtube_holder"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         <TextView
             android:id="@+id/text_cardName"

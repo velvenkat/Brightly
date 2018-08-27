@@ -10,11 +10,15 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.purplefront.brightly.Activities.CreateCards;
 import com.purplefront.brightly.Activities.MySetCards;
 import com.purplefront.brightly.Modules.CardsListModel;
@@ -64,15 +68,20 @@ public class ViewPagerAdapter extends PagerAdapter {
         LayoutInflater inflater = LayoutInflater.from(context1);
 
 
-            if(position < cardsListModels.size() - 1){
+        if (position < cardsListModels.size() - 1) {
             // Inflate the custom layout
 
-                CardsListModel cardsListModel = cardsListModels.get(position);
+            CardsListModel cardsListModel = cardsListModels.get(position);
+            //file_type
+            String type = cardsListModel.getType();
+
+
+            if (type.equals("image")) {
+
                 // Inflate the custom layout
                 View itemView = inflater.inflate(R.layout.items_cards_pager, container, false);
 
-                //file_type
-                String type = cardsListModel.getType();
+
                 // Declare Variables
                 TextView text_cardName;
                 TextView text_cardDescription;
@@ -90,11 +99,12 @@ public class ViewPagerAdapter extends PagerAdapter {
                 if (cardsListModel.getDescription() != null) {
                     text_cardDescription.setText(cardsListModel.getDescription());
                 }
+                image_cardImage.setVisibility(View.VISIBLE);
 
                 image_id = cardsListModel.getCard_id();
                 image_name = cardsListModel.getName();
 
-                if (!cardsListModel.getUrl().isEmpty() && cardsListModel.getUrl()!=null) {
+                if (!cardsListModel.getUrl().isEmpty() && cardsListModel.getUrl() != null) {
 
                     dialog = new ProgressDialog(context);
                     dialog.setMessage("Please wait...");
@@ -119,14 +129,65 @@ public class ViewPagerAdapter extends PagerAdapter {
                             .override(50, 50)*/
                             .into(image_cardImage);
                 }
+                // Add viewpager_item.xml to ViewPager
+                ((ViewPager) container).addView(itemView);
 
+                return itemView;
+            } else if (type.equals("video")) {
+
+                // Inflate the custom layout
+                View itemView = inflater.inflate(R.layout.items_cards_youtube_pager, container, false);
+
+
+                // Declare Variables
+                TextView text_cardName;
+                TextView text_cardDescription;
+                FrameLayout containerYouTubePlayer;
+
+                // Locate the TextViews in viewpager_item.xml
+                text_cardName = (TextView) itemView.findViewById(R.id.text_cardName);
+                text_cardDescription = (TextView) itemView.findViewById(R.id.text_cardDescription);
+                containerYouTubePlayer = (FrameLayout) itemView.findViewById(R.id.youtube_holder);
+                if (cardsListModel.getTitle() != null) {
+                    text_cardName.setText(cardsListModel.getTitle());
+                }
+
+                if (cardsListModel.getDescription() != null) {
+                    text_cardDescription.setText(cardsListModel.getDescription());
+                }
+                image_id = cardsListModel.getCard_id();
+                image_name = cardsListModel.getName();
+
+                // Add the YouTube fragment to view
+                YouTubePlayerFragment youTubePlayerFragment = YouTubePlayerFragment.newInstance();
+                (context).getFragmentManager().beginTransaction().add(R.id.youtube_holder, youTubePlayerFragment).commit();
+                youTubePlayerFragment.initialize("AIzaSyDPwTq4xr0Fq-e1z0tDEBaj3qgAgi5VJ44", new YouTubePlayer.OnInitializedListener() {
+                    @Override
+                    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+//                            Utils.logDebug(TAG, "onInitializationSuccess");
+
+
+                        youTubePlayer.loadVideo(image_name);
+                        youTubePlayer.setShowFullscreenButton(true);
+//                            youTubePlayer.play();
+                    }
+
+                    @Override
+                    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+//                            Utils.logError(TAG, "Could not initialize YouTubePlayer");
+                        containerYouTubePlayer.setVisibility(View.VISIBLE);
+
+                    }
+                });
+
+                containerYouTubePlayer.setVisibility(View.VISIBLE);
                 // Add viewpager_item.xml to ViewPager
                 ((ViewPager) container).addView(itemView);
                 return itemView;
+            }
 
-        }
-        else
-        {
+
+        } else {
 
             View itemView = inflater.inflate(R.layout.items_add, container, false);
 
@@ -141,18 +202,18 @@ public class ViewPagerAdapter extends PagerAdapter {
                     .override(50, 50)*/
                     .into(add_cardImage);
 
-                    add_cardImage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+            add_cardImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                            Intent intent = new Intent(context, CreateCards.class);
-                            intent.putExtra("userId", userId);
-                            intent.putExtra("set_id", set_id);
-                            intent.putExtra("set_name", set_name);
-                            context.startActivity(intent);
-                            context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
-                        }
-                    });
+                    Intent intent = new Intent(context, CreateCards.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("set_id", set_id);
+                    intent.putExtra("set_name", set_name);
+                    context.startActivity(intent);
+                    context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                }
+            });
 
 
             // Add viewpager_item.xml to ViewPager
@@ -160,6 +221,7 @@ public class ViewPagerAdapter extends PagerAdapter {
             return itemView;
 
         }
+        return container;
     }
 
 
