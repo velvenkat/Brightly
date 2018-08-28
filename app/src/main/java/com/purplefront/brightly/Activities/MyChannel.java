@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +20,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.purplefront.brightly.API.ApiCallback;
@@ -26,6 +30,7 @@ import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.MyChannelsAdapter;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Fragments.LoginFragment;
+import com.purplefront.brightly.Fragments.MyProfile;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ChannelListResponse;
 import com.purplefront.brightly.R;
@@ -44,9 +49,13 @@ import retrofit2.Response;
 public class MyChannel extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+
+    private static FragmentManager fragmentManager;
     List<ChannelListModel>  channelListModels = new ArrayList<>();
     MyChannelsAdapter myChannelsAdapter;
+    RelativeLayout channel_layout;
     TextView view_nodata;
+    FrameLayout profileContainer;
     ImageView image_createChannel;
     RecyclerView channels_listview;
     Realm realm;
@@ -61,6 +70,7 @@ public class MyChannel extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_channel);
+        fragmentManager = getSupportFragmentManager();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(Title);
@@ -75,6 +85,8 @@ public class MyChannel extends BaseActivity
             userName = model.getUser_Name().toUpperCase();
             userEmail = model.getUser_Email();
         }
+        channel_layout = (RelativeLayout) findViewById(R.id.channel_layout);
+        profileContainer = (FrameLayout) findViewById(R.id.profileContainer);
 
         image_createChannel = (ImageView) findViewById(R.id.image_createChannel);
         image_createChannel.setOnClickListener(new View.OnClickListener() {
@@ -176,12 +188,41 @@ public class MyChannel extends BaseActivity
 
     }
 
+    // Replace Login Fragment with animation
+    public void replaceLoginFragment() {
+        fragmentManager
+                .beginTransaction()
+                .setCustomAnimations(R.anim.left_enter, R.anim.right_out)
+                .replace(R.id.profileContainer, new MyProfile(),
+                        Util.My_Profile).commit();
+    }
+
     @Override
     public void onBackPressed() {
+        Fragment EditProfile_Fragment = fragmentManager
+                .findFragmentByTag(Util.Edit_Profile);
+        Fragment Profile_Fragment = fragmentManager
+                .findFragmentByTag(Util.My_Profile);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else if (channel_layout.getVisibility() == View.VISIBLE)
+        {
+            finish();
+            super.onBackPressed();
+        }
+        else if (EditProfile_Fragment != null) {
+                replaceLoginFragment();
+            }
+            else if (Profile_Fragment != null)
+            {
+                setTitle(Title);
+                profileContainer.setVisibility(View.GONE);
+                channel_layout.setVisibility(View.VISIBLE);
+            }
+         else{
             finish();
             super.onBackPressed();
         }
@@ -216,9 +257,23 @@ public class MyChannel extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
+
+            setTitle("My Profile");
+            profileContainer.setVisibility(View.VISIBLE);
+            channel_layout.setVisibility(View.GONE);
+
+            fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.left_enter, R.anim.right_out)
+                    .replace(R.id.profileContainer, new MyProfile(),
+                            Util.My_Profile).commit();
+
+
             // Handle the camera action
         } else if (id == R.id.nav_mysubscription) {
 
+            profileContainer.setVisibility(View.GONE);
+            channel_layout.setVisibility(View.VISIBLE);
             type = "subscribe";
             setTitle("My Subscriptions");
             getChannelsLists();
@@ -226,6 +281,8 @@ public class MyChannel extends BaseActivity
         }
         else if (id == R.id.nav_myChannels) {
 
+            profileContainer.setVisibility(View.GONE);
+            channel_layout.setVisibility(View.VISIBLE);
             type = "my";
             setTitle("My Channels");
             getChannelsLists();
@@ -233,12 +290,15 @@ public class MyChannel extends BaseActivity
         }
         else if (id == R.id.nav_allChannels) {
 
+            profileContainer.setVisibility(View.GONE);
+            channel_layout.setVisibility(View.VISIBLE);
             type = "all";
             setTitle("All Channels");
             getChannelsLists();
 
         }
         else if (id == R.id.nav_about) {
+
 
             showLongToast(MyChannel.this, "Comming Soon");
 
