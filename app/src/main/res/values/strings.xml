@@ -12,7 +12,7 @@
     <string name="registration">Registration</string>
     <string name="user_name">Name</string>
     <string name="user_companyname">Company Name</string>
-    <string name="user_emial">Email Id</string>
+    <string name="user_emial">Email ID</string>
     <string name="channel_name">Channel Name</string>
     <string name="create_channel">Create Channel</string>
     <string name="channel_description">Channel Description</string>
@@ -51,5 +51,7 @@
     <string name="logout">Logout</string>
     <string name="about_app">About App</string>
     <string name="create_card">Create Card</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="invite_friend">Invite Friend</string>
 
 </resources>

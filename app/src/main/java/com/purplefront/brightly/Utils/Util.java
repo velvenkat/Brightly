@@ -9,6 +9,9 @@ public class Util {
 	public static final String Login_Fragment = "Login_Fragment";
 	public static final String SignUp_Fragment = "SignUp_Fragment";
 
+	public static final String My_Profile = "My_Profile";
+	public static final String Edit_Profile = "Edit_Profile";
+
 // User Details
 	public static final String User_Id = "User_Id";
 	public static final String User_Name = "User_Name";
