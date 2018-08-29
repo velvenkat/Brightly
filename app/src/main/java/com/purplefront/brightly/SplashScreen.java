@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.purplefront.brightly.Activities.Login;
 import com.purplefront.brightly.Activities.MyChannel;
@@ -22,7 +23,6 @@ public class SplashScreen extends AppCompatActivity {
     String User_CompanyName;
     String User_Email;
     String phoneNumber;
-
     Realm realm;
 
     @Override

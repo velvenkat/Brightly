@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
+import com.purplefront.brightly.Adapters.ViewCardFragmentPagerAdapter;
 import com.purplefront.brightly.Adapters.ViewPagerAdapter;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.CardsListModel;
@@ -33,7 +34,7 @@ public class MySetCards extends BaseActivity {
     // Declare Variables
 
     ViewPager viewPager_Cards;
-    PagerAdapter cardsPagerAdapter;
+    ViewCardFragmentPagerAdapter cardsPagerAdapter;
     ArrayList<CardsListModel> cardsListModels = new ArrayList<>();
 
     Realm realm;
@@ -128,10 +129,11 @@ public class MySetCards extends BaseActivity {
     private void setAdapter(List<CardsListModel> cardsListModels) {
 
         // Pass results to ViewPagerAdapter Class
-        cardsPagerAdapter = new ViewPagerAdapter(MySetCards.this, cardsListModels, set_id, userId, set_name);
+       // cardsPagerAdapter = new ViewPagerAdapter(MySetCards.this, cardsListModels, set_id, userId, set_name);
         // Binds the Adapter to the ViewPager
+        cardsPagerAdapter=new ViewCardFragmentPagerAdapter(this,getSupportFragmentManager(),cardsListModels,set_id,userId,set_name);
         viewPager_Cards.setAdapter(cardsPagerAdapter);
-        cardsPagerAdapter.notifyDataSetChanged();
+       // cardsPagerAdapter.notifyDataSetChanged();
         viewPager_Cards.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
