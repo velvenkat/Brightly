@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -12,15 +16,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.purplefront.brightly.Activities.BaseActivity;
 import com.purplefront.brightly.R;
+import com.purplefront.brightly.Utils.TimeFormat;
 
-public class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpdateListener {
 
     Context context;
     alert_dlg_interface mListener;
+    SeekBar audio_seek_bar;
+    MediaPlayer mediaPlayer;
+    boolean  isAudioPlay = false;
+    String TotalTime;
+    private final Handler handler = new Handler();
+    private int mediaFileLengthInMilliseconds; // this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
+    ImageView img_play_stop;
+    TextView txt_PlayProgTime;
+    boolean isPlayBtnClicked = false;
+
 
     @Override
     public void onStart() {
@@ -32,6 +50,8 @@ public class BaseFragment extends Fragment {
     public void setDlgListener(alert_dlg_interface listener){
         mListener=listener;
     }
+
+
     public void showAlertDialog(String message,String Title,String Pos_Title,String Neg_Title)
     {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
@@ -72,6 +92,7 @@ public class BaseFragment extends Fragment {
     }
 
 
+
     /**
      * @param fragment fragment transaction for all fragments
      */
@@ -92,6 +113,144 @@ public class BaseFragment extends Fragment {
             fragmentTransaction.commitAllowingStateLoss();
         } else
             fragmentTransaction.commit();
+    }
+
+    public void audio_player_initialize(SeekBar seekBar,TextView txtProgTime,ImageView imgPlyStop){
+        audio_seek_bar=seekBar;
+        txt_PlayProgTime=txtProgTime;
+        img_play_stop=imgPlyStop;
+        setSeek_Bar();
+        setImg_play_stop_Listener();
+
+    }
+    public void setImg_play_stop_Listener(){
+        img_play_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isAudioPlay) {
+                    mediaPlayer.pause();
+                    img_play_stop.setImageResource(R.drawable.play_rec);
+                    isAudioPlay = false;
+                    //mediaPlayer.prepareAsync();
+                } else {
+
+                    img_play_stop.setImageResource(R.drawable.stop_rec);
+
+                    mediaPlayer.start();
+                    isAudioPlay = true;
+                    primarySeekBarProgressUpdater();
+
+                }
+            }
+        });
+    }
+
+    public void setSeek_Bar(){
+
+        audio_seek_bar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (v.getId() == R.id.seek_audio_rec) {
+                        /** Seekbar onTouch event handler. Method which seeks MediaPlayer to seekBar primary progress position*/
+                        if (mediaPlayer.isPlaying()) {
+                            SeekBar sb = (SeekBar) v;
+                            int playPositionInMillisecconds = (mediaFileLengthInMilliseconds / 100) * sb.getProgress();
+                            mediaPlayer.seekTo(playPositionInMillisecconds);
+                        } else {
+                            img_play_stop.setImageResource(R.drawable.stop_rec);
+
+                            mediaPlayer.start();
+                            SeekBar sb = (SeekBar) v;
+                            int playPositionInMillisecconds = (mediaFileLengthInMilliseconds / 100) * sb.getProgress();
+                            mediaPlayer.seekTo(playPositionInMillisecconds);
+                            isAudioPlay = true;
+                            primarySeekBarProgressUpdater();
+
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+
+
+    }
+
+    public void release_media() {
+        if (mediaPlayer != null) {
+            if (isAudioPlay) {
+                isAudioPlay = false;
+                mediaPlayer.pause();
+            }
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+    private void primarySeekBarProgressUpdater() {
+        if (isAudioPlay) {
+            audio_seek_bar.setProgress((int) (((float) mediaPlayer.getCurrentPosition() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
+            String cur_Pos = TimeFormat.formateMilliSeccond(mediaPlayer.getCurrentPosition());
+            txt_PlayProgTime.setText(cur_Pos + "/" + TotalTime);
+            if (mediaPlayer.isPlaying()) {
+                Runnable notification = new Runnable() {
+                    public void run() {
+                        primarySeekBarProgressUpdater();
+                    }
+                };
+                handler.postDelayed(notification, 1000);
+            }
+        }
+    }
+
+
+    public void setMediaPlayer(Uri audio_uri,String filePath) {
+
+        try {
+            mediaPlayer = new MediaPlayer();
+            AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+            am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+
+
+            if (audio_uri != null) {
+                mediaPlayer.setDataSource(getContext(), audio_uri);
+            } else {
+                mediaPlayer.setDataSource(filePath);
+            }
+            mediaPlayer.setOnBufferingUpdateListener(this);
+            mediaPlayer.prepareAsync();
+            mediaFileLengthInMilliseconds = mediaPlayer.getDuration(); // gets the song length in milliseconds from URL
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    // mp.stop();
+
+                    img_play_stop.setImageResource(R.drawable.play_rec);
+                    isAudioPlay = false;
+                    mediaPlayer = mp;
+                    //   mp.prepareAsync();
+                }
+            });
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mediaFileLengthInMilliseconds = mediaPlayer.getDuration(); // to get total duration in milliseconds
+                    mediaPlayer = mp;
+                    long currentDuration = mediaPlayer.getCurrentPosition();
+                    TotalTime = TimeFormat.formateMilliSeccond(mediaFileLengthInMilliseconds);
+                    String cur_Pos = TimeFormat.formateMilliSeccond(currentDuration);
+                    txt_PlayProgTime.setText(cur_Pos + "/" + TotalTime);
+
+                }
+            });
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     // Intent Methods
@@ -163,6 +322,10 @@ public class BaseFragment extends Fragment {
     public interface alert_dlg_interface{
         public void postive_btn_clicked();
         public void negative_btn_clicked();
+    }
+    @Override
+    public void onBufferingUpdate(MediaPlayer mp, int percent) {
+        audio_seek_bar.setSecondaryProgress(percent);
     }
 }
 

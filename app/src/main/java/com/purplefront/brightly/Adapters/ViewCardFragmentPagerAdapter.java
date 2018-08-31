@@ -57,10 +57,10 @@ public class ViewCardFragmentPagerAdapter extends FragmentStatePagerAdapter
 
             Bundle bundle = new Bundle();
             bundle.putParcelable("card_mdl_obj", cardObj);
-            if (!cardObj.getType().equalsIgnoreCase("audio")) {
+
 
                 card_frag = new Multimedia_CardFragment();
-            }
+
             bundle.putString("set_id", set_id);
             bundle.putString("userId", userId);
             bundle.putString("set_name", set_name);

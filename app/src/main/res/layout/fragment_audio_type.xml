@@ -5,8 +5,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Fragments.AudioType">
-
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:id="@+id/audio_rec_contr"
+        android:layout_height="match_parent">
+        <include layout="@layout/lo_rec_voice"></include>
+    </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/ll_cr_contr"
+    >
     <ImageView
         android:id="@+id/upload_audioFile"
         android:layout_width="100dp"
@@ -36,6 +47,52 @@
         android:layout_gravity="center_vertical"
         android:textColor="@color/black"
         android:textSize="@dimen/smalltextSize" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:id="@+id/rl_audio_player"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:id="@+id/img_play_stop"
+
+                android:layout_width="50dp"
+
+                android:layout_height="50dp"
+                android:src="@drawable/play_rec" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/img_play_stop">
+
+                <TextView
+                    android:id="@+id/txt_PlayProgTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginLeft="10dp"
+
+                    android:text="0.00/4.00" />
+
+                <SeekBar
+                    android:id="@+id/seek_audio_rec"
+                    android:layout_width="200dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/txt_PlayProgTime"
+                    android:layout_marginLeft="-15dp"
+
+
+                    android:background="@null"
+                    android:clickable="false"
+                    android:progress="50"
+                    android:progressDrawable="@drawable/seek_layer"
+                    android:thumb="@null" />
+            </RelativeLayout>
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/image_deleteAudioFile"
@@ -102,5 +159,5 @@
         android:textColor="@color/white"
         android:textSize="@dimen/mediumtextsize"
         />
-
+</LinearLayout>
 </LinearLayout>

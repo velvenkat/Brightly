@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +24,7 @@ import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.R;
 
 
-public class Multimedia_CardFragment extends Fragment implements YouTubePlayer.OnInitializedListener {
+public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener {
     View rootView;
     CardsListModel cardModelObj;
     ProgressDialog dialog;
@@ -30,7 +32,11 @@ public class Multimedia_CardFragment extends Fragment implements YouTubePlayer.O
     FrameLayout frame_youtube;
     YouTubePlayer UTubePlayer;
     YouTubePlayerSupportFragment youTubePlayerFragment;
+    RelativeLayout rl_audio_player;
     String DEVELOPER_KEY="AIzaSyDPwTq4xr0Fq-e1z0tDEBaj3qgAgi5VJ44";
+    ImageView img_audio_play_stop;
+    SeekBar audio_seek_bar;
+    TextView txt_PlayProgTime;
 
     @Nullable
     @Override
@@ -46,9 +52,13 @@ public class Multimedia_CardFragment extends Fragment implements YouTubePlayer.O
 
         // Locate the TextViews in viewpager_item.xml
         text_cardName = (TextView) rootView.findViewById(R.id.text_cardName);
+        rl_audio_player=(RelativeLayout)rootView.findViewById(R.id.rl_audio_player);
         text_cardDescription = (TextView) rootView.findViewById(R.id.text_cardDescription);
         image_cardImage = (ImageView) rootView.findViewById(R.id.image_cardImage);
         frame_youtube = (FrameLayout) rootView.findViewById(R.id.frame_youtube);
+        img_audio_play_stop = (ImageView) rootView.findViewById(R.id.img_play_stop);
+        audio_seek_bar = (SeekBar) rootView.findViewById(R.id.seek_audio_rec);
+        txt_PlayProgTime = (TextView) rootView.findViewById(R.id.txt_PlayProgTime);
 
 
         if (cardModelObj.getTitle() != null) {
@@ -61,6 +71,7 @@ public class Multimedia_CardFragment extends Fragment implements YouTubePlayer.O
         if (cardModelObj.getType().equalsIgnoreCase("image")) {
             image_cardImage.setVisibility(View.VISIBLE);
             frame_youtube.setVisibility(View.GONE);
+            rl_audio_player.setVisibility(View.GONE);
             if (!cardModelObj.getUrl().isEmpty() && cardModelObj.getUrl() != null) {
 
                 dialog = new ProgressDialog(getContext());
@@ -89,7 +100,7 @@ public class Multimedia_CardFragment extends Fragment implements YouTubePlayer.O
         } else if (cardModelObj.getType().equalsIgnoreCase("video")) {
             image_cardImage.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.VISIBLE);
-
+            rl_audio_player.setVisibility(View.GONE);
             youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
             if (getUserVisibleHint()) {
 
@@ -124,34 +135,16 @@ public class Multimedia_CardFragment extends Fragment implements YouTubePlayer.O
 
                 }
             });
-
-
-            /*thumbnailView.initialize("AIzaSyDPwTq4xr0Fq-e1z0tDEBaj3qgAgi5VJ44", new YouTubeThumbnailView.OnInitializedListener() {
-                @Override
-                public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader youTubeThumbnailLoader) {
-
-                    youTubeThumbnailLoader.setVideo(cardModelObj.getName());
-                    youTubeThumbnailLoader.setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
-                        @Override
-                        public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
-                            youTubeThumbnailLoader.release();
-                        }
-
-                        @Override
-                        public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
-
-                }
-            });
-*/
         }
+        else if (cardModelObj.getType().equalsIgnoreCase("audio")) {
+            image_cardImage.setVisibility(View.VISIBLE);
+            frame_youtube.setVisibility(View.GONE);
+            rl_audio_player.setVisibility(View.VISIBLE);
+            image_cardImage.setImageResource(R.drawable.audio_hdr_img);
 
+            audio_player_initialize(audio_seek_bar,txt_PlayProgTime,img_audio_play_stop);
+            setMediaPlayer(null,cardModelObj.getUrl());
+        }
 
         // Add viewpager_item.xml to ViewPager
 

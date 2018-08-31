@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cur_default"
+
+        android:layout_above="@+id/img_play_stop_rec"
+        android:src="@drawable/curve_bg"
+        />
+    <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_above="@+id/img_play_stop_rec"
+    android:layout_height="wrap_content">
+
+    <com.purplefront.brightly.Custom.SiriWaveView
+        android:id="@+id/siriWaveView"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:waveAmount="4"
+        app:waveColor="#eb8d4a"
+        app:waveFrequency="2.0"
+
+        app:waveHeight="70dp"
+        app:waveInitialPhaseOffset="0"
+        app:wavePhaseShift="-0.05"
+        app:waveVerticalPosition="2" />
+</RelativeLayout>
+    <ImageView
+        android:id="@+id/img_play_stop_rec"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_above="@+id/txtRecSeconds"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/record_voice" />
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/txtRecSeconds"
+    android:layout_marginBottom="150dp"
+    android:layout_centerHorizontal="true"
+    android:layout_alignParentBottom="true"
+    android:text="00:00"
+    />
+</RelativeLayout>
