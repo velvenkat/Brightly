@@ -11,6 +11,7 @@ public class Util {
 
 	public static final String My_Profile = "My_Profile";
 	public static final String Edit_Profile = "Edit_Profile";
+	public static final String NOTIFICATIONS = "NOTIFICATIONS";
 
 // User Details
 	public static final String User_Id = "User_Id";

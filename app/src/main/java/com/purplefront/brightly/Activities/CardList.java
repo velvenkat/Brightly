@@ -262,9 +262,9 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
                         CardsListResponse cardsListResponse = response.body();
                         if (isSuccess) {
 
-                            if (cardsListResponse != null && cardsListResponse.getImages() != null && cardsListResponse.getImages().size() != 0) {
+                            if (cardsListResponse != null && cardsListResponse.getData() != null && cardsListResponse.getData().size() != 0) {
 
-                                cardsListModels = cardsListResponse.getImages();
+                                cardsListModels = cardsListResponse.getData();
                                 setAdapter(cardsListModels);
                                 dismissProgress();
 

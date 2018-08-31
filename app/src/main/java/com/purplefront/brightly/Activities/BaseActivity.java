@@ -113,12 +113,14 @@ public class BaseActivity extends AppCompatActivity {
     public void frwdAnimIntent(Activity activity, Class activityClass) {
         Intent intent = new Intent(activity, activityClass);
         startActivity(intent);
+        finish();
         overridePendingTransition(R.anim.right_enter, R.anim.left_out);
     }
 
     public void backAnimIntent(Activity activity, Class activityClass) {
         Intent intent = new Intent(activity, activityClass);
         startActivity(intent);
+        finish();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
     }
 

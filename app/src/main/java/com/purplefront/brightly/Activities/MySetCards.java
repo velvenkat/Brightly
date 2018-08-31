@@ -88,9 +88,9 @@ public class MySetCards extends BaseActivity {
                         CardsListResponse cardsListResponse = response.body();
                         if (isSuccess) {
 
-                            if (cardsListResponse != null && cardsListResponse.getImages() != null && cardsListResponse.getImages().size() != 0) {
+                            if (cardsListResponse != null && cardsListResponse.getData() != null && cardsListResponse.getData().size() != 0) {
 
-                                cardsListModels = new ArrayList<>(cardsListResponse.getImages());
+                                cardsListModels = new ArrayList<>(cardsListResponse.getData());
                                 dismissProgress();
 
                             } else {

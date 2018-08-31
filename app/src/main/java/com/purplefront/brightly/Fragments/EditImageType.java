@@ -31,6 +31,7 @@ import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.UserModule;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.CircleTransform;
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -125,7 +126,6 @@ public class EditImageType extends BaseFragment{
         }
         else
         {
-            type = "text";
             Glide.with(getActivity())
                     .load(R.drawable.no_image_available)
                     .centerCrop()
@@ -183,12 +183,14 @@ public class EditImageType extends BaseFragment{
         }
         else if(encoded_string.equals("") || encoded_string.length() == 0)
         {
+            type = "text";
             new CustomToast().Show_Toast(getActivity(), image_editCardImage,
                     "Image is required.");
         }
 
         // Else do signup or do your stuff
         else {
+            type = "image";
             getUpdateCards();
         }
     }
@@ -246,11 +248,12 @@ public class EditImageType extends BaseFragment{
                         drawable.setCircular(true);
                         imgPet.setImageDrawable(drawable);
                     }*/
-                    final ImageRequest imageRequest2 =
-                            ImageRequestBuilder.newBuilderWithSource(resultUri)
-                                    .setResizeOptions(img_resize_opts)
-                                    .build();
-                    image_editCardImage.setImageRequest(imageRequest2);
+                    Glide.with(getActivity())
+                            .load(resultUri)
+                            .centerCrop()
+//                            .transform(new CircleTransform(getActivity()))
+//                        .override(50, 50)
+                            .into(image_editCardImage);
                     //   imgPet.getHierarchy().setRoundingParams(roundingParams);
                     // Call_pet_photo_update();
                 } catch (Exception e) {

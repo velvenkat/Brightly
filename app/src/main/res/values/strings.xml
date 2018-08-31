@@ -53,5 +53,9 @@
     <string name="create_card">Create Card</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="invite_friend">Invite Friend</string>
+    <string name="save_edit">Save Edit</string>
+    <string name="save">Save</string>
+    <string name="notifications">Notifications</string>
+    <string name="alert">Alert</string>
 
 </resources>

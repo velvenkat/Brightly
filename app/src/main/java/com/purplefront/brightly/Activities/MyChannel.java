@@ -1,8 +1,11 @@
 package com.purplefront.brightly.Activities;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -25,16 +28,20 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.MyChannelsAdapter;
 import com.purplefront.brightly.Application.RealmModel;
+import com.purplefront.brightly.BadgeDrawable;
 import com.purplefront.brightly.Fragments.LoginFragment;
 import com.purplefront.brightly.Fragments.MyProfile;
+import com.purplefront.brightly.Fragments.Notifications;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ChannelListResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.CircleTransform;
 import com.purplefront.brightly.Utils.SharedPrefUtils;
 import com.purplefront.brightly.Utils.Util;
 
@@ -51,7 +58,9 @@ public class MyChannel extends BaseActivity
 
 
     private static FragmentManager fragmentManager;
-    List<ChannelListModel>  channelListModels = new ArrayList<>();
+    public ActionBarDrawerToggle toggle;
+    public Toolbar toolbar;
+    List<ChannelListModel> channelListModels = new ArrayList<>();
     MyChannelsAdapter myChannelsAdapter;
     RelativeLayout channel_layout;
     TextView view_nodata;
@@ -62,31 +71,38 @@ public class MyChannel extends BaseActivity
     RealmResults<RealmModel> realmModel;
     String userId;
     String userName;
-    String userEmail;
-    String type = "all" ;
+    String userPhone;
+    String userPicture;
+    String type = "all";
     String Title = "All Channels";
+    int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_channel);
         fragmentManager = getSupportFragmentManager();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(Title);
+        setActionBarTitle(Title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         realm = Realm.getDefaultInstance();
         realmModel = realm.where(RealmModel.class).findAllAsync();
         realmModel.load();
-        for(RealmModel model:realmModel){
+        for (RealmModel model : realmModel) {
             userId = model.getUser_Id();
-            userName = model.getUser_Name().toUpperCase();
-            userEmail = model.getUser_Email();
+            userName = model.getUser_Name();
+            userPhone = model.getUser_PhoneNumber();
+            userPicture = model.getImage();
         }
         channel_layout = (RelativeLayout) findViewById(R.id.channel_layout);
         profileContainer = (FrameLayout) findViewById(R.id.profileContainer);
+
+        profileContainer.setVisibility(View.GONE);
+        channel_layout.setVisibility(View.VISIBLE);
 
         image_createChannel = (ImageView) findViewById(R.id.image_createChannel);
         image_createChannel.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +129,7 @@ public class MyChannel extends BaseActivity
         });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -121,11 +137,34 @@ public class MyChannel extends BaseActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         TextView headerText_Name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Name);
         headerText_Name.setText(userName);
-        TextView headerText_Email = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Email);
-        headerText_Email.setText(userEmail);
+        TextView headerText_Phone = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Number);
+        headerText_Phone.setText(userPhone);
+        ImageView headerImage_Profile = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.image_profile);
+        if (userPicture != null) {
+
+            Glide.with(MyChannel.this)
+                    .load(userPicture)
+                    .centerCrop()
+                    .transform(new CircleTransform(MyChannel.this))
+//                        .override(50, 50)
+                    .into(headerImage_Profile);
+        } else {
+            Glide.with(MyChannel.this)
+                    .load(R.drawable.default_user_image)
+                    .centerCrop()
+                    .transform(new CircleTransform(MyChannel.this))
+                    /*.override(50, 50)*/
+                    .into(headerImage_Profile);
+        }
+
+
         navigationView.setNavigationItemSelectedListener(this);
 
         getChannelsLists();
+    }
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 
 
@@ -181,7 +220,7 @@ public class MyChannel extends BaseActivity
     }
 
     private void setAdapter(List<ChannelListModel> channelListModels) {
-        channels_listview.setLayoutManager(new GridLayoutManager(MyChannel.this,3));
+        channels_listview.setLayoutManager(new GridLayoutManager(MyChannel.this, 3));
         myChannelsAdapter = new MyChannelsAdapter(MyChannel.this, channelListModels);
         channels_listview.setAdapter(myChannelsAdapter);
         myChannelsAdapter.notifyDataSetChanged();
@@ -203,35 +242,56 @@ public class MyChannel extends BaseActivity
                 .findFragmentByTag(Util.Edit_Profile);
         Fragment Profile_Fragment = fragmentManager
                 .findFragmentByTag(Util.My_Profile);
+        Fragment Notification_Fragment = fragmentManager
+                .findFragmentByTag(Util.NOTIFICATIONS);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }
-        else if (channel_layout.getVisibility() == View.VISIBLE)
-        {
+        } else if (channel_layout.getVisibility() == View.VISIBLE) {
+            finish();
+            super.onBackPressed();
+        } else if (EditProfile_Fragment != null) {
+            toggle.setDrawerIndicatorEnabled(true);
+            replaceLoginFragment();
+        } else if (Profile_Fragment != null) {
+//            setActionBarTitle(Title);
+            backAnimIntent(this, MyChannel.class);
+         /*   profileContainer.setVisibility(View.GONE);
+            channel_layout.setVisibility(View.VISIBLE);*/
+        } else if (Notification_Fragment != null) {
+//            setActionBarTitle(Title);
+            backAnimIntent(this, MyChannel.class);
+            /*profileContainer.setVisibility(View.GONE);
+            channel_layout.setVisibility(View.VISIBLE);*/
+        } else {
             finish();
             super.onBackPressed();
         }
-        else if (EditProfile_Fragment != null) {
-                replaceLoginFragment();
-            }
-            else if (Profile_Fragment != null)
-            {
-                setTitle(Title);
-                profileContainer.setVisibility(View.GONE);
-                channel_layout.setVisibility(View.VISIBLE);
-            }
-         else{
-            finish();
-            super.onBackPressed();
-        }
+    }
+
+    // Method to share either text or URL.
+    private void shareTextUrl() {
+        Intent share = new Intent(android.content.Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
+        // Add data to the intent, the receiving app will decide
+        // what to do with it.
+        share.putExtra(Intent.EXTRA_SUBJECT, "Title Of The Post");
+        share.putExtra(Intent.EXTRA_TEXT, "http://www.purplefront.com");
+
+        startActivity(Intent.createChooser(share, "Brightly - InfoShare!"));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.my_channel, menu);
+        MenuItem itemCart = menu.findItem(R.id.action_bell);
+        LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
+        setBadgeCount(this, icon, "1");
         return true;
     }
 
@@ -243,11 +303,31 @@ public class MyChannel extends BaseActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_bell) {
+
+
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void setBadgeCount(Context context, LayerDrawable icon, String count) {
+
+        BadgeDrawable badge;
+
+        // Reuse drawable if possible
+        Drawable reuse = icon.findDrawableByLayerId(R.id.ic_badge);
+        if (reuse != null && reuse instanceof BadgeDrawable) {
+            badge = (BadgeDrawable) reuse;
+        } else {
+            badge = new BadgeDrawable(context);
+        }
+
+        badge.setCount(count);
+        icon.mutate();
+        icon.setDrawableByLayerId(R.id.ic_badge, badge);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -258,56 +338,68 @@ public class MyChannel extends BaseActivity
 
         if (id == R.id.nav_profile) {
 
-            setTitle("My Profile");
-            profileContainer.setVisibility(View.VISIBLE);
-            channel_layout.setVisibility(View.GONE);
-
             fragmentManager
                     .beginTransaction()
-                    .setCustomAnimations(R.anim.left_enter, R.anim.right_out)
+                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
                     .replace(R.id.profileContainer, new MyProfile(),
                             Util.My_Profile).commit();
+
+            setActionBarTitle("My Profile");
+            profileContainer.setVisibility(View.VISIBLE);
+            channel_layout.setVisibility(View.GONE);
 
 
             // Handle the camera action
         } else if (id == R.id.nav_mysubscription) {
 
-            profileContainer.setVisibility(View.GONE);
-            channel_layout.setVisibility(View.VISIBLE);
             type = "subscribe";
-            setTitle("My Subscriptions");
-            getChannelsLists();
-
-        }
-        else if (id == R.id.nav_myChannels) {
-
+            setActionBarTitle("My Subscriptions");
             profileContainer.setVisibility(View.GONE);
             channel_layout.setVisibility(View.VISIBLE);
+            getChannelsLists();
+
+        } else if (id == R.id.nav_myChannels) {
+
             type = "my";
-            setTitle("My Channels");
-            getChannelsLists();
-
-        }
-        else if (id == R.id.nav_allChannels) {
-
+            setActionBarTitle("My Channels");
             profileContainer.setVisibility(View.GONE);
             channel_layout.setVisibility(View.VISIBLE);
-            type = "all";
-            setTitle("All Channels");
             getChannelsLists();
 
-        }
-        else if (id == R.id.nav_about) {
+        } else if (id == R.id.nav_allChannels) {
+
+            type = "all";
+            setActionBarTitle("All Channels");
+            profileContainer.setVisibility(View.GONE);
+            channel_layout.setVisibility(View.VISIBLE);
+            getChannelsLists();
+
+        } else if (id == R.id.nav_notifications) {
+
+            fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
+                    .replace(R.id.profileContainer, new Notifications(),
+                            Util.NOTIFICATIONS).commit();
+
+            setActionBarTitle("Notification");
+            profileContainer.setVisibility(View.VISIBLE);
+            channel_layout.setVisibility(View.GONE);
+
+        } else if (id == R.id.nav_about) {
 
 
             showLongToast(MyChannel.this, "Comming Soon");
 
-        }
-        else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_invite) {
+
+            shareTextUrl();
+
+        } else if (id == R.id.nav_logout) {
 
             realm.beginTransaction();
 
-        // delete all realm objects
+            // delete all realm objects
             realm.deleteAll();
 
             //commit realm changes

@@ -5,6 +5,9 @@ import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.CardsListResponse;
 import com.purplefront.brightly.Modules.ChannelListResponse;
 import com.purplefront.brightly.Modules.DeleteChannelResponse;
+import com.purplefront.brightly.Modules.EditProfileResponse;
+import com.purplefront.brightly.Modules.MyProfileResponse;
+import com.purplefront.brightly.Modules.NotificationsResponse;
 import com.purplefront.brightly.Modules.SetListResponse;
 import com.purplefront.brightly.Modules.SignInResponse;
 import com.purplefront.brightly.Modules.SignUpResponse;
@@ -21,6 +24,17 @@ public interface RestApiMethods {
 
     String CACHE_CONTROL = "cache-control: no-cache";
     String CONTENT_TYPE = "content-type:application/json";
+
+    //MyProfile
+    @POST("users/my_profile.php")
+    Call<MyProfileResponse> getMyProfile(@Query("user_id") String user_id);
+
+    //MyProfile
+    @POST("users/profile_edit.php")
+    @FormUrlEncoded
+    Call<EditProfileResponse> getEditProfile(@Query("user_id") String user_id, @Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Field("image") String image, @Query("image_name") String image_name);
+
+
     //Register or SignUp
     @POST("users/newregister.php")
     Call<SignUpResponse> getSignup(@Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Query("password") String password);
@@ -66,32 +80,37 @@ public interface RestApiMethods {
     Call<AddMessageResponse> getDeleteSet(@Query("set_id") String set_id);
 
     //CardList
-    @POST("images/list_image.php")
+    @POST("cards/card_list.php")
     Call<CardsListResponse> getCardsList(@Query("set_id") String set_id);
 
     //SetList
-    @POST("images/add_card.php")
+    @POST("cards/add_card.php")
     @FormUrlEncoded
     Call<AddMessageResponse> getAddCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
 
 
     //Set_Reorder
-    @POST("sets/display_setorder.php?")
+    @POST("sets/display_setorder.php")
     Call<AddMessageResponse> set_reorder_set(@Query("user_id") String user_id,  @Query("set_id") String set_id);
 
 
     //Update Card
-    @POST("images/update_image.php")
+    @POST("cards/update_card.php")
     @FormUrlEncoded
-    Call<AddMessageResponse> getUpdateCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("image_id") String image_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
+    Call<AddMessageResponse> getUpdateCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("card_id") String card_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
 
 
     //Delete Card
-    @POST("images/delete_image.php")
+    @POST("cards/delete_card.php")
     Call<AddMessageResponse> getDeleteCard(@Query("card_id") String card_id);
 
     //Card_Reorder
-    @POST("images/display_order.php?")
-    Call<AddMessageResponse> card_reorder_set(@Query("user_id") String user_id,  @Query("image_id") String image_id);
+    @POST("cards/display_order.php")
+    Call<AddMessageResponse> card_reorder_set(@Query("user_id") String user_id,  @Query("card_ids") String card_id);
+
+    //Notifications
+    @POST("notification/in_app.php")
+    Call<NotificationsResponse> getNotifications(@Query("user_id") String user_id);
+
 
 }

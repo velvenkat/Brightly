@@ -14,5 +14,15 @@
     <color name="btn_login">#E64A19</color>
     <color name="action_bar">#FF5722</color>
 
+    //text color
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="divider_color">#BDBDBD</color>
+
+    <color name="yellow_color">#FFFF00</color>
+
+
+
+
 
 </resources>

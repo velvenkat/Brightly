@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.purplefront.brightly.Activities.MyChannel"
+    >
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never"
-        android:visible="false"/>
+        android:id="@+id/action_bell"
+        app:showAsAction="always"
+        android:icon="@drawable/notification_menu"
+        android:title="@string/alert" />
 </menu>

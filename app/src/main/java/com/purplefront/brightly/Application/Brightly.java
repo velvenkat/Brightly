@@ -16,7 +16,7 @@ public class Brightly extends Application {
         // we'll change it to "myrealm.realm"
         Fresco.initialize(this);
         Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder().name("myrealm.realm").build();
+        RealmConfiguration config = new RealmConfiguration.Builder().name("myrealm.realm").deleteRealmIfMigrationNeeded().build();
         Realm.setDefaultConfiguration(config);
 
     }

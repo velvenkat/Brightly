@@ -14,6 +14,10 @@ public class RealmModel extends RealmObject {
 
     private String User_CompanyName;
 
+    private String image;
+
+    private String image_name;
+
     public String getUser_Id() {
         return User_Id;
     }
@@ -52,5 +56,21 @@ public class RealmModel extends RealmObject {
 
     public void setUser_CompanyName(String user_CompanyName) {
         User_CompanyName = user_CompanyName;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getImage_name() {
+        return image_name;
+    }
+
+    public void setImage_name(String image_name) {
+        this.image_name = image_name;
     }
 }

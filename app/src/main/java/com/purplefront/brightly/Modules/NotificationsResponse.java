@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class CardsListResponse {
+public class NotificationsResponse {
 
     @SerializedName("message")
     @Expose
@@ -13,7 +13,7 @@ public class CardsListResponse {
 
     @SerializedName("data")
     @Expose
-    private List<CardsListModel> data = null;
+    private List<NotificationsModel> data = null;
 
     public String getMessage() {
         return message;
@@ -23,11 +23,11 @@ public class CardsListResponse {
         this.message = message;
     }
 
-    public List<CardsListModel> getData() {
+    public List<NotificationsModel> getData() {
         return data;
     }
 
-    public void setData(List<CardsListModel> data) {
+    public void setData(List<NotificationsModel> data) {
         this.data = data;
     }
 }
