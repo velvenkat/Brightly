@@ -125,7 +125,14 @@ public class CreateCards extends BaseActivity implements UserInterface{
 
         adapter.addFrag(new ImageType(), "image");
         adapter.addFrag(new YoutubeType(), "youtube");
-        adapter.addFrag(new AudioType(), "audio");
+
+        Fragment create_audioType=new AudioType();
+        Bundle bundle =new Bundle();
+        bundle.putBoolean("isCreate",true);
+        create_audioType.setArguments(bundle);
+        adapter.addFrag(create_audioType, "audio");
+
+     //   adapter.addFrag(new AudioType(), "audio");
         adapter.addFrag(new FileType(), "file");
         viewpager_creatCard.setAdapter(adapter);
     }

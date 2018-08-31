@@ -8,7 +8,7 @@ public class UserModule {
     String card_name = "";
     String card_id;
     String card_description = "";
-    String encoded_string = "";
+    String card_multimedia_url = "";
     String image_name = "";
     String type = "";
 
@@ -71,12 +71,12 @@ public class UserModule {
         this.card_description = card_description;
     }
 
-    public String getEncoded_string() {
-        return encoded_string;
+    public String getCard_multimedia_url() {
+        return card_multimedia_url;
     }
 
-    public void setEncoded_string(String encoded_string) {
-        this.encoded_string = encoded_string;
+    public void setCard_multimedia_url(String card_multimedia_url) {
+        this.card_multimedia_url = card_multimedia_url;
     }
 
     public String getImage_name() {

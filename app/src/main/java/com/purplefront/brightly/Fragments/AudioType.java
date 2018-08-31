@@ -22,7 +22,6 @@ import android.util.Base64;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -64,7 +63,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUpdateListener {
+public class AudioType extends BaseFragment  {
 
     View view;
     TextView text_audioFile;
@@ -74,10 +73,10 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
     EditText create_cardDescription;
     Button btn_createCard;
     Uri audio_uri = null;
-    Context context;
+    /*Context context;
     private int mediaFileLengthInMilliseconds; // this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
     boolean  isAudioPlay = false;
-    String TotalTime;
+    String TotalTime;*/
     UserModule userModule;
 
     String userId;
@@ -94,12 +93,10 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
     View rootView;
     ImageView img_play_stop_rec, cur_default;
     TextView txtRecSeconds;
-    String PetId, PetIMG;
     CountDownTimer countDownTimer = null;
     File tempMp3File = null;
     SeekBar audio_seek_bar;
-    MediaPlayer mediaPlayer;
-    private final Handler handler = new Handler();
+
 
     ImageView img_play_stop;
     TextView txt_PlayProgTime;
@@ -108,6 +105,7 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
 
     LinearLayout rec_contr;
     LinearLayout crt_contr;
+    boolean isCreateScreen;
 
 
     public AudioType() {
@@ -129,6 +127,9 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_audio_type, container, false);
+
+        Bundle bundle =getArguments();
+        isCreateScreen=bundle.getBoolean("isCreate");
 
         userId = userModule.getUserId();
         set_id = userModule.getSet_id();
@@ -155,17 +156,28 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
 
         rec_contr.setVisibility(View.GONE);
         crt_contr.setVisibility(View.VISIBLE);
-        text_audioFile.setVisibility(View.VISIBLE);
+        if(isCreateScreen){
+            rl_audio_player.setVisibility(View.GONE);
+            text_audioFile.setVisibility(View.VISIBLE);
+        }
+        else{
+            rl_audio_player.setVisibility(View.VISIBLE);
+            text_audioFile.setVisibility(View.GONE);
+
+        }
+        audio_player_initialize(audio_seek_bar,txt_PlayProgTime,img_play_stop);
+        setMediaPlayer(null,userModule.getCard_multimedia_url());
+
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
 
-        audio_seek_bar.setMax(99); // It means 100% .0-99
+      /*  audio_seek_bar.setMax(99); // It means 100% .0-99
         audio_seek_bar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (v.getId() == R.id.seek_audio_rec) {
-                        /** Seekbar onTouch event handler. Method which seeks MediaPlayer to seekBar primary progress position*/
+                        *//** Seekbar onTouch event handler. Method which seeks MediaPlayer to seekBar primary progress position*//*
                         if (mediaPlayer.isPlaying()) {
                             SeekBar sb = (SeekBar) v;
                             int playPositionInMillisecconds = (mediaFileLengthInMilliseconds / 100) * sb.getProgress();
@@ -186,9 +198,9 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
                 return false;
             }
         });
+*/
 
-
-        img_play_stop.setOnClickListener(new View.OnClickListener() {
+  /*      img_play_stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isAudioPlay) {
@@ -207,7 +219,7 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
                 }
             }
         });
-        rootView.setOnKeyListener(new View.OnKeyListener() {
+  */      rootView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
@@ -218,7 +230,7 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
                         isPlayBtnClicked = false;
                         return false;
                     } else {
-                        release_media();
+                         release_media();
                     }
                 }
                 return true;
@@ -273,7 +285,7 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
         return rootView;
     }
 
-    public void release_media() {
+   /* public void release_media() {
         if (mediaPlayer != null) {
             if (isAudioPlay) {
                 isAudioPlay = false;
@@ -282,8 +294,8 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
             mediaPlayer.release();
             mediaPlayer = null;
         }
-    }
-    private void primarySeekBarProgressUpdater() {
+    }*/
+    /*private void primarySeekBarProgressUpdater() {
         if (isAudioPlay) {
             audio_seek_bar.setProgress((int) (((float) mediaPlayer.getCurrentPosition() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
             String cur_Pos = TimeFormat.formateMilliSeccond(mediaPlayer.getCurrentPosition());
@@ -298,7 +310,7 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
             }
         }
     }
-
+*/
     public void Rec_finish() {
         countDownTimer.cancel();
         if (myAudioRecorder != null) {
@@ -314,7 +326,7 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
         */    // fragmentCall_mainObj.Fragment_call(this,new Create_PetActivity(), "act_crt", bundle);
             rec_contr.setVisibility(View.GONE);
             crt_contr.setVisibility(View.VISIBLE);
-            setMediaPlayer(tempMp3File.getAbsolutePath());
+            setMediaPlayer(null,tempMp3File.getAbsolutePath());
         }
     }
 
@@ -406,7 +418,7 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }*/
-                setMediaPlayer(audio_uri.getPath());
+                setMediaPlayer(audio_uri,null);
                 //Toast.makeText(getContext(), "Audio URI" + audio_uri, Toast.LENGTH_SHORT).show();
             }
         }
@@ -540,7 +552,11 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList("audio", userId, set_id, card_name, card_description, encoded_string, image_name);
+                Call<AddMessageResponse> callRegisterUser;
+                if(isCreateScreen)
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList("audio", userId, set_id, card_name, card_description, encoded_string, image_name);
+                else
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("audio", userId, set_id,userModule.getCard_id(), card_name, card_description, encoded_string, image_name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -584,7 +600,7 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
     }
 
 
-    public void setMediaPlayer(String filePath) {
+    /*public void setMediaPlayer(String filePath) {
 
         try {
             mediaPlayer = new MediaPlayer();
@@ -631,7 +647,7 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
         }
 
 
-    }
+    }*/
 
     private void setAddSetCredentials(AddMessageResponse addMessageResponse) {
 
@@ -650,8 +666,8 @@ public class AudioType extends BaseFragment implements MediaPlayer.OnBufferingUp
         }
     }
 
-    @Override
+  /*  @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         audio_seek_bar.setSecondaryProgress(percent);
-    }
+    }*/
 }

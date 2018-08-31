@@ -1,38 +1,22 @@
 package com.purplefront.brightly.Activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Application.UserInterface;
-import com.purplefront.brightly.CustomToast;
-import com.purplefront.brightly.Fragments.EditAudioType;
+import com.purplefront.brightly.Fragments.AudioType;
 import com.purplefront.brightly.Fragments.EditFileType;
 import com.purplefront.brightly.Fragments.EditImageType;
 import com.purplefront.brightly.Fragments.EditYoutubeType;
@@ -41,14 +25,8 @@ import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.UserModule;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
-import com.purplefront.brightly.Utils.ImageChooser_Crop;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.io.ByteArrayOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -95,7 +73,7 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
         userModule.setCard_id(cardsListModels.getCard_id());
         userModule.setCard_name(cardsListModels.getTitle());
         userModule.setCard_description(cardsListModels.getDescription());
-        userModule.setEncoded_string(cardsListModels.getUrl());
+        userModule.setCard_multimedia_url(cardsListModels.getUrl());
         userModule.setImage_name(cardsListModels.getName());
         userModule.setType(cardsListModels.getType());
 
@@ -205,7 +183,11 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
 
             case "audio":
 
-                adapter.addFrag(new EditAudioType(), "audio");
+                Fragment edit_audioType=new AudioType();
+                Bundle bundle =new Bundle();
+                bundle.putBoolean("isCreate",false);
+                edit_audioType.setArguments(bundle);
+                adapter.addFrag(edit_audioType, "audio");
 
                 break;
 
