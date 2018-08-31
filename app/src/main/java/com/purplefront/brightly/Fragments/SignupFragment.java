@@ -16,6 +16,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.Login;
@@ -62,7 +65,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     String User_CompanyName;
     String User_Email;
     String phoneNumber;
-
+    String deviceToken;
 
 
     public SignupFragment() {
@@ -78,6 +81,17 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         realm = Realm.getDefaultInstance();
         initViews();
         setListeners();
+        //final String[] deviceToken = new String[1];
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                deviceToken = instanceIdResult.getToken();
+                // Do whatever you want with your token now
+                // i.e. store it on SharedPreferences or DB
+                // or directly send it to server
+            }
+        });
+
         return view;
     }
 
@@ -179,7 +193,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
-                Call<SignUpResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignup(getName, getEmail, getPhoneNumber, getCompanyName, getPassword);
+                Call<SignUpResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignup(getName, getEmail, getPhoneNumber, getCompanyName, getPassword,deviceToken);
                 callRegisterUser.enqueue(new ApiCallback<SignUpResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SignUpResponse> response, boolean isSuccess, String message) {

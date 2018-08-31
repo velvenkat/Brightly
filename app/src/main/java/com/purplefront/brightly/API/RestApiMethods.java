@@ -37,11 +37,11 @@ public interface RestApiMethods {
 
     //Register or SignUp
     @POST("users/newregister.php")
-    Call<SignUpResponse> getSignup(@Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Query("password") String password);
+    Call<SignUpResponse> getSignup(@Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Query("password") String password,@Query("token") String token);
 
     //SignIn
     @POST("users/newlogin.php")
-    Call<SignInResponse> getSignIn(@Query("mobile_no") String mobile_no, @Query("password") String password);
+    Call<SignInResponse> getSignIn(@Query("mobile_no") String mobile_no, @Query("password") String password, @Query("token") String token);
 
 
     //ChannelsList

@@ -23,6 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.Login;
@@ -62,7 +65,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     String UserName;
     String User_CompanyName;
     String User_Email;
-    String phoneNumber;
+    String phoneNumber,deviceToken;
 
     Realm realm;
 
@@ -79,6 +82,16 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         realm = Realm.getDefaultInstance();
         initViews();
         setListeners();
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                deviceToken = instanceIdResult.getToken();
+                // Do whatever you want with your token now
+                // i.e. store it on SharedPreferences or DB
+                // or directly send it to server
+            }
+        });
+
         return view;
 
     }
@@ -163,10 +176,12 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     }
 
     public void getSignIn() {
+       // String Token= FirebaseInstanceId.getInstance().getToken();
+
         try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
-                Call<SignInResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignIn(getPhonenumber, getPassword);
+                Call<SignInResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignIn(getPhonenumber, getPassword,deviceToken);
                 callRegisterUser.enqueue(new ApiCallback<SignInResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SignInResponse> response, boolean isSuccess, String message) {
