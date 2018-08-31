@@ -115,12 +115,58 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
 
     private void setupTabIcons() {
 
-        final TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        switch (type) {
+
+            case "image":
+
+                final TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+                tabOne.setText("Image");
+                // tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
+                tabs_editCard.getTabAt(0).setCustomView(tabOne);
+
+                break;
+
+            case "video":
+
+                final TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+                tabTwo.setText("Video");
+                // tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
+                tabs_editCard.getTabAt(0).setCustomView(tabTwo);
+
+                break;
+
+            case "audio":
+
+                final TextView tabThree = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+                tabThree.setText("Audio");
+                // tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
+                tabs_editCard.getTabAt(0).setCustomView(tabThree);
+
+                break;
+
+            case "file":
+
+                final TextView tabFour = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+                tabFour.setText("File");
+                // tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
+                tabs_editCard.getTabAt(0).setCustomView(tabFour);
+
+                break;
+
+            case "text":
+
+                    final TextView tabFive = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+                    tabFive.setText("Text");
+                    // tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
+                    tabs_editCard.getTabAt(0).setCustomView(tabFive);
+                    break;
+        }
+
+        /*final TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         tabOne.setText("Image");
         // tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_editCard.getTabAt(0).setCustomView(tabOne);
 
-        // Supplier id for free Version "RcJ1L4mWaZeIe2wRO3ejHOmcSxf2" =====
         final TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         tabTwo.setText("Video");
         // tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
@@ -132,19 +178,53 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
         tabs_editCard.getTabAt(2).setCustomView(tabThree);
 
         final TextView tabFour = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabFour.setText("File Links");
+        tabFour.setText("File");
         // tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
-        tabs_editCard.getTabAt(3).setCustomView(tabFour);
+        tabs_editCard.getTabAt(3).setCustomView(tabFour);*/
     }
 
     private void setupViewPager(ViewPager viewpager_creatCard) {
 
         EditCardInfo.ViewPagerAdapter adapter = new EditCardInfo.ViewPagerAdapter(getSupportFragmentManager());
 
-        adapter.addFrag(new EditImageType(), "image");
+
+        switch (type) {
+
+            case "image":
+
+                adapter.addFrag(new EditImageType(), "image");
+
+                break;
+
+            case "video":
+
+                adapter.addFrag(new EditYoutubeType(), "youtube");
+
+
+                break;
+
+            case "audio":
+
+                adapter.addFrag(new EditAudioType(), "audio");
+
+                break;
+
+            case "file":
+
+                adapter.addFrag(new EditFileType(), "file");
+
+                break;
+
+            case "text":
+
+                adapter.addFrag(new EditImageType(), "image");
+                break;
+        }
+
+       /* adapter.addFrag(new EditImageType(), "image");
         adapter.addFrag(new EditYoutubeType(), "youtube");
         adapter.addFrag(new EditAudioType(), "audio");
-        adapter.addFrag(new EditFileType(), "file");
+        adapter.addFrag(new EditFileType(), "file");*/
         viewpager_creatCard.setAdapter(adapter);
     }
 
