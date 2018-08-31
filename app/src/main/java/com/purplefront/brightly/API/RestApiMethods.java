@@ -43,6 +43,10 @@ public interface RestApiMethods {
     @POST("users/newlogin.php")
     Call<SignInResponse> getSignIn(@Query("mobile_no") String mobile_no, @Query("password") String password, @Query("token") String token);
 
+    //ForgotPassword
+    @POST("users/forgot_password.php")
+    Call<AddMessageResponse> getForgetPassword(@Query("email_id") String email_id);
+
 
     //ChannelsList
     @POST("channels/list_channels.php")
@@ -111,6 +115,11 @@ public interface RestApiMethods {
     //Notifications
     @POST("notification/in_app.php")
     Call<NotificationsResponse> getNotifications(@Query("user_id") String user_id);
+
+    //Notifications
+    @POST("notification/count.php")
+    Call<NotificationsResponse> getNotificationCounts(@Query("user_id") String user_id);
+
 
 
 }

@@ -39,6 +39,7 @@ import com.purplefront.brightly.Fragments.MyProfile;
 import com.purplefront.brightly.Fragments.Notifications;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ChannelListResponse;
+import com.purplefront.brightly.Modules.NotificationsResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.CircleTransform;
@@ -75,7 +76,7 @@ public class MyChannel extends BaseActivity
     String userPicture;
     String type = "all";
     String Title = "All Channels";
-    int count;
+    String count = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,9 @@ public class MyChannel extends BaseActivity
             userPhone = model.getUser_PhoneNumber();
             userPicture = model.getImage();
         }
+
+        getNotification();
+
         channel_layout = (RelativeLayout) findViewById(R.id.channel_layout);
         profileContainer = (FrameLayout) findViewById(R.id.profileContainer);
 
@@ -167,6 +171,65 @@ public class MyChannel extends BaseActivity
         getSupportActionBar().setTitle(title);
     }
 
+    public void getNotification() {
+        try {
+
+            if (CheckNetworkConnection.isOnline(MyChannel.this)) {
+                Call<NotificationsResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).getNotifications(userId);
+                callRegisterUser.enqueue(new ApiCallback<NotificationsResponse>(MyChannel.this) {
+                    @Override
+                    public void onApiResponse(Response<NotificationsResponse> response, boolean isSuccess, String message) {
+                        NotificationsResponse notificationsResponse = response.body();
+
+                        if (isSuccess) {
+
+                            if (notificationsResponse != null) {
+
+                                setNotificationCounts(notificationsResponse);
+                                dismissProgress();
+
+                            } else {
+
+                                dismissProgress();
+                            }
+
+                        } else {
+
+                            dismissProgress();
+                        }
+
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+                        showLongToast(MyChannel.this, message);
+                    }
+                });
+            } else {
+
+                showLongToast(MyChannel.this, "Network Error");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showLongToast(MyChannel.this, "Something went Wrong, Please try Later");
+
+
+        }
+    }
+
+    private void setNotificationCounts(NotificationsResponse notificationsResponse) {
+
+        String message = notificationsResponse.getMessage();
+
+        if(message.equals("success"))
+        {
+            count = String.valueOf(notificationsResponse.getCount());
+        }
+        else
+        {
+            count = "0";
+        }
+    }
 
     public void getChannelsLists() {
         try {
@@ -291,7 +354,7 @@ public class MyChannel extends BaseActivity
         getMenuInflater().inflate(R.menu.my_channel, menu);
         MenuItem itemCart = menu.findItem(R.id.action_bell);
         LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
-        setBadgeCount(this, icon, "1");
+        setBadgeCount(this, icon, count);
         return true;
     }
 

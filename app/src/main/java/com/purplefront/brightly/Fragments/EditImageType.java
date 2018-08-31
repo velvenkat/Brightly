@@ -106,7 +106,7 @@ public class EditImageType extends BaseFragment{
         card_id = userModule.getCard_id();
         card_name = userModule.getCard_name();
         card_description = userModule.getCard_description();
-        encoded_string = userModule.getEncoded_string();
+        encoded_string = userModule.getCard_multimedia_url();
 
 
         edit_cardName.setText(card_name);
@@ -115,7 +115,7 @@ public class EditImageType extends BaseFragment{
 
 
 
-        if(!encoded_string.isEmpty() && userModule.getEncoded_string() != null) {
+        if(!encoded_string.isEmpty() && userModule.getCard_multimedia_url() != null) {
 
             Glide.with(getActivity())
                     .load(encoded_string)
