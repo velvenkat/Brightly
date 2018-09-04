@@ -59,5 +59,10 @@
     <string name="save">Save</string>
     <string name="notifications">Notifications</string>
     <string name="alert">Alert</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="forgotpassword">Forgot Password</string>
+    <string name="registered_emailid">Please enter your Registered Email Id below:</string>
+    <string name="submit">SUBMIT</string>
+    <string name="back">BACK</string>
 
 </resources>

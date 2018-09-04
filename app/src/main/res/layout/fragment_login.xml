@@ -50,12 +50,23 @@
         android:textSize="@dimen/mediumtextsize" />
 
 
+    <TextView
+        android:id="@+id/forgot_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:padding="5dp"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/dimen_12"
+        android:text="@string/forgot_password"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/mediumtextsize" />
 
         <Button
             android:id="@+id/loginBtn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_30"
+            android:layout_marginTop="@dimen/dimen_12"
             android:background="@drawable/login_btn_background"
             android:padding="3dp"
             android:text="@string/signin"

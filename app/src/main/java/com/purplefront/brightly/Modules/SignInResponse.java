@@ -29,6 +29,10 @@ public class SignInResponse {
     @Expose
     private String company_name;
 
+    @SerializedName("image")
+    @Expose
+    private String image;
+
 
     public String getMessage() {
         return message;
@@ -76,5 +80,13 @@ public class SignInResponse {
 
     public void setCompany_name(String company_name) {
         this.company_name = company_name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

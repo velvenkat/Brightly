@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +29,7 @@ import com.purplefront.brightly.Utils.TimeFormat;
 public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpdateListener {
 
     Context context;
+    ProgressDialog mProgress;
     alert_dlg_interface mListener;
     SeekBar audio_seek_bar;
     MediaPlayer mediaPlayer;
@@ -302,7 +304,12 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
      */
     protected void showProgress() {
         try {
-            ((BaseActivity) getActivity()).showProgress();
+            mProgress = new ProgressDialog(getActivity());
+            mProgress.setIndeterminate(false);
+            mProgress.setTitle("Sending....");
+            mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgress.setCancelable(true);
+            mProgress.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -313,7 +320,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
      */
     protected void dismissProgress() {
         try {
-            ((BaseActivity) getActivity()).dismissProgress();
+            mProgress.dismiss();
         } catch (Exception e) {
             e.printStackTrace();
         }

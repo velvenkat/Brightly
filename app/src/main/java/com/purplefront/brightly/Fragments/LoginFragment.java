@@ -56,7 +56,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     private EditText editText_phone;
     private EditText editText_password;
     private Button btn_signIn;
-    private TextView textView_signUp;
+    private TextView textView_signUp, forgot_password;
     private static Animation shakeAnimation;
 
     String getPhonenumber;
@@ -66,6 +66,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     String User_CompanyName;
     String User_Email;
     String phoneNumber,deviceToken;
+    String image;
 
     Realm realm;
 
@@ -104,6 +105,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         editText_password = (EditText) view.findViewById(R.id.login_password);
         btn_signIn = (Button) view.findViewById(R.id.loginBtn);
         textView_signUp = (TextView) view.findViewById(R.id.text_signup);
+        forgot_password = (TextView) view.findViewById(R.id.forgot_password);
 
         // Load ShakeAnimation
         shakeAnimation = AnimationUtils.loadAnimation(getActivity(),
@@ -116,6 +118,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
                     xrp);
 
             textView_signUp.setTextColor(csl);
+            forgot_password.setTextColor(csl);
+
         } catch (Exception e) {
         }
     }
@@ -124,6 +128,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     private void setListeners() {
         btn_signIn.setOnClickListener(this);
         textView_signUp.setOnClickListener(this);
+        forgot_password.setOnClickListener(this);
     }
 
     @Override
@@ -142,6 +147,16 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
                         .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
                         .replace(R.id.frameContainer, new SignupFragment(),
                                 Util.SignUp_Fragment).commit();
+                break;
+
+            case R.id.forgot_password:
+
+                // Replace signup frgament with animation
+                fragmentManager
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
+                        .replace(R.id.frameContainer, new ForgotPassword(),
+                                Util.ForgotPassword_Fragment).commit();
                 break;
         }
 
@@ -233,6 +248,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         UserName  = signInResponse.getName();
         User_Email  = signInResponse.getEmail();
         User_CompanyName  = signInResponse.getCompany_name();
+        image  = signInResponse.getImage();
+
 
         if(phoneNumber!=null) {
 
@@ -243,6 +260,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
             realmModel.setUser_Email(User_Email);
             realmModel.setUser_PhoneNumber(phoneNumber);
             realmModel.setUser_CompanyName(User_CompanyName);
+            realmModel.setImage(image);
             realm.commitTransaction();
 
             showLongToast(getActivity(), signInResponse.getMessage());

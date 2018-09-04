@@ -45,13 +45,19 @@ public class Login extends AppCompatActivity {
         Fragment SignUp_Fragment = fragmentManager
                 .findFragmentByTag(Util.SignUp_Fragment);
 
+        Fragment ForgotPassword_Fragment = fragmentManager
+                .findFragmentByTag(Util.ForgotPassword_Fragment);
+
         // Check if both are null or not
         // If both are not null then replace login fragment else do backpressed
         // task
 
         if (SignUp_Fragment != null)
             replaceLoginFragment();
+        else if (ForgotPassword_Fragment != null)
+            replaceLoginFragment();
         else
+//            finish();
             super.onBackPressed();
     }
 }
