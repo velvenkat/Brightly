@@ -41,7 +41,9 @@
     <string name="edit_card">Edit Card</string>
     <string name="card_name">Card Name</string>
     <string name="card_url">https://www.youtube.com/</string>
-    <string name="card_url_title">Copy &amp; Paste your Youtube link here</string>
+    <string name="card_url_title">Copy &amp; paste your youtube link here</string>
+    <string name="card_file_url_title">Copy &amp; Paste your pdf file link here</string>
+    <string name="card_file_url_hint">https://</string>
     <string name="card_description">Card Description</string>
     <string name="password">Password</string>
     <string name="all_channels">All Channels</string>

@@ -1,6 +1,8 @@
 package com.purplefront.brightly.Fragments;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +24,8 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.R;
+
+import java.util.Locale;
 
 
 public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener {
@@ -144,6 +148,23 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
             audio_player_initialize(audio_seek_bar,txt_PlayProgTime,img_audio_play_stop);
             setMediaPlayer(null,cardModelObj.getUrl());
+        }
+        else if(cardModelObj.getType().equalsIgnoreCase("file")){
+            Glide.with(getActivity())
+                    .load(R.drawable.open_pdf_icon)
+                    .centerCrop()
+                    /*.transform(new CircleTransform(HomeAct/ivity.this))
+                    .override(50, 50)*/
+                    .into(image_cardImage);
+            image_cardImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String format = "https://drive.google.com/viewerng/viewer?embedded=true&url=%s";
+                    String fullPath = String.format(Locale.ENGLISH, format, cardModelObj.getUrl());
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fullPath));
+                    startActivity(browserIntent);
+                }
+            });
         }
 
         // Add viewpager_item.xml to ViewPager

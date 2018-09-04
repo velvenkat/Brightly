@@ -3,6 +3,7 @@ package com.purplefront.brightly.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,11 +12,16 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -38,7 +44,9 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
@@ -72,6 +80,7 @@ public class ImageType extends BaseFragment {
     String encoded_string = "";
     String image_name = "";
     String type = "";
+    boolean isCreateCard;
 
     public ImageType() {
         // Required empty public constructor
@@ -80,9 +89,8 @@ public class ImageType extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof UserInterface)
-        {
-          userModule=((UserInterface)context).getUserMode();
+        if (context instanceof UserInterface) {
+            userModule = ((UserInterface) context).getUserMode();
 
         }
     }
@@ -91,7 +99,7 @@ public class ImageType extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view =  inflater.inflate(R.layout.fragment_image_type, container, false);
+        view = inflater.inflate(R.layout.fragment_image_type, container, false);
         context = view.getContext();
 
         userId = userModule.getUserId();
@@ -102,15 +110,40 @@ public class ImageType extends BaseFragment {
         image_cardImage = (SimpleDraweeView) view.findViewById(R.id.image_cardImage);
         create_cardName = (EditText) view.findViewById(R.id.create_cardName);
         create_cardDescription = (EditText) view.findViewById(R.id.create_cardDescription);
-        btn_createCard = (Button)view.findViewById(R.id.btn_createCard);
+        btn_createCard = (Button) view.findViewById(R.id.btn_createCard);
 
-        Glide.with(getActivity())
-                .load(R.drawable.no_image_available)
-                .centerCrop()
-                /*.transform(new CircleTransform(HomeActivity.this))
-                .override(50, 50)*/
-                .into(image_cardImage);
+        Bundle bundle = getArguments();
+        isCreateCard = bundle.getBoolean("isCreate");
+        boolean load_def_img = true;
+        if (!isCreateCard) {
+            btn_createCard.setText("UPDATE CARD");
+            create_cardName.setText(userModule.getCard_name());
+            create_cardDescription.setText(userModule.getCard_description());
+            if (!userModule.getType().equalsIgnoreCase("text")) {
+                load_def_img = false;
+                Glide.with(getActivity())
+                        .load(userModule.getCard_multimedia_url())
+                        .centerCrop()
+                        /*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*/
+                        .into(image_cardImage);
 
+            } else {
+                load_def_img = true;
+
+            }
+        }
+        else {
+            btn_createCard.setText("CREATE CARD");
+        }
+        if (load_def_img) {
+            Glide.with(getActivity())
+                    .load(R.drawable.no_image_available)
+                    .centerCrop()
+                    /*.transform(new CircleTransform(HomeAct/ivity.this))
+                    .override(50, 50)*/
+                    .into(image_cardImage);
+        }
         btn_createCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,22 +154,98 @@ public class ImageType extends BaseFragment {
             @Override
             public void onClick(View v) {
 
-                imgImageChooser_crop = new ImageChooser_Crop(getActivity());
-                Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
-                if (intent == null) {
-                    //PermissionUtil.
-                } else {
-                    startActivityForResult(intent, PICK_IMAGE_REQ);
-                }
+                if (isCreateCard || encoded_string.equalsIgnoreCase("image_to_text")) {
 
+
+                    /*imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+                    Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+                    if (intent == null) {
+                        //PermissionUtil.
+                    } else {
+                        startActivityForResult(intent, PICK_IMAGE_REQ);
+                    }*/
+                    imageChooserIntent();
+                } else {
+                    if (userModule.getType().equalsIgnoreCase("text") && encoded_string.equalsIgnoreCase("")) {
+                        imageChooserIntent();
+                    } else
+                        setBottomDialog();
+                }
             }
         });
-
 
 
         return view;
     }
 
+    public void imageChooserIntent() {
+        imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+        Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+        if (intent == null) {
+            //PermissionUtil.
+        } else {
+            startActivityForResult(intent, PICK_IMAGE_REQ);
+        }
+    }
+
+    public void setBottomDialog() {
+
+        final Dialog mBottomSheetDialog = new Dialog(getActivity(), R.style.MaterialDialogSheet);
+        mBottomSheetDialog.setContentView(R.layout.dialog_view_layout); // your custom view.
+        mBottomSheetDialog.setCancelable(true);
+        mBottomSheetDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        mBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+        mBottomSheetDialog.show();
+        ListView list_SettingsMenu = (ListView) mBottomSheetDialog.getWindow().findViewById(R.id.list_view_dialog);
+        ArrayList<String> menu_list = new ArrayList<>();
+        menu_list.add("Choose new image");
+        menu_list.add("Remove image");
+
+        ArrayAdapter<String> menu_itmes = new ArrayAdapter<String>(getContext(), R.layout.menu_row_diualog, R.id.dialog_menu_textView,
+                menu_list);
+        list_SettingsMenu.setAdapter(menu_itmes);
+        list_SettingsMenu.requestFocus();
+        Button btnCancel = (Button) mBottomSheetDialog.getWindow().findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        list_SettingsMenu.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        // Toast.makeText(getContext(),"Position :"+position,Toast.LENGTH_SHORT).show();
+                        mBottomSheetDialog.dismiss();
+                        //audio_uri = null;
+                        //tempMp3File = null;
+                        //release_media();
+                        //text_audioFile.setVisibility(View.VISIBLE);
+                        // rl_audio_player.setVisibility(View.GONE);
+                        switch (position) {
+                            case 1:
+                                if (userModule.getType().equalsIgnoreCase("image"))
+                                    encoded_string = "image_to_text";
+                                else
+                                    encoded_string = "";
+                                Glide.with(getActivity())
+                                        .load(R.drawable.no_image_available)
+                                        .centerCrop()
+                                        /*.transform(new CircleTransform(HomeActivity.this))
+                                        .override(50, 50)*/
+                                        .into(image_cardImage);
+                                break;
+                            case 0:
+                                imageChooserIntent();
+                                break;
+
+                        }
+                    }
+                }
+        );
+
+    }
 
     // Check Validation Method
     private void checkValidation() {
@@ -151,12 +260,12 @@ public class ImageType extends BaseFragment {
 
             new CustomToast().Show_Toast(getActivity(), create_cardName,
                     "Both fields are required.");
-        }
-        else if(encoded_string.equals("") || encoded_string.length() == 0)
-        {
+        } else if (encoded_string.equals("") || encoded_string.length() == 0 || encoded_string.equalsIgnoreCase("image_to_text")) {
            /* new CustomToast().Show_Toast(getActivity(), image_cardImage,
                     "Image is required.");*/
             type = "text";
+
+            getAddCards();
         }
 
         // Else do signup or do your stuff
@@ -165,8 +274,6 @@ public class ImageType extends BaseFragment {
             getAddCards();
         }
     }
-
-
 
 
     @Override
@@ -187,7 +294,7 @@ public class ImageType extends BaseFragment {
                 try {
 
                     Uri picUri = imgImageChooser_crop.getPickImageResultUri(data);
-                               Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), picUri);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), picUri);
                     if (picUri != null) {
                        /* Intent intent = imgImageChooser_crop.performCrop(picUri, false, 150, 150);
                         startActivityForResult(intent, PIC_CROP);*/
@@ -276,7 +383,11 @@ public class ImageType extends BaseFragment {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList(type, userId, set_id, card_name, card_description, encoded_string, image_name );
+                Call<AddMessageResponse> callRegisterUser;
+                if (isCreateCard) {
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList(type, userId, set_id, card_name, card_description, encoded_string, image_name);
+                } else
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList(type, userId, set_id, userModule.getCard_id(), card_name, card_description, encoded_string, image_name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -302,8 +413,7 @@ public class ImageType extends BaseFragment {
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
 
-                        if(message.equals("timeout"))
-                        {
+                        if (message.equals("timeout")) {
                             showLongToast(getActivity(), "Internet is slow, please try again.");
                         }
                         dismissProgress();
@@ -326,21 +436,17 @@ public class ImageType extends BaseFragment {
 
         String message = addMessageResponse.getMessage();
 
-        if(message.equals("success"))
-        {
+        if (message.equals("success")) {
             Intent intent = new Intent(getActivity(), MySetCards.class);
             intent.putExtra("set_id", set_id);
             intent.putExtra("set_name", set_name);
             intent.putExtra("userId", userId);
             startActivity(intent);
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-        }
-
-        else {
+        } else {
             showLongToast(getActivity(), message);
         }
     }
-
 
 
 }

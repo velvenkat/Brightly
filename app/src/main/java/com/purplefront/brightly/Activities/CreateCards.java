@@ -122,18 +122,39 @@ public class CreateCards extends BaseActivity implements UserInterface{
     private void setupViewPager(ViewPager viewpager_creatCard) {
 
         CreateCards.ViewPagerAdapter adapter = new CreateCards.ViewPagerAdapter(getSupportFragmentManager());
+        Fragment create_imgType=new ImageType();
+        Bundle bundle2 =new Bundle();
+        bundle2.putBoolean("isCreate",true);
+        create_imgType.setArguments(bundle2);
+        adapter.addFrag(create_imgType, "image");
 
-        adapter.addFrag(new ImageType(), "image");
-        adapter.addFrag(new YoutubeType(), "youtube");
 
-        Fragment create_audioType=new AudioType();
+
+
+        Fragment create_UTubeType=new YoutubeType();
         Bundle bundle =new Bundle();
         bundle.putBoolean("isCreate",true);
-        create_audioType.setArguments(bundle);
+        create_UTubeType.setArguments(bundle);
+        adapter.addFrag(create_UTubeType, "youtube");
+
+
+//        adapter.addFrag(new YoutubeType(), "youtube");
+
+        Fragment create_audioType=new AudioType();
+        Bundle bundle1 =new Bundle();
+        bundle1.putBoolean("isCreate",true);
+        create_audioType.setArguments(bundle1);
         adapter.addFrag(create_audioType, "audio");
 
      //   adapter.addFrag(new AudioType(), "audio");
-        adapter.addFrag(new FileType(), "file");
+//        adapter.addFrag(new FileType(), "file");
+        Fragment create_fileType=new FileType();
+        Bundle bundle4 =new Bundle();
+        bundle4.putBoolean("isCreate",true);
+        create_fileType.setArguments(bundle4);
+        adapter.addFrag(create_fileType, "file");
+
+
         viewpager_creatCard.setAdapter(adapter);
     }
 

@@ -1,14 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".Fragments.FileType">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/image_file_link"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dimen_25"
+        android:src="@drawable/pdf_icon"/>
+
+
+    <TextView
+        android:id="@+id/create_cardURLTitle"
+        android:singleLine="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_20"
+        android:layout_marginLeft="@dimen/dimen_20"
+        android:layout_marginRight="@dimen/dimen_20"
+        android:gravity="center_vertical"
+        android:text="@string/card_file_url_title"
+        android:padding="@dimen/dimen_4"
+        android:textColor="@color/black"
+        android:textSize="@dimen/smalltextSize" />
+
+    <EditText
+        android:id="@+id/create_cardURL"
+        android:singleLine="true"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="@dimen/dimen_5"
+        android:layout_marginLeft="@dimen/dimen_20"
+        android:layout_marginRight="@dimen/dimen_20"
+        android:inputType="textUri"
+        android:background="@drawable/edit_text_background"
+        android:gravity="center_vertical"
+        android:hint="@string/card_file_url_hint"
+        android:padding="@dimen/dimen_4"
+        android:textColor="@color/black"
+        android:textSize="@dimen/mediumtextsize" />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/dimen_20"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/create_cardName"
+            android:singleLine="true"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:layout_marginBottom="@dimen/dimen_5"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:inputType="textCapSentences"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center_vertical"
+            android:hint="@string/card_name"
+            android:maxLength="25"
+            android:padding="@dimen/dimen_4"
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize" />
+
+        <EditText
+            android:id="@+id/create_cardDescription"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="@dimen/dimen_20"
+            android:layout_marginBottom="@dimen/dimen_10"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:inputType="textCapSentences"
+            android:background="@drawable/edit_text_background"
+            android:gravity="start"
+            android:hint="@string/card_description"
+            android:padding="@dimen/dimen_4"
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_createCard"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/login_btn_background"
+        android:padding="3dp"
+        android:text="@string/create_card"
+        android:textColor="@color/white"
+        android:textSize="@dimen/mediumtextsize"
+        />
+
+
+
+</LinearLayout>

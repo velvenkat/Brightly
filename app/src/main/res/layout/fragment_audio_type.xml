@@ -18,6 +18,7 @@
     android:orientation="vertical"
     android:id="@+id/ll_cr_contr"
     >
+
     <ImageView
         android:id="@+id/upload_audioFile"
         android:layout_width="100dp"
@@ -94,14 +95,14 @@
             </RelativeLayout>
         </RelativeLayout>
 
-        <ImageView
+        <!--<ImageView
             android:id="@+id/image_deleteAudioFile"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_weight="0.2"
             android:paddingRight="@dimen/dimen_16"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/delete_trash"/>
+            android:src="@drawable/delete_trash"/>-->
 
     </LinearLayout>
 

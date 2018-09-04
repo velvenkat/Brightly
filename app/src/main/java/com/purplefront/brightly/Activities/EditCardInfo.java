@@ -17,9 +17,9 @@ import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Application.UserInterface;
 import com.purplefront.brightly.Fragments.AudioType;
-import com.purplefront.brightly.Fragments.EditFileType;
-import com.purplefront.brightly.Fragments.EditImageType;
-import com.purplefront.brightly.Fragments.EditYoutubeType;
+import com.purplefront.brightly.Fragments.FileType;
+import com.purplefront.brightly.Fragments.ImageType;
+import com.purplefront.brightly.Fragments.YoutubeType;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.UserModule;
@@ -170,13 +170,27 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
 
             case "image":
 
-                adapter.addFrag(new EditImageType(), "image");
+                Fragment edit_imgType=new ImageType();
+                Bundle bundle2 =new Bundle();
+                bundle2.putBoolean("isCreate",false);
+                edit_imgType.setArguments(bundle2);
+                adapter.addFrag(edit_imgType, "image");
+
+
+                //adapter.addFrag(new EditImageType(), "image");
 
                 break;
 
             case "video":
 
-                adapter.addFrag(new EditYoutubeType(), "youtube");
+               // adapter.addFrag(new YoutubeType(), "youtube");
+
+                Fragment edit_UTubeType=new YoutubeType();
+                Bundle bundle =new Bundle();
+                bundle.putBoolean("isCreate",false);
+                edit_UTubeType.setArguments(bundle);
+                adapter.addFrag(edit_UTubeType, "youtube");
+
 
 
                 break;
@@ -184,22 +198,33 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
             case "audio":
 
                 Fragment edit_audioType=new AudioType();
-                Bundle bundle =new Bundle();
-                bundle.putBoolean("isCreate",false);
-                edit_audioType.setArguments(bundle);
+                Bundle bundle1 =new Bundle();
+                bundle1.putBoolean("isCreate",false);
+                edit_audioType.setArguments(bundle1);
                 adapter.addFrag(edit_audioType, "audio");
 
                 break;
 
             case "file":
 
-                adapter.addFrag(new EditFileType(), "file");
+                Fragment edit_fileType=new FileType();
+                Bundle bundle4 =new Bundle();
+                bundle4.putBoolean("isCreate",false);
+                edit_fileType.setArguments(bundle4);
+                adapter.addFrag(edit_fileType, "file");
+
 
                 break;
 
             case "text":
 
-                adapter.addFrag(new EditImageType(), "image");
+/*                adapter.addFrag(new EditImageType(), "image");*/
+                Fragment edit_imgType1=new ImageType();
+                Bundle bundle3 =new Bundle();
+                bundle3.putBoolean("isCreate",false);
+                edit_imgType1.setArguments(bundle3);
+                adapter.addFrag(edit_imgType1, "image");
+
                 break;
         }
 

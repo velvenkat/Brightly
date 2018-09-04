@@ -50,6 +50,7 @@ public class YoutubeType extends BaseFragment {
     String image_name;
     String type = "";
 
+    boolean isCreateCard;
 
     public YoutubeType() {
         // Required empty public constructor
@@ -82,6 +83,17 @@ public class YoutubeType extends BaseFragment {
         create_cardDescription = (EditText) view.findViewById(R.id.create_cardDescription);
         btn_createCard = (Button)view.findViewById(R.id.btn_createCard);
 
+        Bundle bundle=getArguments();
+        isCreateCard=bundle.getBoolean("isCreate");
+        if(isCreateCard){
+
+        }
+        else{
+            btn_createCard.setText("UPDATE CARD");
+            create_cardName.setText(userModule.getCard_name());
+            create_cardDescription.setText(userModule.getCard_description());
+            create_cardURL.setText(userModule.getCard_multimedia_url());
+        }
         btn_createCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,7 +147,11 @@ public class YoutubeType extends BaseFragment {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList("video", userId, set_id, card_name, card_description, "", image_name );
+                Call<AddMessageResponse> callRegisterUser;
+                if(isCreateCard)
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList("video", userId, set_id, card_name, card_description, "", image_name );
+                else
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("video", userId, set_id, userModule.getCard_id(),card_name, card_description, "", image_name );
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {

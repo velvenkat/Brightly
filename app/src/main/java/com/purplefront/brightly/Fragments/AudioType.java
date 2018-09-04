@@ -63,12 +63,12 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AudioType extends BaseFragment  {
+public class AudioType extends BaseFragment {
 
     View view;
     TextView text_audioFile;
     ImageView upload_audioFile;
-    ImageView image_deleteAudioFile;
+    // ImageView image_deleteAudioFile;
     EditText create_cardName;
     EditText create_cardDescription;
     Button btn_createCard;
@@ -128,8 +128,8 @@ public class AudioType extends BaseFragment  {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_audio_type, container, false);
 
-        Bundle bundle =getArguments();
-        isCreateScreen=bundle.getBoolean("isCreate");
+        Bundle bundle = getArguments();
+        isCreateScreen = bundle.getBoolean("isCreate");
 
         userId = userModule.getUserId();
         set_id = userModule.getSet_id();
@@ -139,7 +139,7 @@ public class AudioType extends BaseFragment  {
         audio_seek_bar = (SeekBar) rootView.findViewById(R.id.seek_audio_rec);
         txt_PlayProgTime = (TextView) rootView.findViewById(R.id.txt_PlayProgTime);
         text_audioFile = (TextView) rootView.findViewById(R.id.text_audioFile);
-        image_deleteAudioFile = (ImageView) rootView.findViewById(R.id.image_deleteAudioFile);
+        //   image_deleteAudioFile = (ImageView) rootView.findViewById(R.id.image_deleteAudioFile);
         upload_audioFile = (ImageView) rootView.findViewById(R.id.upload_audioFile);
         create_cardName = (EditText) rootView.findViewById(R.id.create_cardName);
         create_cardDescription = (EditText) rootView.findViewById(R.id.create_cardDescription);
@@ -156,17 +156,19 @@ public class AudioType extends BaseFragment  {
 
         rec_contr.setVisibility(View.GONE);
         crt_contr.setVisibility(View.VISIBLE);
-        if(isCreateScreen){
+        audio_player_initialize(audio_seek_bar, txt_PlayProgTime, img_play_stop);
+        if (isCreateScreen) {
             rl_audio_player.setVisibility(View.GONE);
             text_audioFile.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             rl_audio_player.setVisibility(View.VISIBLE);
             text_audioFile.setVisibility(View.GONE);
-
+            setMediaPlayer(null, userModule.getCard_multimedia_url());
+            create_cardName.setText(userModule.getCard_name());
+            create_cardDescription.setText(userModule.getCard_description());
+            btn_createCard.setText("UPDATE CARD");
         }
-        audio_player_initialize(audio_seek_bar,txt_PlayProgTime,img_play_stop);
-        setMediaPlayer(null,userModule.getCard_multimedia_url());
+
 
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
@@ -219,18 +221,25 @@ public class AudioType extends BaseFragment  {
                 }
             }
         });
-  */      rootView.setOnKeyListener(new View.OnKeyListener() {
+  */
+        rootView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
                     if ((rec_contr.getVisibility() == View.VISIBLE)) {
+
                         rec_contr.setVisibility(View.GONE);
+
                         crt_contr.setVisibility(View.VISIBLE);
+                        if (isPlayBtnClicked) {
+                            myAudioRecorder.stop();
+                            myAudioRecorder.release();
+                        }
                         tempMp3File = null;
                         isPlayBtnClicked = false;
                         return false;
                     } else {
-                         release_media();
+                        release_media();
                     }
                 }
                 return true;
@@ -285,16 +294,16 @@ public class AudioType extends BaseFragment  {
         return rootView;
     }
 
-   /* public void release_media() {
-        if (mediaPlayer != null) {
-            if (isAudioPlay) {
-                isAudioPlay = false;
-                mediaPlayer.pause();
-            }
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-    }*/
+    /* public void release_media() {
+         if (mediaPlayer != null) {
+             if (isAudioPlay) {
+                 isAudioPlay = false;
+                 mediaPlayer.pause();
+             }
+             mediaPlayer.release();
+             mediaPlayer = null;
+         }
+     }*/
     /*private void primarySeekBarProgressUpdater() {
         if (isAudioPlay) {
             audio_seek_bar.setProgress((int) (((float) mediaPlayer.getCurrentPosition() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
@@ -326,7 +335,7 @@ public class AudioType extends BaseFragment  {
         */    // fragmentCall_mainObj.Fragment_call(this,new Create_PetActivity(), "act_crt", bundle);
             rec_contr.setVisibility(View.GONE);
             crt_contr.setVisibility(View.VISIBLE);
-            setMediaPlayer(null,tempMp3File.getAbsolutePath());
+            setMediaPlayer(null, tempMp3File.getAbsolutePath());
         }
     }
 
@@ -340,7 +349,7 @@ public class AudioType extends BaseFragment  {
         mBottomSheetDialog.show();
         ListView list_SettingsMenu = (ListView) mBottomSheetDialog.getWindow().findViewById(R.id.list_view_dialog);
         ArrayList<String> menu_list = new ArrayList<>();
-        menu_list.add("Chose audio file");
+        menu_list.add("Choose audio file");
         menu_list.add("Record audio");
 
         ArrayAdapter<String> menu_itmes = new ArrayAdapter<String>(getContext(), R.layout.menu_row_diualog, R.id.dialog_menu_textView,
@@ -360,11 +369,11 @@ public class AudioType extends BaseFragment  {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         // Toast.makeText(getContext(),"Position :"+position,Toast.LENGTH_SHORT).show();
                         mBottomSheetDialog.dismiss();
-                        audio_uri = null;
-                        tempMp3File = null;
-                        release_media();
-                        text_audioFile.setVisibility(View.VISIBLE);
-                        rl_audio_player.setVisibility(View.GONE);
+                        //audio_uri = null;
+                        //tempMp3File = null;
+                        //release_media();
+                        //text_audioFile.setVisibility(View.VISIBLE);
+                        // rl_audio_player.setVisibility(View.GONE);
                         switch (position) {
                             case 1:
                                 try {
@@ -418,7 +427,7 @@ public class AudioType extends BaseFragment  {
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }*/
-                setMediaPlayer(audio_uri,null);
+                setMediaPlayer(audio_uri, null);
                 //Toast.makeText(getContext(), "Audio URI" + audio_uri, Toast.LENGTH_SHORT).show();
             }
         }
@@ -523,7 +532,10 @@ public class AudioType extends BaseFragment  {
                 image_name = sdf.format(new Date());
 
             } else {
-                encoded_string = "";
+                if (isCreateScreen)
+                    encoded_string = "";
+                else
+                    encoded_string = "old";
             }
         } catch (Exception e) {
 
@@ -536,8 +548,10 @@ public class AudioType extends BaseFragment  {
             new CustomToast().Show_Toast(getActivity(), create_cardName,
                     "Both fields are required.");
         } else if (encoded_string.equals("") || encoded_string.length() == 0) {
+
             new CustomToast().Show_Toast(getActivity(), text_audioFile,
                     "Audio File is required.");
+
         }
 
         // Else do signup or do your stuff
@@ -553,10 +567,11 @@ public class AudioType extends BaseFragment  {
             if (CheckNetworkConnection.isOnline(getActivity())) {
                 showProgress();
                 Call<AddMessageResponse> callRegisterUser;
-                if(isCreateScreen)
+                if (isCreateScreen)
                     callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList("audio", userId, set_id, card_name, card_description, encoded_string, image_name);
                 else
-                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("audio", userId, set_id,userModule.getCard_id(), card_name, card_description, encoded_string, image_name);
+
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("audio", userId, set_id, userModule.getCard_id(), card_name, card_description, encoded_string, image_name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {

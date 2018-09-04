@@ -43,6 +43,7 @@ public class ItemsAddFragment extends Fragment {
                 intent.putExtra("userId", user_id);
                 intent.putExtra("set_id", set_id);
                 intent.putExtra("set_name", set_name);
+
                 getActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
