@@ -148,7 +148,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     }
 
     public void setSeek_Bar(){
-
+        audio_seek_bar.setMax(99);
         audio_seek_bar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
