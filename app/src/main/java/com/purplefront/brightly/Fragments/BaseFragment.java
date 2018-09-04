@@ -306,7 +306,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
         try {
             mProgress = new ProgressDialog(getActivity());
             mProgress.setIndeterminate(false);
-            mProgress.setTitle("Sending....");
+            mProgress.setTitle("Please wait....");
             mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mProgress.setCancelable(true);
             mProgress.show();

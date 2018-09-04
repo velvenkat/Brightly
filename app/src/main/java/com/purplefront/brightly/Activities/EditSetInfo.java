@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
@@ -26,6 +27,8 @@ public class EditSetInfo extends BaseActivity {
     EditText edit_setName;
     EditText edit_setDescription;
     Button btn_editSet;
+
+    ImageView share, delete;
 
     String userId;
     String channel_id = "";
@@ -54,6 +57,9 @@ public class EditSetInfo extends BaseActivity {
         edit_setDescription = (EditText) findViewById(R.id.edit_setDescription);
         btn_editSet = (Button) findViewById(R.id.btn_editSet);
 
+        share = (ImageView) findViewById(R.id.share);
+        delete = (ImageView) findViewById(R.id.delete);
+
         edit_setName.setText(set_name);
         edit_setDescription.setText(set_description);
 
@@ -61,6 +67,26 @@ public class EditSetInfo extends BaseActivity {
             @Override
             public void onClick(View view) {
                 checkValidation();
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAlertDialog();
+            }
+        });
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(EditSetInfo.this, ShareWithContacts.class);
+                intent.putExtra("set_id", set_id);
+                intent.putExtra("userId", userId);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.left_enter, R.anim.right_out);
             }
         });
     }
@@ -122,13 +148,6 @@ public class EditSetInfo extends BaseActivity {
         alertDialog.show();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.delete, menu);
-        return true;
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -139,11 +158,6 @@ public class EditSetInfo extends BaseActivity {
                 overridePendingTransition(R.anim.left_enter, R.anim.right_out);
                 return true;
 
-            case R.id.delete:
-
-                showAlertDialog();
-
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

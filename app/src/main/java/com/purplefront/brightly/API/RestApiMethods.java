@@ -83,6 +83,10 @@ public interface RestApiMethods {
     @POST("sets/delete_set.php")
     Call<AddMessageResponse> getDeleteSet(@Query("set_id") String set_id);
 
+    //Update Sets
+    @POST("share/share_set_multiple.php")
+    Call<AddMessageResponse> getShareSet(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("phone_no ") String phone_no );
+
     //CardList
     @POST("cards/card_list.php")
     Call<CardsListResponse> getCardsList(@Query("set_id") String set_id);
