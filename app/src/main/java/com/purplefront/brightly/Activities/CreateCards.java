@@ -114,7 +114,7 @@ public class CreateCards extends BaseActivity implements UserInterface{
         tabs_creatCard.getTabAt(2).setCustomView(tabThree);
 
         final TextView tabFour = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabFour.setText("File Links");
+        tabFour.setText("File");
         // tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_creatCard.getTabAt(3).setCustomView(tabFour);
     }

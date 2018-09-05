@@ -21,6 +21,10 @@ public class SetsListModel {
     @Expose
     private String thumbnail;
 
+    @SerializedName("share_link")
+    @Expose
+    private String share_link;
+
     public boolean isDelSel() {
         return isDelSel;
     }
@@ -30,11 +34,12 @@ public class SetsListModel {
     }
 
     private boolean isDelSel=false;
-    public SetsListModel(String set_id, String set_name, String description, String thumbnail) {
+    public SetsListModel(String set_id, String set_name, String description, String thumbnail, String share_link) {
         this.set_id = set_id;
         this.set_name = set_name;
         this.description = description;
         this.thumbnail = thumbnail;
+        this.share_link = share_link;
     }
 
     public String getSet_id() {
@@ -67,5 +72,13 @@ public class SetsListModel {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public String getShare_link() {
+        return share_link;
+    }
+
+    public void setShare_link(String share_link) {
+        this.share_link = share_link;
     }
 }

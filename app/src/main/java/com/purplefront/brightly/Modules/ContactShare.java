@@ -1,13 +1,15 @@
 package com.purplefront.brightly.Modules;
 
-public class ContactShare {
+import java.io.Serializable;
+
+public class ContactShare implements Serializable {
 
     private String ContactName;
     private String ContactNumber;
 
     public ContactShare(String contactName, String contactNumber) {
-        ContactName = contactName;
-        ContactNumber = contactNumber;
+        this.ContactName = contactName;
+        this.ContactNumber = contactNumber;
     }
 
     public ContactShare() {

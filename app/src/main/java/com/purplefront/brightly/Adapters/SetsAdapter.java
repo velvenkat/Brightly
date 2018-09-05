@@ -36,6 +36,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
     RealmResults<RealmModel> realmModel;
     String userId;
     String channel_id;
+    String share_link;
     Set_sel_interface mListener;
     boolean isSelToDel = false;
 
@@ -142,13 +143,14 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     mListener.onSelect(position, setsListModel);
                 } else {
 
-
+                    share_link = setsListModel.getShare_link();
                     Intent intent = new Intent(context, MySetCards.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("set_id", setsListModel.getSet_id());
                     intent.putExtra("set_name", setsListModel.getSet_name());
                     intent.putExtra("set_description", setsListModel.getDescription());
                     intent.putExtra("channel_id", channel_id);
+                    intent.putExtra("share_link", share_link);
                     context.startActivity(intent);
                     context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
                 }

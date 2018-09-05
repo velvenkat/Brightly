@@ -13,7 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 
 import com.purplefront.brightly.Adapters.ContactsAdapter;
@@ -22,15 +27,17 @@ import com.purplefront.brightly.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ShareWithContacts extends BaseActivity {
 
     private static final int REQUEST_PERMISSION = 1;
 
-    RecyclerView contacts_listview;
-    SearchView conatcts_searchView;
+    ListView contacts_listview;
+    EditText conatcts_searchView;
 
-    List<ContactShare> contactShares = new ArrayList<>();
+    ArrayList<ContactShare> contactShares = new ArrayList<>();
+    ArrayList<ContactShare> getContactShares;
     ContactShare contacts;
     ContactsAdapter contactAdapter;
 
@@ -39,17 +46,20 @@ public class ShareWithContacts extends BaseActivity {
     String set_name = "";
     String set_id = "";
     String userId;
+    String share_link;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_with_contacts);
 
-        contacts_listview = (RecyclerView) findViewById(R.id.contacts_listview);
-        conatcts_searchView = (SearchView) findViewById(R.id.conatcts_searchView);
+        contacts_listview = (ListView) findViewById(R.id.contacts_listview);
+        conatcts_searchView = (EditText) findViewById(R.id.conatcts_searchView);
+
 
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
+        share_link = getIntent().getStringExtra("share_link");
         userId = getIntent().getStringExtra("userId");
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
@@ -60,6 +70,41 @@ public class ShareWithContacts extends BaseActivity {
         } else {
             requestLocationPermission();
         }
+
+        // Capture Text in EditText
+        conatcts_searchView.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+                String srch_str=conatcts_searchView.getText().toString();
+                if(srch_str.trim().equals("")){
+
+                }
+                else {
+                    String text = srch_str.trim().toLowerCase();
+
+                        if (contactAdapter != null) {
+                            contactAdapter.filter(text);
+                        } else {
+                            Toast.makeText(ShareWithContacts.this, "Could't able to find the Data ,Please try after some time.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1,
+                                          int arg2, int arg3) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                      int arg3) {
+                // TODO Auto-generated method stub
+            }
+        });
 
     }
 
@@ -88,7 +133,7 @@ public class ShareWithContacts extends BaseActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-//                    getAllContacts();
+                   // getAllContacts();
                     LoadContact loadContact = new LoadContact();
                     loadContact.execute();
 
@@ -109,8 +154,11 @@ public class ShareWithContacts extends BaseActivity {
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
     }
 
-/*
-    private void getAllContacts() {
+    /*private void getAllContacts() {
+        progress=new ProgressDialog(ShareWithContacts.this);
+        progress.setMessage("Extracting Contacts...");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.show();
 
         ContentResolver contentResolver = getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
@@ -150,11 +198,16 @@ public class ShareWithContacts extends BaseActivity {
                 }
             }
 
-            contacts_listview.setLayoutManager(new LinearLayoutManager(ShareWithContacts.this));
-            contactAdapter = new ContactsAdapter(ShareWithContacts.this, contactShares);
-            contacts_listview.setAdapter(contactAdapter);
+            setConatcts(contactShares);
+            progress.dismiss();
         }
     }*/
+
+    private void setConatcts(ArrayList<ContactShare> contactShares) {
+        this.getContactShares = contactShares;
+        contactAdapter = new ContactsAdapter(ShareWithContacts.this, getContactShares);
+        contacts_listview.setAdapter(contactAdapter);
+    }
 
     @SuppressLint("StaticFieldLeak")
     class LoadContact extends AsyncTask<Void, Void, Void>
@@ -168,7 +221,7 @@ public class ShareWithContacts extends BaseActivity {
             progress.setMessage("Extracting Contacts...");
             progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progress.show();
-            /*showProgress();*/
+            showProgress();
 
         }
 
@@ -209,6 +262,7 @@ public class ShareWithContacts extends BaseActivity {
                             String emailId = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                         }
                         contactShares.add(contacts);
+
                     }
                 }
 
@@ -221,10 +275,11 @@ public class ShareWithContacts extends BaseActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            contacts_listview.setLayoutManager(new LinearLayoutManager(ShareWithContacts.this));
-            contactAdapter = new ContactsAdapter(ShareWithContacts.this, contactShares);
-            contacts_listview.setAdapter(contactAdapter);
-            /*dismissProgress();*/
+
+            /*contactAdapter = new ContactsAdapter(ShareWithContacts.this, contactShares);
+            contacts_listview.setAdapter(contactAdapter);*/
+            setConatcts(contactShares);
+            dismissProgress();
             progress.dismiss();
         }
     }

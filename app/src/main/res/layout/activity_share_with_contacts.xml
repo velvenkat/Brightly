@@ -8,20 +8,23 @@
     tools:context=".Activities.ShareWithContacts">
 
 
-    <SearchView
+    <EditText
         android:id="@+id/conatcts_searchView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_4"
-        android:gravity="center"
+        android:layout_height="40dp"
+        android:layout_margin="@dimen/dimen10"
         android:background="@drawable/edit_text_background"
         android:hint="@string/search_by_name"
-        android:padding="2dp"
+        android:padding="@dimen/dimen_10"
+        android:textColor="@color/black"
+        android:drawableLeft="@android:drawable/ic_menu_search"
+        android:drawablePadding="@dimen/dimen_8"
         android:singleLine="true"
+        android:textSize="@dimen/mediumtextsize"
         android:textColorHint="@color/secondary_text"/>
 
 
-    <android.support.v7.widget.RecyclerView
+    <ListView
         android:id="@+id/contacts_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

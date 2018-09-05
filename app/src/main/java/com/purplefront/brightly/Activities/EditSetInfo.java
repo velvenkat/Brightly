@@ -35,6 +35,7 @@ public class EditSetInfo extends BaseActivity {
     String set_description = "";
     String set_name = "";
     String set_id = "";
+    String share_link;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,8 @@ public class EditSetInfo extends BaseActivity {
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
         userId = getIntent().getStringExtra("userId");
+        share_link = getIntent().getStringExtra("share_link");
+
 
         edit_setName = (EditText) findViewById(R.id.edit_setName);
         edit_setDescription = (EditText) findViewById(R.id.edit_setDescription);
@@ -84,6 +87,7 @@ public class EditSetInfo extends BaseActivity {
                 Intent intent = new Intent(EditSetInfo.this, ShareWithContacts.class);
                 intent.putExtra("set_id", set_id);
                 intent.putExtra("userId", userId);
+                intent.putExtra("share_link", share_link);
                 startActivity(intent);
                 finish();
                 overridePendingTransition(R.anim.left_enter, R.anim.right_out);

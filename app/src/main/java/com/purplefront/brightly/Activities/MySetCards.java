@@ -45,6 +45,7 @@ public class MySetCards extends BaseActivity {
     String set_description = "";
     String set_name = "";
     String set_id = "";
+    String share_link = "";
     int Cur_PagrPosition;
 
     @Override
@@ -69,6 +70,7 @@ public class MySetCards extends BaseActivity {
         set_description = getIntent().getStringExtra("set_description");
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
+        share_link = getIntent().getStringExtra("share_link");
         setTitle(set_name);
 
         // Locate the ViewPager in viewpager_main.xml
@@ -177,6 +179,7 @@ public class MySetCards extends BaseActivity {
                 intent.putExtra("set_id", set_id);
                 intent.putExtra("set_name", set_name);
                 intent.putExtra("set_description", set_description);
+                intent.putExtra("share_link", share_link);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
 

@@ -182,14 +182,24 @@ public class ImageChooser_Crop {
 
     public Uri getPickImageResultUri(Intent data) {
         boolean isCamera = true;
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
+      /*  if (android.os.Build.VERSION.SDK_INT >= 23) {
             isCamera = data == null || data.getClipData() == null;
-        } else {
+        } else {*/
             if (data != null) {
-                String action = data.getAction();
-                isCamera = action != null && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+                if(data.getAction()!=null) {
+                    String action = data.getAction();
+                    isCamera=true;
+                  //  isCamera = action != null && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+                }
+                else{
+                    isCamera=false;
+                }
             }
-        }
+            else
+            {
+             return null;
+            }
+
         return isCamera ? getCaptureImageOutputUri() : data.getData();
     }
 
