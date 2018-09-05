@@ -18,7 +18,20 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/action_bar"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:gravity="center_vertical"
+                android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="@dimen/dimen_20"
+                android:src="@drawable/check_list"
+                android:id="@+id/menu_multi_sel"
+
+                android:layout_alignParentRight="true"
+                android:layout_height="@dimen/dimen_20" />
+            </RelativeLayout>
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 

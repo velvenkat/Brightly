@@ -2,6 +2,7 @@ package com.purplefront.brightly.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -55,12 +56,17 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     ArrayList<String> del_sel_id = new ArrayList<>();
     String channel_id = "";
     RelativeLayout del_contr;
+    ItemTouchHelper ith;
 
     Button btn_cancel, btn_delete;
     String strDelSelId = "";
     TextView txtItemSel;
     CheckBox chk_sel_all;
-    boolean is_on_set_chg_chk_status=false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
+
+    ImageView img_mutli_sel;
+    boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
+
+   // boolean isMultiSelChoosed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +81,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         btn_cancel = (Button) findViewById(R.id.btn_cancel);
         btn_delete = (Button) findViewById(R.id.btn_delete);
         chk_sel_all = (CheckBox) findViewById(R.id.chk_sel_all);
+        img_mutli_sel=(ImageView)findViewById(R.id.menu_multi_sel);
         realmModel = realm.where(RealmModel.class).findAllAsync();
         realmModel.load();
         for (RealmModel model : realmModel) {
@@ -94,38 +101,59 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
 
         image_createChannelSet = (ImageView) findViewById(R.id.image_createChannelSet);
         setDlgListener(this);
+        img_mutli_sel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(MyChannelsSet.this,"HI",Toast.LENGTH_LONG).show();
+                if(setsListModelList.size()>0) {
+                    getSupportActionBar().hide();
+                    del_contr.setVisibility(View.VISIBLE);
+                    txtItemSel.setText("");
+                    btn_delete.setEnabled(false);
+                    ith.attachToRecyclerView(null);
+                    channelsSetAdapter.set_SelToDel(true);
+                    channelsSetAdapter.notifyDataSetChanged();
+                    // isMultiSelChoosed=true;
+                    //   ith = new ItemTouchHelper(dragCallback);
+
+                }
+                else {
+
+                }
+
+
+            }
+        });
         chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if(is_on_set_chg_chk_status){
+                if (is_on_set_chg_chk_status) {
 
-                  is_on_set_chg_chk_status=false;
-                }
-
-                else{
-                    del_sel_id=new ArrayList<>();
+                    is_on_set_chg_chk_status = false;
+                } else {
+                    del_sel_id = new ArrayList<>();
                     if (isChecked) {
                         chk_sel_all.setText("Unselect all");
                         btn_delete.setEnabled(true);
 
-                        for(int i=0;i<setsListModelList.size();i++){
-                            SetsListModel modelObj=setsListModelList.get(i);
+                        for (int i = 0; i < setsListModelList.size(); i++) {
+                            SetsListModel modelObj = setsListModelList.get(i);
                             modelObj.setDelSel(true);
                             del_sel_id.add(modelObj.getSet_id());
                             setsListModelList.remove(i);
-                            setsListModelList.add(i,modelObj);
+                            setsListModelList.add(i, modelObj);
 
                         }
                         txtItemSel.setText(del_sel_id.size() + " items selected");
                     } else {
                         chk_sel_all.setText("Select all");
                         btn_delete.setEnabled(false);
-                        for(int i=0;i<setsListModelList.size();i++){
-                            SetsListModel modelObj=setsListModelList.get(i);
+                        for (int i = 0; i < setsListModelList.size(); i++) {
+                            SetsListModel modelObj = setsListModelList.get(i);
                             modelObj.setDelSel(false);
                             setsListModelList.remove(i);
-                            setsListModelList.add(i,modelObj);
+                            setsListModelList.add(i, modelObj);
                         }
                         txtItemSel.setText("");
                     }
@@ -140,7 +168,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                 strDelSelId = android.text.TextUtils.join(",", del_sel_id);
                 showAlertDialog("You are about to delete the Set. All the information contained in the Sets will be lost.", "Confirm Delete...", "Delete", "Cancel");
                 // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
-
+                ith.attachToRecyclerView(channelSet_listview);
             }
         });
 
@@ -174,10 +202,11 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                 }
                 channelsSetAdapter.set_SelToDel(false);
                 channelsSetAdapter.notifyDataSetChanged();
+                ith.attachToRecyclerView(channelSet_listview);
             }
         });
 // Extend the Callback class
-        ItemTouchHelper.Callback _ithCallback = new ItemTouchHelper.Callback() {
+        /*ItemTouchHelper.Callback _ithCallback = new ItemTouchHelper.Callback() {
             //and in your imlpementaion of
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 // get the viewHolder's and target's positions in your adapter data, swap them
@@ -185,7 +214,14 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                 // and notify the adapter that its dataset has changed
                 channelsSetAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 //Toast.makeText(MyChannelsSet.this,"OnMoved",Toast.LENGTH_LONG).show();
-                call_set_reorder();
+                Handler handler =new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        call_set_reorder();
+                    }
+                },500);
+
                 return true;
             }
 
@@ -208,6 +244,77 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
         ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
         ith.attachToRecyclerView(channelSet_listview);
+*/
+
+        ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
+
+            int dragFrom = -1;
+            int dragTo = -1;
+
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
+                        0);
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+
+
+                    int fromPosition = viewHolder.getAdapterPosition();
+                    int toPosition = target.getAdapterPosition();
+
+
+                    if (dragFrom == -1) {
+                        dragFrom = fromPosition;
+                    }
+                    dragTo = toPosition;
+
+                    //channelsSetAdapter.onItemMove(fromPosition, toPosition);
+                    Collections.swap(setsListModelList, fromPosition, toPosition);
+                    // and notify the adapter that its dataset has changed
+                    channelsSetAdapter.notifyItemMoved(fromPosition, toPosition);
+                     channelsSetAdapter.notifyItemChanged(fromPosition);
+                    channelsSetAdapter.notifyItemChanged(toPosition);
+                    return true;
+
+            }
+
+            private void reallyMoved(int from, int to) {
+                // I guessed this was what you want...
+                call_set_reorder();
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return false;
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+
+                if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+                    reallyMoved(dragFrom, dragTo);
+                }
+
+                dragFrom = dragTo = -1;
+            }
+
+        };
+        // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
+         ith = new ItemTouchHelper(dragCallback);
+        ith.attachToRecyclerView(channelSet_listview);
 
         image_createChannelSet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,6 +332,8 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         getSetLists();
 
     }
+
+
 
     public void getSetLists() {
         try {
@@ -421,8 +530,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
 
     @Override
     public void onSelect(int position, SetsListModel modelObj) {
-        getSupportActionBar().hide();
-        del_contr.setVisibility(View.VISIBLE);
+
         if (modelObj.isDelSel()) {
             modelObj.setDelSel(false);
             int i = 0;
@@ -438,7 +546,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                 btn_delete.setEnabled(false);
                 txtItemSel.setText("");
                 chk_sel_all.setText("Select all");
-                is_on_set_chg_chk_status=true;
+                is_on_set_chg_chk_status = true;
                 chk_sel_all.setChecked(false);
             }
         } else {
@@ -446,9 +554,9 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
 
             chk_sel_all.setVisibility(View.VISIBLE);
             del_sel_id.add(modelObj.getSet_id());
-            if(setsListModelList.size()==del_sel_id.size()){
-             chk_sel_all.setText("Unselect all");
-                is_on_set_chg_chk_status=true;
+            if (setsListModelList.size() == del_sel_id.size()) {
+                chk_sel_all.setText("Unselect all");
+                is_on_set_chg_chk_status = true;
                 chk_sel_all.setChecked(true);
             }
             txtItemSel.setText(del_sel_id.size() + " items selected");

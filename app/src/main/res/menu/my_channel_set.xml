@@ -7,4 +7,5 @@
         app:showAsAction="never"
         android:visible="true"
         android:title="@string/info_edit" />
+
 </menu>

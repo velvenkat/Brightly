@@ -263,6 +263,15 @@ public class ImageType extends BaseFragment {
         } else if (encoded_string.equals("") || encoded_string.length() == 0 || encoded_string.equalsIgnoreCase("image_to_text")) {
            /* new CustomToast().Show_Toast(getActivity(), image_cardImage,
                     "Image is required.");*/
+            if(userModule.getType().equals("image")){
+                if(encoded_string.equalsIgnoreCase("image_to_text"))
+                    type = "text";
+                else {
+                    encoded_string = "old";
+                    type="image";
+                }
+            }
+            else
             type = "text";
 
             getAddCards();

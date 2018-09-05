@@ -69,7 +69,10 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        return position;
+        if(isSelToDel)
+            return position;
+        else
+        return super.getItemViewType(position);
     }
 
     @Override
@@ -124,7 +127,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                 }
             }
         });
-        holder.channel_layout.setOnLongClickListener(new View.OnLongClickListener() {
+        /*holder.channel_layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 isSelToDel = true;
@@ -132,7 +135,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                 return true;
             }
         });
-
+*/
         holder.channel_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
