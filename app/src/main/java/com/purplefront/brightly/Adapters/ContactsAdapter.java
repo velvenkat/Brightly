@@ -1,32 +1,33 @@
 package com.purplefront.brightly.Adapters;
 
 import android.app.Activity;
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.purplefront.brightly.Activities.ShareWithContacts;
 import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.R;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 public class ContactsAdapter extends BaseAdapter {
 
     private List<ContactShare> contactShares = null;
     private ArrayList<ContactShare> arraylist;
+    private ArrayList<String> selectedNumber = new ArrayList<String>();
+
     Activity context;
     LayoutInflater inflater;
+    String string;
 
     public ContactsAdapter(ShareWithContacts shareWithContacts, ArrayList<ContactShare> getContactShares) {
 
@@ -41,7 +42,8 @@ public class ContactsAdapter extends BaseAdapter {
 
     public class ViewHolder {
         TextView tvContactName, tvPhoneNumber;
-        LinearLayout contact_layout;
+        ImageView tick_selected;
+        CardView contact_layout;
     }
 
   /*  @Override
@@ -74,6 +76,14 @@ public class ContactsAdapter extends BaseAdapter {
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    public ArrayList<String> getContact_Share(){
+        return selectedNumber;
+    }
+    @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
         final ViewHolder holder;
 
@@ -83,19 +93,68 @@ public class ContactsAdapter extends BaseAdapter {
             // Locate the TextViews in listview_item.xml
             holder.tvContactName = view.findViewById(R.id.tvContactName);
             holder.tvPhoneNumber = view.findViewById(R.id.tvPhoneNumber);
-
+            holder.tick_selected = view.findViewById(R.id.tick_selected);
             holder.contact_layout = view.findViewById(R.id.contact_layout);
 
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
+        ContactShare model_view = contactShares.get(position);
         // Set the results into TextViews
-        holder.tvContactName.setText(contactShares.get(position).getContactName());
-        holder.tvPhoneNumber.setText(contactShares.get(position).getContactNumber());
+        holder.tvContactName.setText(model_view.getContactName());
+        holder.tvPhoneNumber.setText(model_view.getContactNumber());
+        holder.tick_selected.setImageResource(model_view.isSelected() ? R.mipmap.ic_right_tick : R.mipmap.ic_tick);
+
+        holder.contact_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+             /*   model_view.setSelected(!model_view.isSelected());
+                holder.tick_selected.setImageResource(model_view.isSelected() ? R.mipmap.ic_right_tick : R.mipmap.ic_tick);
+*/
+             if (model_view.isSelected()) {
+                    holder.tick_selected.setImageResource(R.mipmap.ic_tick);
+                    model_view.setSelected(false);
+                    int pos = 0;
+                 String mob_no=model_view.getContactNumber();
+                 mob_no=mob_no.replaceAll("[^0-9]","").trim();
+                    for (String num : selectedNumber) {
+                        if (num.equals(mob_no)) {
+                            selectedNumber.remove(pos);
+                        }
+                        pos++;
+                    }
+                } else
+                    {
+                        String mob_no=model_view.getContactNumber();
+                        mob_no=mob_no.replaceAll("[^0-9]","").trim();
+                        if(mob_no.length()>=10) {
+                            selectedNumber.add(mob_no);
+                            holder.tick_selected.setImageResource(R.mipmap.ic_right_tick);
+                            model_view.setSelected(true);
+                        }
+                /*HashSet<String> listToSet = new HashSet<String>(selectedNumber);
+
+                List<String> listWithoutDuplicates = new ArrayList<String>(listToSet);*/
+                    }
+
+                       /* string = TextUtils.join(", ", selectedNumber);
+                        Toast.makeText(context, string, Toast.LENGTH_LONG).show();*/
+
+
+            }
+        });
+
+
+
+
+
+
 
         return view;
     }
+
 
     // Filter Class
     public void filter(String charText) {

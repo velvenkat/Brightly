@@ -15,6 +15,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -35,6 +38,7 @@ public class ShareWithContacts extends BaseActivity {
 
     ListView contacts_listview;
     EditText conatcts_searchView;
+    Button btn_submit;
 
     ArrayList<ContactShare> contactShares = new ArrayList<>();
     ArrayList<ContactShare> getContactShares;
@@ -56,11 +60,24 @@ public class ShareWithContacts extends BaseActivity {
         contacts_listview = (ListView) findViewById(R.id.contacts_listview);
         conatcts_searchView = (EditText) findViewById(R.id.conatcts_searchView);
 
+        btn_submit = (Button) findViewById(R.id.btn_submit);
+
 
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
         share_link = getIntent().getStringExtra("share_link");
         userId = getIntent().getStringExtra("userId");
+
+        btn_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+               ArrayList<String>sel_num= new ArrayList<>(contactAdapter.getContact_Share());
+               String split_num=android.text.TextUtils.join(",",sel_num);
+               Toast.makeText(ShareWithContacts.this,"Sel_num"+split_num,Toast.LENGTH_LONG).show();
+
+            }
+        });
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -103,6 +120,16 @@ public class ShareWithContacts extends BaseActivity {
             public void onTextChanged(CharSequence arg0, int arg1, int arg2,
                                       int arg3) {
                 // TODO Auto-generated method stub
+            }
+        });
+
+        contacts_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+                ContactShare contactShare = contactShares.get(position);
+
+
             }
         });
 

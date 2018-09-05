@@ -23,6 +23,11 @@
         android:textSize="@dimen/mediumtextsize"
         android:textColorHint="@color/secondary_text"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:id="@+id/btn_submit"
+        android:text="Submit"
+        android:layout_height="wrap_content" />
 
     <ListView
         android:id="@+id/contacts_listview"

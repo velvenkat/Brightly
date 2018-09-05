@@ -6,6 +6,7 @@ public class ContactShare implements Serializable {
 
     private String ContactName;
     private String ContactNumber;
+    private boolean isSelected = false;
 
     public ContactShare(String contactName, String contactNumber) {
         this.ContactName = contactName;
@@ -31,5 +32,13 @@ public class ContactShare implements Serializable {
 
     public void setContactNumber(String contactNumber) {
         ContactNumber = contactNumber;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
