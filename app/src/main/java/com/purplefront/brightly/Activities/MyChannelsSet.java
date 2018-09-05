@@ -168,7 +168,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                 strDelSelId = android.text.TextUtils.join(",", del_sel_id);
                 showAlertDialog("You are about to delete the Set. All the information contained in the Sets will be lost.", "Confirm Delete...", "Delete", "Cancel");
                 // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
-                ith.attachToRecyclerView(channelSet_listview);
+                //ith.attachToRecyclerView(channelSet_listview);
             }
         });
 

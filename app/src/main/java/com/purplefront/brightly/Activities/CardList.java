@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +49,8 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
     String strDelSelId = "";
     TextView txtItemSel;
     CheckBox chk_sel_all;
+    ItemTouchHelper ith;
+    ImageView img_mutli_sel;
     boolean is_on_set_chg_chk_status=false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
 
 
@@ -72,6 +75,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
         btn_delete = (Button) findViewById(R.id.btn_delete);
         chk_sel_all = (CheckBox) findViewById(R.id.chk_sel_all);
         txtItemSel = (TextView) findViewById(R.id.txtCntSelected);
+        img_mutli_sel=(ImageView)findViewById(R.id.menu_multi_sel);
 
         setDlgListener(this);
         chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -113,6 +117,30 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
                 cardListAdapter.notifyDataSetChanged();
             }
         });
+        img_mutli_sel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(MyChannelsSet.this,"HI",Toast.LENGTH_LONG).show();
+                if(cardsListModels.size()>0) {
+                    getSupportActionBar().hide();
+                    del_contr.setVisibility(View.VISIBLE);
+                    txtItemSel.setText("");
+                    btn_delete.setEnabled(false);
+                    ith.attachToRecyclerView(null);
+                    cardListAdapter.set_SelToDel(true);
+                    cardListAdapter.notifyDataSetChanged();
+                    // isMultiSelChoosed=true;
+                    //   ith = new ItemTouchHelper(dragCallback);
+
+                }
+                else {
+
+                }
+
+
+            }
+        });
+
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,7 +148,6 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
                 strDelSelId = android.text.TextUtils.join(",", del_sel_id);
                 showAlertDialog("You are about to delete selected Cards. All the information contained in the Cards will be lost.", "Confirm Delete...", "Delete", "Cancel");
                 // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
-
             }
         });
 
@@ -154,41 +181,81 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
                 }
                 cardListAdapter.set_SelToDel(false);
                 cardListAdapter.notifyDataSetChanged();
+                ith.attachToRecyclerView(card_listview);
+
             }
         });
 
 
 
-        ItemTouchHelper.Callback _ithCallback = new ItemTouchHelper.Callback() {
-            //and in your imlpementaion of
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                // get the viewHolder's and target's positions in your adapter data, swap them
-                Collections.swap(cardsListModels, viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                // and notify the adapter that its dataset has changed
-                cardListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                //Toast.makeText(MyChannelsSet.this,"OnMoved",Toast.LENGTH_LONG).show();
-                call_card_reorder();
-                return true;
+        ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
+
+            int dragFrom = -1;
+            int dragTo = -1;
+
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN ,
+                        0);
             }
 
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+
+
+                int fromPosition = viewHolder.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+
+
+                if (dragFrom == -1) {
+                    dragFrom = fromPosition;
+                }
+                dragTo = toPosition;
+
+                //channelsSetAdapter.onItemMove(fromPosition, toPosition);
+                Collections.swap(cardsListModels, fromPosition, toPosition);
+                // and notify the adapter that its dataset has changed
+                cardListAdapter.notifyItemMoved(fromPosition, toPosition);
+                cardListAdapter.notifyItemChanged(fromPosition);
+                cardListAdapter.notifyItemChanged(toPosition);
+                return true;
+
+            }
+
+            private void reallyMoved(int from, int to) {
+                // I guessed this was what you want...
+                call_card_reorder();
+            }
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                //TODO
-                //  Toast.makeText(MyChannelsSet.this,"OnSwiped",Toast.LENGTH_LONG).show();
+
             }
 
-            //defines the enabled move directions in each state (idle, swiping, dragging).
             @Override
-            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                //     Toast.makeText(MyChannelsSet.this,"Make Flag",Toast.LENGTH_LONG).show();
-                return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG,
-                        ItemTouchHelper.DOWN | ItemTouchHelper.UP | ItemTouchHelper.START | ItemTouchHelper.END);
+            public boolean isLongPressDragEnabled() {
+                return true;
             }
-        };
 
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return false;
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+
+                if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+                    reallyMoved(dragFrom, dragTo);
+                }
+
+                dragFrom = dragTo = -1;
+            }
+
+        };
         // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
-        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
+        ith = new ItemTouchHelper(dragCallback);
         ith.attachToRecyclerView(card_listview);
 
 
@@ -300,7 +367,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
     }
 
     private void setAdapter(List<CardsListModel> cardsListModels) {
-        card_listview.setLayoutManager(new LinearLayoutManager(CardList.this));
+        card_listview.setLayoutManager(new GridLayoutManager(CardList.this,1));
         cardListAdapter = new CardListAdapter(CardList.this, cardsListModels,this);
         card_listview.setAdapter(cardListAdapter);
 

@@ -58,7 +58,12 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     }
     @Override
     public int getItemViewType(int position) {
+        if(isSelToDel)
         return position;
+        else
+            return super.getItemViewType(position);
+
+
     }
 
     @Override
@@ -121,14 +126,14 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         }
 
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+       /* holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 isSelToDel = true;
                 mListener.onSelect(position, cardsListModel);
                 return true;
             }
-        });
+        });*/
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
