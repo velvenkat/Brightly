@@ -130,10 +130,11 @@ public class CreateSet extends BaseActivity {
 
         if(message.equals("success"))
         {
-            Intent intent = new Intent(CreateSet.this, MyChannelsSet.class);
+            /*Intent intent = new Intent(CreateSet.this, MyChannelsSet.class);
             intent.putExtra("channel_name", channel_name);
             intent.putExtra("channel_id", channel_id);
-            startActivity(intent);
+            startActivity(intent);*/
+            onBackPressed();
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);
         }

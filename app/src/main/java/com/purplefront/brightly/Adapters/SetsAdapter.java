@@ -3,6 +3,7 @@ package com.purplefront.brightly.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -20,8 +21,11 @@ import com.purplefront.brightly.Activities.MyChannelsSet;
 import com.purplefront.brightly.Activities.MySetCards;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.SetsListModel;
+import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -29,6 +33,7 @@ import io.realm.RealmResults;
 
 public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
+    ArrayList<SharedDataModel> sharedDataModels;
     List<SetsListModel> setsListModels;
     Activity context;
     LayoutInflater inflater;
@@ -36,16 +41,18 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
     RealmResults<RealmModel> realmModel;
     String userId;
     String channel_id;
+    String channel_name;
     String share_link;
     Set_sel_interface mListener;
     boolean isSelToDel = false;
 
 
-    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels, String channel_id, Set_sel_interface listenr) {
+    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels, String channel_id, String channel_name, Set_sel_interface listenr) {
 
         this.context = myChannelsSet;
         this.setsListModels = setsListModels;
         this.channel_id = channel_id;
+        this.channel_name = channel_name;
         inflater = (LayoutInflater.from(context));
         mListener = listenr;
     }
@@ -91,6 +98,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
         }
 
         SetsListModel setsListModel = setsListModels.get(position);
+        sharedDataModels = setsListModel.getShared_data();
         holder.textView_setName.setText(setsListModel.getSet_name());
         if (isSelToDel) {
             holder.chkbx_del_set.setVisibility(View.VISIBLE);
@@ -153,7 +161,9 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     intent.putExtra("set_name", setsListModel.getSet_name());
                     intent.putExtra("set_description", setsListModel.getDescription());
                     intent.putExtra("channel_id", channel_id);
+                    intent.putExtra("channel_name", channel_name);
                     intent.putExtra("share_link", share_link);
+                    intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
                     context.startActivity(intent);
                     context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
                 }

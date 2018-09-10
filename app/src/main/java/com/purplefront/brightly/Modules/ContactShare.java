@@ -1,8 +1,10 @@
 package com.purplefront.brightly.Modules;
 
+import com.purplefront.brightly.Application.RealmModel;
+
 import java.io.Serializable;
 
-public class ContactShare implements Serializable {
+public class ContactShare implements io.realm.RealmModel {
 
     private String ContactName;
     private String ContactNumber;

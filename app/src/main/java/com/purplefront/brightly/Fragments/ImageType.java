@@ -446,12 +446,13 @@ public class ImageType extends BaseFragment {
         String message = addMessageResponse.getMessage();
 
         if (message.equals("success")) {
-            Intent intent = new Intent(getActivity(), MySetCards.class);
+          /*  Intent intent = new Intent(getActivity(), MySetCards.class);
             intent.putExtra("set_id", set_id);
             intent.putExtra("set_name", set_name);
             intent.putExtra("userId", userId);
-            startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+            startActivity(intent);*/
+          getActivity().onBackPressed();
+          getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);
         } else {
             showLongToast(getActivity(), message);
         }

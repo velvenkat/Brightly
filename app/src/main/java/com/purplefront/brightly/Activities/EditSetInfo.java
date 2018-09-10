@@ -4,25 +4,37 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
+import com.purplefront.brightly.Adapters.SharedListAdapter;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class EditSetInfo extends BaseActivity {
+
+    ArrayList<SharedDataModel> sharedDataModels;
+    RecyclerView shared_listview;
+    SharedListAdapter sharedListAdapter;
 
     EditText edit_setName;
     EditText edit_setDescription;
@@ -36,11 +48,14 @@ public class EditSetInfo extends BaseActivity {
     String set_name = "";
     String set_id = "";
     String share_link;
+    String channel_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_set_info);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -49,11 +64,15 @@ public class EditSetInfo extends BaseActivity {
         setTitle("Edit Set Info");
 
         channel_id = getIntent().getStringExtra("channel_id");
+        channel_name = getIntent().getStringExtra("channel_name");
         set_description = getIntent().getStringExtra("set_description");
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
         userId = getIntent().getStringExtra("userId");
         share_link = getIntent().getStringExtra("share_link");
+        sharedDataModels = getIntent().getParcelableArrayListExtra("sharedDataModels");
+
+
 
 
         edit_setName = (EditText) findViewById(R.id.edit_setName);
@@ -62,9 +81,16 @@ public class EditSetInfo extends BaseActivity {
 
         share = (ImageView) findViewById(R.id.share);
         delete = (ImageView) findViewById(R.id.delete);
+        shared_listview = (RecyclerView) findViewById(R.id.shared_listview);
 
         edit_setName.setText(set_name);
         edit_setDescription.setText(set_description);
+
+
+
+            shared_listview.setLayoutManager(new LinearLayoutManager(this));
+            sharedListAdapter = new SharedListAdapter(EditSetInfo.this, sharedDataModels, set_id);
+            shared_listview.setAdapter(sharedListAdapter);
 
         btn_editSet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,13 +110,16 @@ public class EditSetInfo extends BaseActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(EditSetInfo.this, ShareWithContacts.class);
+                Intent intent = new Intent(EditSetInfo.this, SharePage.class);
                 intent.putExtra("set_id", set_id);
+                intent.putExtra("set_name", set_name);
+                intent.putExtra("set_description", set_description);
                 intent.putExtra("userId", userId);
                 intent.putExtra("share_link", share_link);
+                intent.putExtra("channel_id", channel_id);
+                intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
                 startActivity(intent);
-                finish();
-                overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
         });
     }
@@ -158,7 +187,8 @@ public class EditSetInfo extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // app icon in action bar clicked; goto parent activity.
-                this.finish();
+
+                finish();
                 overridePendingTransition(R.anim.left_enter, R.anim.right_out);
                 return true;
 
@@ -166,6 +196,69 @@ public class EditSetInfo extends BaseActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    public void getRevokeSet(String set_id, String assigned_to) {
+
+        try {
+
+            if (CheckNetworkConnection.isOnline(EditSetInfo.this)) {
+                showProgress();
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(EditSetInfo.this).getRevokeSet(set_id, assigned_to);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(EditSetInfo.this) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        AddMessageResponse addMessageResponse = response.body();
+                        if (isSuccess) {
+
+                            if (addMessageResponse != null) {
+
+                                setRevokeSetCredentials(addMessageResponse);
+                                dismissProgress();
+
+                            } else {
+                                dismissProgress();
+
+                            }
+
+                        } else {
+
+                            dismissProgress();
+                        }
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                    }
+                });
+            } else {
+
+                dismissProgress();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
+    }
+
+
+    private void setRevokeSetCredentials(AddMessageResponse addMessageResponse) {
+
+
+        String message = addMessageResponse.getMessage();
+
+
+        if(message.equals("success"))
+        {
+            showLongToast(EditSetInfo.this, addMessageResponse.getMessage());
+        }
+        else {
+            showLongToast(EditSetInfo.this, message);
+        }
+    }
+
 
     public void getDeleteSet() {
         try {
@@ -286,6 +379,7 @@ public class EditSetInfo extends BaseActivity {
         {
             Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
             intent.putExtra("channel_id", channel_id);
+            intent.putExtra("channel_name", channel_name);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();

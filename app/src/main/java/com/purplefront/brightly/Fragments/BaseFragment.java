@@ -302,7 +302,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     /**
      * show progress dialog while api calls
      */
-    protected void showProgress() {
+    public void showProgress() {
         try {
             mProgress = new ProgressDialog(getActivity());
             mProgress.setIndeterminate(false);
@@ -318,7 +318,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     /**
      * dissmiss progresss dialog for api calls
      */
-    protected void dismissProgress() {
+    public void dismissProgress() {
         try {
             mProgress.dismiss();
         } catch (Exception e) {

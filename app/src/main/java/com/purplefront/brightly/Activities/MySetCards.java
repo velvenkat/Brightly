@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Activities;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import com.purplefront.brightly.Adapters.ViewPagerAdapter;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
+import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 
@@ -42,11 +44,13 @@ public class MySetCards extends BaseActivity {
 
     String userId;
     String channel_id = "";
+    String channel_name = "";
     String set_description = "";
     String set_name = "";
     String set_id = "";
     String share_link = "";
     int Cur_PagrPosition;
+    ArrayList<SharedDataModel> sharedDataModels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +71,12 @@ public class MySetCards extends BaseActivity {
 
         userId = getIntent().getStringExtra("userId");
         channel_id = getIntent().getStringExtra("channel_id");
+        channel_name = getIntent().getStringExtra("channel_name");
         set_description = getIntent().getStringExtra("set_description");
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
         share_link = getIntent().getStringExtra("share_link");
+        sharedDataModels = getIntent().getParcelableArrayListExtra("sharedDataModels");
         setTitle(set_name);
 
         // Locate the ViewPager in viewpager_main.xml
@@ -176,10 +182,12 @@ public class MySetCards extends BaseActivity {
                 Intent intent = new Intent(MySetCards.this, EditSetInfo.class);
                 intent.putExtra("userId", userId);
                 intent.putExtra("channel_id", channel_id);
+                intent.putExtra("channel_name", channel_name);
                 intent.putExtra("set_id", set_id);
                 intent.putExtra("set_name", set_name);
                 intent.putExtra("set_description", set_description);
                 intent.putExtra("share_link", share_link);
+                intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
 
@@ -227,6 +235,7 @@ public class MySetCards extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        finish();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
     }
 }

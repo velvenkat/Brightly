@@ -64,9 +64,18 @@
     <string name="registered_emailid">Please enter your Registered Email Id below:</string>
     <string name="submit">SUBMIT</string>
     <string name="back">BACK</string>
-    <string name="share">Share</string>
-    <string name="search_by_name">Search by Name or Mobile Number</string>
+    <string name="search_by_name">Search Contacts</string>
+    <string name="share_msg_text">Download Brighly app from Google Play Store @ </string>
+    <string name="share_msg_subject">Brighly - Android app</string>
     <string name="name">Name</string>
     <string name="phone">Phone</string>
+    <string name="sharetext1">To share with users who have downloaded Brightly App or will have to download Brightly App use the below button</string>
+    <string name="sharetext2">Note: If your friend does not have the app yet, please use the invite a friend button from the menu options.</string>
+    <string name="shretext3">Create a sharable link, Anyone with the link can view this set. Brightly App NOT required.</string>
+    <string name="sharetext4">Note: Users cannot view any other information shared by you with them. They will need to download Brightly App to use all feature.</string>
+    <string name="share_in_app">Share in App</string>
+    <string name="share_a_link">Share A Link</string>
+    <string name="share">Share</string>
+    <string name="sharing_content_title_text">This Set Info is shared with the below Contacts :</string>
 
 </resources>

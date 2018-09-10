@@ -88,6 +88,27 @@
             android:textColor="@color/black"
             android:textSize="@dimen/mediumtextsize" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:layout_marginLeft="@dimen/dimen_16"
+            android:layout_marginRight="@dimen/dimen_16"
+            android:textStyle="bold"
+            android:text="@string/sharing_content_title_text"/>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/shared_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:layout_marginLeft="@dimen/dimen_16"
+            android:layout_marginRight="@dimen/dimen_16"
+            android:nestedScrollingEnabled="false"/>
+
     </LinearLayout>
 
     <Button
@@ -100,6 +121,5 @@
         android:textColor="@color/white"
         android:textSize="@dimen/mediumtextsize"
         />
-
 
 </LinearLayout>

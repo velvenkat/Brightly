@@ -9,6 +9,10 @@ public class AddMessageResponse {
     @Expose
     private String message;
 
+    @SerializedName("msg")
+    @Expose
+    private String msg;
+
     public String getMessage() {
         return message;
     }
@@ -17,4 +21,11 @@ public class AddMessageResponse {
         this.message = message;
     }
 
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 }

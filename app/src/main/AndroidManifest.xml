@@ -104,7 +104,8 @@
         </service>
         <!-- [END firebase_iid_service] -->
 
-        <activity android:name=".Activities.ShareWithContacts"></activity>
+        <activity android:name=".Activities.ShareWithContacts" />
+        <activity android:name=".Activities.SharePage"></activity>
     </application>
 
 </manifest>

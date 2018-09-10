@@ -3,6 +3,9 @@ package com.purplefront.brightly.Modules;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SetsListModel {
 
     @SerializedName("set_id")
@@ -25,6 +28,10 @@ public class SetsListModel {
     @Expose
     private String share_link;
 
+    @SerializedName("shared_data")
+    @Expose
+    private ArrayList<SharedDataModel> shared_data = null;
+
     public boolean isDelSel() {
         return isDelSel;
     }
@@ -34,12 +41,15 @@ public class SetsListModel {
     }
 
     private boolean isDelSel=false;
-    public SetsListModel(String set_id, String set_name, String description, String thumbnail, String share_link) {
+
+    public SetsListModel(String set_id, String set_name, String description, String thumbnail, String share_link, ArrayList<SharedDataModel> shared_data, boolean isDelSel) {
         this.set_id = set_id;
         this.set_name = set_name;
         this.description = description;
         this.thumbnail = thumbnail;
         this.share_link = share_link;
+        this.shared_data = shared_data;
+        this.isDelSel = isDelSel;
     }
 
     public String getSet_id() {
@@ -80,5 +90,13 @@ public class SetsListModel {
 
     public void setShare_link(String share_link) {
         this.share_link = share_link;
+    }
+
+    public ArrayList<SharedDataModel> getShared_data() {
+        return shared_data;
+    }
+
+    public void setShared_data(ArrayList<SharedDataModel> shared_data) {
+        this.shared_data = shared_data;
     }
 }

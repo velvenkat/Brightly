@@ -2,18 +2,12 @@ package com.purplefront.brightly.Activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -37,8 +31,8 @@ public class BaseActivity extends AppCompatActivity {
      * @return check is fiels is empty  if empty request focus to that field
      */
 
-    public void setDlgListener(alert_dlg_interface listener){
-        mListener=listener;
+    public void setDlgListener(alert_dlg_interface listener) {
+        mListener = listener;
     }
 
     boolean isEmptyField(EditText editText) {
@@ -48,8 +42,7 @@ public class BaseActivity extends AppCompatActivity {
         return empty;
     }
 
-    public void showAlertDialog(String message,String Title,String Pos_Title,String Neg_Title)
-    {
+    public void showAlertDialog(String message, String Title, String Pos_Title, String Neg_Title) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(BaseActivity.this);
 
         // Setting Dialog Title
@@ -63,7 +56,7 @@ public class BaseActivity extends AppCompatActivity {
 
         // Setting Positive "Yes" Button
         alertDialog.setPositiveButton(Pos_Title, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
+            public void onClick(DialogInterface dialog, int which) {
 
                 dialog.dismiss();
                 mListener.postive_btn_clicked();
@@ -145,6 +138,7 @@ public class BaseActivity extends AppCompatActivity {
         dialog.show();
 
     }
+
     /**
      * dismiss progress dialog after api calls
      */
@@ -172,6 +166,18 @@ public class BaseActivity extends AppCompatActivity {
         if (s.length() == 0) return s;
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
+   public String[] split_string(String charText) {
+       String[] parts;
+       parts = charText.split("\\s+");
+        Log.d("Length-->", "" + parts.length);
+        if (parts.length == 2)
+
+        {
+            String First = parts[0];
+            String Last = parts[1];
+        }
+       return parts;
+    }
 
     public String toCamelCase(String string) {
         String result = "";
@@ -183,8 +189,10 @@ public class BaseActivity extends AppCompatActivity {
         }
         return result;
     }
-   public interface alert_dlg_interface{
+
+    public interface alert_dlg_interface {
         public void postive_btn_clicked();
+
         public void negative_btn_clicked();
-   }
+    }
 }

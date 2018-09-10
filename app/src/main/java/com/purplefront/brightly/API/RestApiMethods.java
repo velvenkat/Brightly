@@ -79,13 +79,18 @@ public interface RestApiMethods {
     @POST("sets/update_set.php")
     Call<AddMessageResponse> getUpdateSet(@Query("user_id") String user_id, @Query("channel_id") String channel_id, @Query("set_name") String set_name, @Query("set_description") String set_description, @Query("set_id") String set_id);
 
-    //Update Sets
+    //delete Sets
     @POST("sets/delete_set.php")
     Call<AddMessageResponse> getDeleteSet(@Query("set_id") String set_id);
 
-    //Update Sets
+    //Share Sets
     @POST("share/share_set_multiple.php")
-    Call<AddMessageResponse> getShareSet(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("phone_no ") String phone_no );
+    Call<AddMessageResponse> getShareSet(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("phone_no") String phone_no );
+
+    //Revoke Sets
+    @POST("share/revoke_set.php")
+    Call<AddMessageResponse> getRevokeSet(@Query("set_id") String set_id, @Query("assigned_to") String assigned_to );
+
 
     //CardList
     @POST("cards/card_list.php")

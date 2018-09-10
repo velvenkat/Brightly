@@ -165,7 +165,7 @@ public class ContactsAdapter extends BaseAdapter {
         }
         else
         {
-            for (ContactShare centerInfo : arraylist)
+            for (ContactShare centerInfo : arraylist) //startsWith(constraint.toString().toUpperCase())) contains(charText.substring(0, 1).toUpperCase() + charText.substring(1).toLowerCase()))
             {
                 if (centerInfo.getContactName()!=null && centerInfo.getContactName().toLowerCase().contains(charText))
                 {

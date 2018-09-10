@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="@color/white"
+    android:layout_marginTop="@dimen/dimen_1"
+    >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:weightSum="2"
+        android:padding="@dimen/dimen_4"
+       >
+
+        <TextView
+            android:id="@+id/text_sharedNumber"
+            android:layout_width="0dp"
+            android:layout_weight="0.8"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Number"
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize"
+            android:visibility="visible"
+            />
+
+        <TextView
+            android:id="@+id/text_sharedName"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Name"
+            android:layout_marginLeft="@dimen/dimen_4"
+            android:maxLines="1"
+            android:lines="1"
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize"
+            android:visibility="visible"
+            />
+
+        <ImageView
+            android:id="@+id/revoke_shared"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/delete_cross_icon"
+            />
+
+    </LinearLayout>
+
+
+</android.support.v7.widget.CardView>

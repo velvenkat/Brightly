@@ -438,7 +438,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     private void setAdapter(List<SetsListModel> setsListModels) {
 
         channelSet_listview.setLayoutManager(new GridLayoutManager(MyChannelsSet.this, 3));
-        channelsSetAdapter = new SetsAdapter(MyChannelsSet.this, setsListModels, channel_id, this);
+        channelsSetAdapter = new SetsAdapter(MyChannelsSet.this, setsListModels, channel_id, channel_name, this);
         channelSet_listview.setAdapter(channelsSetAdapter);
         //  channelsSetAdapter.notifyDataSetChanged();
     }
@@ -525,6 +525,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        finish();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
     }
 
