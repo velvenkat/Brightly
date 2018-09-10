@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.purplefront.brightly.Activities.MyChannelsSet;
 import com.purplefront.brightly.Activities.MySetCards;
 import com.purplefront.brightly.Application.RealmModel;
+import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
@@ -35,6 +36,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
     ArrayList<SharedDataModel> sharedDataModels;
     List<SetsListModel> setsListModels;
+    ChannelListModel chl_list_obj;
     Activity context;
     LayoutInflater inflater;
     Realm realm;
@@ -48,17 +50,16 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
     String Created_By;
 
 
-    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels, String channel_id,String channel_name, Set_sel_interface listenr,String created_by) {
+    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels,  ChannelListModel chl_list_obj, Set_sel_interface listenr) {
 
 
         this.context = myChannelsSet;
         this.setsListModels = setsListModels;
-        this.channel_id = channel_id;
-        this.channel_name = channel_name;
+        this.chl_list_obj = chl_list_obj;
         inflater = (LayoutInflater.from(context));
-        Created_By=created_by;
         mListener = listenr;
     }
+
 
     public void set_SelToDel(boolean value) {
         isSelToDel = value;
@@ -163,10 +164,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     intent.putExtra("set_id", setsListModel.getSet_id());
                     intent.putExtra("set_name", setsListModel.getSet_name());
                     intent.putExtra("set_description", setsListModel.getDescription());
-                    intent.putExtra("channel_id", channel_id);
-                    intent.putExtra("channel_name", channel_name);
-                    intent.putExtra("share_link", share_link);
-                    intent.putExtra("created_by",Created_By);
+                    intent.putExtra("model_obj", chl_list_obj);
                     intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
                     context.startActivity(intent);
                     context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);

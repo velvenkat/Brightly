@@ -12,6 +12,7 @@ import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 
@@ -29,6 +30,7 @@ public class CreateSet extends BaseActivity {
     String set_name = "";
     String set_description = "";
     String channel_name;
+    ChannelListModel chl_list_obj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +43,9 @@ public class CreateSet extends BaseActivity {
         setTitle("Create Set");
 
         userId = getIntent().getStringExtra("userId");
-        channel_id = getIntent().getStringExtra("channel_id");
-        channel_name = getIntent().getStringExtra("channel_name");
+        chl_list_obj=getIntent().getParcelableExtra("model_obj");
+        channel_id=chl_list_obj.getChannel_id();
+        channel_name=chl_list_obj.getChannel_name();
 
         create_setName = (EditText) findViewById(R.id.create_setName);
         create_setDescription = (EditText) findViewById(R.id.create_setDescription);
@@ -130,10 +133,9 @@ public class CreateSet extends BaseActivity {
 
         if(message.equals("success"))
         {
-            /*Intent intent = new Intent(CreateSet.this, MyChannelsSet.class);
-            intent.putExtra("channel_name", channel_name);
-            intent.putExtra("channel_id", channel_id);
-            startActivity(intent);*/
+            Intent intent = new Intent(CreateSet.this, MyChannelsSet.class);
+            intent.putExtra("model_obj", chl_list_obj);
+            startActivity(intent);
             onBackPressed();
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);

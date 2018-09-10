@@ -24,6 +24,7 @@ import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Fragments.ItemsAddFragment;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
+import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -48,7 +49,7 @@ public class MySetCards extends BaseActivity {
     Realm realm;
     RealmResults<RealmModel> realmModel;
 
-    String Created_By;
+    String Created_By = "";
     String userId;
     String channel_id = "";
     String channel_name = "";
@@ -60,32 +61,35 @@ public class MySetCards extends BaseActivity {
     int UPDATECARD = 102;
     ImageView image_createCard;
     ArrayList<SharedDataModel> sharedDataModels;
+    ChannelListModel chl_list_obj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_set_cards);
 
-     /*   realm = Realm.getDefaultInstance();
+        realm = Realm.getDefaultInstance();
         realmModel = realm.where(RealmModel.class).findAllAsync();
         realmModel.load();
         for(RealmModel model:realmModel){
             userId = model.getUser_Id();
-        }*/
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        chl_list_obj=getIntent().getParcelableExtra("model_obj");
+
         userId = getIntent().getStringExtra("userId");
-        channel_id = getIntent().getStringExtra("channel_id");
-        channel_name = getIntent().getStringExtra("channel_name");
+        channel_id=chl_list_obj.getChannel_id();
+        channel_name=chl_list_obj.getChannel_name();
+        Created_By = chl_list_obj.getCreated_by();
         set_description = getIntent().getStringExtra("set_description");
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
         share_link = getIntent().getStringExtra("share_link");
-        Created_By = getIntent().getStringExtra("created_by");
         sharedDataModels = getIntent().getParcelableArrayListExtra("sharedDataModels");
         setTitle(set_name);
 
@@ -110,7 +114,7 @@ public class MySetCards extends BaseActivity {
                 intent.putExtra("userId", userId);
                 intent.putExtra("set_id", set_id);
                 intent.putExtra("set_name", set_name);
-
+                intent.putExtra("model_obj", chl_list_obj);
                 startActivityForResult(intent,UPDATECARD);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
@@ -228,13 +232,11 @@ public class MySetCards extends BaseActivity {
             case R.id.setInfo_Edit:
                 Intent intent = new Intent(MySetCards.this, EditSetInfo.class);
                 intent.putExtra("userId", userId);
-                intent.putExtra("channel_id", channel_id);
-                intent.putExtra("channel_name", channel_name);
                 intent.putExtra("set_id", set_id);
                 intent.putExtra("set_name", set_name);
                 intent.putExtra("set_description", set_description);
                 intent.putExtra("share_link", share_link);
-                intent.putExtra("created_by", Created_By);
+                intent.putExtra("model_obj", chl_list_obj);
                 intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
@@ -249,7 +251,7 @@ public class MySetCards extends BaseActivity {
                     intent1.putExtra("userId", userId);
                     intent1.putExtra("set_id", set_id);
                     intent1.putExtra("set_name", set_name);
-                    intent1.putExtra("created_by", Created_By);
+                    intent1.putExtra("model_obj", chl_list_obj);
                     intent1.putExtra("Card_Dtls", cardsListModels.get(Cur_PagrPosition));
 
                     //intent1.putExtra("my_card_bundle",bundle);

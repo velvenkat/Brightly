@@ -54,6 +54,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     String channel_description = "";
     String encoded_string = "";
     String image_name = "";
+    String Created_By = "";
     ArrayList<String> del_sel_id = new ArrayList<>();
     String channel_id = "";
     RelativeLayout del_contr;
@@ -102,6 +103,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         channel_description=chl_list_obj.getDescription();
         encoded_string=chl_list_obj.getCover_image();
         image_name=chl_list_obj.getImage_name();
+        Created_By = chl_list_obj.getCreated_by();
 
         view_nodata = (TextView) findViewById(R.id.view_nodata);
         txtItemSel = (TextView) findViewById(R.id.txtCntSelected);
@@ -111,7 +113,8 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         image_createChannelSet = (ImageView) findViewById(R.id.image_createChannelSet);
         setDlgListener(this);
         if(!userId.equalsIgnoreCase(chl_list_obj.getCreated_by())){
-            img_mutli_sel.setVisibility(View.INVISIBLE);
+            img_mutli_sel.setVisibility(View.GONE);
+            image_createChannelSet.setVisibility(View.GONE);
         }
         img_mutli_sel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -337,8 +340,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
 
                 Intent intent = new Intent(MyChannelsSet.this, CreateSet.class);
                 intent.putExtra("userId", userId);
-                intent.putExtra("channel_id", channel_id);
-                intent.putExtra("channel_name", channel_name);
+                intent.putExtra("model_obj", chl_list_obj);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
@@ -453,7 +455,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     private void setAdapter(List<SetsListModel> setsListModels) {
 
         channelSet_listview.setLayoutManager(new GridLayoutManager(MyChannelsSet.this, 3));
-        channelsSetAdapter = new SetsAdapter(MyChannelsSet.this, setsListModels, channel_id,channel_name, this,chl_list_obj.getCreated_by());
+        channelsSetAdapter = new SetsAdapter(MyChannelsSet.this, setsListModels, chl_list_obj, this);
         channelSet_listview.setAdapter(channelsSetAdapter);
         //  channelsSetAdapter.notifyDataSetChanged();
     }
@@ -506,7 +508,10 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
        // if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
+        if (userId.equalsIgnoreCase(Created_By)) {
             getMenuInflater().inflate(R.menu.my_channel_set, menu);
+        }else
+            getMenuInflater().inflate(R.menu.my_channel_sub_set, menu);
             return true;
 
     }

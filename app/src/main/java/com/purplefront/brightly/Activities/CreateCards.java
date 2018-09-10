@@ -38,6 +38,7 @@ import com.purplefront.brightly.Fragments.ImageType;
 import com.purplefront.brightly.Fragments.YoutubeType;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.CardsListModel;
+import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.UserModule;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -67,6 +68,7 @@ public class CreateCards extends BaseActivity implements UserInterface {
     private ViewPager viewpager_creatCard;
     String Created_By;
     CardsListModel cardModelObj;
+    ChannelListModel chl_list_obj;
     ;
 
     @Override
@@ -80,10 +82,12 @@ public class CreateCards extends BaseActivity implements UserInterface {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setTitle("Create Card");
 
+        chl_list_obj=getIntent().getParcelableExtra("model_obj");
+        Created_By = chl_list_obj.getCreated_by();
         userId = getIntent().getStringExtra("userId");
         set_id = getIntent().getStringExtra("set_id");
         set_name = getIntent().getStringExtra("set_name");
-        Created_By = getIntent().getStringExtra("created_by");
+
         userModule = new UserModule();
         userModule.setSet_id(set_id);
         userModule.setSet_name(set_name);

@@ -19,7 +19,6 @@ public class SharePage extends BaseActivity {
     Button share_inApp;
     Button share_aLink;
 
-    String channel_id = "";
     String set_description = "";
     String set_name = "";
     String userId;
@@ -38,7 +37,6 @@ public class SharePage extends BaseActivity {
 
         setTitle("Share Set");
 
-        channel_id = getIntent().getStringExtra("channel_id");
         set_description = getIntent().getStringExtra("set_description");
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
@@ -54,7 +52,6 @@ public class SharePage extends BaseActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SharePage.this, ShareWithContacts.class);
                 intent.putExtra("set_id", set_id);
-                intent.putExtra("channel_id", channel_id);
                 intent.putExtra("set_name", set_description);
                 intent.putExtra("set_name", set_name);
                 intent.putExtra("userId", userId);

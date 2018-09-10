@@ -21,6 +21,7 @@ import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.SharedListAdapter;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -50,6 +51,7 @@ public class EditSetInfo extends BaseActivity {
     String share_link;
     String channel_name;
     String Created_By;
+    ChannelListModel chl_list_obj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +65,16 @@ public class EditSetInfo extends BaseActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         setTitle("Edit Set Info");
-
-        channel_id = getIntent().getStringExtra("channel_id");
-        channel_name = getIntent().getStringExtra("channel_name");
+        chl_list_obj=getIntent().getParcelableExtra("model_obj");
+        channel_id=chl_list_obj.getChannel_id();
+        channel_name=chl_list_obj.getChannel_name();
+        Created_By = chl_list_obj.getCreated_by();
         set_description = getIntent().getStringExtra("set_description");
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
         userId = getIntent().getStringExtra("userId");
         share_link = getIntent().getStringExtra("share_link");
         sharedDataModels = getIntent().getParcelableArrayListExtra("sharedDataModels");
-
-
-
-        Created_By=getIntent().getStringExtra("created_by");
 
         edit_setName = (EditText) findViewById(R.id.edit_setName);
         edit_setDescription = (EditText) findViewById(R.id.edit_setDescription);
@@ -95,16 +94,18 @@ public class EditSetInfo extends BaseActivity {
             edit_setDescription.setEnabled(false);
             setTitle("Set Info");
 
+          /*  shared_listview.setLayoutManager(new LinearLayoutManager(this));
+            sharedListAdapter = new SharedListAdapter(EditSetInfo.this, sharedDataModels, set_id);
+            shared_listview.setAdapter(sharedListAdapter);*/
 
+        }
+        else {
 
+            setTitle("Edit Set Info");
             shared_listview.setLayoutManager(new LinearLayoutManager(this));
             sharedListAdapter = new SharedListAdapter(EditSetInfo.this, sharedDataModels, set_id);
             shared_listview.setAdapter(sharedListAdapter);
 
-
-        }
-        else {
-            setTitle("Edit Set Info");
         }
         btn_editSet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +131,6 @@ public class EditSetInfo extends BaseActivity {
                 intent.putExtra("set_description", set_description);
                 intent.putExtra("userId", userId);
                 intent.putExtra("share_link", share_link);
-                intent.putExtra("channel_id", channel_id);
                 intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
@@ -327,7 +327,8 @@ public class EditSetInfo extends BaseActivity {
         if(message.equals("success"))
         {
             Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
-            intent.putExtra("channel_id", channel_id);
+            intent.putExtra("model_obj", chl_list_obj);
+            intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);
@@ -391,13 +392,14 @@ public class EditSetInfo extends BaseActivity {
 
         if(message.equals("success"))
         {
-            Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
-            intent.putExtra("channel_id", channel_id);
-            intent.putExtra("channel_name", channel_name);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+           /* Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
+            intent.putExtra("model_obj", chl_list_obj);
+            intent.putExtra("userId", userId);
+            intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
+            startActivity(intent);*/
+           onBackPressed();
+           finish();
+           overridePendingTransition(R.anim.left_enter, R.anim.right_out);
 
 
         }

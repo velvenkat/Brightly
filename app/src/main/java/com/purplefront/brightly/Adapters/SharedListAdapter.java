@@ -81,7 +81,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
                     public void onClick(DialogInterface dialog,int which) {
 
 
-                        ((EditSetInfo)context).getRevokeSet(set_id, sharedDataModel.getPhone());
+                        ((EditSetInfo)context).getRevokeSet(set_id, sharedDataModel.getId());
                         // Write your code here to invoke YES event
 //                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
                     }

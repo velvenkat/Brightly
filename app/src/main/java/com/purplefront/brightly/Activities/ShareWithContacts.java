@@ -65,7 +65,6 @@ public class ShareWithContacts extends BaseActivity {
 
     String split_num = "";
 
-    String channel_id = "";
     String set_description = "";
     String set_name = "";
     String set_id = "";
@@ -85,7 +84,6 @@ public class ShareWithContacts extends BaseActivity {
         btn_share = (ImageView) findViewById(R.id.btn_share);
         btn_sync = (ImageView) findViewById(R.id.btn_sync);
 
-        channel_id = getIntent().getStringExtra("channel_id");
         set_description = getIntent().getStringExtra("set_description");
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
@@ -241,7 +239,6 @@ public class ShareWithContacts extends BaseActivity {
         {
             Intent intent = new Intent(ShareWithContacts.this, EditSetInfo.class);
             intent.putExtra("set_id", set_id);
-            intent.putExtra("channel_id", channel_id);
             intent.putExtra("set_description", set_description);
             intent.putExtra("set_name", set_name);
             intent.putExtra("userId", userId);

@@ -29,6 +29,7 @@
     <string name="no_channels_available">No Channels Available</string>
     <string name="setmenu">SetMenu</string>
     <string name="info_edit">Channel Info/Edit</string>
+    <string name="info">Channel Info</string>
     <string name="delete">Delete</string>
     <string name="no_sets_available">No Sets Available</string>
     <string name="create_set">Create Set</string>
