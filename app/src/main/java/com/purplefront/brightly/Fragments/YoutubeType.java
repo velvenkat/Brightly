@@ -1,11 +1,13 @@
 package com.purplefront.brightly.Fragments;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +33,7 @@ import retrofit2.Response;
  */
 public class YoutubeType extends BaseFragment {
 
-    View view;
+    View rootView;
     ImageView image_youtube_link;
     EditText create_cardName;
     EditText create_cardDescription;
@@ -71,17 +73,17 @@ public class YoutubeType extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_youtube_type, container, false);
+        rootView = inflater.inflate(R.layout.fragment_youtube_type, container, false);
 
         userId = userModule.getUserId();
         set_id = userModule.getSet_id();
         set_name = userModule.getSet_name();
 
-        create_cardURL = (EditText) view.findViewById(R.id.create_cardURL);
-        image_youtube_link = (ImageView) view.findViewById(R.id.image_youtube_link);
-        create_cardName = (EditText) view.findViewById(R.id.create_cardName);
-        create_cardDescription = (EditText) view.findViewById(R.id.create_cardDescription);
-        btn_createCard = (Button)view.findViewById(R.id.btn_createCard);
+        create_cardURL = (EditText) rootView.findViewById(R.id.create_cardURL);
+        image_youtube_link = (ImageView) rootView.findViewById(R.id.image_youtube_link);
+        create_cardName = (EditText) rootView.findViewById(R.id.create_cardName);
+        create_cardDescription = (EditText) rootView.findViewById(R.id.create_cardDescription);
+        btn_createCard = (Button)rootView.findViewById(R.id.btn_createCard);
 
         Bundle bundle=getArguments();
         isCreateCard=bundle.getBoolean("isCreate");
@@ -92,6 +94,7 @@ public class YoutubeType extends BaseFragment {
             btn_createCard.setText("UPDATE CARD");
             create_cardName.setText(userModule.getCard_name());
             create_cardDescription.setText(userModule.getCard_description());
+            if(userModule.getType().equalsIgnoreCase("video"))
             create_cardURL.setText(userModule.getCard_multimedia_url());
         }
         btn_createCard.setOnClickListener(new View.OnClickListener() {
@@ -110,8 +113,22 @@ public class YoutubeType extends BaseFragment {
                 startActivity(intent);
             }
         });
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
 
-        return view;
+                    getActivity().setResult(Activity.RESULT_CANCELED);
+                    getActivity().finish();
+                }
+                return true;
+            }
+        });
+
+
+        return rootView;
     }
 
     // Check Validation Method
@@ -159,9 +176,9 @@ public class YoutubeType extends BaseFragment {
                         if (isSuccess) {
 
                             if (addMessageResponse != null) {
-
-                                setAddSetCredentials(addMessageResponse);
                                 dismissProgress();
+                                setAddSetCredentials(addMessageResponse);
+
 
                             } else {
                                 dismissProgress();
@@ -206,11 +223,10 @@ public class YoutubeType extends BaseFragment {
            /* Intent intent = new Intent(getActivity(), MySetCards.class);
             intent.putExtra("set_id", set_id);
             intent.putExtra("set_name", set_name);
-            intent.putExtra("userId", userId);
-            startActivity(intent);*/
-            getActivity().onBackPressed();
+            intent.putExtra("userId", userId);*/
+            getActivity().setResult(Activity.RESULT_OK);
+            getActivity().finish();
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-
         }
 
         else {

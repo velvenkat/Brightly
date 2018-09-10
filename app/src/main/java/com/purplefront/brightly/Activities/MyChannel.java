@@ -445,6 +445,7 @@ public class MyChannel extends BaseActivity
             setActionBarTitle("My Subscriptions");
             profileContainer.setVisibility(View.GONE);
             channel_layout.setVisibility(View.VISIBLE);
+            image_createChannel.setVisibility(View.GONE);
             getChannelsLists();
 
         } else if (id == R.id.nav_myChannels) {
@@ -453,6 +454,7 @@ public class MyChannel extends BaseActivity
             setActionBarTitle("My Channels");
             profileContainer.setVisibility(View.GONE);
             channel_layout.setVisibility(View.VISIBLE);
+            image_createChannel.setVisibility(View.VISIBLE);
             getChannelsLists();
 
         } else if (id == R.id.nav_allChannels) {
@@ -461,6 +463,7 @@ public class MyChannel extends BaseActivity
             setActionBarTitle("All Channels");
             profileContainer.setVisibility(View.GONE);
             channel_layout.setVisibility(View.VISIBLE);
+            image_createChannel.setVisibility(View.VISIBLE);
             getChannelsLists();
 
         } else if (id == R.id.nav_notifications) {

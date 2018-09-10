@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +61,7 @@ import static android.app.Activity.RESULT_OK;
  */
 public class ImageType extends BaseFragment {
 
-    View view;
+    View frag_rootView;
     EditText create_cardName;
     EditText create_cardDescription;
     SimpleDraweeView image_cardImage;
@@ -80,6 +81,7 @@ public class ImageType extends BaseFragment {
     String encoded_string = "";
     String image_name = "";
     String type = "";
+    String Created_by;
     boolean isCreateCard;
 
     public ImageType() {
@@ -99,28 +101,37 @@ public class ImageType extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_image_type, container, false);
-        context = view.getContext();
+        frag_rootView = inflater.inflate(R.layout.fragment_image_type, container, false);
+        context = frag_rootView.getContext();
 
         userId = userModule.getUserId();
         set_id = userModule.getSet_id();
         set_name = userModule.getSet_name();
 
 
-        image_cardImage = (SimpleDraweeView) view.findViewById(R.id.image_cardImage);
-        create_cardName = (EditText) view.findViewById(R.id.create_cardName);
-        create_cardDescription = (EditText) view.findViewById(R.id.create_cardDescription);
-        btn_createCard = (Button) view.findViewById(R.id.btn_createCard);
+        image_cardImage = (SimpleDraweeView) frag_rootView.findViewById(R.id.image_cardImage);
+        create_cardName = (EditText) frag_rootView.findViewById(R.id.create_cardName);
+        create_cardDescription = (EditText) frag_rootView.findViewById(R.id.create_cardDescription);
+        btn_createCard = (Button) frag_rootView.findViewById(R.id.btn_createCard);
 
         Bundle bundle = getArguments();
         isCreateCard = bundle.getBoolean("isCreate");
+        Created_by=bundle.getString("created_by");
         boolean load_def_img = true;
+
         if (!isCreateCard) {
             btn_createCard.setText("UPDATE CARD");
             create_cardName.setText(userModule.getCard_name());
             create_cardDescription.setText(userModule.getCard_description());
-            if (!userModule.getType().equalsIgnoreCase("text")) {
+            if(!Created_by.equalsIgnoreCase(userId)){
+                image_cardImage.setClickable(false);
+                create_cardName.setEnabled(false);
+                create_cardDescription.setEnabled(false);
+                btn_createCard.setVisibility(View.GONE);
+            }
+            if (userModule.getType().equalsIgnoreCase("image")) {
                 load_def_img = false;
+
                 Glide.with(getActivity())
                         .load(userModule.getCard_multimedia_url())
                         .centerCrop()
@@ -166,7 +177,7 @@ public class ImageType extends BaseFragment {
                     }*/
                     imageChooserIntent();
                 } else {
-                    if (userModule.getType().equalsIgnoreCase("text") && encoded_string.equalsIgnoreCase("")) {
+                    if (!userModule.getType().equalsIgnoreCase("image") && encoded_string.equalsIgnoreCase("")) {
                         imageChooserIntent();
                     } else
                         setBottomDialog();
@@ -174,9 +185,22 @@ public class ImageType extends BaseFragment {
             }
         });
 
+        frag_rootView.setFocusableInTouchMode(true);
+        frag_rootView.requestFocus();
+        frag_rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
 
-        return view;
+                 getActivity().setResult(Activity.RESULT_CANCELED);
+                 getActivity().finish();
+                }
+                return true;
+            }
+        });
+        return frag_rootView;
     }
+
 
     public void imageChooserIntent() {
         imgImageChooser_crop = new ImageChooser_Crop(getActivity());
@@ -404,9 +428,9 @@ public class ImageType extends BaseFragment {
                         if (isSuccess) {
 
                             if (addMessageResponse != null) {
-
-                                setAddSetCredentials(addMessageResponse);
                                 dismissProgress();
+                                setAddSetCredentials(addMessageResponse);
+
 
                             } else {
                                 dismissProgress();
@@ -446,13 +470,15 @@ public class ImageType extends BaseFragment {
         String message = addMessageResponse.getMessage();
 
         if (message.equals("success")) {
-          /*  Intent intent = new Intent(getActivity(), MySetCards.class);
+           /* Intent intent = new Intent(getActivity(), MySetCards.class);
             intent.putExtra("set_id", set_id);
             intent.putExtra("set_name", set_name);
-            intent.putExtra("userId", userId);
+            intent.putExtra("userId", userId);*/
+            getActivity().setResult(Activity.RESULT_OK);
+            getActivity().finish();
+           /* getActivity().finish();
             startActivity(intent);*/
-          getActivity().onBackPressed();
-          getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+            getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);
         } else {
             showLongToast(getActivity(), message);
         }

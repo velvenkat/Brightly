@@ -1,9 +1,12 @@
 package com.purplefront.brightly.Modules;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ChannelListModel {
+public class ChannelListModel implements Parcelable {
 
     @SerializedName("channel_id")
     @Expose
@@ -24,6 +27,66 @@ public class ChannelListModel {
     @SerializedName("image_name")
     @Expose
     private String image_name;
+
+    protected ChannelListModel(Parcel in) {
+        channel_id = in.readString();
+        channel_name = in.readString();
+        description = in.readString();
+        cover_image = in.readString();
+        image_name = in.readString();
+        created_by = in.readString();
+        created_time = in.readString();
+        created_date = in.readString();
+    }
+
+    public static final Creator<ChannelListModel> CREATOR = new Creator<ChannelListModel>() {
+        @Override
+        public ChannelListModel createFromParcel(Parcel in) {
+            return new ChannelListModel(in);
+        }
+
+        @Override
+        public ChannelListModel[] newArray(int size) {
+            return new ChannelListModel[size];
+        }
+    };
+
+    public String getCreated_by() {
+        return created_by;
+    }
+
+    public void setCreated_by(String created_by) {
+        this.created_by = created_by;
+    }
+
+    public String getCreated_time() {
+        return created_time;
+    }
+
+    public void setCreated_time(String created_time) {
+        this.created_time = created_time;
+    }
+
+    public String getCreated_date() {
+        return created_date;
+    }
+
+    public void setCreated_date(String created_date) {
+        this.created_date = created_date;
+    }
+
+    @SerializedName("created_by")
+    @Expose
+    private String created_by;
+
+    @SerializedName("created_time")
+    @Expose
+    private String created_time;
+
+    @SerializedName("created_date")
+    @Expose
+    private String created_date;
+
 
     public ChannelListModel(String channel_id, String channel_name, String description, String cover_image, String image_name) {
         this.channel_id = channel_id;
@@ -71,5 +134,22 @@ public class ChannelListModel {
 
     public void setImage_name(String image_name) {
         this.image_name = image_name;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(channel_id);
+        dest.writeString(channel_name);
+        dest.writeString(description);
+        dest.writeString(cover_image);
+        dest.writeString(image_name);
+        dest.writeString(created_by);
+        dest.writeString(created_time);
+        dest.writeString(created_date);
     }
 }

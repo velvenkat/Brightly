@@ -35,7 +35,9 @@
     <string name="set_name">Set Name</string>
     <string name="set_description">Set Description</string>
     <string name="set_info_edit">Set Info/Edit</string>
+    <string name="set_info">Set Info</string>
     <string name="card_info_edit">Card Info/Edit</string>
+    <string name="card_info">Card Info</string>
     <string name="reorder">Reorder</string>
     <string name="edit_set">Edit Set</string>
     <string name="edit_card">Edit Card</string>

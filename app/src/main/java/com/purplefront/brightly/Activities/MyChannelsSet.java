@@ -23,6 +23,7 @@ import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.SetsAdapter;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.SetListResponse;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
@@ -62,6 +63,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     String strDelSelId = "";
     TextView txtItemSel;
     CheckBox chk_sel_all;
+    ChannelListModel chl_list_obj;
 
     ImageView img_mutli_sel;
     boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
@@ -88,11 +90,18 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
             userId = model.getUser_Id();
         }
 
-        channel_id = getIntent().getStringExtra("channel_id");
+       /* channel_id = getIntent().getStringExtra("channel_id");
         channel_name = getIntent().getStringExtra("channel_name");
         channel_description = getIntent().getStringExtra("channel_description");
         encoded_string = getIntent().getStringExtra("encoded_string");
-        image_name = getIntent().getStringExtra("image_name");
+        image_name = getIntent().getStringExtra("image_name");*/
+
+        chl_list_obj=getIntent().getParcelableExtra("model_obj");
+        channel_id=chl_list_obj.getChannel_id();
+        channel_name=chl_list_obj.getChannel_name();
+        channel_description=chl_list_obj.getDescription();
+        encoded_string=chl_list_obj.getCover_image();
+        image_name=chl_list_obj.getImage_name();
 
         view_nodata = (TextView) findViewById(R.id.view_nodata);
         txtItemSel = (TextView) findViewById(R.id.txtCntSelected);
@@ -101,6 +110,9 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
 
         image_createChannelSet = (ImageView) findViewById(R.id.image_createChannelSet);
         setDlgListener(this);
+        if(!userId.equalsIgnoreCase(chl_list_obj.getCreated_by())){
+            img_mutli_sel.setVisibility(View.INVISIBLE);
+        }
         img_mutli_sel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,6 +122,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                     del_contr.setVisibility(View.VISIBLE);
                     txtItemSel.setText("");
                     btn_delete.setEnabled(false);
+                    if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
                     ith.attachToRecyclerView(null);
                     channelsSetAdapter.set_SelToDel(true);
                     channelsSetAdapter.notifyDataSetChanged();
@@ -202,6 +215,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                 }
                 channelsSetAdapter.set_SelToDel(false);
                 channelsSetAdapter.notifyDataSetChanged();
+                if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
                 ith.attachToRecyclerView(channelSet_listview);
             }
         });
@@ -245,20 +259,20 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
         ith.attachToRecyclerView(channelSet_listview);
 */
+        if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
+            ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
 
-        ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
+                int dragFrom = -1;
+                int dragTo = -1;
 
-            int dragFrom = -1;
-            int dragTo = -1;
+                @Override
+                public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                    return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
+                            0);
+                }
 
-            @Override
-            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
-                        0);
-            }
-
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                @Override
+                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
 
 
                     int fromPosition = viewHolder.getAdapterPosition();
@@ -274,47 +288,48 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                     Collections.swap(setsListModelList, fromPosition, toPosition);
                     // and notify the adapter that its dataset has changed
                     channelsSetAdapter.notifyItemMoved(fromPosition, toPosition);
-                     channelsSetAdapter.notifyItemChanged(fromPosition);
+                    channelsSetAdapter.notifyItemChanged(fromPosition);
                     channelsSetAdapter.notifyItemChanged(toPosition);
                     return true;
 
-            }
-
-            private void reallyMoved(int from, int to) {
-                // I guessed this was what you want...
-                call_set_reorder();
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-            }
-
-            @Override
-            public boolean isLongPressDragEnabled() {
-                return true;
-            }
-
-            @Override
-            public boolean isItemViewSwipeEnabled() {
-                return false;
-            }
-
-            @Override
-            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                super.clearView(recyclerView, viewHolder);
-
-                if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
-                    reallyMoved(dragFrom, dragTo);
                 }
 
-                dragFrom = dragTo = -1;
-            }
+                private void reallyMoved(int from, int to) {
+                    // I guessed this was what you want...
+                    call_set_reorder();
+                }
 
-        };
-        // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
-         ith = new ItemTouchHelper(dragCallback);
-        ith.attachToRecyclerView(channelSet_listview);
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+                }
+
+                @Override
+                public boolean isLongPressDragEnabled() {
+                    return true;
+                }
+
+                @Override
+                public boolean isItemViewSwipeEnabled() {
+                    return false;
+                }
+
+                @Override
+                public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                    super.clearView(recyclerView, viewHolder);
+
+                    if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+                        reallyMoved(dragFrom, dragTo);
+                    }
+
+                    dragFrom = dragTo = -1;
+                }
+
+            };
+            // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
+            ith = new ItemTouchHelper(dragCallback);
+            ith.attachToRecyclerView(channelSet_listview);
+        }
 
         image_createChannelSet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -438,7 +453,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     private void setAdapter(List<SetsListModel> setsListModels) {
 
         channelSet_listview.setLayoutManager(new GridLayoutManager(MyChannelsSet.this, 3));
-        channelsSetAdapter = new SetsAdapter(MyChannelsSet.this, setsListModels, channel_id, channel_name, this);
+        channelsSetAdapter = new SetsAdapter(MyChannelsSet.this, setsListModels, channel_id,channel_name, this,chl_list_obj.getCreated_by());
         channelSet_listview.setAdapter(channelsSetAdapter);
         //  channelsSetAdapter.notifyDataSetChanged();
     }
@@ -490,8 +505,10 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.my_channel_set, menu);
-        return true;
+       // if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
+            getMenuInflater().inflate(R.menu.my_channel_set, menu);
+            return true;
+
     }
 
     @Override
@@ -506,11 +523,12 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
             case R.id.channelInfo_Edit:
                 Intent intent = new Intent(MyChannelsSet.this, EditChannelInfo.class);
                 intent.putExtra("userId", userId);
-                intent.putExtra("channel_name", channel_name);
+              /*  intent.putExtra("channel_name", channel_name);
                 intent.putExtra("channel_description", channel_description);
                 intent.putExtra("encoded_string", encoded_string);
                 intent.putExtra("image_name", image_name);
-                intent.putExtra("channel_id", channel_id);
+                intent.putExtra("channel_id", channel_id);*/
+                intent.putExtra("model_obj",chl_list_obj);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
 

@@ -37,6 +37,7 @@ import com.purplefront.brightly.Fragments.FileType;
 import com.purplefront.brightly.Fragments.ImageType;
 import com.purplefront.brightly.Fragments.YoutubeType;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.UserModule;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -55,7 +56,7 @@ import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class CreateCards extends BaseActivity implements UserInterface{
+public class CreateCards extends BaseActivity implements UserInterface {
 
     String userId;
     String set_id;
@@ -64,7 +65,9 @@ public class CreateCards extends BaseActivity implements UserInterface{
     UserModule userModule;
     private TabLayout tabs_creatCard;
     private ViewPager viewpager_creatCard;
-
+    String Created_By;
+    CardsListModel cardModelObj;
+    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +83,23 @@ public class CreateCards extends BaseActivity implements UserInterface{
         userId = getIntent().getStringExtra("userId");
         set_id = getIntent().getStringExtra("set_id");
         set_name = getIntent().getStringExtra("set_name");
-
+        Created_By = getIntent().getStringExtra("created_by");
         userModule = new UserModule();
         userModule.setSet_id(set_id);
         userModule.setSet_name(set_name);
         userModule.setUserId(userId);
+
+        if (Created_By != null) {
+            cardModelObj = getIntent().getParcelableExtra("Card_Dtls");
+            userModule.setCard_id(cardModelObj.getCard_id());
+            userModule.setCard_name(cardModelObj.getTitle());
+            userModule.setCard_description(cardModelObj.getDescription());
+            userModule.setCard_multimedia_url(cardModelObj.getUrl());
+            userModule.setImage_name(cardModelObj.getName());
+            userModule.setType(cardModelObj.getType());
+
+        }
+
 
         viewpager_creatCard = (ViewPager) findViewById(R.id.viewpager_creatCard);
 
@@ -122,36 +137,37 @@ public class CreateCards extends BaseActivity implements UserInterface{
     private void setupViewPager(ViewPager viewpager_creatCard) {
 
         CreateCards.ViewPagerAdapter adapter = new CreateCards.ViewPagerAdapter(getSupportFragmentManager());
-        Fragment create_imgType=new ImageType();
-        Bundle bundle2 =new Bundle();
-        bundle2.putBoolean("isCreate",true);
-        create_imgType.setArguments(bundle2);
+        Fragment create_imgType = new ImageType();
+        Bundle bundle = new Bundle();
+        if (Created_By == null)
+            bundle.putBoolean("isCreate", true);
+        else {
+            bundle.putBoolean("isCreate", false);
+            bundle.putString("created_by", Created_By);
+        }
+
+
+        create_imgType.setArguments(bundle);
         adapter.addFrag(create_imgType, "image");
 
 
-
-
-        Fragment create_UTubeType=new YoutubeType();
-        Bundle bundle =new Bundle();
-        bundle.putBoolean("isCreate",true);
+        Fragment create_UTubeType = new YoutubeType();
         create_UTubeType.setArguments(bundle);
         adapter.addFrag(create_UTubeType, "youtube");
 
 
 //        adapter.addFrag(new YoutubeType(), "youtube");
 
-        Fragment create_audioType=new AudioType();
-        Bundle bundle1 =new Bundle();
-        bundle1.putBoolean("isCreate",true);
-        create_audioType.setArguments(bundle1);
+        Fragment create_audioType = new AudioType();
+
+        create_audioType.setArguments(bundle);
         adapter.addFrag(create_audioType, "audio");
 
-     //   adapter.addFrag(new AudioType(), "audio");
+        //   adapter.addFrag(new AudioType(), "audio");
 //        adapter.addFrag(new FileType(), "file");
-        Fragment create_fileType=new FileType();
-        Bundle bundle4 =new Bundle();
-        bundle4.putBoolean("isCreate",true);
-        create_fileType.setArguments(bundle4);
+        Fragment create_fileType = new FileType();
+
+        create_fileType.setArguments(bundle);
         adapter.addFrag(create_fileType, "file");
 
 
@@ -161,9 +177,11 @@ public class CreateCards extends BaseActivity implements UserInterface{
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
+
         public ViewPagerAdapter(FragmentManager manager) {
             super(manager);
         }
+
         @Override
         public Fragment getItem(int position) {
             return mFragmentList.get(position);
@@ -178,6 +196,7 @@ public class CreateCards extends BaseActivity implements UserInterface{
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
+
         @Override
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);

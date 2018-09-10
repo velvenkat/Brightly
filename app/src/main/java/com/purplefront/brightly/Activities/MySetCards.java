@@ -1,6 +1,9 @@
 package com.purplefront.brightly.Activities;
 
+
+import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -11,12 +14,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.ViewCardFragmentPagerAdapter;
 import com.purplefront.brightly.Adapters.ViewPagerAdapter;
 import com.purplefront.brightly.Application.RealmModel;
+import com.purplefront.brightly.Fragments.ItemsAddFragment;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
 import com.purplefront.brightly.Modules.SharedDataModel;
@@ -31,6 +36,7 @@ import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
+
 public class MySetCards extends BaseActivity {
 
     // Declare Variables
@@ -42,6 +48,7 @@ public class MySetCards extends BaseActivity {
     Realm realm;
     RealmResults<RealmModel> realmModel;
 
+    String Created_By;
     String userId;
     String channel_id = "";
     String channel_name = "";
@@ -50,6 +57,8 @@ public class MySetCards extends BaseActivity {
     String set_id = "";
     String share_link = "";
     int Cur_PagrPosition;
+    int UPDATECARD = 102;
+    ImageView image_createCard;
     ArrayList<SharedDataModel> sharedDataModels;
 
     @Override
@@ -76,12 +85,47 @@ public class MySetCards extends BaseActivity {
         set_name = getIntent().getStringExtra("set_name");
         set_id = getIntent().getStringExtra("set_id");
         share_link = getIntent().getStringExtra("share_link");
+        Created_By = getIntent().getStringExtra("created_by");
         sharedDataModels = getIntent().getParcelableArrayListExtra("sharedDataModels");
         setTitle(set_name);
 
         // Locate the ViewPager in viewpager_main.xml
         viewPager_Cards = (ViewPager) findViewById(R.id.viewPager_Cards);
+        image_createCard = (ImageView) findViewById(R.id.image_createCard);
+        if (!userId.equalsIgnoreCase(Created_By)) {
+            image_createCard.setVisibility(View.GONE);
+        } else {
+            image_createCard.setVisibility(View.VISIBLE);
+        }
+        image_createCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*Fragment card_frag = new ItemsAddFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("set_id", set_id);
+                bundle.putString("userId", userId);
+                bundle.putString("set_name", set_name);
+                card_frag.setArguments(bundle);*/
+                Intent intent = new Intent(MySetCards.this, CreateCards.class);
+                intent.putExtra("userId", userId);
+                intent.putExtra("set_id", set_id);
+                intent.putExtra("set_name", set_name);
+
+                startActivityForResult(intent,UPDATECARD);
+                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+            }
+        });
         getCardsLists();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == UPDATECARD) {
+                getCardsLists();
+            }
+        }
     }
 
     public void getCardsLists() {
@@ -106,8 +150,8 @@ public class MySetCards extends BaseActivity {
                                 view_nodata.setVisibility(View.VISIBLE);*/
                                 dismissProgress();
                             }
-                            CardsListModel dummyCardObj=new CardsListModel();
-                            cardsListModels.add(dummyCardObj);
+                /*            CardsListModel dummyCardObj=new CardsListModel();
+                            cardsListModels.add(dummyCardObj);*/
                             setAdapter(cardsListModels);
 
                         } else {
@@ -137,11 +181,11 @@ public class MySetCards extends BaseActivity {
     private void setAdapter(List<CardsListModel> cardsListModels) {
 
         // Pass results to ViewPagerAdapter Class
-       // cardsPagerAdapter = new ViewPagerAdapter(MySetCards.this, cardsListModels, set_id, userId, set_name);
+        // cardsPagerAdapter = new ViewPagerAdapter(MySetCards.this, cardsListModels, set_id, userId, set_name);
         // Binds the Adapter to the ViewPager
-        cardsPagerAdapter=new ViewCardFragmentPagerAdapter(this,getSupportFragmentManager(),cardsListModels,set_id,userId,set_name);
+        cardsPagerAdapter = new ViewCardFragmentPagerAdapter(this, getSupportFragmentManager(), cardsListModels, set_id, userId, set_name);
         viewPager_Cards.setAdapter(cardsPagerAdapter);
-       // cardsPagerAdapter.notifyDataSetChanged();
+        // cardsPagerAdapter.notifyDataSetChanged();
         viewPager_Cards.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -150,7 +194,7 @@ public class MySetCards extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
-               Cur_PagrPosition=position;
+                Cur_PagrPosition = position;
             }
 
             @Override
@@ -165,7 +209,10 @@ public class MySetCards extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.my_set_cards, menu);
+        if (userId.equalsIgnoreCase(Created_By)) {
+            getMenuInflater().inflate(R.menu.my_set_cards, menu);
+        } else
+            getMenuInflater().inflate(R.menu.my_sub_cards, menu);
         return true;
     }
 
@@ -187,6 +234,7 @@ public class MySetCards extends BaseActivity {
                 intent.putExtra("set_name", set_name);
                 intent.putExtra("set_description", set_description);
                 intent.putExtra("share_link", share_link);
+                intent.putExtra("created_by", Created_By);
                 intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
@@ -195,22 +243,22 @@ public class MySetCards extends BaseActivity {
 
             case R.id.cardInfo_Edit:
 
-                if(Cur_PagrPosition < cardsListModels.size() - 1)
-                {
-                    Intent intent1 = new Intent(MySetCards.this, EditCardInfo.class);
-                    Bundle bundle=new Bundle();
-                    bundle.putString("userId", userId);
-                    bundle.putString("set_id", set_id);
-                    bundle.putString("set_name", set_name);
-                    bundle.putParcelable("Card_Dtls", cardsListModels.get(Cur_PagrPosition));
-                    intent1.putExtra("my_card_bundle",bundle);
-                    startActivity(intent1);
+                if (Cur_PagrPosition < cardsListModels.size() - 1) {
+                    Intent intent1 = new Intent(MySetCards.this, CreateCards.class);
+
+                    intent1.putExtra("userId", userId);
+                    intent1.putExtra("set_id", set_id);
+                    intent1.putExtra("set_name", set_name);
+                    intent1.putExtra("created_by", Created_By);
+                    intent1.putExtra("Card_Dtls", cardsListModels.get(Cur_PagrPosition));
+
+                    //intent1.putExtra("my_card_bundle",bundle);
+
+                    startActivityForResult(intent1, UPDATECARD);
                     overridePendingTransition(R.anim.right_enter, R.anim.left_out);
 
 
-                }
-                else
-                {
+                } else {
                     showLongToast(MySetCards.this, "No Card to Edit");
 
                 }

@@ -49,6 +49,7 @@ public class EditSetInfo extends BaseActivity {
     String set_id = "";
     String share_link;
     String channel_name;
+    String Created_By;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,7 @@ public class EditSetInfo extends BaseActivity {
 
 
 
+        Created_By=getIntent().getStringExtra("created_by");
 
         edit_setName = (EditText) findViewById(R.id.edit_setName);
         edit_setDescription = (EditText) findViewById(R.id.edit_setDescription);
@@ -85,6 +87,13 @@ public class EditSetInfo extends BaseActivity {
 
         edit_setName.setText(set_name);
         edit_setDescription.setText(set_description);
+        if(!Created_By.equalsIgnoreCase(userId)){
+            share.setVisibility(View.GONE);
+            delete.setVisibility(View.GONE);
+            btn_editSet.setVisibility(View.GONE);
+            edit_setName.setEnabled(false);
+            edit_setDescription.setEnabled(false);
+            setTitle("Set Info");
 
 
 
@@ -92,6 +101,11 @@ public class EditSetInfo extends BaseActivity {
             sharedListAdapter = new SharedListAdapter(EditSetInfo.this, sharedDataModels, set_id);
             shared_listview.setAdapter(sharedListAdapter);
 
+
+        }
+        else {
+            setTitle("Edit Set Info");
+        }
         btn_editSet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

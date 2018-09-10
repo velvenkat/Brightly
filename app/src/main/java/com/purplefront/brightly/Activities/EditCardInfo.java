@@ -49,6 +49,7 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
     String encoded_string = "";
     String image_name = "";
     String type = "";
+    String created_by;
     CardsListModel cardsListModels;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +60,14 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        setTitle("Edit Card Info");
+
         Bundle bundle=getIntent().getBundleExtra("my_card_bundle");
         cardsListModels=bundle.getParcelable("Card_Dtls");
 
         userId = bundle.getString("userId");
         set_id = bundle.getString("set_id");
         set_name = bundle.getString("set_name");
+        created_by=bundle.getString("created_by");
         userModule = new UserModule();
         userModule.setSet_id(set_id);
         userModule.setSet_name(set_name);
@@ -79,9 +81,14 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
 
         card_id = cardsListModels.getCard_id();
         type = cardsListModels.getType();
-
+        if(created_by.equalsIgnoreCase(userId)){
+            setTitle("Edit Card Info");
+        }
+        else
+            setTitle("Card Info");
         setDlgListener(this);
-        viewpager_editCard = (ViewPager) findViewById(R.id.viewpager_editCard);
+        viewpager_editCard = (ViewPager)
+                findViewById(R.id.viewpager_editCard);
 
         setupViewPager(viewpager_editCard);
         tabs_editCard = (TabLayout) findViewById(R.id.tabs_editCard);
@@ -173,6 +180,7 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
                 Fragment edit_imgType=new ImageType();
                 Bundle bundle2 =new Bundle();
                 bundle2.putBoolean("isCreate",false);
+                bundle2.putString("created_by",created_by);
                 edit_imgType.setArguments(bundle2);
                 adapter.addFrag(edit_imgType, "image");
 
@@ -188,6 +196,7 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
                 Fragment edit_UTubeType=new YoutubeType();
                 Bundle bundle =new Bundle();
                 bundle.putBoolean("isCreate",false);
+                bundle.putString("created_by",created_by);
                 edit_UTubeType.setArguments(bundle);
                 adapter.addFrag(edit_UTubeType, "youtube");
 
@@ -200,6 +209,7 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
                 Fragment edit_audioType=new AudioType();
                 Bundle bundle1 =new Bundle();
                 bundle1.putBoolean("isCreate",false);
+                bundle1.putString("created_by",created_by);
                 edit_audioType.setArguments(bundle1);
                 adapter.addFrag(edit_audioType, "audio");
 
@@ -210,6 +220,7 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
                 Fragment edit_fileType=new FileType();
                 Bundle bundle4 =new Bundle();
                 bundle4.putBoolean("isCreate",false);
+                bundle4.putString("created_by",created_by);
                 edit_fileType.setArguments(bundle4);
                 adapter.addFrag(edit_fileType, "file");
 
@@ -222,6 +233,7 @@ public class EditCardInfo extends BaseActivity implements BaseActivity.alert_dlg
                 Fragment edit_imgType1=new ImageType();
                 Bundle bundle3 =new Bundle();
                 bundle3.putBoolean("isCreate",false);
+                bundle3.putString("created_by",created_by);
                 edit_imgType1.setArguments(bundle3);
                 adapter.addFrag(edit_imgType1, "image");
 

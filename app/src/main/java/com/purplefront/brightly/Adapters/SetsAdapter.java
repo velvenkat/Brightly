@@ -45,15 +45,18 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
     String share_link;
     Set_sel_interface mListener;
     boolean isSelToDel = false;
+    String Created_By;
 
 
-    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels, String channel_id, String channel_name, Set_sel_interface listenr) {
+    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels, String channel_id,String channel_name, Set_sel_interface listenr,String created_by) {
+
 
         this.context = myChannelsSet;
         this.setsListModels = setsListModels;
         this.channel_id = channel_id;
         this.channel_name = channel_name;
         inflater = (LayoutInflater.from(context));
+        Created_By=created_by;
         mListener = listenr;
     }
 
@@ -163,6 +166,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     intent.putExtra("channel_id", channel_id);
                     intent.putExtra("channel_name", channel_name);
                     intent.putExtra("share_link", share_link);
+                    intent.putExtra("created_by",Created_By);
                     intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
                     context.startActivity(intent);
                     context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);

@@ -52,7 +52,7 @@ public class ViewCardFragmentPagerAdapter extends FragmentStatePagerAdapter
     @Override
     public Fragment getItem(int position) {
         Fragment card_frag = null;
-        if(position<cardsListModels.size()-1) {
+        if(position<cardsListModels.size()) {
             CardsListModel cardObj = cardsListModels.get(position);
 
             Bundle bundle = new Bundle();
@@ -66,9 +66,9 @@ public class ViewCardFragmentPagerAdapter extends FragmentStatePagerAdapter
             bundle.putString("set_name", set_name);
             card_frag.setArguments(bundle);
 
-            return card_frag;
+
         }
-        else{
+       /* else{
             card_frag = new ItemsAddFragment();
             Bundle bundle = new Bundle();
             bundle.putString("set_id", set_id);
@@ -76,8 +76,8 @@ public class ViewCardFragmentPagerAdapter extends FragmentStatePagerAdapter
             bundle.putString("set_name", set_name);
             card_frag.setArguments(bundle);
             return card_frag;
-        }
-
+        }*/
+        return card_frag;
     }
 
    /* @Override

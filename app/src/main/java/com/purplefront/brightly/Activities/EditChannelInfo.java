@@ -28,6 +28,7 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.CustomToast;
+import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.DeleteChannelResponse;
 import com.purplefront.brightly.Modules.UpdateChannelResponse;
 import com.purplefront.brightly.R;
@@ -59,6 +60,7 @@ public class EditChannelInfo extends BaseActivity {
 
     int PICK_IMAGE_REQ = 77;
     ResizeOptions img_resize_opts;
+    ChannelListModel chl_modl_obj;
     ImageChooser_Crop imgImageChooser_crop;
 
     @Override
@@ -69,14 +71,22 @@ public class EditChannelInfo extends BaseActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        setTitle("Edit Channel Info");
+
 
         userId = getIntent().getStringExtra("userId");
-        channel_id = getIntent().getStringExtra("channel_id");
+        /*channel_id = getIntent().getStringExtra("channel_id");
         channel_name = getIntent().getStringExtra("channel_name");
         channel_description = getIntent().getStringExtra("channel_description");
         encoded_string = getIntent().getStringExtra("encoded_string");
-        image_name = getIntent().getStringExtra("image_name");
+        image_name = getIntent().getStringExtra("image_name");*/
+
+        chl_modl_obj = getIntent().getParcelableExtra("model_obj");
+        channel_id = chl_modl_obj.getChannel_id();
+        channel_name = chl_modl_obj.getChannel_name();
+        channel_description = chl_modl_obj.getDescription();
+        encoded_string = chl_modl_obj.getCover_image();
+        image_name = chl_modl_obj.getImage_name();
+
 
         imageView_editChannelImage = (SimpleDraweeView) findViewById(R.id.imageView_editChannelImage);
         edit_channelName = (EditText) findViewById(R.id.edit_channelName);
@@ -86,6 +96,16 @@ public class EditChannelInfo extends BaseActivity {
         edit_channelName.setText(channel_name);
         edit_channelDescription.setText(channel_description);
 
+        if(!userId.equalsIgnoreCase(chl_modl_obj.getCreated_by())) {
+            edit_channelName.setEnabled(false);
+            edit_channelDescription.setEnabled(false);
+            btn_editChannel.setVisibility(View.GONE);
+            setTitle("Channel Info");
+        }
+        else {
+            btn_editChannel.setVisibility(View.VISIBLE);
+            setTitle("Edit Channel Info");
+        }
         btn_editChannel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,19 +116,19 @@ public class EditChannelInfo extends BaseActivity {
         imageView_editChannelImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                imgImageChooser_crop = new ImageChooser_Crop(EditChannelInfo.this);
-                Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
-                if (intent == null) {
-                    //PermissionUtil.
-                } else {
-                    startActivityForResult(intent, PICK_IMAGE_REQ);
+                if(userId.equalsIgnoreCase(chl_modl_obj.getCreated_by())) {
+                    imgImageChooser_crop = new ImageChooser_Crop(EditChannelInfo.this);
+                    Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+                    if (intent == null) {
+                        //PermissionUtil.
+                    } else {
+                        startActivityForResult(intent, PICK_IMAGE_REQ);
+                    }
                 }
-
             }
         });
 
-        if(!encoded_string.isEmpty()) {
+        if (!encoded_string.isEmpty()) {
 
             Glide.with(EditChannelInfo.this)
                     .load(encoded_string)
@@ -116,9 +136,7 @@ public class EditChannelInfo extends BaseActivity {
                     /*.transform(new CircleTransform(HomeActivity.this))
                     .override(50, 50)*/
                     .into(imageView_editChannelImage);
-        }
-        else
-        {
+        } else {
             Glide.with(EditChannelInfo.this)
                     .load(R.drawable.no_image_available)
                     .centerCrop()
@@ -135,7 +153,6 @@ public class EditChannelInfo extends BaseActivity {
                             .build();
             imageView_editChannelImage.setImageRequest(imageRequest2);*/
         }
-
 
 
     }
@@ -161,8 +178,7 @@ public class EditChannelInfo extends BaseActivity {
         }
     }
 
-    public void showAlertDialog()
-    {
+    public void showAlertDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(EditChannelInfo.this);
 
         // Setting Dialog Title
@@ -176,7 +192,7 @@ public class EditChannelInfo extends BaseActivity {
 
         // Setting Positive "Yes" Button
         alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
+            public void onClick(DialogInterface dialog, int which) {
 
                 getDeleteChannel();
                 // Write your code here to invoke YES event
@@ -200,6 +216,7 @@ public class EditChannelInfo extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        if(chl_modl_obj.getCreated_by().equalsIgnoreCase(userId))
         getMenuInflater().inflate(R.menu.delete, menu);
         return true;
     }
@@ -274,14 +291,12 @@ public class EditChannelInfo extends BaseActivity {
 
         String message = deleteChannelResponse.getMessage();
 
-        if(message.equals("success"))
-        {
+        if (message.equals("success")) {
             stackClearIntent(EditChannelInfo.this, MyChannel.class);
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);
 
 
-        }
-        else {
+        } else {
             showLongToast(EditChannelInfo.this, message);
         }
     }
@@ -304,7 +319,7 @@ public class EditChannelInfo extends BaseActivity {
                 try {
 
                     Uri picUri = imgImageChooser_crop.getPickImageResultUri(data);
-                               Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditChannelInfo.this.getContentResolver(), picUri);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditChannelInfo.this.getContentResolver(), picUri);
                     if (picUri != null) {
                        /* Intent intent = imgImageChooser_crop.performCrop(picUri, false, 150, 150);
                         startActivityForResult(intent, PIC_CROP);*/
@@ -437,14 +452,12 @@ public class EditChannelInfo extends BaseActivity {
 
         String message = updateChannelResponse.getMessage();
 
-        if(message.equals("success"))
-        {
+        if (message.equals("success")) {
             stackClearIntent(EditChannelInfo.this, MyChannel.class);
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);
 
 
-        }
-        else {
+        } else {
             showLongToast(EditChannelInfo.this, message);
         }
     }

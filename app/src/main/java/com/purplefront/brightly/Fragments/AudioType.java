@@ -3,6 +3,7 @@ package com.purplefront.brightly.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -73,6 +74,7 @@ public class AudioType extends BaseFragment {
     EditText create_cardDescription;
     Button btn_createCard;
     Uri audio_uri = null;
+    String CreatedBy;
     /*Context context;
     private int mediaFileLengthInMilliseconds; // this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
     boolean  isAudioPlay = false;
@@ -130,8 +132,10 @@ public class AudioType extends BaseFragment {
 
         Bundle bundle = getArguments();
         isCreateScreen = bundle.getBoolean("isCreate");
+        CreatedBy=bundle.getString("created_by");
 
-        userId = userModule.getUserId();
+
+                userId = userModule.getUserId();
         set_id = userModule.getSet_id();
         set_name = userModule.getSet_name();
 
@@ -151,8 +155,7 @@ public class AudioType extends BaseFragment {
         txtRecSeconds = (TextView) rootView.findViewById(R.id.txtRecSeconds);
         cur_default = (ImageView) rootView.findViewById(R.id.cur_default);
         rl_audio_player = (RelativeLayout) rootView.findViewById(R.id.rl_audio_player);
-
-        waveView.stopAnimation();
+         waveView.stopAnimation();
 
         rec_contr.setVisibility(View.GONE);
         crt_contr.setVisibility(View.VISIBLE);
@@ -161,9 +164,14 @@ public class AudioType extends BaseFragment {
             rl_audio_player.setVisibility(View.GONE);
             text_audioFile.setVisibility(View.VISIBLE);
         } else {
-            rl_audio_player.setVisibility(View.VISIBLE);
-            text_audioFile.setVisibility(View.GONE);
-            setMediaPlayer(null, userModule.getCard_multimedia_url());
+            if(!CreatedBy.equalsIgnoreCase(userId)){
+
+            }
+            if(userModule.getType().equalsIgnoreCase("audio")) {
+                rl_audio_player.setVisibility(View.VISIBLE);
+                text_audioFile.setVisibility(View.GONE);
+                setMediaPlayer(null, userModule.getCard_multimedia_url());
+            }
             create_cardName.setText(userModule.getCard_name());
             create_cardDescription.setText(userModule.getCard_description());
             btn_createCard.setText("UPDATE CARD");
@@ -240,6 +248,8 @@ public class AudioType extends BaseFragment {
                         return false;
                     } else {
                         release_media();
+                        getActivity().setResult(Activity.RESULT_CANCELED);
+                        getActivity().finish();
                     }
                 }
                 return true;
@@ -549,8 +559,13 @@ public class AudioType extends BaseFragment {
                     "Both fields are required.");
         } else if (encoded_string.equals("") || encoded_string.length() == 0) {
 
-            new CustomToast().Show_Toast(getActivity(), text_audioFile,
-                    "Audio File is required.");
+            if(userModule.getType().equalsIgnoreCase("audio")){
+                encoded_string="old";
+            }
+            else {
+                new CustomToast().Show_Toast(getActivity(), text_audioFile,
+                        "Audio File is required.");
+            }
 
         }
 
@@ -579,9 +594,9 @@ public class AudioType extends BaseFragment {
                         if (isSuccess) {
 
                             if (addMessageResponse != null) {
-
-                                setAddSetCredentials(addMessageResponse);
                                 dismissProgress();
+                                setAddSetCredentials(addMessageResponse);
+
 
                             } else {
                                 dismissProgress();
@@ -673,9 +688,11 @@ public class AudioType extends BaseFragment {
             /*Intent intent = new Intent(getActivity(), MySetCards.class);
             intent.putExtra("set_id", set_id);
             intent.putExtra("set_name", set_name);
-            intent.putExtra("userId", userId);
-            startActivity(intent);*/
-            getActivity().onBackPressed();
+            intent.putExtra("userId", userId);*/
+            release_media();
+            getActivity().setResult(Activity.RESULT_OK);
+            getActivity().finish();
+
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);
         } else {
             showLongToast(getActivity(), message);

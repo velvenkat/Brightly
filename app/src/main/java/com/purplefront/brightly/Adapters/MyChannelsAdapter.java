@@ -91,11 +91,12 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
             public void onClick(View view) {
 
                 Intent intent = new Intent(context, MyChannelsSet.class);
-                intent.putExtra("channel_id", channelListModel.getChannel_id());
+              /*  intent.putExtra("channel_id", channelListModel.getChannel_id());
                 intent.putExtra("channel_name", channelListModel.getChannel_name());
                 intent.putExtra("channel_description", channelListModel.getDescription());
                 intent.putExtra("encoded_string", channelListModel.getCover_image());
-                intent.putExtra("image_name", channelListModel.getImage_name());
+                intent.putExtra("image_name", channelListModel.getImage_name());*/
+                intent.putExtra("model_obj",channelListModel);
                 context.startActivity(intent);
                 context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
