@@ -160,7 +160,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 @Override
                 public void onClick(View v) {
                     String format = "https://docs.google.com/gview?embedded=true&url=%s";
-                    String fullPath = String.format(Locale.ENGLISH, format, cardModelObj.getUrl());
+                    String fullPath = String.format(Locale.ENGLISH, cardModelObj.getUrl());
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fullPath));
                     startActivity(browserIntent);
                 }

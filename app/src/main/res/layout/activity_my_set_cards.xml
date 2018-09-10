@@ -14,12 +14,30 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/action_bar"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        <TextView
+            android:id="@+id/pager_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sub_title"
+            android:textStyle="bold"
+            android:layout_marginRight="@dimen/dimen_45"
+            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/white_greyish"
+            />
+
+        </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -33,6 +51,8 @@
 
         >
     </android.support.v4.view.ViewPager>
+
+
     <ImageView
         android:id="@+id/image_createCard"
         android:layout_width="60dp"

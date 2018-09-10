@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
@@ -48,6 +49,10 @@ public class MySetCards extends BaseActivity {
 
     Realm realm;
     RealmResults<RealmModel> realmModel;
+
+    TextView pager_count;
+    String count;
+    String pager_size;
 
     String Created_By = "";
     String userId;
@@ -92,6 +97,8 @@ public class MySetCards extends BaseActivity {
         share_link = getIntent().getStringExtra("share_link");
         sharedDataModels = getIntent().getParcelableArrayListExtra("sharedDataModels");
         setTitle(set_name);
+
+        pager_count = (TextView) findViewById(R.id.pager_count);
 
         // Locate the ViewPager in viewpager_main.xml
         viewPager_Cards = (ViewPager) findViewById(R.id.viewPager_Cards);
@@ -193,6 +200,10 @@ public class MySetCards extends BaseActivity {
         viewPager_Cards.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                pager_size = String.valueOf(cardsListModels.size());
+                count = String.valueOf(position+1);
+                pager_count.setText(count +"/"+ pager_size);
 
             }
 
