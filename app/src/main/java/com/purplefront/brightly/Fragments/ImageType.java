@@ -21,8 +21,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -64,12 +66,12 @@ public class ImageType extends BaseFragment {
     View frag_rootView;
     EditText create_cardName;
     EditText create_cardDescription;
-    SimpleDraweeView image_cardImage;
+    ImageView image_cardImage;
     ResizeOptions img_resize_opts;
     ImageChooser_Crop imgImageChooser_crop;
     Button btn_createCard;
     int PICK_IMAGE_REQ = 77;
-
+    ResizeOptions mResizeOptions;
     Context context;
     UserModule userModule;
 
@@ -109,7 +111,7 @@ public class ImageType extends BaseFragment {
         set_name = userModule.getSet_name();
 
 
-        image_cardImage = (SimpleDraweeView) frag_rootView.findViewById(R.id.image_cardImage);
+        image_cardImage = (ImageView) frag_rootView.findViewById(R.id.image_cardImage);
         create_cardName = (EditText) frag_rootView.findViewById(R.id.create_cardName);
         create_cardDescription = (EditText) frag_rootView.findViewById(R.id.create_cardDescription);
         btn_createCard = (Button) frag_rootView.findViewById(R.id.btn_createCard);
@@ -118,6 +120,24 @@ public class ImageType extends BaseFragment {
         isCreateCard = bundle.getBoolean("isCreate");
         Created_by=bundle.getString("created_by");
         boolean load_def_img = true;
+
+        frag_rootView.addOnLayoutChangeListener(
+                new View.OnLayoutChangeListener() {
+                    @Override
+                    public void onLayoutChange(
+                            View view,
+                            int left,
+                            int top,
+                            int right,
+                            int bottom,
+                            int oldLeft,
+                            int oldTop,
+                            int oldRight,
+                            int oldBottom) {
+                        final int imageSize = ((right - 10) - (left - 10));
+                        mResizeOptions = new ResizeOptions(imageSize, imageSize);
+                    }
+                });
 
         if (!isCreateCard) {
             btn_createCard.setText("UPDATE CARD");
@@ -138,6 +158,18 @@ public class ImageType extends BaseFragment {
                         /*.transform(new CircleTransform(HomeActivity.this))
                         .override(50, 50)*/
                         .into(image_cardImage);
+               /* RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                //  layoutParams.setMargins(0,0,0,0);
+                image_cardImage.setLayoutParams(layoutParams);*/
+
+             //   image_cardImage.setScaleType(ImageView.ScaleType.FIT_XY);
+
+
+                /*final ImageRequest imageRequest =
+                        ImageRequestBuilder.newBuilderWithSource(Uri.parse(userModule.getCard_multimedia_url()))
+                                .setResizeOptions(mResizeOptions)
+                                .build();
+                image_cardImage.setImageRequest(imageRequest);*/
 
             } else {
                 load_def_img = true;
@@ -148,12 +180,22 @@ public class ImageType extends BaseFragment {
             btn_createCard.setText("CREATE CARD");
         }
         if (load_def_img) {
-            Glide.with(getActivity())
+           /* Glide.with(getActivity())
                     .load(R.drawable.no_image_available)
                     .centerCrop()
-                    /*.transform(new CircleTransform(HomeAct/ivity.this))
-                    .override(50, 50)*/
-                    .into(image_cardImage);
+                    *//*.transform(new CircleTransform(HomeAct/ivity.this))
+                    .override(50, 50)*//*
+                    .into(image_cardImage);*/
+            image_cardImage.setImageResource(R.drawable.no_image_available);
+
+
+            /*RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            //  layoutParams.setMargins(0,0,0,0);
+            layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);*/
+          //  image_cardImage.setLayoutParams(layoutParams);
+
+
+           // image_cardImage.setScaleType(ImageView.ScaleType.FIT_XY);
         }
         btn_createCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -361,11 +403,28 @@ public class ImageType extends BaseFragment {
                         drawable.setCircular(true);
                         imgPet.setImageDrawable(drawable);
                     }*/
-                    final ImageRequest imageRequest2 =
+                    /*final ImageRequest imageRequest2 =
                             ImageRequestBuilder.newBuilderWithSource(resultUri)
-                                    .setResizeOptions(img_resize_opts)
+                                    .setResizeOptions(mResizeOptions)
                                     .build();
-                    image_cardImage.setImageRequest(imageRequest2);
+                    image_cardImage.setImageRequest(imageRequest2);*/
+
+                 /*   RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    //     layoutParams.setMargins(0,0,0,0);
+                    image_cardImage.setLayoutParams(layoutParams);*/
+                 //   image_cardImage.setScaleType(ImageView.ScaleType.FIT_XY);
+                   /* final ImageRequest imageRequest2 =
+                            ImageRequestBuilder.newBuilderWithSource(resultUri)
+                                    .setResizeOptions(mResizeOptions)
+                                    .build();
+                    image_cardImage.setImageRequest(imageRequest2);*/
+                    Glide.with(getActivity())
+                            .load(resultUri)
+                            .centerCrop()
+                            /*.transform(new CircleTransform(HomeActivity.this))
+                            .override(50, 50)*/
+                            .into(image_cardImage);
+
                     //   imgPet.getHierarchy().setRoundingParams(roundingParams);
                     // Call_pet_photo_update();
                 } catch (Exception e) {
