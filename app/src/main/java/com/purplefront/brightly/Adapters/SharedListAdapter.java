@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.purplefront.brightly.Activities.BaseActivity;
 import com.purplefront.brightly.Activities.EditSetInfo;
 import com.purplefront.brightly.Activities.ShareWithContacts;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 
@@ -23,16 +24,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.ViewHolder> {
-    ArrayList<SharedDataModel> sharedDataModels;
+    ArrayList<SharedDataModel> sharedDataModel;
     Activity context;
     LayoutInflater inflater;
     String set_id;
 
 
-    public SharedListAdapter(EditSetInfo editSetInfo, ArrayList<SharedDataModel> sharedDataModels, String set_id) {
+    public SharedListAdapter(EditSetInfo editSetInfo, ArrayList<SharedDataModel> sharedDataModel, String set_id) {
 
         this.context = editSetInfo;
-        this.sharedDataModels = sharedDataModels;
+        this.sharedDataModel = sharedDataModel;
         this.set_id = set_id;
         inflater = (LayoutInflater.from(context));
     }
@@ -51,13 +52,13 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull SharedListAdapter.ViewHolder holder, int position) {
 
-        SharedDataModel sharedDataModel = sharedDataModels.get(position);
+        SharedDataModel sharedDataModels = sharedDataModel.get(position);
 
-        if (sharedDataModel.getName() != null) {
-            holder.text_sharedName.setText(sharedDataModel.getName());
+        if (sharedDataModels.getName() != null) {
+            holder.text_sharedName.setText(sharedDataModels.getName());
         }
-        if (sharedDataModel.getPhone() != null) {
-            holder.text_sharedNumber.setText(sharedDataModel.getPhone());
+        if (sharedDataModels.getPhone() != null) {
+            holder.text_sharedNumber.setText(sharedDataModels.getPhone());
         }
 
         holder.revoke_shared.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +82,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
                     public void onClick(DialogInterface dialog,int which) {
 
 
-                        ((EditSetInfo)context).getRevokeSet(set_id, sharedDataModel.getId());
+                        ((EditSetInfo)context).getRevokeSet(set_id, sharedDataModel.get(position).getId());
                         // Write your code here to invoke YES event
 //                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
                     }
@@ -106,7 +107,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return sharedDataModels.size();
+        return sharedDataModel.size();
     }
 
 

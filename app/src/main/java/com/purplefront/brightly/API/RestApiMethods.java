@@ -8,6 +8,7 @@ import com.purplefront.brightly.Modules.DeleteChannelResponse;
 import com.purplefront.brightly.Modules.EditProfileResponse;
 import com.purplefront.brightly.Modules.MyProfileResponse;
 import com.purplefront.brightly.Modules.NotificationsResponse;
+import com.purplefront.brightly.Modules.SetInfoSharedResponse;
 import com.purplefront.brightly.Modules.SetListResponse;
 import com.purplefront.brightly.Modules.SignInResponse;
 import com.purplefront.brightly.Modules.SignUpResponse;
@@ -78,6 +79,11 @@ public interface RestApiMethods {
     //Update Sets
     @POST("sets/update_set.php")
     Call<AddMessageResponse> getUpdateSet(@Query("user_id") String user_id, @Query("channel_id") String channel_id, @Query("set_name") String set_name, @Query("set_description") String set_description, @Query("set_id") String set_id);
+
+    //Update Sets
+    @POST("sets/set_info.php")
+    Call<SetInfoSharedResponse> getSetSharedInfo(@Query("user_id") String user_id, @Query("channel_id") String channel_id, @Query("set_id") String set_id);
+
 
     //delete Sets
     @POST("sets/delete_set.php")

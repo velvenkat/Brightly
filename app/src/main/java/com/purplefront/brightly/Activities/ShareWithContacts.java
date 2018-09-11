@@ -36,7 +36,9 @@ import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.ContactsAdapter;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ContactShare;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -53,7 +55,6 @@ public class ShareWithContacts extends BaseActivity {
 
     private static final int REQUEST_PERMISSION = 1;
 
-    ArrayList<SharedDataModel> sharedDataModels;
     ListView contacts_listview;
     EditText conatcts_searchView;
     ImageView btn_share, btn_sync;
@@ -70,6 +71,8 @@ public class ShareWithContacts extends BaseActivity {
     String set_id = "";
     String userId;
     String share_link;
+    ChannelListModel chl_list_obj;
+    SetsListModel setsListModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,12 +87,14 @@ public class ShareWithContacts extends BaseActivity {
         btn_share = (ImageView) findViewById(R.id.btn_share);
         btn_sync = (ImageView) findViewById(R.id.btn_sync);
 
-        set_description = getIntent().getStringExtra("set_description");
-        set_name = getIntent().getStringExtra("set_name");
-        set_id = getIntent().getStringExtra("set_id");
-        share_link = getIntent().getStringExtra("share_link");
+        chl_list_obj=getIntent().getParcelableExtra("model_obj");
+        setsListModel = getIntent().getParcelableExtra("setsListModel");
+        set_description = setsListModel.getDescription();
+        set_name = setsListModel.getSet_name();
+        set_id = setsListModel.getSet_id();
+        share_link = setsListModel.getShare_link();
         userId = getIntent().getStringExtra("userId");
-        sharedDataModels = getIntent().getParcelableArrayListExtra("sharedDataModels");
+
 
         SharedPreferences mPrefs = getSharedPreferences("contactShares", MODE_PRIVATE);
         Gson gson = new Gson();
@@ -238,12 +243,9 @@ public class ShareWithContacts extends BaseActivity {
         if(message.equals("success"))
         {
             Intent intent = new Intent(ShareWithContacts.this, EditSetInfo.class);
-            intent.putExtra("set_id", set_id);
-            intent.putExtra("set_description", set_description);
-            intent.putExtra("set_name", set_name);
             intent.putExtra("userId", userId);
-            intent.putExtra("share_link", share_link);
-            intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
+            intent.putExtra("model_obj", chl_list_obj);
+            intent.putExtra("setsListModel", setsListModel);
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);

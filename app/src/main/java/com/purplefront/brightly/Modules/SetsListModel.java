@@ -1,12 +1,15 @@
 package com.purplefront.brightly.Modules;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetsListModel {
+public class SetsListModel implements Parcelable{
 
     @SerializedName("set_id")
     @Expose
@@ -31,6 +34,28 @@ public class SetsListModel {
     @SerializedName("shared_data")
     @Expose
     private ArrayList<SharedDataModel> shared_data = null;
+
+    protected SetsListModel(Parcel in) {
+        set_id = in.readString();
+        set_name = in.readString();
+        description = in.readString();
+        thumbnail = in.readString();
+        share_link = in.readString();
+        shared_data = in.createTypedArrayList(SharedDataModel.CREATOR);
+        isDelSel = in.readByte() != 0;
+    }
+
+    public static final Creator<SetsListModel> CREATOR = new Creator<SetsListModel>() {
+        @Override
+        public SetsListModel createFromParcel(Parcel in) {
+            return new SetsListModel(in);
+        }
+
+        @Override
+        public SetsListModel[] newArray(int size) {
+            return new SetsListModel[size];
+        }
+    };
 
     public boolean isDelSel() {
         return isDelSel;
@@ -98,5 +123,21 @@ public class SetsListModel {
 
     public void setShared_data(ArrayList<SharedDataModel> shared_data) {
         this.shared_data = shared_data;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(set_id);
+        parcel.writeString(set_name);
+        parcel.writeString(description);
+        parcel.writeString(thumbnail);
+        parcel.writeString(share_link);
+        parcel.writeTypedList(shared_data);
+        parcel.writeByte((byte) (isDelSel ? 1 : 0));
     }
 }

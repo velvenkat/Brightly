@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.purplefront.brightly.Modules.ChannelListModel;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 
@@ -15,7 +17,6 @@ import java.util.ArrayList;
 
 public class SharePage extends BaseActivity {
 
-    ArrayList<SharedDataModel> sharedDataModels;
     Button share_inApp;
     Button share_aLink;
 
@@ -24,6 +25,9 @@ public class SharePage extends BaseActivity {
     String userId;
     String set_id = "";
     String share_link;
+    ChannelListModel chl_list_obj;
+    SetsListModel setsListModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +40,13 @@ public class SharePage extends BaseActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         setTitle("Share Set");
-
-        set_description = getIntent().getStringExtra("set_description");
-        set_name = getIntent().getStringExtra("set_name");
-        set_id = getIntent().getStringExtra("set_id");
-        share_link = getIntent().getStringExtra("share_link");
+        chl_list_obj=getIntent().getParcelableExtra("model_obj");
+        setsListModel=getIntent().getParcelableExtra("setsListModel");
+        set_description = setsListModel.getDescription();
+        set_name = setsListModel.getSet_name();
+        set_id = setsListModel.getSet_id();
+        share_link = setsListModel.getShare_link();
         userId = getIntent().getStringExtra("userId");
-        sharedDataModels = getIntent().getParcelableArrayListExtra("sharedDataModels");
 
         share_inApp = (Button) findViewById(R.id.share_inApp);
         share_aLink = (Button) findViewById(R.id.share_aLink);
@@ -51,13 +55,11 @@ public class SharePage extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SharePage.this, ShareWithContacts.class);
-                intent.putExtra("set_id", set_id);
-                intent.putExtra("set_name", set_description);
-                intent.putExtra("set_name", set_name);
                 intent.putExtra("userId", userId);
-                intent.putExtra("share_link", share_link);
-                intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
+                intent.putExtra("model_obj", chl_list_obj);
+                intent.putExtra("setsListModel", setsListModel);
                 startActivity(intent);
+                finish();
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
         });

@@ -26,6 +26,7 @@ import com.purplefront.brightly.Fragments.ItemsAddFragment;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -65,7 +66,7 @@ public class MySetCards extends BaseActivity {
     int Cur_PagrPosition;
     int UPDATECARD = 102;
     ImageView image_createCard;
-    ArrayList<SharedDataModel> sharedDataModels;
+    SetsListModel setsListModel;
     ChannelListModel chl_list_obj;
 
     @Override
@@ -91,11 +92,12 @@ public class MySetCards extends BaseActivity {
         channel_id=chl_list_obj.getChannel_id();
         channel_name=chl_list_obj.getChannel_name();
         Created_By = chl_list_obj.getCreated_by();
-        set_description = getIntent().getStringExtra("set_description");
-        set_name = getIntent().getStringExtra("set_name");
-        set_id = getIntent().getStringExtra("set_id");
-        share_link = getIntent().getStringExtra("share_link");
-        sharedDataModels = getIntent().getParcelableArrayListExtra("sharedDataModels");
+
+        setsListModel = getIntent().getParcelableExtra("setsListModel");
+        set_description = setsListModel.getDescription();
+        set_name = setsListModel.getSet_name();
+        set_id = setsListModel.getSet_id();
+        share_link = setsListModel.getShare_link();
         setTitle(set_name);
 
         pager_count = (TextView) findViewById(R.id.pager_count);
@@ -119,9 +121,9 @@ public class MySetCards extends BaseActivity {
                 card_frag.setArguments(bundle);*/
                 Intent intent = new Intent(MySetCards.this, CreateCards.class);
                 intent.putExtra("userId", userId);
-                intent.putExtra("set_id", set_id);
-                intent.putExtra("set_name", set_name);
+                intent.putExtra("setsListModel", setsListModel);
                 intent.putExtra("model_obj", chl_list_obj);
+                intent.putExtra("isCreate_Crd",true);
                 startActivityForResult(intent,UPDATECARD);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
@@ -243,12 +245,8 @@ public class MySetCards extends BaseActivity {
             case R.id.setInfo_Edit:
                 Intent intent = new Intent(MySetCards.this, EditSetInfo.class);
                 intent.putExtra("userId", userId);
-                intent.putExtra("set_id", set_id);
-                intent.putExtra("set_name", set_name);
-                intent.putExtra("set_description", set_description);
-                intent.putExtra("share_link", share_link);
                 intent.putExtra("model_obj", chl_list_obj);
-                intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
+                intent.putExtra("setsListModel", setsListModel);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
 
@@ -256,13 +254,13 @@ public class MySetCards extends BaseActivity {
 
             case R.id.cardInfo_Edit:
 
-                if (Cur_PagrPosition < cardsListModels.size() - 1) {
+                if (cardsListModels.size()!=0) {
                     Intent intent1 = new Intent(MySetCards.this, CreateCards.class);
 
                     intent1.putExtra("userId", userId);
-                    intent1.putExtra("set_id", set_id);
-                    intent1.putExtra("set_name", set_name);
+                    intent1.putExtra("setsListModel", setsListModel);
                     intent1.putExtra("model_obj", chl_list_obj);
+                    intent1.putExtra("isCreate_Crd",false);
                     intent1.putExtra("Card_Dtls", cardsListModels.get(Cur_PagrPosition));
 
                     //intent1.putExtra("my_card_bundle",bundle);
@@ -281,8 +279,7 @@ public class MySetCards extends BaseActivity {
 
                 Intent intent2 = new Intent(MySetCards.this, CardList.class);
                 intent2.putExtra("userId", userId);
-                intent2.putExtra("set_id", set_id);
-                intent2.putExtra("set_name", set_name);
+                intent2.putExtra("setsListModel", setsListModel);
                 startActivity(intent2);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
 

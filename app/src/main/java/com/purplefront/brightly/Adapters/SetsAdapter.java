@@ -34,8 +34,7 @@ import io.realm.RealmResults;
 
 public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
-    ArrayList<SharedDataModel> sharedDataModels;
-    List<SetsListModel> setsListModels;
+    ArrayList<SetsListModel> setsListModels;
     ChannelListModel chl_list_obj;
     Activity context;
     LayoutInflater inflater;
@@ -50,7 +49,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
     String Created_By;
 
 
-    public SetsAdapter(MyChannelsSet myChannelsSet, List<SetsListModel> setsListModels,  ChannelListModel chl_list_obj, Set_sel_interface listenr) {
+    public SetsAdapter(MyChannelsSet myChannelsSet, ArrayList<SetsListModel> setsListModels,  ChannelListModel chl_list_obj, Set_sel_interface listenr) {
 
 
         this.context = myChannelsSet;
@@ -102,7 +101,6 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
         }
 
         SetsListModel setsListModel = setsListModels.get(position);
-        sharedDataModels = setsListModel.getShared_data();
         holder.textView_setName.setText(setsListModel.getSet_name());
         if (isSelToDel) {
             holder.chkbx_del_set.setVisibility(View.VISIBLE);
@@ -157,15 +155,10 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                 if (isSelToDel) {
                     mListener.onSelect(position, setsListModel);
                 } else {
-
-                    share_link = setsListModel.getShare_link();
                     Intent intent = new Intent(context, MySetCards.class);
                     intent.putExtra("userId", userId);
-                    intent.putExtra("set_id", setsListModel.getSet_id());
-                    intent.putExtra("set_name", setsListModel.getSet_name());
-                    intent.putExtra("set_description", setsListModel.getDescription());
                     intent.putExtra("model_obj", chl_list_obj);
-                    intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
+                    intent.putExtra("setsListModel", setsListModel);
                     context.startActivity(intent);
                     context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
                 }

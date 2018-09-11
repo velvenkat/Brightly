@@ -52,7 +52,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
     ItemTouchHelper ith;
     ImageView img_mutli_sel;
     boolean is_on_set_chg_chk_status=false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
-
+    SetsListModel setsListModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +64,9 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         userId = getIntent().getStringExtra("userId");
-        set_name = getIntent().getStringExtra("set_name");
-        set_id = getIntent().getStringExtra("set_id");
+        setsListModel = getIntent().getParcelableExtra("setsListModel");
+        set_name = setsListModel.getSet_name();
+        set_id = setsListModel.getSet_id();
         setTitle(set_name);
 
         view_nodata = (TextView) findViewById(R.id.view_nodata);

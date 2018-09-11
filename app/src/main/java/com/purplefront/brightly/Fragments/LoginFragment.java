@@ -264,6 +264,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
             realm.commitTransaction();
 
             showLongToast(getActivity(), signInResponse.getMessage());
+            getActivity().finish();
             frwdAnimIntent(getActivity(), MyChannel.class);
 
 

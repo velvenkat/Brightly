@@ -39,6 +39,7 @@ import com.purplefront.brightly.Fragments.YoutubeType;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.ChannelListModel;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Modules.UserModule;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -67,8 +68,10 @@ public class CreateCards extends BaseActivity implements UserInterface {
     private TabLayout tabs_creatCard;
     private ViewPager viewpager_creatCard;
     String Created_By;
+    boolean isCreate_Crd;
     CardsListModel cardModelObj;
     ChannelListModel chl_list_obj;
+    SetsListModel setsListModel;
     ;
 
     @Override
@@ -82,28 +85,32 @@ public class CreateCards extends BaseActivity implements UserInterface {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setTitle("Create Card");
 
+        isCreate_Crd=getIntent().getBooleanExtra("isCreate_Crd",false);
+
         chl_list_obj=getIntent().getParcelableExtra("model_obj");
         Created_By = chl_list_obj.getCreated_by();
         userId = getIntent().getStringExtra("userId");
-        set_id = getIntent().getStringExtra("set_id");
-        set_name = getIntent().getStringExtra("set_name");
+        setsListModel=getIntent().getParcelableExtra("setsListModel");
+        set_id = setsListModel.getSet_id();
+        set_name = setsListModel.getSet_name();
 
         userModule = new UserModule();
         userModule.setSet_id(set_id);
         userModule.setSet_name(set_name);
         userModule.setUserId(userId);
-
-        if (Created_By != null) {
-            cardModelObj = getIntent().getParcelableExtra("Card_Dtls");
-            userModule.setCard_id(cardModelObj.getCard_id());
-            userModule.setCard_name(cardModelObj.getTitle());
-            userModule.setCard_description(cardModelObj.getDescription());
-            userModule.setCard_multimedia_url(cardModelObj.getUrl());
-            userModule.setImage_name(cardModelObj.getName());
-            userModule.setType(cardModelObj.getType());
-
+        if(!isCreate_Crd) {
+            if (Created_By != null) {
+                cardModelObj = getIntent().getParcelableExtra("Card_Dtls");
+                if (cardModelObj != null) {
+                    userModule.setCard_id(cardModelObj.getCard_id());
+                    userModule.setCard_name(cardModelObj.getTitle());
+                    userModule.setCard_description(cardModelObj.getDescription());
+                    userModule.setCard_multimedia_url(cardModelObj.getUrl());
+                    userModule.setImage_name(cardModelObj.getName());
+                    userModule.setType(cardModelObj.getType());
+                }
+            }
         }
-
 
         viewpager_creatCard = (ViewPager) findViewById(R.id.viewpager_creatCard);
 
@@ -143,7 +150,7 @@ public class CreateCards extends BaseActivity implements UserInterface {
         CreateCards.ViewPagerAdapter adapter = new CreateCards.ViewPagerAdapter(getSupportFragmentManager());
         Fragment create_imgType = new ImageType();
         Bundle bundle = new Bundle();
-        if (Created_By == null)
+        if (isCreate_Crd)
             bundle.putBoolean("isCreate", true);
         else {
             bundle.putBoolean("isCreate", false);

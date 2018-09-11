@@ -4,17 +4,16 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class SetListResponse {
+public class SetInfoSharedResponse {
 
     @SerializedName("message")
     @Expose
     private String message;
 
-    @SerializedName("sets")
+    @SerializedName("shared_data")
     @Expose
-    private ArrayList<SetsListModel> sets = null;
+    private ArrayList<SharedDataModel> shared_data = null;
 
     public String getMessage() {
         return message;
@@ -24,11 +23,11 @@ public class SetListResponse {
         this.message = message;
     }
 
-    public ArrayList<SetsListModel> getSets() {
-        return sets;
+    public ArrayList<SharedDataModel> getShared_data() {
+        return shared_data;
     }
 
-    public void setSets(ArrayList<SetsListModel> sets) {
-        this.sets = sets;
+    public void setShared_data(ArrayList<SharedDataModel> shared_data) {
+        this.shared_data = shared_data;
     }
 }

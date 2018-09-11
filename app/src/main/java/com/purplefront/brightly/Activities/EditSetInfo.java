@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
@@ -22,6 +23,8 @@ import com.purplefront.brightly.Adapters.SharedListAdapter;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
+import com.purplefront.brightly.Modules.SetInfoSharedResponse;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -33,13 +36,12 @@ import retrofit2.Response;
 
 public class EditSetInfo extends BaseActivity {
 
-    ArrayList<SharedDataModel> sharedDataModels;
     RecyclerView shared_listview;
     SharedListAdapter sharedListAdapter;
-
     EditText edit_setName;
     EditText edit_setDescription;
     Button btn_editSet;
+    TextView text_share_title;
 
     ImageView share, delete;
 
@@ -52,6 +54,7 @@ public class EditSetInfo extends BaseActivity {
     String channel_name;
     String Created_By;
     ChannelListModel chl_list_obj;
+    SetsListModel setsListModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,15 +72,16 @@ public class EditSetInfo extends BaseActivity {
         channel_id=chl_list_obj.getChannel_id();
         channel_name=chl_list_obj.getChannel_name();
         Created_By = chl_list_obj.getCreated_by();
-        set_description = getIntent().getStringExtra("set_description");
-        set_name = getIntent().getStringExtra("set_name");
-        set_id = getIntent().getStringExtra("set_id");
         userId = getIntent().getStringExtra("userId");
-        share_link = getIntent().getStringExtra("share_link");
-        sharedDataModels = getIntent().getParcelableArrayListExtra("sharedDataModels");
+        setsListModel = getIntent().getParcelableExtra("setsListModel");
+        set_description = setsListModel.getDescription();
+        set_name = setsListModel.getSet_name();
+        set_id = setsListModel.getSet_id();
+        share_link = setsListModel.getShare_link();
 
         edit_setName = (EditText) findViewById(R.id.edit_setName);
         edit_setDescription = (EditText) findViewById(R.id.edit_setDescription);
+        text_share_title = (TextView) findViewById(R.id.text_share_title);
         btn_editSet = (Button) findViewById(R.id.btn_editSet);
 
         share = (ImageView) findViewById(R.id.share);
@@ -102,9 +106,9 @@ public class EditSetInfo extends BaseActivity {
         else {
 
             setTitle("Edit Set Info");
-            shared_listview.setLayoutManager(new LinearLayoutManager(this));
-            sharedListAdapter = new SharedListAdapter(EditSetInfo.this, sharedDataModels, set_id);
-            shared_listview.setAdapter(sharedListAdapter);
+
+                getSetSharedInfo();
+
 
         }
         btn_editSet.setOnClickListener(new View.OnClickListener() {
@@ -126,12 +130,9 @@ public class EditSetInfo extends BaseActivity {
             public void onClick(View view) {
 
                 Intent intent = new Intent(EditSetInfo.this, SharePage.class);
-                intent.putExtra("set_id", set_id);
-                intent.putExtra("set_name", set_name);
-                intent.putExtra("set_description", set_description);
                 intent.putExtra("userId", userId);
-                intent.putExtra("share_link", share_link);
-                intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
+                intent.putExtra("model_obj", chl_list_obj);
+                intent.putExtra("setsListModel", setsListModel);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
@@ -216,7 +217,7 @@ public class EditSetInfo extends BaseActivity {
         try {
 
             if (CheckNetworkConnection.isOnline(EditSetInfo.this)) {
-                showProgress();
+//                showProgress();
                 Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(EditSetInfo.this).getRevokeSet(set_id, assigned_to);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(EditSetInfo.this) {
                     @Override
@@ -266,10 +267,13 @@ public class EditSetInfo extends BaseActivity {
 
         if(message.equals("success"))
         {
+            getSetSharedInfo();
             showLongToast(EditSetInfo.this, addMessageResponse.getMessage());
+            dismissProgress();
         }
         else {
             showLongToast(EditSetInfo.this, message);
+            dismissProgress();
         }
     }
 
@@ -328,7 +332,7 @@ public class EditSetInfo extends BaseActivity {
         {
             Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
             intent.putExtra("model_obj", chl_list_obj);
-            intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
+            intent.putExtra("setsListModel", setsListModel);
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);
@@ -400,11 +404,72 @@ public class EditSetInfo extends BaseActivity {
            onBackPressed();
            finish();
            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-
-
+           dismissProgress();
         }
         else {
             showLongToast(EditSetInfo.this, message);
+            dismissProgress();
+        }
+    }
+
+    public void getSetSharedInfo() {
+        try {
+
+            if (CheckNetworkConnection.isOnline(EditSetInfo.this)) {
+                showProgress();
+                Call<SetInfoSharedResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(EditSetInfo.this).getSetSharedInfo(userId, channel_id, set_id);
+                callRegisterUser.enqueue(new ApiCallback<SetInfoSharedResponse>(EditSetInfo.this) {
+                    @Override
+                    public void onApiResponse(Response<SetInfoSharedResponse> response, boolean isSuccess, String message) {
+                        SetInfoSharedResponse infoSharedResponse = response.body();
+                        if (isSuccess) {
+
+                            if (infoSharedResponse != null) {
+
+                                setSharedCredentials(infoSharedResponse);
+                                dismissProgress();
+
+                            } else {
+                                dismissProgress();
+
+                            }
+
+                        } else {
+
+                            dismissProgress();
+                        }
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                    }
+                });
+            } else {
+
+                dismissProgress();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
+
+    }
+
+    private void setSharedCredentials(SetInfoSharedResponse infoSharedResponse) {
+
+        if(!setsListModel.getShared_data().isEmpty() && setsListModel.getShared_data() != null) {
+            shared_listview.setLayoutManager(new LinearLayoutManager(this));
+            sharedListAdapter = new SharedListAdapter(EditSetInfo.this, infoSharedResponse.getShared_data(), set_id);
+            shared_listview.setAdapter(sharedListAdapter);
+            dismissProgress();
+        }
+        else
+        {
+            text_share_title.setVisibility(View.GONE);
+            dismissProgress();
         }
     }
 

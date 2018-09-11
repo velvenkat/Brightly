@@ -40,7 +40,7 @@ import retrofit2.Response;
 
 public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_interface, BaseActivity.alert_dlg_interface {
 
-    List<SetsListModel> setsListModelList = new ArrayList<>();
+    ArrayList<SetsListModel> setsListModelList = new ArrayList<>();
     SetsAdapter channelsSetAdapter;
 
     TextView view_nodata;
@@ -452,7 +452,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
 
     }
 
-    private void setAdapter(List<SetsListModel> setsListModels) {
+    private void setAdapter(ArrayList<SetsListModel> setsListModels) {
 
         channelSet_listview.setLayoutManager(new GridLayoutManager(MyChannelsSet.this, 3));
         channelsSetAdapter = new SetsAdapter(MyChannelsSet.this, setsListModels, chl_list_obj, this);

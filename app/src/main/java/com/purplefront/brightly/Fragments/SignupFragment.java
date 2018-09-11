@@ -262,6 +262,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
             realm.commitTransaction();
 
             showLongToast(getActivity(), signUpResponse.getMessage());
+            getActivity().finish();
             finishIntent(getActivity(), MyChannel.class);
 
         }
