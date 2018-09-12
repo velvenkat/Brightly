@@ -1,9 +1,12 @@
 package com.purplefront.brightly.Modules;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class NotificationsModel {
+public class NotificationsModel implements Parcelable {
 
     @SerializedName("content")
     @Expose
@@ -37,6 +40,27 @@ public class NotificationsModel {
         this.shared_user_profile_pic = shared_user_profile_pic;
         this.notificationsSetDetail = notificationsSetDetail;
     }
+
+    protected NotificationsModel(Parcel in) {
+        content = in.readString();
+        date_time = in.readString();
+        action = in.readString();
+        channel_id = in.readString();
+        shared_user_profile_pic = in.readString();
+        notificationsSetDetail = in.readParcelable(NotificationsSetDetail.class.getClassLoader());
+    }
+
+    public static final Creator<NotificationsModel> CREATOR = new Creator<NotificationsModel>() {
+        @Override
+        public NotificationsModel createFromParcel(Parcel in) {
+            return new NotificationsModel(in);
+        }
+
+        @Override
+        public NotificationsModel[] newArray(int size) {
+            return new NotificationsModel[size];
+        }
+    };
 
     public String getContent() {
         return content;
@@ -84,5 +108,20 @@ public class NotificationsModel {
 
     public void setNotificationsSetDetail(NotificationsSetDetail notificationsSetDetail) {
         this.notificationsSetDetail = notificationsSetDetail;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(content);
+        dest.writeString(date_time);
+        dest.writeString(action);
+        dest.writeString(channel_id);
+        dest.writeString(shared_user_profile_pic);
+        dest.writeParcelable(notificationsSetDetail, flags);
     }
 }
