@@ -97,8 +97,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                 Intent intent = new Intent(context, MySetCards.class);
                 intent.putExtra("userId", userId);
-                intent.putExtra("channel_id", channel_id);
-                intent.putExtra("notificationsSetDetail", notificationsSetDetail);
+                intent.putExtra("notfy_modl_obj", notificationsModel);
                 intent.putExtra("isNotification", true);
                 context.startActivity(intent);
                 context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);

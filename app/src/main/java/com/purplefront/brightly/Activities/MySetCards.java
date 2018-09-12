@@ -23,9 +23,12 @@ import com.purplefront.brightly.Adapters.ViewCardFragmentPagerAdapter;
 import com.purplefront.brightly.Adapters.ViewPagerAdapter;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Fragments.ItemsAddFragment;
+import com.purplefront.brightly.Fragments.Notifications;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
+import com.purplefront.brightly.Modules.NotificationsModel;
+import com.purplefront.brightly.Modules.NotificationsSetDetail;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
@@ -63,22 +66,28 @@ public class MySetCards extends BaseActivity {
     String set_name = "";
     String set_id = "";
     String share_link = "";
+    boolean isNotification;
     int Cur_PagrPosition;
     int UPDATECARD = 102;
     ImageView image_createCard;
     SetsListModel setsListModel;
     ChannelListModel chl_list_obj;
+    NotificationsModel notificationsModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_set_cards);
 
+        userId = getIntent().getStringExtra("userId");
+
         realm = Realm.getDefaultInstance();
         realmModel = realm.where(RealmModel.class).findAllAsync();
         realmModel.load();
-        for(RealmModel model:realmModel){
-            userId = model.getUser_Id();
+        if(userId == null) {
+            for (RealmModel model : realmModel) {
+                userId = model.getUser_Id();
+            }
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -86,18 +95,32 @@ public class MySetCards extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        chl_list_obj=getIntent().getParcelableExtra("model_obj");
+        isNotification = getIntent().getBooleanExtra("isNotification", false);
 
-        userId = getIntent().getStringExtra("userId");
-        channel_id=chl_list_obj.getChannel_id();
-        channel_name=chl_list_obj.getChannel_name();
-        Created_By = chl_list_obj.getCreated_by();
+        if(isNotification)
+        {
+            notificationsModel = getIntent().getParcelableExtra("notfy_modl_obj");
+            channel_id = notificationsModel.getChannel_id();
+            set_description = notificationsModel.getNotificationsSetDetail().getDescription();
+            set_name = notificationsModel.getNotificationsSetDetail().getName();
+            set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
+            Created_By = notificationsModel.getNotificationsSetDetail().getCreated_by();
 
-        setsListModel = getIntent().getParcelableExtra("setsListModel");
-        set_description = setsListModel.getDescription();
-        set_name = setsListModel.getSet_name();
-        set_id = setsListModel.getSet_id();
-        share_link = setsListModel.getShare_link();
+        }
+        else {
+
+            chl_list_obj = getIntent().getParcelableExtra("model_obj");
+            channel_id = chl_list_obj.getChannel_id();
+            channel_name = chl_list_obj.getChannel_name();
+            Created_By = chl_list_obj.getCreated_by();
+
+            setsListModel = getIntent().getParcelableExtra("setsListModel");
+            set_description = setsListModel.getDescription();
+            set_name = setsListModel.getSet_name();
+            set_id = setsListModel.getSet_id();
+            share_link = setsListModel.getShare_link();
+        }
+
         setTitle(set_name);
 
         pager_count = (TextView) findViewById(R.id.pager_count);
@@ -243,12 +266,26 @@ public class MySetCards extends BaseActivity {
                 return true;
 
             case R.id.setInfo_Edit:
-                Intent intent = new Intent(MySetCards.this, EditSetInfo.class);
-                intent.putExtra("userId", userId);
-                intent.putExtra("model_obj", chl_list_obj);
-                intent.putExtra("setsListModel", setsListModel);
-                startActivity(intent);
-                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+
+                if(isNotification) {
+
+                    Intent intent = new Intent(MySetCards.this, EditSetInfo.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("notfy_modl_obj", notificationsModel);
+                    intent.putExtra("isNotification", true);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                }
+                else
+                {
+                    Intent intent = new Intent(MySetCards.this, EditSetInfo.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("model_obj", chl_list_obj);
+                    intent.putExtra("setsListModel", setsListModel);
+                    intent.putExtra("isNotification", false);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                }
 
                 return true;
 

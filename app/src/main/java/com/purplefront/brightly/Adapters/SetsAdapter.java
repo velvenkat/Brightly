@@ -159,6 +159,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     intent.putExtra("userId", userId);
                     intent.putExtra("model_obj", chl_list_obj);
                     intent.putExtra("setsListModel", setsListModel);
+                    intent.putExtra("isNotification", false);
                     context.startActivity(intent);
                     context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
                 }

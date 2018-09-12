@@ -23,6 +23,7 @@ import com.purplefront.brightly.Adapters.SharedListAdapter;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
+import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.SetInfoSharedResponse;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Modules.SharedDataModel;
@@ -45,6 +46,7 @@ public class EditSetInfo extends BaseActivity {
 
     ImageView share, delete;
 
+    boolean isNotification;
     String userId;
     String channel_id = "";
     String set_description = "";
@@ -55,6 +57,7 @@ public class EditSetInfo extends BaseActivity {
     String Created_By;
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
+    NotificationsModel notificationsModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,16 +71,33 @@ public class EditSetInfo extends BaseActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         setTitle("Edit Set Info");
-        chl_list_obj=getIntent().getParcelableExtra("model_obj");
-        channel_id=chl_list_obj.getChannel_id();
-        channel_name=chl_list_obj.getChannel_name();
-        Created_By = chl_list_obj.getCreated_by();
-        userId = getIntent().getStringExtra("userId");
-        setsListModel = getIntent().getParcelableExtra("setsListModel");
-        set_description = setsListModel.getDescription();
-        set_name = setsListModel.getSet_name();
-        set_id = setsListModel.getSet_id();
-        share_link = setsListModel.getShare_link();
+
+        isNotification = getIntent().getBooleanExtra("isNotification", false);
+
+        if(isNotification)
+        {
+            notificationsModel = getIntent().getParcelableExtra("notfy_modl_obj");
+            channel_id = notificationsModel.getChannel_id();
+            set_description = notificationsModel.getNotificationsSetDetail().getDescription();
+            set_name = notificationsModel.getNotificationsSetDetail().getName();
+            set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
+            Created_By = notificationsModel.getNotificationsSetDetail().getCreated_by();
+
+        }
+        else {
+
+            chl_list_obj = getIntent().getParcelableExtra("model_obj");
+            channel_id = chl_list_obj.getChannel_id();
+            channel_name = chl_list_obj.getChannel_name();
+            Created_By = chl_list_obj.getCreated_by();
+            userId = getIntent().getStringExtra("userId");
+            setsListModel = getIntent().getParcelableExtra("setsListModel");
+            set_description = setsListModel.getDescription();
+            set_name = setsListModel.getSet_name();
+            set_id = setsListModel.getSet_id();
+            share_link = setsListModel.getShare_link();
+
+        }
 
         edit_setName = (EditText) findViewById(R.id.edit_setName);
         edit_setDescription = (EditText) findViewById(R.id.edit_setDescription);
