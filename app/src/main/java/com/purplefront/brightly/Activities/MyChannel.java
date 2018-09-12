@@ -394,7 +394,15 @@ public class MyChannel extends BaseActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_bell) {
 
+            fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
+                    .replace(R.id.profileContainer, new Notifications(),
+                            Util.NOTIFICATIONS).commit();
 
+            setActionBarTitle("Notification");
+            profileContainer.setVisibility(View.VISIBLE);
+            channel_layout.setVisibility(View.GONE);
 
             return true;
         }
