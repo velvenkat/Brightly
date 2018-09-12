@@ -1,9 +1,12 @@
 package com.purplefront.brightly.Modules;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class NotificationsSetDetail {
+public class NotificationsSetDetail implements Parcelable{
 
     @SerializedName("set_id")
     @Expose
@@ -28,6 +31,25 @@ public class NotificationsSetDetail {
         this.description = description;
         this.created_by = created_by;
     }
+
+    protected NotificationsSetDetail(Parcel in) {
+        set_id = in.readString();
+        name = in.readString();
+        description = in.readString();
+        created_by = in.readString();
+    }
+
+    public static final Creator<NotificationsSetDetail> CREATOR = new Creator<NotificationsSetDetail>() {
+        @Override
+        public NotificationsSetDetail createFromParcel(Parcel in) {
+            return new NotificationsSetDetail(in);
+        }
+
+        @Override
+        public NotificationsSetDetail[] newArray(int size) {
+            return new NotificationsSetDetail[size];
+        }
+    };
 
     public String getSet_id() {
         return set_id;
@@ -59,5 +81,18 @@ public class NotificationsSetDetail {
 
     public void setCreated_by(String created_by) {
         this.created_by = created_by;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(set_id);
+        parcel.writeString(name);
+        parcel.writeString(description);
+        parcel.writeString(created_by);
     }
 }

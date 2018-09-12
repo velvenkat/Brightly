@@ -139,7 +139,7 @@ public class Notifications extends BaseFragment {
     private void setNotificationCredentials(List<NotificationsModel> notificationsModel, String message ) {
 
         notifications_listview.setLayoutManager(new LinearLayoutManager(getActivity()));
-        notificationsAdapter = new NotificationsAdapter(getActivity(), notificationsModel);
+        notificationsAdapter = new NotificationsAdapter(getActivity(), notificationsModel, user_ID);
         notifications_listview.setAdapter(notificationsAdapter);
         showShortToast(getActivity(), message);
 

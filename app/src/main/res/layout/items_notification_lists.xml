@@ -12,9 +12,9 @@
     >
 
     <RelativeLayout
+        android:id="@+id/notification_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:layout_margin="@dimen/dimen_2"
         android:gravity="center"
         android:padding="@dimen/dimen_5"
