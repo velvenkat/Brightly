@@ -305,14 +305,13 @@ public class ShareWithContacts extends BaseActivity {
         ContentResolver contentResolver = getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
         if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
+            cursor.moveToFirst();
+            do{
                 int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
                 if (hasPhoneNumber > 0) {
                     String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                     String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                    contacts = new ContactShare();
-                    contacts.setContactName(name);
 
                     Cursor phoneCursor = contentResolver.query(
                             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -320,10 +319,17 @@ public class ShareWithContacts extends BaseActivity {
                             ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
                             new String[]{id},
                             null);
-                    if (phoneCursor.moveToNext()) {
+                    phoneCursor.moveToFirst();
+                    do {
+
+                        contacts = new ContactShare();
+                        contacts.setContactName(name);
+
                         String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         contacts.setContactNumber(phoneNumber);
-                    }
+                        contactShares.add(contacts);
+
+                    } while (phoneCursor.moveToNext());
                    /* if (phoneCursor.moveToLast()) {
                         String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         contacts.setContactNumber(phoneNumber);
@@ -343,12 +349,11 @@ public class ShareWithContacts extends BaseActivity {
                     /*if (!contactShares.contains(contacts)) {
                         contactShares.add(contacts);
                     }*/
-                    contactShares.add(contacts);
 
 
 
                 }
-            }
+            }while (cursor.moveToNext());
 
             setConatcts(contactShares);
             showLongToast(ShareWithContacts.this, "Contacts Updated");

@@ -129,9 +129,9 @@ public class MyChannel extends BaseActivity
             contactShares = gson.fromJson(json, type);
 
             if (contactShares == null) {
-            LoadContact loadContact = new LoadContact();
-            loadContact.execute();
-        }
+                LoadContact loadContact = new LoadContact();
+                loadContact.execute();
+            }
 
         } else {
             requestLocationPermission();
@@ -598,15 +598,14 @@ public class MyChannel extends BaseActivity
             ContentResolver contentResolver = getContentResolver();
             Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
             if (cursor.getCount() > 0) {
-                while (cursor.moveToNext()) {
+                cursor.moveToFirst();
+                do {
 
                     int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
                     if (hasPhoneNumber > 0) {
                         String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                         String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                        contacts = new ContactShare();
-                        contacts.setContactName(name);
 
                         Cursor phoneCursor = contentResolver.query(
                                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -614,10 +613,15 @@ public class MyChannel extends BaseActivity
                                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
                                 new String[]{id},
                                 null);
-                        if (phoneCursor.moveToNext()) {
+                        phoneCursor.moveToFirst();
+                        do {
+                            contacts = new ContactShare();
+                            contacts.setContactName(name);
                             String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                             contacts.setContactNumber(phoneNumber);
-                        }
+                            contactShares.add(contacts);
+
+                        } while (phoneCursor.moveToNext());
 
                         phoneCursor.close();
 
@@ -629,7 +633,7 @@ public class MyChannel extends BaseActivity
                         while (emailCursor.moveToNext()) {
                             String emailId = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                         }
-                        contactShares.add(contacts);
+
 
                         SharedPreferences mPrefs = getSharedPreferences("contactShares", MODE_PRIVATE);
 //                        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(MyChannel.this);
@@ -640,7 +644,7 @@ public class MyChannel extends BaseActivity
                         prefsEditor.commit();
 
                     }
-                }
+                } while (cursor.moveToNext());
                 cursor.close();
 
             }
