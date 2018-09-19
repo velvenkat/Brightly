@@ -44,8 +44,10 @@
     <string name="edit_card">Edit Card</string>
     <string name="card_name">Card Name</string>
     <string name="card_url">https://www.youtube.com/</string>
+    <string name="file_steps">Copy a sharable link from any file upload site such as : \n \n    - Google Docs / Sheets / Slides. \n	   - Google Drive. \n    - One Drive. \n     - iCloud.	\n    or any other app.</string>
+    <string name="youtube_steps">Steps to Create Youtube Card : \n \n1. Click on YouTube icon above You will be redirected to YouTube app/website. \n2. Browse to the video you want to upload. \n3. Click on Share button. Click on Copy link option in share a link. \n4. On the top left of the screen. Click on Brightly, to navigate back to the Brightly App. \n5. Click on the Text window above and paste the YouTube link copied. \n6. Click on Done.</string>
     <string name="card_url_title">Copy &amp; paste your youtube link here</string>
-    <string name="card_file_url_title">Copy &amp; Paste your pdf file link here</string>
+    <string name="card_file_url_title">Copy &amp; Paste your File Link here</string>
     <string name="card_file_url_hint">https://</string>
     <string name="card_description">Card Description</string>
     <string name="password">Password</string>
@@ -81,5 +83,6 @@
     <string name="share">Share</string>
     <string name="sharing_content_title_text">This Set Info is shared with the below Contacts :</string>
     <string name="add_cards_suggestion">Add Cards using below &quot; + &quot; button</string>
+    <string name="paste_file_upload_link_below">Paste File Upload Link Below</string>
 
 </resources>

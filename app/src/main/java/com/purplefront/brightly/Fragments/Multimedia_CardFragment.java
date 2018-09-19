@@ -58,7 +58,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
         // Locate the TextViews in viewpager_item.xml
         text_cardName = (TextView) rootView.findViewById(R.id.text_cardName);
-        rl_audio_player=(RelativeLayout)rootView.findViewById(R.id.rl_audio_player);
+        rl_audio_player = (RelativeLayout) rootView.findViewById(R.id.rl_audio_player);
         text_cardDescription = (TextView) rootView.findViewById(R.id.text_cardDescription);
         image_cardImage = (ImageView) rootView.findViewById(R.id.image_cardImage);
         frame_youtube = (FrameLayout) rootView.findViewById(R.id.frame_youtube);
@@ -106,7 +106,16 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                         .override(50, 50)*/
                         .into(image_cardImage);
             }
-        } else if (cardModelObj.getType().equalsIgnoreCase("video")) {
+        }
+        else if (cardModelObj.getType().equalsIgnoreCase("text"))
+        {
+            image_cardImage.setVisibility(View.GONE);
+            frame_youtube.setVisibility(View.GONE);
+            rl_audio_player.setVisibility(View.GONE);
+            file_cardLink.setVisibility(View.GONE);
+        }
+        else if (cardModelObj.getType().equalsIgnoreCase("video"))
+        {
             image_cardImage.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.VISIBLE);
             rl_audio_player.setVisibility(View.GONE);
