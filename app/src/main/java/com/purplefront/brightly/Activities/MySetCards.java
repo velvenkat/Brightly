@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.ViewCardFragmentPagerAdapter;
-import com.purplefront.brightly.Adapters.ViewPagerAdapter;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Fragments.ItemsAddFragment;
 import com.purplefront.brightly.Fragments.Notifications;
@@ -57,7 +56,7 @@ public class MySetCards extends BaseActivity {
     TextView pager_count;
     String count;
     String pager_size;
-
+    TextView view_nodata;
     String Created_By = "";
     String userId;
     String channel_id = "";
@@ -124,6 +123,7 @@ public class MySetCards extends BaseActivity {
         setTitle(set_name);
 
         pager_count = (TextView) findViewById(R.id.pager_count);
+        view_nodata = (TextView) findViewById(R.id.view_nodata);
 
         // Locate the ViewPager in viewpager_main.xml
         viewPager_Cards = (ViewPager) findViewById(R.id.viewPager_Cards);
@@ -179,11 +179,11 @@ public class MySetCards extends BaseActivity {
                             if (cardsListResponse != null && cardsListResponse.getData() != null && cardsListResponse.getData().size() != 0) {
 
                                 cardsListModels = new ArrayList<>(cardsListResponse.getData());
+                                view_nodata.setVisibility(View.GONE);
                                 dismissProgress();
 
                             } else {
-                                /*channelSet_listview.setVisibility(View.GONE);
-                                view_nodata.setVisibility(View.VISIBLE);*/
+                                view_nodata.setVisibility(View.VISIBLE);
                                 dismissProgress();
                             }
                 /*            CardsListModel dummyCardObj=new CardsListModel();
@@ -301,7 +301,6 @@ public class MySetCards extends BaseActivity {
                     intent1.putExtra("Card_Dtls", cardsListModels.get(Cur_PagrPosition));
 
                     //intent1.putExtra("my_card_bundle",bundle);
-
                     startActivityForResult(intent1, UPDATECARD);
                     overridePendingTransition(R.anim.right_enter, R.anim.left_out);
 

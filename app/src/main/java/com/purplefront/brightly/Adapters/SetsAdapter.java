@@ -3,10 +3,14 @@ package com.purplefront.brightly.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,7 +105,6 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
         }
 
         SetsListModel setsListModel = setsListModels.get(position);
-        holder.textView_setName.setText(setsListModel.getSet_name());
         if (isSelToDel) {
             holder.chkbx_del_set.setVisibility(View.VISIBLE);
         } else {
@@ -117,7 +120,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
             Glide.with(context)
                     .load(setsListModel.getThumbnail())
-                    .centerCrop()
+                    .fitCenter()
                     /*.transform(new CircleTransform(HomeActivity.this))
                     .override(50, 50)*/
                     .into(holder.imageView_setImage);
@@ -129,6 +132,9 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     .override(50, 50)*/
                     .into(holder.imageView_setImage);
         }
+        String counts = setsListModel.getTotal_card_count();
+        holder.textView_setName.setText(setsListModel.getSet_name());
+        holder.textView_setCount.setText("("+counts+")");
         holder.chkbx_del_set.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -176,6 +182,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView textView_setName;
+        TextView textView_setCount;
         ImageView imageView_setImage;
         CardView channel_layout;
         CheckBox chkbx_del_set;
@@ -185,6 +192,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
             channel_layout = itemView.findViewById(R.id.set_layout);
             imageView_setImage = itemView.findViewById(R.id.imageView_setImage);
             textView_setName = itemView.findViewById(R.id.textView_setName);
+            textView_setCount = itemView.findViewById(R.id.textView_setCount);
             chkbx_del_set = itemView.findViewById(R.id.chk_set_sel);
         }
     }

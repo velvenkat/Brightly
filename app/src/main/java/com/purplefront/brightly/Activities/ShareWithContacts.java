@@ -45,6 +45,7 @@ import com.purplefront.brightly.Utils.CheckNetworkConnection;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -87,7 +88,7 @@ public class ShareWithContacts extends BaseActivity {
         btn_share = (ImageView) findViewById(R.id.btn_share);
         btn_sync = (ImageView) findViewById(R.id.btn_sync);
 
-        chl_list_obj=getIntent().getParcelableExtra("model_obj");
+        chl_list_obj = getIntent().getParcelableExtra("model_obj");
         setsListModel = getIntent().getParcelableExtra("setsListModel");
         set_description = setsListModel.getDescription();
         set_name = setsListModel.getSet_name();
@@ -99,7 +100,8 @@ public class ShareWithContacts extends BaseActivity {
         SharedPreferences mPrefs = getSharedPreferences("contactShares", MODE_PRIVATE);
         Gson gson = new Gson();
         String json = mPrefs.getString("contactShares", "");
-        Type type = new TypeToken<ArrayList<ContactShare>>(){}.getType();
+        Type type = new TypeToken<ArrayList<ContactShare>>() {
+        }.getType();
         contactShares = gson.fromJson(json, type);
         setConatcts(contactShares);
 
@@ -108,26 +110,26 @@ public class ShareWithContacts extends BaseActivity {
             public void onClick(View view) {
 
 
-               checkValidation();
+                checkValidation();
 //               Toast.makeText(ShareWithContacts.this,"Sel_num"+split_num,Toast.LENGTH_LONG).show();
 
             }
         });
 
 
-       btn_sync.setOnClickListener(new View.OnClickListener() {
+        btn_sync.setOnClickListener(new View.OnClickListener() {
 
-           @Override
-           public void onClick(View view) {
-               showLongToast(ShareWithContacts.this, "Loading New Contacts");
-               if (ActivityCompat.checkSelfPermission(ShareWithContacts.this, android.Manifest.permission.READ_CONTACTS)
-                       == PackageManager.PERMISSION_GRANTED) {
-                   getAllContacts();
-               } else {
-                   requestLocationPermission();
-               }
-           }
-       });
+            @Override
+            public void onClick(View view) {
+                showLongToast(ShareWithContacts.this, "Loading New Contacts");
+                if (ActivityCompat.checkSelfPermission(ShareWithContacts.this, android.Manifest.permission.READ_CONTACTS)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    getAllContacts();
+                } else {
+                    requestLocationPermission();
+                }
+            }
+        });
 
         // Capture Text in EditText
         conatcts_searchView.addTextChangedListener(new TextWatcher() {
@@ -135,19 +137,18 @@ public class ShareWithContacts extends BaseActivity {
             @Override
             public void afterTextChanged(Editable arg0) {
                 // TODO Auto-generated method stub
-                String srch_str=conatcts_searchView.getText().toString();
-                if(srch_str.trim().equals("")){
+                String srch_str = conatcts_searchView.getText().toString();
+                if (srch_str.trim().equals("")) {
 
-                }
-                else {
+                } else {
                     String text = srch_str.trim().toLowerCase();
 
-                        if (contactAdapter != null) {
-                            contactAdapter.filter(text);
-                        } else {
-                            Toast.makeText(ShareWithContacts.this, "Could't able to find the Data ,Please try after some time.", Toast.LENGTH_LONG).show();
-                        }
+                    if (contactAdapter != null) {
+                        contactAdapter.filter(text);
+                    } else {
+                        Toast.makeText(ShareWithContacts.this, "Could't able to find the Data ,Please try after some time.", Toast.LENGTH_LONG).show();
                     }
+                }
 
             }
 
@@ -170,18 +171,17 @@ public class ShareWithContacts extends BaseActivity {
     // Check Validation before login
     private void checkValidation() {
         // Get phonenumber
-        ArrayList<String>sel_num= new ArrayList<>(contactAdapter.getContact_Share());
-        split_num = android.text.TextUtils.join(",",sel_num);
+        ArrayList<String> sel_num = new ArrayList<>(contactAdapter.getContact_Share());
+        split_num = android.text.TextUtils.join(",", sel_num);
 
-        if (split_num.equals("") || split_num.length() <= 9 )
-        {
+        if (split_num.equals("") || split_num.length() <= 9) {
             new CustomToast().Show_Toast(ShareWithContacts.this, btn_share,
                     "Please select the Phone Number.");
 
         }
         // Else do login and do your stuff
         else {
-           getShareSet();
+            getShareSet();
             //            Toast.makeText(getActivity(), "Do Login.", Toast.LENGTH_SHORT).show();
         }
 
@@ -240,17 +240,17 @@ public class ShareWithContacts extends BaseActivity {
         String message = addMessageResponse.getMsg();
         showLongToast(ShareWithContacts.this, addMessageResponse.getMessage());
 
-        if(message.equals("success"))
-        {
+        if (message.equals("success")) {
             Intent intent = new Intent(ShareWithContacts.this, EditSetInfo.class);
             intent.putExtra("userId", userId);
             intent.putExtra("model_obj", chl_list_obj);
             intent.putExtra("setsListModel", setsListModel);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-        }
-        else {
+        } else {
             showLongToast(ShareWithContacts.this, message);
         }
     }
@@ -264,7 +264,7 @@ public class ShareWithContacts extends BaseActivity {
         } else {
 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS,
-                            Manifest.permission.WRITE_CONTACTS}, REQUEST_PERMISSION);
+                    Manifest.permission.WRITE_CONTACTS}, REQUEST_PERMISSION);
 
           /*  ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS},
                     REQUEST_PERMISSION);*/
@@ -280,7 +280,7 @@ public class ShareWithContacts extends BaseActivity {
 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                   // getAllContacts();
+                    // getAllContacts();
 
                 } else {
 
@@ -301,6 +301,7 @@ public class ShareWithContacts extends BaseActivity {
 
     private void getAllContacts() {
 //        showProgress();
+        contactShares.clear();
         ContentResolver contentResolver = getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
         if (cursor.getCount() > 0) {
@@ -323,6 +324,10 @@ public class ShareWithContacts extends BaseActivity {
                         String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         contacts.setContactNumber(phoneNumber);
                     }
+                   /* if (phoneCursor.moveToLast()) {
+                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        contacts.setContactNumber(phoneNumber);
+                    }*/
 
                     phoneCursor.close();
 
@@ -334,27 +339,37 @@ public class ShareWithContacts extends BaseActivity {
                     while (emailCursor.moveToNext()) {
                         String emailId = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                     }
+
+                    /*if (!contactShares.contains(contacts)) {
+                        contactShares.add(contacts);
+                    }*/
                     contactShares.add(contacts);
+
+
 
                 }
             }
 
             setConatcts(contactShares);
             showLongToast(ShareWithContacts.this, "Contacts Updated");
+            cursor.close();
         }
     }
 
     private void setConatcts(ArrayList<ContactShare> contactShares) {
+
+
         this.getContactShares = contactShares;
+
         contactAdapter = new ContactsAdapter(ShareWithContacts.this, getContactShares);
         contacts_listview.setAdapter(contactAdapter);
         SharedPreferences mPrefs = getSharedPreferences("contactShares", MODE_PRIVATE);
-//                        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(MyChannel.this);
-                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                    Gson gson = new Gson();
-                    String json = gson.toJson(contactShares);
-                    prefsEditor.putString("contactShares", json);
-                    prefsEditor.commit();
+//      SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(MyChannel.this);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(contactShares);
+        prefsEditor.putString("contactShares", json);
+        prefsEditor.commit();
 
     }
 }

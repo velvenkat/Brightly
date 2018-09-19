@@ -375,7 +375,7 @@ public class ImageType extends BaseFragment {
                         startActivityForResult(intent, PIC_CROP);*/
                         // for fragment (DO NOT use `getActivity()`)
                         CropImage.activity(picUri)
-                                .setMinCropResultSize(500, 500)
+                                .setMinCropResultSize(250, 250)
                                 .setMaxCropResultSize(bitmap.getWidth(), bitmap.getHeight())
 //                                .setAspectRatio(1, 1)
                                 .setCropShape(CropImageView.CropShape.RECTANGLE)
@@ -420,7 +420,7 @@ public class ImageType extends BaseFragment {
                     image_cardImage.setImageRequest(imageRequest2);*/
                     Glide.with(getActivity())
                             .load(resultUri)
-                            .centerCrop()
+                            .fitCenter()
                             /*.transform(new CircleTransform(HomeActivity.this))
                             .override(50, 50)*/
                             .into(image_cardImage);

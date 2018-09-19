@@ -80,5 +80,6 @@
     <string name="share_a_link">Share A Link</string>
     <string name="share">Share</string>
     <string name="sharing_content_title_text">This Set Info is shared with the below Contacts :</string>
+    <string name="add_cards_suggestion">Add Cards using below &quot; + &quot; button</string>
 
 </resources>

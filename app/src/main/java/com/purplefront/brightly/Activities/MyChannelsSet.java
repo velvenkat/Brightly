@@ -342,6 +342,8 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                 intent.putExtra("userId", userId);
                 intent.putExtra("model_obj", chl_list_obj);
                 startActivity(intent);
+                finish();
+                onBackPressed();
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
         });

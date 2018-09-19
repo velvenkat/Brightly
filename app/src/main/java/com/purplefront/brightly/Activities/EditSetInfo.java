@@ -74,8 +74,7 @@ public class EditSetInfo extends BaseActivity {
 
         isNotification = getIntent().getBooleanExtra("isNotification", false);
 
-        if(isNotification)
-        {
+        if (isNotification) {
             notificationsModel = getIntent().getParcelableExtra("notfy_modl_obj");
             channel_id = notificationsModel.getChannel_id();
             set_description = notificationsModel.getNotificationsSetDetail().getDescription();
@@ -83,8 +82,7 @@ public class EditSetInfo extends BaseActivity {
             set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
             Created_By = notificationsModel.getNotificationsSetDetail().getCreated_by();
 
-        }
-        else {
+        } else {
 
             chl_list_obj = getIntent().getParcelableExtra("model_obj");
             channel_id = chl_list_obj.getChannel_id();
@@ -110,7 +108,7 @@ public class EditSetInfo extends BaseActivity {
 
         edit_setName.setText(set_name);
         edit_setDescription.setText(set_description);
-        if(!Created_By.equalsIgnoreCase(userId)){
+        if (!Created_By.equalsIgnoreCase(userId)) {
             share.setVisibility(View.GONE);
             delete.setVisibility(View.GONE);
             btn_editSet.setVisibility(View.GONE);
@@ -122,12 +120,11 @@ public class EditSetInfo extends BaseActivity {
             sharedListAdapter = new SharedListAdapter(EditSetInfo.this, sharedDataModels, set_id);
             shared_listview.setAdapter(sharedListAdapter);*/
 
-        }
-        else {
+        } else {
 
             setTitle("Edit Set Info");
 
-                getSetSharedInfo();
+            getSetSharedInfo();
 
 
         }
@@ -180,8 +177,7 @@ public class EditSetInfo extends BaseActivity {
         }
     }
 
-    public void showAlertDialog()
-    {
+    public void showAlertDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(EditSetInfo.this);
 
         // Setting Dialog Title
@@ -195,7 +191,7 @@ public class EditSetInfo extends BaseActivity {
 
         // Setting Positive "Yes" Button
         alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
+            public void onClick(DialogInterface dialog, int which) {
 
                 getDeleteSet();
                 // Write your code here to invoke YES event
@@ -285,13 +281,11 @@ public class EditSetInfo extends BaseActivity {
         String message = addMessageResponse.getMessage();
 
 
-        if(message.equals("success"))
-        {
+        if (message.equals("success")) {
             getSetSharedInfo();
             showLongToast(EditSetInfo.this, addMessageResponse.getMessage());
             dismissProgress();
-        }
-        else {
+        } else {
             showLongToast(EditSetInfo.this, message);
             dismissProgress();
         }
@@ -348,18 +342,18 @@ public class EditSetInfo extends BaseActivity {
 
         String message = deleteSetResponse.getMessage();
 
-        if(message.equals("success"))
-        {
+        if (message.equals("success")) {
             Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
             intent.putExtra("model_obj", chl_list_obj);
-            intent.putExtra("setsListModel", setsListModel);
+            intent.putExtra("userId", userId);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            finish();
+            onBackPressed();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);
 
 
-        }
-        else {
+        } else {
             showLongToast(EditSetInfo.this, message);
         }
     }
@@ -414,19 +408,18 @@ public class EditSetInfo extends BaseActivity {
 
         String message = updateSetResponse.getMessage();
 
-        if(message.equals("success"))
-        {
-           /* Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
+        if (message.equals("success")) {
+            Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
             intent.putExtra("model_obj", chl_list_obj);
             intent.putExtra("userId", userId);
-            intent.putParcelableArrayListExtra("sharedDataModels", sharedDataModels);
-            startActivity(intent);*/
-           onBackPressed();
-           finish();
-           overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-           dismissProgress();
-        }
-        else {
+//            intent.putExtra("setsListModel", setsListModel);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+            dismissProgress();
+        } else {
             showLongToast(EditSetInfo.this, message);
             dismissProgress();
         }
@@ -480,14 +473,12 @@ public class EditSetInfo extends BaseActivity {
 
     private void setSharedCredentials(SetInfoSharedResponse infoSharedResponse) {
 
-        if(!setsListModel.getShared_data().isEmpty() && setsListModel.getShared_data() != null) {
+        if (!setsListModel.getShared_data().isEmpty() && setsListModel.getShared_data() != null) {
             shared_listview.setLayoutManager(new LinearLayoutManager(this));
             sharedListAdapter = new SharedListAdapter(EditSetInfo.this, infoSharedResponse.getShared_data(), set_id);
             shared_listview.setAdapter(sharedListAdapter);
             dismissProgress();
-        }
-        else
-        {
+        } else {
             text_share_title.setVisibility(View.GONE);
             dismissProgress();
         }

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     ImageView img_audio_play_stop;
     SeekBar audio_seek_bar;
     TextView txt_PlayProgTime;
+    TextView file_cardLink;
 
     @Nullable
     @Override
@@ -63,6 +65,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         img_audio_play_stop = (ImageView) rootView.findViewById(R.id.img_play_stop);
         audio_seek_bar = (SeekBar) rootView.findViewById(R.id.seek_audio_rec);
         txt_PlayProgTime = (TextView) rootView.findViewById(R.id.txt_PlayProgTime);
+        file_cardLink = (TextView) rootView.findViewById(R.id.file_cardLink);
 
 
         if (cardModelObj.getTitle() != null) {
@@ -76,6 +79,8 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             image_cardImage.setVisibility(View.VISIBLE);
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
+            file_cardLink.setVisibility(View.GONE);
+
             if (!cardModelObj.getUrl().isEmpty() && cardModelObj.getUrl() != null) {
 
                 dialog = new ProgressDialog(getContext());
@@ -86,7 +91,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
                 Glide.with(getContext())
                         .load(cardModelObj.getUrl())
-                        .centerCrop()
+                        .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
                         .override(50, 50)*/
                         .into(image_cardImage);
@@ -105,6 +110,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             image_cardImage.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.VISIBLE);
             rl_audio_player.setVisibility(View.GONE);
+            file_cardLink.setVisibility(View.GONE);
             youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
             if (getUserVisibleHint()) {
 
@@ -144,27 +150,37 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             image_cardImage.setVisibility(View.VISIBLE);
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.VISIBLE);
+            file_cardLink.setVisibility(View.GONE);
             image_cardImage.setImageResource(R.drawable.audio_hdr_img);
 
             audio_player_initialize(audio_seek_bar,txt_PlayProgTime,img_audio_play_stop);
             setMediaPlayer(null,cardModelObj.getUrl());
         }
         else if(cardModelObj.getType().equalsIgnoreCase("file")){
-            Glide.with(getActivity())
+
+            image_cardImage.setVisibility(View.GONE);
+            frame_youtube.setVisibility(View.GONE);
+            rl_audio_player.setVisibility(View.GONE);
+            file_cardLink.setVisibility(View.VISIBLE);
+            file_cardLink.setText(cardModelObj.getUrl());
+            file_cardLink.setMovementMethod(LinkMovementMethod.getInstance());
+            /*Glide.with(getActivity())
                     .load(R.drawable.open_pdf_icon)
                     .centerCrop()
-                    /*.transform(new CircleTransform(HomeAct/ivity.this))
-                    .override(50, 50)*/
-                    .into(image_cardImage);
-            image_cardImage.setOnClickListener(new View.OnClickListener() {
+                    *//*.transform(new CircleTransform(HomeAct/ivity.this))
+                    .override(50, 50)*//*
+                    .into(image_cardImage);*/
+
+           /* file_cardLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     String format = "https://docs.google.com/gview?embedded=true&url=%s";
                     String fullPath = String.format(Locale.ENGLISH, cardModelObj.getUrl());
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fullPath));
                     startActivity(browserIntent);
                 }
-            });
+            });*/
         }
 
         // Add viewpager_item.xml to ViewPager

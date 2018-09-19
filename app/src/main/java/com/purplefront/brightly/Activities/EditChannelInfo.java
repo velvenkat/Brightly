@@ -132,7 +132,7 @@ public class EditChannelInfo extends BaseActivity {
 
             Glide.with(EditChannelInfo.this)
                     .load(encoded_string)
-                    .centerCrop()
+                    .fitCenter()
                     /*.transform(new CircleTransform(HomeActivity.this))
                     .override(50, 50)*/
                     .into(imageView_editChannelImage);
@@ -325,7 +325,7 @@ public class EditChannelInfo extends BaseActivity {
                         startActivityForResult(intent, PIC_CROP);*/
                         // for fragment (DO NOT use `getActivity()`)
                         CropImage.activity(picUri)
-                                .setMinCropResultSize(500, 500)
+                                .setMinCropResultSize(250, 250)
                                 .setMaxCropResultSize(bitmap.getWidth(), bitmap.getHeight())
 //                                .setAspectRatio(1, 1)
                                 .setCropShape(CropImageView.CropShape.RECTANGLE)
@@ -353,11 +353,18 @@ public class EditChannelInfo extends BaseActivity {
                         drawable.setCircular(true);
                         imgPet.setImageDrawable(drawable);
                     }*/
-                    final ImageRequest imageRequest2 =
+                  /*  final ImageRequest imageRequest2 =
                             ImageRequestBuilder.newBuilderWithSource(resultUri)
                                     .setResizeOptions(img_resize_opts)
                                     .build();
-                    imageView_editChannelImage.setImageRequest(imageRequest2);
+                    imageView_editChannelImage.setImageRequest(imageRequest2);*/
+
+                    Glide.with(EditChannelInfo.this)
+                            .load(resultUri)
+                            .fitCenter()
+                            /*.transform(new CircleTransform(HomeActivity.this))
+                            .override(50, 50)*/
+                            .into(imageView_editChannelImage);
                     //   imgPet.getHierarchy().setRoundingParams(roundingParams);
                     // Call_pet_photo_update();
                 } catch (Exception e) {

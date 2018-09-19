@@ -28,6 +28,12 @@ public class ChannelListModel implements Parcelable {
     @Expose
     private String image_name;
 
+    @SerializedName("total_set_count")
+    @Expose
+    private String total_set_count;
+
+
+
     protected ChannelListModel(Parcel in) {
         channel_id = in.readString();
         channel_name = in.readString();
@@ -37,6 +43,7 @@ public class ChannelListModel implements Parcelable {
         created_by = in.readString();
         created_time = in.readString();
         created_date = in.readString();
+        total_set_count = in.readString();
     }
 
     public static final Creator<ChannelListModel> CREATOR = new Creator<ChannelListModel>() {
@@ -88,12 +95,13 @@ public class ChannelListModel implements Parcelable {
     private String created_date;
 
 
-    public ChannelListModel(String channel_id, String channel_name, String description, String cover_image, String image_name) {
+    public ChannelListModel(String channel_id, String channel_name, String description, String cover_image, String image_name, String total_set_count) {
         this.channel_id = channel_id;
         this.channel_name = channel_name;
         this.description = description;
         this.cover_image = cover_image;
         this.image_name = image_name;
+        this.total_set_count = total_set_count;
     }
 
     public String getChannel_id() {
@@ -136,6 +144,14 @@ public class ChannelListModel implements Parcelable {
         this.image_name = image_name;
     }
 
+    public String getTotal_set_count() {
+        return total_set_count;
+    }
+
+    public void setTotal_set_count(String total_set_count) {
+        this.total_set_count = total_set_count;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -151,5 +167,6 @@ public class ChannelListModel implements Parcelable {
         dest.writeString(created_by);
         dest.writeString(created_time);
         dest.writeString(created_date);
+        dest.writeString(total_set_count);
     }
 }

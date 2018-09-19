@@ -21,6 +21,18 @@
             android:scaleType="fitXY"
             android:visibility="visible"
             android:src="@drawable/no_image_available"/>
+
+        <TextView
+            android:id="@+id/file_cardLink"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:visibility="gone"
+            android:gravity="center"
+            android:textSize="@dimen/font_20"
+            android:linksClickable="true"
+            android:autoLink="all"
+            />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="250dp"

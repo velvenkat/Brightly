@@ -136,7 +136,6 @@ public class CreateSet extends BaseActivity {
             Intent intent = new Intent(CreateSet.this, MyChannelsSet.class);
             intent.putExtra("model_obj", chl_list_obj);
             startActivity(intent);
-            onBackPressed();
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);
         }

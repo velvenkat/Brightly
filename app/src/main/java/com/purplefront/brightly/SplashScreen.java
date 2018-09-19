@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.purplefront.brightly.Activities.Login;
@@ -17,19 +20,23 @@ import io.realm.RealmResults;
 
 public class SplashScreen extends AppCompatActivity {
 
-    private static int SPLASH_TIME_OUT = 2000;
+    private static int SPLASH_TIME_OUT = 3000;
     String User_ID;
     String UserName;
     String User_CompanyName;
     String User_Email;
     String phoneNumber;
     Realm realm;
+    ImageView logo;
+    TextView logo_title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         realm = Realm.getDefaultInstance();
+        logo=(ImageView)findViewById(R.id.logo);
+        logo_title=(TextView) findViewById(R.id.logo_title);
 //        userId = SharedPrefUtils.getString(MyChannel.this, Util.User_Id, "");
 
         RealmResults<RealmModel> realmModel = realm.where(RealmModel.class).findAllAsync();
@@ -48,19 +55,24 @@ public class SplashScreen extends AppCompatActivity {
 
                 if (User_ID != null && !User_ID.isEmpty()){
                     Intent intent = new Intent(SplashScreen.this, MyChannel.class);
-                    SplashScreen.this.finish();
                     startActivity(intent);
                     overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                    SplashScreen.this.finish();
                 }
                 else
                 {
                     Intent intent = new Intent(SplashScreen.this, Login.class);
-                    SplashScreen.this.finish();
                     startActivity(intent);
                     overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                    SplashScreen.this.finish();
                 }
 
             }
         }, SPLASH_TIME_OUT);
+
+        Animation myanim = AnimationUtils.loadAnimation(this,R.anim.mysplashanimation);
+        logo_title.startAnimation(myanim);
     }
+
+
 }

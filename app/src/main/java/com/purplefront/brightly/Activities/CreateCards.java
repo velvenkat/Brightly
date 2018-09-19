@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -58,7 +59,7 @@ import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class CreateCards extends BaseActivity implements UserInterface {
+public class CreateCards extends BaseActivity implements UserInterface, BaseActivity.alert_dlg_interface {
 
     String userId;
     String set_id;
@@ -83,8 +84,7 @@ public class CreateCards extends BaseActivity implements UserInterface {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        setTitle("Create Card");
-
+        setDlgListener(this);
         isCreate_Crd=getIntent().getBooleanExtra("isCreate_Crd",false);
 
         chl_list_obj=getIntent().getParcelableExtra("model_obj");
@@ -99,6 +99,7 @@ public class CreateCards extends BaseActivity implements UserInterface {
         userModule.setSet_name(set_name);
         userModule.setUserId(userId);
         if(!isCreate_Crd) {
+            setTitle("Edit Card Info");
             if (Created_By != null) {
                 cardModelObj = getIntent().getParcelableExtra("Card_Dtls");
                 if (cardModelObj != null) {
@@ -110,6 +111,10 @@ public class CreateCards extends BaseActivity implements UserInterface {
                     userModule.setType(cardModelObj.getType());
                 }
             }
+        }
+        else
+        {
+            setTitle("Create Card");
         }
 
         viewpager_creatCard = (ViewPager) findViewById(R.id.viewpager_creatCard);
@@ -216,6 +221,15 @@ public class CreateCards extends BaseActivity implements UserInterface {
 
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        if(!isCreate_Crd) {
+            getMenuInflater().inflate(R.menu.delete, menu);
+        }
+        return true;
+
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -223,11 +237,85 @@ public class CreateCards extends BaseActivity implements UserInterface {
                 this.finish();
                 overridePendingTransition(R.anim.left_enter, R.anim.right_out);
                 return true;
+
+            case R.id.delete:
+
+                showAlertDialog("Your about to delete the Card, the information contained in the Card will be lost", "Confirm Delete....", "Delete", "Cancel");
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+
+    public void getDeleteCard() {
+        try {
+
+            if (CheckNetworkConnection.isOnline(CreateCards.this)) {
+                showProgress();
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(CreateCards.this).getDeleteCard(cardModelObj.getCard_id());
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(CreateCards.this) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        AddMessageResponse deleteSetResponse = response.body();
+                        if (isSuccess) {
+
+                            if (deleteSetResponse != null) {
+
+                                setDeleteCredentials(deleteSetResponse);
+                                dismissProgress();
+
+                            } else {
+                                dismissProgress();
+
+                            }
+
+                        } else {
+
+                            dismissProgress();
+                        }
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                    }
+                });
+            } else {
+
+                dismissProgress();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
+
+    }
+
+    private void setDeleteCredentials(AddMessageResponse deleteSetResponse) {
+
+        String message = deleteSetResponse.getMessage();
+
+        if(message.equals("success"))
+        {
+            Intent intent = new Intent(CreateCards.this, MySetCards.class);
+            intent.putExtra("model_obj", chl_list_obj);
+            intent.putExtra("setsListModel", setsListModel);
+            intent.putExtra("userId", userId);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            onBackPressed();
+            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+
+        }
+        else {
+            showLongToast(CreateCards.this, message);
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -235,6 +323,19 @@ public class CreateCards extends BaseActivity implements UserInterface {
         finish();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
     }
+
+
+
+    @Override
+    public void postive_btn_clicked() {
+        getDeleteCard();
+    }
+
+    @Override
+    public void negative_btn_clicked() {
+
+    }
+
 
     @Override
     public void setUserMode(UserModule userMode) {

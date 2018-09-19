@@ -19,6 +19,7 @@ import com.purplefront.brightly.Activities.MyChannelsSet;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.R;
+import com.purplefront.brightly.Utils.CircleTransform;
 
 import java.util.List;
 
@@ -65,22 +66,26 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
         }
 
         ChannelListModel channelListModel = channelListModels.get(position);
-        holder.textView_channelName.setText(channelListModel.getChannel_name());
+        String count = "("+channelListModel.getTotal_set_count()+")";
+        holder.textView_channelName.setText(channelListModel.getChannel_name()+ " " + count);
 
         if(!channelListModel.getCover_image().isEmpty()) {
 
             Glide.with(context)
                     .load(channelListModel.getCover_image())
-                    .centerCrop()
-                    /*.transform(new CircleTransform(HomeActivity.this))
-                    .override(50, 50)*/
+                    .asBitmap()
+                    .fitCenter()
+//                    .transform(new CircleTransform(context))
+                    /*.override(50, 50)*/
                     .into(holder.imageView_channelImage);
         }
         else
         {
             Glide.with(context)
                     .load(R.drawable.no_image_available)
-                    .centerCrop()
+                    .asBitmap()
+                    .fitCenter()
+//                    .transform(new CircleTransform(context))
                     /*.transform(new CircleTransform(HomeActivity.this))
                     .override(50, 50)*/
                     .into(holder.imageView_channelImage);
@@ -118,6 +123,7 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
         public ViewHolder(View itemView) {
             super(itemView);
             channel_layout = itemView.findViewById(R.id.channel_layout);
+//            channel_layout.setBackgroundResource(R.drawable.circular_image_drawable);
             imageView_channelImage = itemView.findViewById(R.id.imageView_channelImage);
             textView_channelName = itemView.findViewById(R.id.textView_channelName);
         }

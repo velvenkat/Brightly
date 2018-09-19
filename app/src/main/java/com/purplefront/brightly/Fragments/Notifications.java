@@ -86,6 +86,7 @@ public class Notifications extends BaseFragment {
         try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
+                showProgress();
                 Call<NotificationsResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getNotifications(user_ID);
                 callRegisterUser.enqueue(new ApiCallback<NotificationsResponse>(getActivity()) {
                     @Override
@@ -141,7 +142,6 @@ public class Notifications extends BaseFragment {
         notifications_listview.setLayoutManager(new LinearLayoutManager(getActivity()));
         notificationsAdapter = new NotificationsAdapter(getActivity(), notificationsModel, user_ID);
         notifications_listview.setAdapter(notificationsAdapter);
-        showShortToast(getActivity(), message);
 
     }
 }

@@ -8,6 +8,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -97,10 +99,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
 
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NotificationChannel.DEFAULT_CHANNEL_ID)
                     .setContentTitle(remoteMessage.getNotification().getTitle())
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setLargeIcon(bitmap)
                     .setContentText(remoteMessage.getNotification().getBody())
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri)
@@ -136,10 +140,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
 
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,NotificationChannel.DEFAULT_CHANNEL_ID)
                     .setContentTitle(remoteMessage.getNotification().getTitle())
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setLargeIcon(bitmap)
                     .setContentText(remoteMessage.getNotification().getBody())
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri)

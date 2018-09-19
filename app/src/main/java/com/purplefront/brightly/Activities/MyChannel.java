@@ -40,6 +40,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Adapters.MyChannelsAdapter;
@@ -58,6 +59,7 @@ import com.purplefront.brightly.Utils.CircleTransform;
 import com.purplefront.brightly.Utils.SharedPrefUtils;
 import com.purplefront.brightly.Utils.Util;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,17 +116,26 @@ public class MyChannel extends BaseActivity
             userPhone = model.getUser_PhoneNumber();
             userPicture = model.getImage();
         }
+//        getNotificationCount();
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED) {
 //            getAllContacts();
+            SharedPreferences mPrefs = getSharedPreferences("contactShares", MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = mPrefs.getString("contactShares", "");
+            Type type = new TypeToken<ArrayList<ContactShare>>() {
+            }.getType();
+            contactShares = gson.fromJson(json, type);
+
+            if (contactShares == null) {
             LoadContact loadContact = new LoadContact();
             loadContact.execute();
+        }
+
         } else {
             requestLocationPermission();
         }
-
-        getNotification();
 
         channel_layout = (RelativeLayout) findViewById(R.id.channel_layout);
         profileContainer = (FrameLayout) findViewById(R.id.profileContainer);
@@ -191,16 +202,24 @@ public class MyChannel extends BaseActivity
         getChannelsLists();
     }
 
+   /* @Override
+    protected void onResume(){
+        super.onResume();
+        // put your code here...
+        getNotificationCount();
+
+    }*/
+
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
 
-    public void getNotification() {
+    public void getNotificationCount() {
         try {
 
             if (CheckNetworkConnection.isOnline(MyChannel.this)) {
-                showProgress();
-                Call<NotificationsResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).getNotifications(userId);
+//                showProgress();
+                Call<NotificationsResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).getNotificationCounts(userId);
                 callRegisterUser.enqueue(new ApiCallback<NotificationsResponse>(MyChannel.this) {
                     @Override
                     public void onApiResponse(Response<NotificationsResponse> response, boolean isSuccess, String message) {
@@ -227,18 +246,18 @@ public class MyChannel extends BaseActivity
 
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
-                        showLongToast(MyChannel.this, message);
+//                        showLongToast(MyChannel.this, message);
                         dismissProgress();
                     }
                 });
             } else {
 
-                showLongToast(MyChannel.this, "Network Error");
+//                showLongToast(MyChannel.this, "Network Error");
                 dismissProgress();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showLongToast(MyChannel.this, "Something went Wrong, Please try Later");
+//            showLongToast(MyChannel.this, "Something went Wrong, Please try Later");
 
 
         }
@@ -248,12 +267,9 @@ public class MyChannel extends BaseActivity
 
         String message = notificationsResponse.getMessage();
 
-        if(message.equals("success"))
-        {
-            count = String.valueOf(notificationsResponse.getCount());
-        }
-        else
-        {
+        if (message.equals("success")) {
+            count = notificationsResponse.getCount();
+        } else {
             count = "0";
         }
     }
@@ -310,7 +326,9 @@ public class MyChannel extends BaseActivity
     }
 
     private void setAdapter(List<ChannelListModel> channelListModels) {
-        channels_listview.setLayoutManager(new GridLayoutManager(MyChannel.this, 3));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(MyChannel.this, 3);
+        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        channels_listview.setLayoutManager(gridLayoutManager);
         myChannelsAdapter = new MyChannelsAdapter(MyChannel.this, channelListModels);
         channels_listview.setAdapter(myChannelsAdapter);
         myChannelsAdapter.notifyDataSetChanged();
@@ -375,13 +393,15 @@ public class MyChannel extends BaseActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        invalidateOptionsMenu();
+        getNotificationCount();
         getMenuInflater().inflate(R.menu.my_channel, menu);
         MenuItem itemCart = menu.findItem(R.id.action_bell);
         LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
         setBadgeCount(this, icon, count);
-        return true;
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -565,8 +585,7 @@ public class MyChannel extends BaseActivity
 
 
     @SuppressLint("StaticFieldLeak")
-    class LoadContact extends AsyncTask<Void, Void, Void>
-    {
+    class LoadContact extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -622,9 +641,10 @@ public class MyChannel extends BaseActivity
 
                     }
                 }
+                cursor.close();
 
             }
-
+//                cursor.close();
 
             return null;
         }

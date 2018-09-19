@@ -13,7 +13,7 @@ public class NotificationsResponse {
 
     @SerializedName("count")
     @Expose
-    private int count;
+    private String count;
 
     @SerializedName("data")
     @Expose
@@ -27,11 +27,11 @@ public class NotificationsResponse {
         this.message = message;
     }
 
-    public int getCount() {
+    public String getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(String count) {
         this.count = count;
     }
 

@@ -271,7 +271,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         }
         else
         {
-            showLongToast(getActivity(), getPhonenumber+" is not Registered, please Sign Up");
+            showLongToast(getActivity(), signInResponse.getMessage());
         }
     }
 }

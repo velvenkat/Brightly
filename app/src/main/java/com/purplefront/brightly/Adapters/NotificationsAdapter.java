@@ -12,8 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.purplefront.brightly.Activities.MyChannel;
 import com.purplefront.brightly.Activities.MySetCards;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.NotificationsSetDetail;
@@ -30,13 +32,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     NotificationsSetDetail notificationsSetDetail;
 
-    String content = "";
-    String Created_By = "";
     String userId;
     String channel_id = "";
-    String set_description = "";
-    String set_name = "";
-    String set_id = "";
+
 
 
     public NotificationsAdapter(FragmentActivity activity, List<NotificationsModel> notificationsModels, String user_ID) {
@@ -67,6 +65,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         if (notificationsModel.getContent() != null) {
             holder.notification_content.setText(notificationsModel.getContent());
         }
+
+        if(notificationsModel.getAction().equals("deleted")) {
+
+            holder.notification_content.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        }
+
+
         if (notificationsModel.getDate_time() != null) {
             holder.notification_dateTime.setText(notificationsModel.getDate_time());
         }
@@ -75,7 +80,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
             Glide.with(context)
                     .load(notificationsModel.getShared_user_profile_pic())
-                    .centerCrop()
+                    .fitCenter()
                    .transform(new CircleTransform(context))
                     /*.override(50, 50)*/
                     .into(holder.notification_Image);
@@ -95,12 +100,19 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(context, MySetCards.class);
-                intent.putExtra("userId", userId);
-                intent.putExtra("notfy_modl_obj", notificationsModel);
-                intent.putExtra("isNotification", true);
-                context.startActivity(intent);
-                context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                if(notificationsModel.getAction().equals("deleted")) {
+
+                    Toast.makeText(context, "Set Permission has been Revoked", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Intent intent = new Intent(context, MySetCards.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("notfy_modl_obj", notificationsModel);
+                    intent.putExtra("isNotification", true);
+                    context.startActivity(intent);
+                    context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                }
 
             }
         });
