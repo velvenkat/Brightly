@@ -386,21 +386,6 @@ public class AudioType extends BaseFragment {
                         // rl_audio_player.setVisibility(View.GONE);
                         switch (position) {
                             case 1:
-                                try {
-
-                                    tempMp3File = File.createTempFile("audio_bark", ".3gp", getActivity().getCacheDir());
-
-                                    // prints absolute path
-                                    //  System.out.println("File path: " + f.getAbsolutePath());
-
-                                    // deletes file when the virtual machine terminate
-                                    tempMp3File.deleteOnExit();
-
-
-                                } catch (Exception e) {
-
-                                    e.printStackTrace();
-                                }
 
                                 rec_contr.setVisibility(View.VISIBLE);
                                 crt_contr.setVisibility(View.GONE);
@@ -480,8 +465,26 @@ public class AudioType extends BaseFragment {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO},
                     REQUEST_PERMISSION_RECORD_AUDIO);
-            tempMp3File = null;
+          //  tempMp3File = null;
         } else {
+
+            try {
+
+                tempMp3File = File.createTempFile("audio_bark", ".3gp", getActivity().getCacheDir());
+
+                // prints absolute path
+                //  System.out.println("File path: " + f.getAbsolutePath());
+
+                // deletes file when the virtual machine terminate
+                tempMp3File.deleteOnExit();
+
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+
+
             audio_rec();
             isPlayBtnClicked = true;
             img_play_stop_rec.setImageResource(R.drawable.stop_rec);
