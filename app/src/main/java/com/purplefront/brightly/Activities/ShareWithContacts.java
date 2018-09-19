@@ -320,16 +320,19 @@ public class ShareWithContacts extends BaseActivity {
                             new String[]{id},
                             null);
                     phoneCursor.moveToFirst();
-                    do {
 
-                        contacts = new ContactShare();
-                        contacts.setContactName(name);
+                    if (phoneCursor.getCount() > 0) {
+                        do {
 
-                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        contacts.setContactNumber(phoneNumber);
-                        contactShares.add(contacts);
+                            contacts = new ContactShare();
+                            contacts.setContactName(name);
 
-                    } while (phoneCursor.moveToNext());
+                            String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            contacts.setContactNumber(phoneNumber);
+                            contactShares.add(contacts);
+
+                        } while (phoneCursor.moveToNext());
+                    }
                    /* if (phoneCursor.moveToLast()) {
                         String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         contacts.setContactNumber(phoneNumber);

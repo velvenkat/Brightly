@@ -614,15 +614,18 @@ public class MyChannel extends BaseActivity
                                 new String[]{id},
                                 null);
                         phoneCursor.moveToFirst();
-                        do {
-                            contacts = new ContactShare();
-                            contacts.setContactName(name);
-                            String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                            contacts.setContactNumber(phoneNumber);
-                            contactShares.add(contacts);
+                        if (phoneCursor.getCount() > 0) {
+                            do {
 
-                        } while (phoneCursor.moveToNext());
+                                contacts = new ContactShare();
+                                contacts.setContactName(name);
 
+                                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                                contacts.setContactNumber(phoneNumber);
+                                contactShares.add(contacts);
+
+                            } while (phoneCursor.moveToNext());
+                        }
                         phoneCursor.close();
 
                         Cursor emailCursor = contentResolver.query(
