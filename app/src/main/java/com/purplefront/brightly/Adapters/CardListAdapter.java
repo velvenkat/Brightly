@@ -99,30 +99,69 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         }
 
 
-        if (!cardsListModel.getUrl().isEmpty()) {
+        switch (cardsListModel.getType()) {
+            case "image":
 
-            dialog = new ProgressDialog(context);
-            dialog.setMessage("Please wait...");
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
+                dialog = new ProgressDialog(context);
+                dialog.setMessage("Please wait...");
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
 
-            Glide.with(context)
-                    .load(cardsListModel.getUrl())
-                    .centerCrop()
-                    /*.transform(new CircleTransform(HomeActivity.this))
-                    .override(50, 50)*/
-                    .into(holder.image_cardImage);
-            dialog.cancel();
-            dialog.dismiss();
+                Glide.with(context)
+                        .load(cardsListModel.getUrl())
+                        .fitCenter()
+                        /*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*/
+                        .into(holder.image_cardImage);
+                dialog.cancel();
+                dialog.dismiss();
 
-        } else {
-            Glide.with(context)
-                    .load(R.drawable.no_image_available)
-                    .centerCrop()
-                    /*.transform(new CircleTransform(HomeActivity.this))
-                    .override(50, 50)*/
-                    .into(holder.image_cardImage);
+                break;
+            case "audio":
+
+                holder.image_cardImage.setPadding(0,20,0,20);
+
+                Glide.with(context)
+                        .load(R.drawable.audio_list_icon)
+                        .fitCenter()
+                        /*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*/
+                        .into(holder.image_cardImage);
+
+                break;
+            case "video":
+
+//                holder.image_cardImage.setPadding(0,20,0,20);
+
+                Glide.with(context)
+                        .load(R.drawable.youtube_list_icon)
+                        .fitCenter()
+                        /*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*/
+                        .into(holder.image_cardImage);
+
+                break;
+            case "file":
+
+                holder.image_cardImage.setPadding(0,20,0,20);
+
+                Glide.with(context)
+                        .load(R.drawable.file_list_icon)
+                        .fitCenter()
+                        /*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*/
+                        .into(holder.image_cardImage);
+
+                break;
+            default:
+                Glide.with(context)
+                        .load(R.drawable.no_image_available)
+                        .centerCrop()
+                        /*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*/
+                        .into(holder.image_cardImage);
+                break;
         }
 
 

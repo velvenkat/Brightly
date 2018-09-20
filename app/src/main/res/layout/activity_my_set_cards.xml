@@ -25,22 +25,19 @@
             android:background="@color/action_bar"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <TextView
-            android:id="@+id/pager_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/sub_title"
-            android:textStyle="bold"
+        <ImageView
+            android:id="@+id/card_list_icon"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
             android:layout_marginRight="@dimen/dimen_45"
             android:layout_centerInParent="true"
             android:layout_alignParentRight="true"
-            android:textColor="@color/white_greyish"
+            android:src="@drawable/list_order"
             />
 
         </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>
-
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager_Cards"
@@ -48,9 +45,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-
         >
     </android.support.v4.view.ViewPager>
+
+    <TextView
+        android:id="@+id/pager_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dimen_2"
+        android:textSize="@dimen/sub_title"
+        android:textStyle="italic"
+        android:layout_marginRight="@dimen/dimen_12"
+        android:background="@drawable/edit_text_background"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorPrimaryDark"
+        />
 
     <TextView
         android:id="@+id/view_nodata"
@@ -73,6 +83,5 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:background="@drawable/circular_image_drawable"
-
         android:src="@drawable/add_image_white"/>
 </RelativeLayout>

@@ -50,6 +50,8 @@ public class MySetCards extends BaseActivity {
     ViewCardFragmentPagerAdapter cardsPagerAdapter;
     ArrayList<CardsListModel> cardsListModels = new ArrayList<>();
 
+    ImageView card_list_icon;
+
     Realm realm;
     RealmResults<RealmModel> realmModel;
 
@@ -128,6 +130,8 @@ public class MySetCards extends BaseActivity {
         // Locate the ViewPager in viewpager_main.xml
         viewPager_Cards = (ViewPager) findViewById(R.id.viewPager_Cards);
         image_createCard = (ImageView) findViewById(R.id.image_createCard);
+        card_list_icon = (ImageView) findViewById(R.id.card_list_icon);
+
         if (!userId.equalsIgnoreCase(Created_By)) {
             image_createCard.setVisibility(View.GONE);
         } else {
@@ -151,6 +155,22 @@ public class MySetCards extends BaseActivity {
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
         });
+
+        card_list_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent2 = new Intent(MySetCards.this, CardList.class);
+                intent2.putExtra("userId", userId);
+                intent2.putExtra("setsListModel", setsListModel);
+                intent2.putExtra("re_order", false);
+                intent2.putExtra("card_position", Cur_PagrPosition);
+                startActivity(intent2);
+                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+
+            }
+        });
+
         getCardsLists();
     }
 
@@ -316,6 +336,7 @@ public class MySetCards extends BaseActivity {
                 Intent intent2 = new Intent(MySetCards.this, CardList.class);
                 intent2.putExtra("userId", userId);
                 intent2.putExtra("setsListModel", setsListModel);
+                intent2.putExtra("re_order", true);
                 startActivity(intent2);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
 
