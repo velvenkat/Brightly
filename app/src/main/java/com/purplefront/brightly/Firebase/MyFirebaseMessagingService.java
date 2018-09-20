@@ -29,6 +29,7 @@ import com.purplefront.brightly.Activities.MySetCards;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.NotificationsSetDetail;
 import com.purplefront.brightly.R;
+import com.purplefront.brightly.SplashScreen;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -73,14 +74,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         base_unit_id = remoteMessage.getData().get("unit_id");
 */
 
-        Intent remoteIntent=remoteMessage.toIntent();
+       /* Intent remoteIntent=remoteMessage.toIntent();
         Bundle bundle=remoteIntent.getExtras();
         String extraStr=bundle.getString("gcm.notification.data");
 
         Gson gson = new Gson();
 
-        NotificationsModel gsonObj = gson.fromJson(extraStr, NotificationsModel.class);
+        NotificationsModel gsonObj = gson.fromJson(extraStr, NotificationsModel.class);*/
 
+        String content=remoteMessage.getData().get("data");
+        Gson gson = new Gson();
+
+        NotificationsModel gsonObj = gson.fromJson(content, NotificationsModel.class);
 
 
 
@@ -94,7 +99,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             intent.putExtra("base_unit_id", remoteMessage.getData().get("unit_id"));
             intent.putExtra("title_name", remoteMessage.getData().get("title"));*/
            intent.putExtra("isNotification",true);
-           intent.putExtra("notfy_modl_obj",gsonObj);
+          intent.putExtra("notfy_modl_obj",gsonObj);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
@@ -102,10 +107,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NotificationChannel.DEFAULT_CHANNEL_ID)
-                    .setContentTitle(remoteMessage.getNotification().getTitle())
+                    .setContentTitle(remoteMessage.getData().get("title"))
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setLargeIcon(bitmap)
-                    .setContentText(remoteMessage.getNotification().getBody())
+                    .setContentText(remoteMessage.getData().get("body"))
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri)
                     .setContentIntent(pendingIntent);
@@ -128,14 +133,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         } else {
 
             Log.d("DAFARE", "DAFARE");
-            Intent intent = new Intent(this, NotificationHandler.class);
+            Intent intent = new Intent(this, MySetCards.class);
 
          /*   intent.putExtra("message_body", remoteMessage.getData().get("body"));
             intent.putExtra("control_unit_sim_number", remoteMessage.getData().get("tag"));
             intent.putExtra("base_unit_id", remoteMessage.getData().get("unit_id"));
             intent.putExtra("title_name", remoteMessage.getData().get("title"));*/
             intent.putExtra("isNotification",true);
-            intent.putExtra("notfy_modl_obj",gsonObj);
+           intent.putExtra("notfy_modl_obj",gsonObj);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
@@ -143,10 +148,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,NotificationChannel.DEFAULT_CHANNEL_ID)
-                    .setContentTitle(remoteMessage.getNotification().getTitle())
+                    .setContentTitle(remoteMessage.getData().get("title"))
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setLargeIcon(bitmap)
-                    .setContentText(remoteMessage.getNotification().getBody())
+                    .setContentText(remoteMessage.getData().get("body"))
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri)
                     .setContentIntent(pendingIntent);

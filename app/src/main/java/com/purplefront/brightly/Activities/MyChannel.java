@@ -108,6 +108,7 @@ public class MyChannel extends BaseActivity
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         realm = Realm.getDefaultInstance();
+        contactShares = new ArrayList<>();
         realmModel = realm.where(RealmModel.class).findAllAsync();
         realmModel.load();
         for (RealmModel model : realmModel) {
@@ -596,6 +597,7 @@ public class MyChannel extends BaseActivity
         @Override
         protected Void doInBackground(Void... voids) {
             ContentResolver contentResolver = getContentResolver();
+            contactShares = new ArrayList<>();
             Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
