@@ -34,7 +34,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class CardList extends BaseActivity implements BaseActivity.alert_dlg_interface,CardListAdapter.Card_sel_interface {
+public class CardList extends BaseActivity implements BaseActivity.alert_dlg_interface, CardListAdapter.Card_sel_interface {
 
     List<CardsListModel> cardsListModels = new ArrayList<>();
     CardListAdapter cardListAdapter;
@@ -51,7 +51,8 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
     CheckBox chk_sel_all;
     ItemTouchHelper ith;
     ImageView img_mutli_sel;
-    boolean is_on_set_chg_chk_status=false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
+    boolean isReorder;
+    boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
     SetsListModel setsListModel;
 
     @Override
@@ -65,6 +66,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
 
         userId = getIntent().getStringExtra("userId");
         setsListModel = getIntent().getParcelableExtra("setsListModel");
+        isReorder = getIntent().getBooleanExtra("re_order", false);
         set_name = setsListModel.getSet_name();
         set_id = setsListModel.getSet_id();
         setTitle(set_name);
@@ -76,41 +78,39 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
         btn_delete = (Button) findViewById(R.id.btn_delete);
         chk_sel_all = (CheckBox) findViewById(R.id.chk_sel_all);
         txtItemSel = (TextView) findViewById(R.id.txtCntSelected);
-        img_mutli_sel=(ImageView)findViewById(R.id.menu_multi_sel);
+        img_mutli_sel = (ImageView) findViewById(R.id.menu_multi_sel);
 
         setDlgListener(this);
         chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if(is_on_set_chg_chk_status){
+                if (is_on_set_chg_chk_status) {
 
-                    is_on_set_chg_chk_status=false;
-                }
-
-                else{
-                    del_sel_id=new ArrayList<>();
+                    is_on_set_chg_chk_status = false;
+                } else {
+                    del_sel_id = new ArrayList<>();
                     if (isChecked) {
                         chk_sel_all.setText("Unselect all");
                         btn_delete.setEnabled(true);
 
-                        for(int i=0;i<cardsListModels.size();i++){
-                            CardsListModel modelObj=cardsListModels.get(i);
+                        for (int i = 0; i < cardsListModels.size(); i++) {
+                            CardsListModel modelObj = cardsListModels.get(i);
                             modelObj.setDelSel(true);
                             del_sel_id.add(modelObj.getCard_id());
                             cardsListModels.remove(i);
-                            cardsListModels.add(i,modelObj);
+                            cardsListModels.add(i, modelObj);
 
                         }
                         txtItemSel.setText(del_sel_id.size() + " items selected");
                     } else {
                         chk_sel_all.setText("Select all");
                         btn_delete.setEnabled(false);
-                        for(int i=0;i<cardsListModels.size();i++){
-                            CardsListModel modelObj=cardsListModels.get(i);
+                        for (int i = 0; i < cardsListModels.size(); i++) {
+                            CardsListModel modelObj = cardsListModels.get(i);
                             modelObj.setDelSel(false);
                             cardsListModels.remove(i);
-                            cardsListModels.add(i,modelObj);
+                            cardsListModels.add(i, modelObj);
                         }
                         txtItemSel.setText("");
                     }
@@ -122,19 +122,19 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
             @Override
             public void onClick(View v) {
                 //Toast.makeText(MyChannelsSet.this,"HI",Toast.LENGTH_LONG).show();
-                if(cardsListModels.size()>0) {
+                if (cardsListModels.size() > 0) {
                     getSupportActionBar().hide();
                     del_contr.setVisibility(View.VISIBLE);
                     txtItemSel.setText("");
                     btn_delete.setEnabled(false);
-                    ith.attachToRecyclerView(null);
+                    if (isReorder)
+                        ith.attachToRecyclerView(null);
                     cardListAdapter.set_SelToDel(true);
                     cardListAdapter.notifyDataSetChanged();
                     // isMultiSelChoosed=true;
                     //   ith = new ItemTouchHelper(dragCallback);
 
-                }
-                else {
+                } else {
 
                 }
 
@@ -182,84 +182,86 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
                 }
                 cardListAdapter.set_SelToDel(false);
                 cardListAdapter.notifyDataSetChanged();
-                ith.attachToRecyclerView(card_listview);
+                if (isReorder)
+                    ith.attachToRecyclerView(card_listview);
 
             }
         });
 
 
+        if (isReorder) {
+            ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
 
-        ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
+                int dragFrom = -1;
+                int dragTo = -1;
 
-            int dragFrom = -1;
-            int dragTo = -1;
-
-            @Override
-            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN ,
-                        0);
-            }
-
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-
-
-                int fromPosition = viewHolder.getAdapterPosition();
-                int toPosition = target.getAdapterPosition();
-
-
-                if (dragFrom == -1) {
-                    dragFrom = fromPosition;
-                }
-                dragTo = toPosition;
-
-                //channelsSetAdapter.onItemMove(fromPosition, toPosition);
-                Collections.swap(cardsListModels, fromPosition, toPosition);
-                // and notify the adapter that its dataset has changed
-                cardListAdapter.notifyItemMoved(fromPosition, toPosition);
-                cardListAdapter.notifyItemChanged(fromPosition);
-                cardListAdapter.notifyItemChanged(toPosition);
-                return true;
-
-            }
-
-            private void reallyMoved(int from, int to) {
-                // I guessed this was what you want...
-                call_card_reorder();
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-            }
-
-            @Override
-            public boolean isLongPressDragEnabled() {
-                return true;
-            }
-
-            @Override
-            public boolean isItemViewSwipeEnabled() {
-                return false;
-            }
-
-            @Override
-            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                super.clearView(recyclerView, viewHolder);
-
-                if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
-                    reallyMoved(dragFrom, dragTo);
+                @Override
+                public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                    return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                            0);
                 }
 
-                dragFrom = dragTo = -1;
-            }
-
-        };
-        // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
-        ith = new ItemTouchHelper(dragCallback);
-        ith.attachToRecyclerView(card_listview);
+                @Override
+                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
 
 
+                    int fromPosition = viewHolder.getAdapterPosition();
+                    int toPosition = target.getAdapterPosition();
+
+
+                    if (dragFrom == -1) {
+                        dragFrom = fromPosition;
+                    }
+                    dragTo = toPosition;
+
+                    //channelsSetAdapter.onItemMove(fromPosition, toPosition);
+                    Collections.swap(cardsListModels, fromPosition, toPosition);
+                    // and notify the adapter that its dataset has changed
+                    cardListAdapter.notifyItemMoved(fromPosition, toPosition);
+                    cardListAdapter.notifyItemChanged(fromPosition);
+                    cardListAdapter.notifyItemChanged(toPosition);
+                    return true;
+
+                }
+
+                private void reallyMoved(int from, int to) {
+                    // I guessed this was what you want...
+                    call_card_reorder();
+                }
+
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+                }
+
+                @Override
+                public boolean isLongPressDragEnabled() {
+                    return true;
+                }
+
+                @Override
+                public boolean isItemViewSwipeEnabled() {
+                    return false;
+                }
+
+                @Override
+                public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                    super.clearView(recyclerView, viewHolder);
+
+                    if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+                        reallyMoved(dragFrom, dragTo);
+                    }
+
+                    dragFrom = dragTo = -1;
+                }
+
+            };
+            // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
+            ith = new ItemTouchHelper(dragCallback);
+            ith.attachToRecyclerView(card_listview);
+
+        } else
+            img_mutli_sel.setVisibility(View.INVISIBLE);
 
         getCardsLists();
     }
@@ -306,7 +308,6 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
         }
 
     }
-
 
 
     public void reset_view() {
@@ -368,8 +369,8 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
     }
 
     private void setAdapter(List<CardsListModel> cardsListModels) {
-        card_listview.setLayoutManager(new GridLayoutManager(CardList.this,1));
-        cardListAdapter = new CardListAdapter(CardList.this, cardsListModels,this);
+        card_listview.setLayoutManager(new GridLayoutManager(CardList.this, 1));
+        cardListAdapter = new CardListAdapter(CardList.this, cardsListModels, this);
         card_listview.setAdapter(cardListAdapter);
 
     }
@@ -412,7 +413,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
                 btn_delete.setEnabled(false);
                 txtItemSel.setText("");
                 chk_sel_all.setText("Select all");
-                is_on_set_chg_chk_status=true;
+                is_on_set_chg_chk_status = true;
                 chk_sel_all.setChecked(false);
             }
         } else {
@@ -420,9 +421,9 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
 
             chk_sel_all.setVisibility(View.VISIBLE);
             del_sel_id.add(modelObj.getCard_id());
-            if(cardsListModels.size()==del_sel_id.size()){
+            if (cardsListModels.size() == del_sel_id.size()) {
                 chk_sel_all.setText("Unselect all");
-                is_on_set_chg_chk_status=true;
+                is_on_set_chg_chk_status = true;
                 chk_sel_all.setChecked(true);
             }
             txtItemSel.setText(del_sel_id.size() + " items selected");
