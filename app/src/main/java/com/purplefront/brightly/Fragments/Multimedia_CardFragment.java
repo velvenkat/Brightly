@@ -1,5 +1,6 @@
 package com.purplefront.brightly.Fragments;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -97,6 +98,35 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                         .into(image_cardImage);
                 dialog.cancel();
                 dialog.dismiss();
+
+                image_cardImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+
+                        LayoutInflater inflater = LayoutInflater.from(getActivity());
+                        View imgEntryView = inflater.inflate(R.layout.dialog_fullscreen, null);
+                        final Dialog dialog=new Dialog(getActivity(),android.R.style.Theme_Black_NoTitleBar_Fullscreen); //default fullscreen titlebar
+                        ImageView img = (ImageView) imgEntryView.findViewById(R.id.usericon_large);
+
+                        Glide.with(getContext())
+                                .load(cardModelObj.getUrl())
+                                .fitCenter()
+                                /*.transform(new CircleTransform(HomeActivity.this))
+                                .override(50, 50)*/
+                                .into(img);
+
+                        dialog.setContentView(imgEntryView);
+                        dialog.show();
+
+                        imgEntryView.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View paramView) {
+                                dialog.cancel();
+                            }
+                        });
+
+                    }
+                });
 
             } else {
                 Glide.with(getContext())
