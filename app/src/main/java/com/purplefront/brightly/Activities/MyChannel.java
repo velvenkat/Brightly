@@ -94,6 +94,7 @@ public class MyChannel extends BaseActivity
     String type = "all";
     String Title = "All Channels";
     String count = "0";
+    String deviceToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +117,7 @@ public class MyChannel extends BaseActivity
             userName = model.getUser_Name();
             userPhone = model.getUser_PhoneNumber();
             userPicture = model.getImage();
+            deviceToken = model.getDeviceToken();
         }
 //        getNotificationCount();
 

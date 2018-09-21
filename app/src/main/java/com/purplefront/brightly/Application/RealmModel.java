@@ -4,6 +4,8 @@ import io.realm.RealmObject;
 
 public class RealmModel extends RealmObject {
 
+    private String deviceToken;
+
     private String User_Id;
 
     private String User_Name;
@@ -17,6 +19,14 @@ public class RealmModel extends RealmObject {
     private String image;
 
     private String image_name;
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
 
     public String getUser_Id() {
         return User_Id;

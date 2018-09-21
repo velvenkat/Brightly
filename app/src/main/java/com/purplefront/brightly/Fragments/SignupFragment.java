@@ -250,10 +250,11 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         User_Email  = signUpResponse.getEmail();
         User_CompanyName  = signUpResponse.getCompany_name();
 
-        if(!message.equals("Unable to create User.")) {
+        if(message.equals("success")) {
 
             realm.beginTransaction();
             RealmModel realmModel=realm.createObject(RealmModel.class);
+            realmModel.setDeviceToken(deviceToken);
             realmModel.setUser_Id(User_ID);
             realmModel.setUser_Name(UserName);
             realmModel.setUser_Email(User_Email);

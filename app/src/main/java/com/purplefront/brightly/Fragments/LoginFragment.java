@@ -67,6 +67,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     String User_Email;
     String phoneNumber,deviceToken;
     String image;
+    String message;
 
     Realm realm;
 
@@ -243,6 +244,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
      */
     private void setLoginCredentials(SignInResponse signInResponse) {
 
+        message = signInResponse.getMessage();
         phoneNumber = signInResponse.getMobile();
         User_ID = signInResponse.getId();
         UserName  = signInResponse.getName();
@@ -251,10 +253,11 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         image  = signInResponse.getImage();
 
 
-        if(phoneNumber!=null) {
+        if(message.equals("success")) {
 
             realm.beginTransaction();
             RealmModel realmModel=realm.createObject(RealmModel.class);
+            realmModel.setDeviceToken(deviceToken);
             realmModel.setUser_Id(User_ID);
             realmModel.setUser_Name(UserName);
             realmModel.setUser_Email(User_Email);
