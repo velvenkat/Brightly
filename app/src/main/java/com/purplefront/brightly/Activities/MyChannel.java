@@ -37,6 +37,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
@@ -49,6 +50,7 @@ import com.purplefront.brightly.BadgeDrawable;
 import com.purplefront.brightly.Fragments.LoginFragment;
 import com.purplefront.brightly.Fragments.MyProfile;
 import com.purplefront.brightly.Fragments.Notifications;
+import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ChannelListResponse;
 import com.purplefront.brightly.Modules.ContactShare;
@@ -527,6 +529,28 @@ public class MyChannel extends BaseActivity
 
             //commit realm changes
             realm.commitTransaction();
+            if (CheckNetworkConnection.isOnline(MyChannel.this)) {
+                showProgress();
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).call_logout_user(userId, deviceToken);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(MyChannel.this) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
+                        Toast.makeText(MyChannel.this, "Message:" + response.message(), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                    }
+                });
+            } /*else {
+
+                dismissProgress();
+            }*/ else {
+                Toast.makeText(MyChannel.this, "Check network connection", Toast.LENGTH_LONG).show();
+            }
             /*realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {

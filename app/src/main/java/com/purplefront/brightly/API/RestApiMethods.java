@@ -38,11 +38,11 @@ public interface RestApiMethods {
 
     //Register or SignUp
     @POST("users/newregister.php")
-    Call<SignUpResponse> getSignup(@Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Query("password") String password,@Query("token") String token);
+    Call<SignUpResponse> getSignup(@Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Query("password") String password,@Query("token") String token,@Query("os") String os_type);
 
     //SignIn
     @POST("users/newlogin.php")
-    Call<SignInResponse> getSignIn(@Query("mobile_no") String mobile_no, @Query("password") String password, @Query("token") String token);
+    Call<SignInResponse> getSignIn(@Query("mobile_no") String mobile_no, @Query("password") String password, @Query("token") String token, @Query("os") String os_type);
 
     //ForgotPassword
     @POST("users/forgot_password.php")
@@ -135,6 +135,8 @@ public interface RestApiMethods {
     @POST("notification/count.php")
     Call<NotificationsResponse> getNotificationCounts(@Query("user_id") String user_id);
 
+    @POST("users/logout.php")
+    Call<AddMessageResponse> call_logout_user(@Query("user_id") String user_id,@Query("token") String token);
 
 
 }

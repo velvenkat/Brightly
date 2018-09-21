@@ -197,7 +197,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
-                Call<SignInResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignIn(getPhonenumber, getPassword,deviceToken);
+                Call<SignInResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignIn(getPhonenumber, getPassword,deviceToken,"android");
                 callRegisterUser.enqueue(new ApiCallback<SignInResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SignInResponse> response, boolean isSuccess, String message) {
