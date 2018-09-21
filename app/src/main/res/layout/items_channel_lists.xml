@@ -21,6 +21,17 @@
         android:scaleType="fitXY"
         android:src="@drawable/no_image_available"/>
 
+        <ImageView
+            android:id="@+id/subscribed_icon"
+            android:layout_width="50dp"
+            android:layout_height="12dp"
+            android:src="@drawable/subscribed_icon"
+            android:padding="@dimen/dimen_2"
+            android:background="@color/white_greyish"
+            android:visibility="gone"
+            android:layout_alignParentRight="true"
+            />
+
         <TextView
             android:id="@+id/textView_channelName"
             android:layout_width="match_parent"

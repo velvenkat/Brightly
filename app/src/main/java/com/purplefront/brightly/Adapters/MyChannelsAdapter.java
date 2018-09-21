@@ -34,6 +34,7 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
     Realm realm;
     RealmResults<RealmModel> realmModel;
     String userId;
+    String Created_by;
 
 
     public MyChannelsAdapter(MyChannel myChannel, List<ChannelListModel> channelListModels) {
@@ -65,9 +66,19 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
             userId = model.getUser_Id();
         }
 
+
         ChannelListModel channelListModel = channelListModels.get(position);
         String count = "("+channelListModel.getTotal_set_count()+")";
         holder.textView_channelName.setText(channelListModel.getChannel_name()+ " " + count);
+        Created_by = channelListModel.getCreated_by();
+
+        if(!Created_by.equals(userId))
+        {
+            holder.subscribed_icon.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.subscribed_icon.setVisibility(View.GONE);
+        }
 
         if(!channelListModel.getCover_image().isEmpty()) {
 
@@ -119,12 +130,14 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
         TextView textView_channelName;
         ImageView imageView_channelImage;
         CardView channel_layout;
+        ImageView subscribed_icon;
 
         public ViewHolder(View itemView) {
             super(itemView);
             channel_layout = itemView.findViewById(R.id.channel_layout);
 //            channel_layout.setBackgroundResource(R.drawable.circular_image_drawable);
             imageView_channelImage = itemView.findViewById(R.id.imageView_channelImage);
+            subscribed_icon = itemView.findViewById(R.id.subscribed_icon);
             textView_channelName = itemView.findViewById(R.id.textView_channelName);
         }
     }

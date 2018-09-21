@@ -96,6 +96,7 @@
             android:layout_marginTop="@dimen/dimen_10"
             android:layout_marginLeft="@dimen/dimen_16"
             android:layout_marginRight="@dimen/dimen_16"
+            android:visibility="gone"
             android:textStyle="bold"
             android:text="@string/sharing_content_title_text"/>
 

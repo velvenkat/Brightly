@@ -35,6 +35,10 @@ public class SetsListModel implements Parcelable{
     @Expose
     private String total_card_count;
 
+    @SerializedName("shared_by")
+    @Expose
+    private String shared_by;
+
     @SerializedName("shared_data")
     @Expose
     private ArrayList<SharedDataModel> shared_data = null;
@@ -46,6 +50,7 @@ public class SetsListModel implements Parcelable{
         thumbnail = in.readString();
         share_link = in.readString();
         total_card_count = in.readString();
+        shared_by = in.readString();
         shared_data = in.createTypedArrayList(SharedDataModel.CREATOR);
         isDelSel = in.readByte() != 0;
     }
@@ -72,7 +77,7 @@ public class SetsListModel implements Parcelable{
 
     private boolean isDelSel=false;
 
-    public SetsListModel(String set_id, String set_name, String description, String thumbnail, String share_link, ArrayList<SharedDataModel> shared_data, boolean isDelSel, String total_card_count) {
+    public SetsListModel(String set_id, String set_name, String description, String thumbnail, String share_link, ArrayList<SharedDataModel> shared_data, boolean isDelSel, String total_card_count, String shared_by) {
         this.set_id = set_id;
         this.set_name = set_name;
         this.description = description;
@@ -81,6 +86,7 @@ public class SetsListModel implements Parcelable{
         this.shared_data = shared_data;
         this.isDelSel = isDelSel;
         this.total_card_count = total_card_count;
+        this.shared_by = shared_by;
     }
 
     public String getSet_id() {
@@ -131,6 +137,14 @@ public class SetsListModel implements Parcelable{
         this.total_card_count = total_card_count;
     }
 
+    public String getShared_by() {
+        return shared_by;
+    }
+
+    public void setShared_by(String shared_by) {
+        this.shared_by = shared_by;
+    }
+
     public ArrayList<SharedDataModel> getShared_data() {
         return shared_data;
     }
@@ -152,6 +166,7 @@ public class SetsListModel implements Parcelable{
         parcel.writeString(thumbnail);
         parcel.writeString(share_link);
         parcel.writeString(total_card_count);
+        parcel.writeString(shared_by);
         parcel.writeTypedList(shared_data);
         parcel.writeByte((byte) (isDelSel ? 1 : 0));
     }

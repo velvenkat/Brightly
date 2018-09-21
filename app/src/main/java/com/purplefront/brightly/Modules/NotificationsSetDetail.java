@@ -24,6 +24,10 @@ public class NotificationsSetDetail implements Parcelable{
     @Expose
     private String created_by;
 
+    @SerializedName("shared_by")
+    @Expose
+    private String shared_by;
+
 
     public NotificationsSetDetail(String set_id, String name, String description, String created_by) {
         this.set_id = set_id;
@@ -37,6 +41,7 @@ public class NotificationsSetDetail implements Parcelable{
         name = in.readString();
         description = in.readString();
         created_by = in.readString();
+        shared_by = in.readString();
     }
 
     public static final Creator<NotificationsSetDetail> CREATOR = new Creator<NotificationsSetDetail>() {
@@ -83,6 +88,14 @@ public class NotificationsSetDetail implements Parcelable{
         this.created_by = created_by;
     }
 
+    public String getShared_by() {
+        return shared_by;
+    }
+
+    public void setShared_by(String shared_by) {
+        this.shared_by = shared_by;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -94,5 +107,6 @@ public class NotificationsSetDetail implements Parcelable{
         parcel.writeString(name);
         parcel.writeString(description);
         parcel.writeString(created_by);
+        parcel.writeString(shared_by);
     }
 }

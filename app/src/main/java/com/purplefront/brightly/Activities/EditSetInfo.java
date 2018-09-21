@@ -55,6 +55,7 @@ public class EditSetInfo extends BaseActivity {
     String share_link;
     String channel_name;
     String Created_By;
+    String shared_by;
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
     NotificationsModel notificationsModel;
@@ -81,6 +82,7 @@ public class EditSetInfo extends BaseActivity {
             set_name = notificationsModel.getNotificationsSetDetail().getName();
             set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
             Created_By = notificationsModel.getNotificationsSetDetail().getCreated_by();
+            shared_by = notificationsModel.getNotificationsSetDetail().getShared_by();
 
         } else {
 
@@ -94,6 +96,7 @@ public class EditSetInfo extends BaseActivity {
             set_name = setsListModel.getSet_name();
             set_id = setsListModel.getSet_id();
             share_link = setsListModel.getShare_link();
+            shared_by = setsListModel.getShared_by();
 
         }
 
@@ -114,6 +117,10 @@ public class EditSetInfo extends BaseActivity {
             btn_editSet.setVisibility(View.GONE);
             edit_setName.setEnabled(false);
             edit_setDescription.setEnabled(false);
+            if(shared_by != null) {
+                text_share_title.setVisibility(View.VISIBLE);
+                text_share_title.setText("Shared by : " + shared_by);
+            }
             setTitle("Set Info");
 
           /*  shared_listview.setLayoutManager(new LinearLayoutManager(this));
@@ -123,7 +130,6 @@ public class EditSetInfo extends BaseActivity {
         } else {
 
             setTitle("Edit Set Info");
-
             getSetSharedInfo();
 
 
@@ -444,6 +450,7 @@ public class EditSetInfo extends BaseActivity {
 
                             } else {
                                 dismissProgress();
+                                text_share_title.setVisibility(View.GONE);
 
                             }
 
@@ -474,12 +481,12 @@ public class EditSetInfo extends BaseActivity {
     private void setSharedCredentials(SetInfoSharedResponse infoSharedResponse) {
 
         if (!setsListModel.getShared_data().isEmpty() && setsListModel.getShared_data() != null) {
+            text_share_title.setVisibility(View.VISIBLE);
             shared_listview.setLayoutManager(new LinearLayoutManager(this));
             sharedListAdapter = new SharedListAdapter(EditSetInfo.this, infoSharedResponse.getShared_data(), set_id);
             shared_listview.setAdapter(sharedListAdapter);
             dismissProgress();
         } else {
-            text_share_title.setVisibility(View.GONE);
             dismissProgress();
         }
     }
