@@ -24,8 +24,61 @@ public class RetrofitInterface {
     private static final String BASE_URL = "http://104.211.211.148/Brightly/";
     static Retrofit retrofit = null;
 
+    private static final Interceptor REWRITE_RESPONSE_INTERCEPTOR = chain -> {
+        okhttp3.Response originalResponse = chain.proceed(chain.request());
+        String cacheControl = originalResponse.header("Cache-Control");
+        if (cacheControl == null || cacheControl.contains("no-store") || cacheControl.contains("no-cache") ||
+                cacheControl.contains("must-revalidate") || cacheControl.contains("max-age=0")) {
+            return originalResponse.newBuilder()
+                    .removeHeader("Pragma")
+                    .header("Cache-Control", "public, max-age=" + 5000)
+                    .build();
+        } else {
+            return originalResponse;
+        }
+    };
+
     public static RestApiMethods getRestApiMethods(Context context) {
+
+
         if (retrofit == null) {
+
+            File httpCacheDirectory = new File(context.getCacheDir(), CACHE_DIR);
+            Cache cache = new Cache(httpCacheDirectory, 10 * 1024 * 1024);
+
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            httpClient.cache(cache);
+            httpClient.connectTimeout(30, TimeUnit.SECONDS);
+            httpClient.readTimeout(30, TimeUnit.SECONDS);
+/*            Interceptor cacheInterceptor = chain -> {
+                try {
+                    return chain.proceed(chain.request());
+                } catch (Exception e) {
+                    Request offlineRequest = chain.request().newBuilder()
+                            .header("Cache-Control", "public, only-if-cached, max-stale=" + 60 * 60 * 24)
+                            .build();
+                    return chain.proceed(offlineRequest);
+                }
+            };*/
+
+            Interceptor REWRITE_RESPONSE_INTERCEPTOR_OFFLINE = chain -> {
+                Request request = chain.request();
+                if (!CheckNetworkConnection.isOnline(context)) {
+                    request = request.newBuilder()
+                            .removeHeader("Pragma")
+                            .header("Cache-Control", "public, only-if-cached")
+                            .build();
+                }
+                return chain.proceed(request);
+            };
+
+            httpClient.addNetworkInterceptor(REWRITE_RESPONSE_INTERCEPTOR);
+            httpClient.addInterceptor(REWRITE_RESPONSE_INTERCEPTOR_OFFLINE);
+
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpClient.addInterceptor(logging);
+
             // Retrofit setup
             Gson gson = new GsonBuilder()
                     .setLenient()
@@ -35,10 +88,12 @@ public class RetrofitInterface {
                     .baseUrl(BASE_URL)
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(gson))
-                    //.client(httpClient.build())
+                    .client(httpClient.build())
                     .build();
             // Service setup
         }
         return retrofit.create(RestApiMethods.class);
     }
+
+
 }
