@@ -97,12 +97,17 @@ public class MyChannel extends BaseActivity
     String Title = "All Channels";
     String count = "0";
     String deviceToken;
+    boolean isNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_channel);
+
+        isNotification = getIntent().getBooleanExtra("isNotification", false);
+
         fragmentManager = getSupportFragmentManager();
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(Title);
@@ -147,6 +152,19 @@ public class MyChannel extends BaseActivity
 
         profileContainer.setVisibility(View.GONE);
         channel_layout.setVisibility(View.VISIBLE);
+
+        if(isNotification)
+        {
+            fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
+                    .replace(R.id.profileContainer, new Notifications(),
+                            Util.NOTIFICATIONS).commit();
+
+            setActionBarTitle("Notification");
+            profileContainer.setVisibility(View.VISIBLE);
+            channel_layout.setVisibility(View.GONE);
+        }
 
         image_createChannel = (ImageView) findViewById(R.id.image_createChannel);
         image_createChannel.setOnClickListener(new View.OnClickListener() {

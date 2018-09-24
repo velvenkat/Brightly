@@ -8,6 +8,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class NotificationsModel implements Parcelable {
 
+    @SerializedName("type")
+    @Expose
+    private String type;
+
     @SerializedName("content")
     @Expose
     private String content;
@@ -28,6 +32,10 @@ public class NotificationsModel implements Parcelable {
     @Expose
     private String shared_user_profile_pic;
 
+    @SerializedName("card_order_position")
+    @Expose
+    private String card_order_position;
+
     @SerializedName("set_details")
     @Expose
     private NotificationsSetDetail notificationsSetDetail;
@@ -42,10 +50,12 @@ public class NotificationsModel implements Parcelable {
     }
 
     protected NotificationsModel(Parcel in) {
+        type = in.readString();
         content = in.readString();
         date_time = in.readString();
         action = in.readString();
         channel_id = in.readString();
+        card_order_position = in.readString();
         shared_user_profile_pic = in.readString();
         notificationsSetDetail = in.readParcelable(NotificationsSetDetail.class.getClassLoader());
     }
@@ -61,6 +71,14 @@ public class NotificationsModel implements Parcelable {
             return new NotificationsModel[size];
         }
     };
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getContent() {
         return content;
@@ -84,6 +102,14 @@ public class NotificationsModel implements Parcelable {
 
     public void setShared_user_profile_pic(String shared_user_profile_pic) {
         this.shared_user_profile_pic = shared_user_profile_pic;
+    }
+
+    public String getCard_order_position() {
+        return card_order_position;
+    }
+
+    public void setCard_order_position(String card_order_position) {
+        this.card_order_position = card_order_position;
     }
 
     public String getAction() {
@@ -117,10 +143,12 @@ public class NotificationsModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(type);
         dest.writeString(content);
         dest.writeString(date_time);
         dest.writeString(action);
         dest.writeString(channel_id);
+        dest.writeString(card_order_position);
         dest.writeString(shared_user_profile_pic);
         dest.writeParcelable(notificationsSetDetail, flags);
     }

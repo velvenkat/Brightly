@@ -66,9 +66,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             holder.notification_content.setText(notificationsModel.getContent());
         }
 
-        if(notificationsModel.getAction().equals("deleted")) {
+        if(notificationsModel.getAction().equals("deleted")  || notificationsModel.getAction().equals("revoked")) {
 
             holder.notification_content.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        }
+        else
+        {
+            holder.notification_content.setTextColor(context.getResources().getColor(R.color.black));
         }
 
 
@@ -100,10 +104,21 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             @Override
             public void onClick(View view) {
 
-                if(notificationsModel.getAction().equals("deleted")) {
+                if((notificationsModel.getType().equals("set")) && notificationsModel.getAction().equals("deleted")) {
 
-                    Toast.makeText(context, "Set Permission has been Revoked", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "This Set is Deleted...", Toast.LENGTH_SHORT).show();
+
                 }
+                else if((notificationsModel.getType().equals("card")) && notificationsModel.getAction().equals("deleted")) {
+
+                    Toast.makeText(context, "This Card is Deleted...", Toast.LENGTH_SHORT).show();
+
+                }
+                else if(notificationsModel.getAction().equals("revoked"))
+                {
+                    Toast.makeText(context, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
+                }
+
                 else
                 {
                     Intent intent = new Intent(context, MySetCards.class);

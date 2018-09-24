@@ -25,7 +25,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.purplefront.brightly.Activities.MyChannel;
 import com.purplefront.brightly.Activities.MySetCards;
+import com.purplefront.brightly.Fragments.Notifications;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.NotificationsSetDetail;
 import com.purplefront.brightly.R;
@@ -55,7 +57,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
   //  String message_body = "", message_title = "", control_unit_sim_number = "" , base_unit_id = "";
 
     public static MediaPlayer media_player_object;
-
+    Intent intent;
 
 
 
@@ -93,7 +95,31 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d("JDKDNKK", "JDKDNKK");
 
             Log.d("RIDACKDFD", "RIDACKDFD");
-            Intent intent = new Intent(this, MySetCards.class);
+
+            if((gsonObj.getType().equals("set")) && gsonObj.getAction().equals("deleted")) {
+
+                intent = new Intent(this, MyChannel.class);
+//                Toast.makeText(this, "This Set is Deleted...", Toast.LENGTH_SHORT).show();
+
+            }
+            else if((gsonObj.getType().equals("card")) && gsonObj.getAction().equals("deleted")) {
+
+                intent = new Intent(this, MyChannel.class);
+//                Toast.makeText(this, "This Card is Deleted...", Toast.LENGTH_SHORT).show();
+
+            }
+            else if(gsonObj.getAction().equals("revoked"))
+            {
+                intent = new Intent(this, MyChannel.class);
+//                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
+            }
+
+            else
+            {
+                 intent = new Intent(this, MySetCards.class);
+
+            }
+
            /* intent.putExtra("message_body", remoteMessage.getData().get("body"));
             intent.putExtra("control_unit_sim_number", remoteMessage.getData().get("tag"));
             intent.putExtra("base_unit_id", remoteMessage.getData().get("unit_id"));
@@ -133,7 +159,29 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         } else {
 
             Log.d("DAFARE", "DAFARE");
-            Intent intent = new Intent(this, MySetCards.class);
+            if((gsonObj.getType().equals("set")) && gsonObj.getAction().equals("deleted")) {
+
+                intent = new Intent(this, MyChannel.class);
+//                Toast.makeText(this, "This Set is Deleted...", Toast.LENGTH_SHORT).show();
+
+            }
+            else if((gsonObj.getType().equals("card")) && gsonObj.getAction().equals("deleted")) {
+
+                intent = new Intent(this, MyChannel.class);
+//                Toast.makeText(this, "This Card is Deleted...", Toast.LENGTH_SHORT).show();
+
+            }
+            else if(gsonObj.getAction().equals("revoked"))
+            {
+                intent = new Intent(this, MyChannel.class);
+//                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
+            }
+
+            else
+            {
+                intent = new Intent(this, MySetCards.class);
+
+            }
 
          /*   intent.putExtra("message_body", remoteMessage.getData().get("body"));
             intent.putExtra("control_unit_sim_number", remoteMessage.getData().get("tag"));
