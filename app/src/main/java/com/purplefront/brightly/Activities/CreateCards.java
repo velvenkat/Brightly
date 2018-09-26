@@ -153,7 +153,7 @@ public class CreateCards extends BaseActivity implements UserInterface, BaseActi
     private void setupViewPager(ViewPager viewpager_creatCard) {
 
         CreateCards.ViewPagerAdapter adapter = new CreateCards.ViewPagerAdapter(getSupportFragmentManager());
-        Fragment create_imgType = new ImageType();
+
         Bundle bundle = new Bundle();
         if (isCreate_Crd)
             bundle.putBoolean("isCreate", true);
@@ -163,6 +163,7 @@ public class CreateCards extends BaseActivity implements UserInterface, BaseActi
         }
 
 
+        Fragment create_imgType = new ImageType();
         create_imgType.setArguments(bundle);
         adapter.addFrag(create_imgType, "image");
 
@@ -171,23 +172,40 @@ public class CreateCards extends BaseActivity implements UserInterface, BaseActi
         create_UTubeType.setArguments(bundle);
         adapter.addFrag(create_UTubeType, "youtube");
 
-
 //        adapter.addFrag(new YoutubeType(), "youtube");
 
         Fragment create_audioType = new AudioType();
-
         create_audioType.setArguments(bundle);
         adapter.addFrag(create_audioType, "audio");
 
         //   adapter.addFrag(new AudioType(), "audio");
 //        adapter.addFrag(new FileType(), "file");
         Fragment create_fileType = new FileType();
-
         create_fileType.setArguments(bundle);
         adapter.addFrag(create_fileType, "file");
-
-
         viewpager_creatCard.setAdapter(adapter);
+        if(!isCreate_Crd) {
+            int pos=-1;
+            switch (cardModelObj.getType()) {
+                case "image":
+                    pos = 0;
+                    break;
+
+                case "video":
+                    pos = 1;
+                    break;
+
+                case "audio":
+                    pos = 2;
+                    break;
+
+                case "file":
+                    pos = 3;
+                    break;
+            }
+            viewpager_creatCard.setCurrentItem(pos);
+        }
+
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

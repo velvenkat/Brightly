@@ -22,13 +22,13 @@
         android:src="@drawable/no_image_available"/>
 
         <ImageView
-            android:id="@+id/subscribed_icon"
-            android:layout_width="50dp"
-            android:layout_height="12dp"
-            android:src="@drawable/subscribed_icon"
+            android:id="@+id/shared_icon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/shared_icon"
             android:padding="@dimen/dimen_2"
-            android:background="@color/white_greyish"
-            android:visibility="gone"
+            android:layout_margin="@dimen/dimen_4"
+            android:visibility="visible"
             android:layout_alignParentRight="true"
             />
 

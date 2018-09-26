@@ -137,7 +137,7 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
             channel_layout = itemView.findViewById(R.id.channel_layout);
 //            channel_layout.setBackgroundResource(R.drawable.circular_image_drawable);
             imageView_channelImage = itemView.findViewById(R.id.imageView_channelImage);
-            subscribed_icon = itemView.findViewById(R.id.subscribed_icon);
+            subscribed_icon = itemView.findViewById(R.id.shared_icon);
             textView_channelName = itemView.findViewById(R.id.textView_channelName);
         }
     }

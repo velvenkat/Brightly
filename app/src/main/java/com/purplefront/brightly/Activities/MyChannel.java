@@ -33,6 +33,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -69,10 +70,16 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+import uk.co.deanwild.materialshowcaseview.target.Target;
+import uk.co.deanwild.materialshowcaseview.target.ViewTarget;
 
 public class MyChannel extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String SHOWCASE_ID = "1";
 
     ArrayList<ContactShare> contactShares = new ArrayList<>();
     private static final int REQUEST_PERMISSION = 1;
@@ -98,6 +105,7 @@ public class MyChannel extends BaseActivity
     String count = "0";
     String deviceToken;
     boolean isNotification;
+    View target_menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,10 +115,13 @@ public class MyChannel extends BaseActivity
         isNotification = getIntent().getBooleanExtra("isNotification", false);
 
         fragmentManager = getSupportFragmentManager();
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.my_channel);
         setSupportActionBar(toolbar);
+        target_menu = (toolbar.findViewById(R.id.action_bell));
+
         setTitle(Title);
+
         setActionBarTitle(Title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -223,6 +234,45 @@ public class MyChannel extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         getChannelsLists();
+        MaterialShowcaseView.resetSingleUse(MyChannel.this, SHOWCASE_ID);
+//        ShowcaseSingle();
+        MultipleShowcase();
+    }
+
+  /*  private void ShowcaseSingle() {
+
+
+        // single example
+        new MaterialShowcaseView.Builder(this)
+                .setTarget(target)
+                .setDismissText("GOT IT")
+                .setDismissTextColor(R.color.black)
+                .setContentText("This is some amazing feature you should know about")
+                .setDelay(1000) // optional but starting animations immediately in onCreate can make them choppy
+                .singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
+                .show();
+    }*/
+
+    private void MultipleShowcase()
+    {
+        // sequence example
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(target_menu,
+                "Here all types of Set, Cards Notifications shown","GOT IT");
+
+        sequence.addSequenceItem(image_createChannel,
+                "Click this to Create a Channel", "GOT IT");
+
+       /* sequence.addSequenceItem(mButtonThree,
+                "This is button three", "GOT IT");*/
+
+        sequence.start();
     }
 
    /* @Override
@@ -433,7 +483,6 @@ public class MyChannel extends BaseActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_bell) {
 
@@ -493,7 +542,7 @@ public class MyChannel extends BaseActivity
         } else if (id == R.id.nav_mysubscription) {
 
             type = "subscribe";
-            setActionBarTitle("My Subscriptions");
+            setActionBarTitle("Shared With Me");
             profileContainer.setVisibility(View.GONE);
             channel_layout.setVisibility(View.VISIBLE);
             image_createChannel.setVisibility(View.GONE);

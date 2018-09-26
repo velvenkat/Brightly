@@ -39,7 +39,7 @@
     <string name="set_info">Set Info</string>
     <string name="card_info_edit">Card Info/Edit</string>
     <string name="card_info">Card Info</string>
-    <string name="reorder">Card Reorder</string>
+    <string name="reorder">Card Reorder / Delete</string>
     <string name="edit_set">Edit Set</string>
     <string name="edit_card">Edit Card</string>
     <string name="card_name">Card Name</string>
@@ -53,7 +53,7 @@
     <string name="password">Password</string>
     <string name="all_channels">All Channels</string>
     <string name="my_channels">My Channels</string>
-    <string name="my_subscription">My Subscription</string>
+    <string name="my_subscription">Shared With Me</string>
     <string name="profile">Profile</string>
     <string name="logout">Logout</string>
     <string name="about_app">About App</string>
