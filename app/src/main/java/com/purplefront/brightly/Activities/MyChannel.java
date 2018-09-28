@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.AsyncTask;
@@ -234,7 +235,7 @@ public class MyChannel extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         getChannelsLists();
-        MaterialShowcaseView.resetSingleUse(MyChannel.this, SHOWCASE_ID);
+//        MaterialShowcaseView.resetSingleUse(MyChannel.this, SHOWCASE_ID);
 //        ShowcaseSingle();
         MultipleShowcase();
     }
@@ -257,7 +258,10 @@ public class MyChannel extends BaseActivity
     {
         // sequence example
         ShowcaseConfig config = new ShowcaseConfig();
-        config.setDelay(500); // half second between each showcase view
+        config.setDelay(1000); // half second between each showcase view
+        config.setMaskColor(Color.parseColor("#AA000000"));
+        config.setContentTextColor(Color.WHITE);
+        config.setDismissTextColor(Color.CYAN);
 
         MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
 
