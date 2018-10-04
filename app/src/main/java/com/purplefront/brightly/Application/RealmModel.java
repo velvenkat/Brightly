@@ -1,8 +1,11 @@
 package com.purplefront.brightly.Application;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import io.realm.RealmObject;
 
-public class RealmModel extends RealmObject {
+public class RealmModel extends RealmObject implements Parcelable{
 
     private String deviceToken;
 
@@ -19,6 +22,32 @@ public class RealmModel extends RealmObject {
     private String image;
 
     private String image_name;
+
+    protected RealmModel(Parcel in) {
+        deviceToken = in.readString();
+        User_Id = in.readString();
+        User_Name = in.readString();
+        User_Email = in.readString();
+        User_PhoneNumber = in.readString();
+        User_CompanyName = in.readString();
+        image = in.readString();
+        image_name = in.readString();
+    }
+   public  RealmModel()
+   {
+
+   }
+    public static final Creator<RealmModel> CREATOR = new Creator<RealmModel>() {
+        @Override
+        public RealmModel createFromParcel(Parcel in) {
+            return new RealmModel(in);
+        }
+
+        @Override
+        public RealmModel[] newArray(int size) {
+            return new RealmModel[size];
+        }
+    };
 
     public String getDeviceToken() {
         return deviceToken;
@@ -82,5 +111,22 @@ public class RealmModel extends RealmObject {
 
     public void setImage_name(String image_name) {
         this.image_name = image_name;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(deviceToken);
+        dest.writeString(User_Id);
+        dest.writeString(User_Name);
+        dest.writeString(User_Email);
+        dest.writeString(User_PhoneNumber);
+        dest.writeString(User_CompanyName);
+        dest.writeString(image);
+        dest.writeString(image_name);
     }
 }

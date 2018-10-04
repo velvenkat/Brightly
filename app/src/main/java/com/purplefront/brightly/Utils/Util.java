@@ -13,8 +13,21 @@ public class Util {
 	public static final String My_Profile = "My_Profile";
 	public static final String Edit_Profile = "Edit_Profile";
 	public static final String NOTIFICATIONS = "NOTIFICATIONS";
+	public static final String CHANNELS = "CHANNELS";
+	public static final String Create_Card = "Create_Card";
+	public static final String Create_Channel = "Create_Channel";
+	public static final String Create_Set = "Create_Set";
+	public static final String Edit_Channel = "Edit_Channel";
+	public static final String Edit_Set= "Edit_Set";
+	public static final String Set_List= "Set_List";
+	public static final String Edit_Card= "Edit_Card";
+	public static final String view_card= "View_Card";
+	public static final String Card_List= "Card_List";
+	public static final String share_page= "share_page";
+	public static final String share_with_contact= "share_with_contact";
 
-// User Details
+
+	// User Details
 	public static final String User_Id = "User_Id";
 	public static final String User_Name = "User_Name";
 	public static final String User_Email = "User_Email";

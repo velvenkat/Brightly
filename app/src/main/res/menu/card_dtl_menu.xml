@@ -5,8 +5,9 @@
     tools:context="com.purplefront.brightly.Activities.BrightlyNavigationActivity"
     >
     <item
-        android:id="@+id/action_bell"
+        android:id="@+id/action_share"
         app:showAsAction="always"
-        android:icon="@drawable/notification_menu"
-        android:title="@string/alert" />
+        android:icon="@drawable/list_order"
+        android:title="List Order" />
+
 </menu>

@@ -9,14 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.purplefront.brightly.Activities.CardList;
+import com.purplefront.brightly.Fragments.CardList;
 import com.purplefront.brightly.Modules.CardsListModel;
-import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 
 import java.util.List;
@@ -28,17 +26,16 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     String image_id;
 
     List<CardsListModel> cardsListModels;
-    Activity context;
-    LayoutInflater inflater;
+    Context scrn_context;
+
     Card_sel_interface mListener;
 
     boolean isSelToDel=false;
 
-    public CardListAdapter(CardList cardList, List<CardsListModel> cardsListModels,Card_sel_interface listener) {
+    public CardListAdapter(Context context, List<CardsListModel> cardsListModels,Card_sel_interface listener) {
 
-        this.context = cardList;
+        this.scrn_context = context;
         this.cardsListModels = cardsListModels;
-        inflater = (LayoutInflater.from(context));
         mListener=listener;
     }
 
@@ -102,13 +99,13 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         switch (cardsListModel.getType()) {
             case "image":
 
-                dialog = new ProgressDialog(context);
+                dialog = new ProgressDialog(scrn_context);
                 dialog.setMessage("Please wait...");
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.show();
 
-                Glide.with(context)
+                Glide.with(scrn_context)
                         .load(cardsListModel.getUrl())
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
@@ -122,7 +119,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
                 holder.image_cardImage.setPadding(0,20,0,20);
 
-                Glide.with(context)
+                Glide.with(scrn_context)
                         .load(R.drawable.audio_list_icon)
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
@@ -134,7 +131,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
 //                holder.image_cardImage.setPadding(0,20,0,20);
 
-                Glide.with(context)
+                Glide.with(scrn_context)
                         .load(R.drawable.youtube_list_icon)
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
@@ -146,7 +143,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
                 holder.image_cardImage.setPadding(0,20,0,20);
 
-                Glide.with(context)
+                Glide.with(scrn_context)
                         .load(R.drawable.file_list_icon)
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
@@ -155,7 +152,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
                 break;
             default:
-                Glide.with(context)
+                Glide.with(scrn_context)
                         .load(R.drawable.no_image_available)
                         .centerCrop()
                         /*.transform(new CircleTransform(HomeActivity.this))
@@ -178,7 +175,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
             @Override
             public void onClick(View view) {
 
-//                Toast.makeText(context, "Working", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(scrn_context, "Working", Toast.LENGTH_SHORT).show();
 
                 if (isSelToDel) {
                     mListener.onSelect(position, cardsListModel);

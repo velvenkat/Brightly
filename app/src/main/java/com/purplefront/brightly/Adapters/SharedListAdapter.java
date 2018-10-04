@@ -9,33 +9,30 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.purplefront.brightly.Activities.BaseActivity;
-import com.purplefront.brightly.Activities.EditSetInfo;
-import com.purplefront.brightly.Activities.ShareWithContacts;
-import com.purplefront.brightly.Modules.SetsListModel;
+import com.purplefront.brightly.Fragments.EditSetInfo;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.ViewHolder> {
     ArrayList<SharedDataModel> sharedDataModel;
-    Activity context;
+    Context scrn_context;
     LayoutInflater inflater;
     String set_id;
+    SharedListInterface mListener;
 
 
-    public SharedListAdapter(EditSetInfo editSetInfo, ArrayList<SharedDataModel> sharedDataModel, String set_id) {
+    public SharedListAdapter(Context editSetInfo, ArrayList<SharedDataModel> sharedDataModel, String set_id,SharedListInterface listener) {
 
-        this.context = editSetInfo;
+        this.scrn_context = editSetInfo;
         this.sharedDataModel = sharedDataModel;
         this.set_id = set_id;
-        inflater = (LayoutInflater.from(context));
+        inflater = (LayoutInflater.from(scrn_context));
+        mListener=listener;
     }
 
     @NonNull
@@ -66,7 +63,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
             public void onClick(View view) {
 
 
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(scrn_context);
 
                 // Setting Dialog Title
                 alertDialog.setTitle("Confirm Revoke....");
@@ -82,7 +79,8 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
                     public void onClick(DialogInterface dialog,int which) {
 
 
-                        ((EditSetInfo)context).getRevokeSet(set_id, sharedDataModel.get(position).getId());
+
+                        mListener.call_revoke(set_id,sharedDataModel.get(position).getId());
                         // Write your code here to invoke YES event
 //                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
                     }
@@ -124,5 +122,8 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
             text_sharedNumber = itemView.findViewById(R.id.text_sharedNumber);
             revoke_shared = itemView.findViewById(R.id.revoke_shared);
         }
+    }
+    public interface SharedListInterface{
+        public void call_revoke(String set_id, String assigned_to);
     }
 }

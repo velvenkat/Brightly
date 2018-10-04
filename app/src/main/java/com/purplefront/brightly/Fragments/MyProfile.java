@@ -1,11 +1,12 @@
 package com.purplefront.brightly.Fragments;
 
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +17,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
-import com.purplefront.brightly.Activities.MyChannel;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
-import com.purplefront.brightly.Modules.EditProfileResponse;
 import com.purplefront.brightly.Modules.MyProfileResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.CircleTransform;
 import com.purplefront.brightly.Utils.Util;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -44,6 +41,9 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
     private ImageView Image_profile;
     private TextView User_Name, User_Phone;
     FloatingActionButton edit_profile;
+
+    RealmModel user_obj;
+
 
     Realm realm;
     RealmResults<RealmModel> realmModel;
@@ -66,14 +66,17 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_my_profile, container, false);
+        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
         fragmentManager = getActivity().getSupportFragmentManager();
         // Set title bar
-        ((MyChannel) getActivity()).setActionBarTitle("My Profile");
+        ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("My Profile");
 
         realm = Realm.getDefaultInstance();
         realmModel = realm.where(RealmModel.class).findAllAsync();
         initViews();
         getMyProfile();
+
+
         return view;
     }
 
@@ -89,18 +92,18 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
         User_Name = (TextView) view.findViewById(R.id.User_Name);
         User_Phone = (TextView) view.findViewById(R.id.User_Phone);
 
-        realmModel.load();
-        for(RealmModel model:realmModel){
-            user_ID = model.getUser_Id();
-            User_Name.setText( model.getUser_Name());
-            User_Phone.setText(model.getUser_PhoneNumber());
-            input_email.setText(model.getUser_Email());
-            input_company.setText(model.getUser_CompanyName());
+      //  realmModel.load();
+       // for(RealmModel model:realmModel){
+            user_ID = user_obj.getUser_Id();
+            User_Name.setText( user_obj.getUser_Name());
+            User_Phone.setText(user_obj.getUser_PhoneNumber());
+            input_email.setText(user_obj.getUser_Email());
+            input_company.setText(user_obj.getUser_CompanyName());
 
-            if( model.getImage() != null) {
+            if( user_obj.getImage() != null) {
 
                 Glide.with(getActivity())
-                        .load(model.getImage())
+                        .load(user_obj.getImage())
                         .centerCrop()
                         .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)
@@ -116,7 +119,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
                         .into(Image_profile);
             }
 
-        }
+        //}
 
 
     }
@@ -178,6 +181,15 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
         imageProfile  = profileResponse.getImage();
         userEmail  = profileResponse.getEmail();
 
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+
+        // delete all realm objects
+        realm.deleteAll();
+
+        //commit realm changes
+        realm.commitTransaction();
+
         if(phoneNumber!=null) {
 
             realm.beginTransaction();
@@ -194,6 +206,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
                 User_Phone.setText(realmModel.getUser_PhoneNumber());
                 input_email.setText(realmModel.getUser_Email());
                 input_company.setText(realmModel.getUser_CompanyName());
+//                ((BrightlyNavigationActivity)getActivity()).setUserModel(realmModel);
 
                 if(!realmModel.getImage().isEmpty()) {
 
@@ -236,11 +249,13 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
                 case R.id.edit_profile:
 
                     // Replace edit frgament with animation
-                    fragmentManager
+                    /*fragmentManager
                             .beginTransaction()
                             .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
-                            .replace(R.id.profileContainer, new EditProfile(),
-                                    Util.Edit_Profile).commit();
+                            .replace(R.id.frag_container, new EditProfile(),
+                                    Util.Edit_Profile).commit();*/
+                    Fragment fragment=new EditProfile();
+                    ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Edit_Profile,fragment,true);
                     break;
             }
 

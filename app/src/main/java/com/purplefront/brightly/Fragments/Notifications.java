@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,26 +14,25 @@ import android.widget.TextView;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
-import com.purplefront.brightly.Activities.MyChannel;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Adapters.NotificationsAdapter;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.NotificationsResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Notifications extends BaseFragment {
+public class Notifications extends BaseFragment implements NotificationsAdapter.MessagePassInterface {
 
     View view;
     private static FragmentManager fragmentManager;
@@ -41,15 +41,18 @@ public class Notifications extends BaseFragment {
     TextView view_nodata;
     RecyclerView notifications_listview;
 
-    Realm realm;
+    /*Realm realm;
     RealmResults<RealmModel> realmModel;
-
-    String user_ID;
+*/
+   // String user_ID;
     String message;
+    RealmModel user_obj;
 
     public Notifications() {
         // Required empty public constructor
     }
+
+
 
 
     @Override
@@ -57,12 +60,13 @@ public class Notifications extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view =  inflater.inflate(R.layout.fragment_notifications, container, false);
+        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
         fragmentManager = getActivity().getSupportFragmentManager();
         // Set title bar
-        ((MyChannel) getActivity()).setActionBarTitle("Notifications");
+        ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("Notifications");
 
-        realm = Realm.getDefaultInstance();
-        realmModel = realm.where(RealmModel.class).findAllAsync();
+        /*realm = Realm.getDefaultInstance();
+        realmModel = realm.where(RealmModel.class).findAllAsync();*/
 
         initViews();
         getNotification();
@@ -75,10 +79,10 @@ public class Notifications extends BaseFragment {
         view_nodata = (TextView) view.findViewById(R.id.view_nodata);
         notifications_listview = (RecyclerView) view.findViewById(R.id.notifications_listview);
 
-        realmModel.load();
-        for(RealmModel model:realmModel) {
+      //  realmModel.load();
+       /* for(RealmModel model:realmModel) {
             user_ID = model.getUser_Id();
-        }
+        }*/
     }
 
 
@@ -87,7 +91,7 @@ public class Notifications extends BaseFragment {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
                 showProgress();
-                Call<NotificationsResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getNotifications(user_ID);
+                Call<NotificationsResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getNotifications(user_obj.getUser_Id());
                 callRegisterUser.enqueue(new ApiCallback<NotificationsResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<NotificationsResponse> response, boolean isSuccess, String message) {
@@ -140,8 +144,13 @@ public class Notifications extends BaseFragment {
     private void setNotificationCredentials(List<NotificationsModel> notificationsModel, String message ) {
 
         notifications_listview.setLayoutManager(new LinearLayoutManager(getActivity()));
-        notificationsAdapter = new NotificationsAdapter(getActivity(), notificationsModel, user_ID);
+        notificationsAdapter = new NotificationsAdapter(this,getActivity(), notificationsModel, user_obj.getUser_Id());
         notifications_listview.setAdapter(notificationsAdapter);
 
+    }
+
+    @Override
+    public void onMessagePass(Fragment fragment) {
+        ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.view_card,fragment,false);
     }
 }

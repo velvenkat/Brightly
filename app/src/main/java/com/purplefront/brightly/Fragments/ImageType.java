@@ -24,34 +24,29 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
-import com.purplefront.brightly.Activities.CreateCards;
-import com.purplefront.brightly.Activities.MySetCards;
-import com.purplefront.brightly.Application.UserInterface;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
+
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
-import com.purplefront.brightly.Modules.UserModule;
+import com.purplefront.brightly.Modules.SetEntryModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
+import com.purplefront.brightly.Utils.Util;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -73,7 +68,7 @@ public class ImageType extends BaseFragment {
     int PICK_IMAGE_REQ = 77;
     ResizeOptions mResizeOptions;
     Context context;
-    UserModule userModule;
+    RealmModel user_obj;
 
     String userId;
     String set_id;
@@ -85,30 +80,21 @@ public class ImageType extends BaseFragment {
     String type = "";
     String Created_by;
     boolean isCreateCard;
+    SetEntryModel setEntryModelObj;
 
     public ImageType() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof UserInterface) {
-            userModule = ((UserInterface) context).getUserMode();
-
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         frag_rootView = inflater.inflate(R.layout.fragment_image_type, container, false);
+        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
         context = frag_rootView.getContext();
-
-        userId = userModule.getUserId();
-        set_id = userModule.getSet_id();
-        set_name = userModule.getSet_name();
+//        Bundle bundle=getArguments();
 
 
         image_cardImage = (ImageView) frag_rootView.findViewById(R.id.image_cardImage);
@@ -120,6 +106,11 @@ public class ImageType extends BaseFragment {
         isCreateCard = bundle.getBoolean("isCreate");
         Created_by=bundle.getString("created_by");
         boolean load_def_img = true;
+        setEntryModelObj=bundle.getParcelable("set_entry_obj");
+
+        userId = user_obj.getUser_Id();
+        set_id = setEntryModelObj.getSet_id();
+        set_name = setEntryModelObj.getSet_name();
 
         frag_rootView.addOnLayoutChangeListener(
                 new View.OnLayoutChangeListener() {
@@ -141,19 +132,19 @@ public class ImageType extends BaseFragment {
 
         if (!isCreateCard) {
             btn_createCard.setText("UPDATE CARD");
-            create_cardName.setText(userModule.getCard_name());
-            create_cardDescription.setText(userModule.getCard_description());
+            create_cardName.setText(setEntryModelObj.getCard_name());
+            create_cardDescription.setText(setEntryModelObj.getCard_description());
             if(!Created_by.equalsIgnoreCase(userId)){
                 image_cardImage.setClickable(false);
                 create_cardName.setEnabled(false);
                 create_cardDescription.setEnabled(false);
                 btn_createCard.setVisibility(View.GONE);
             }
-            if (userModule.getType().equalsIgnoreCase("image")) {
+            if (setEntryModelObj.getType().equalsIgnoreCase("image")) {
                 load_def_img = false;
 
                 Glide.with(getActivity())
-                        .load(userModule.getCard_multimedia_url())
+                        .load(setEntryModelObj.getCard_multimedia_url())
                         .centerCrop()
                         /*.transform(new CircleTransform(HomeActivity.this))
                         .override(50, 50)*/
@@ -219,7 +210,7 @@ public class ImageType extends BaseFragment {
                     }*/
                     imageChooserIntent();
                 } else {
-                    if (!userModule.getType().equalsIgnoreCase("image") && encoded_string.equalsIgnoreCase("")) {
+                    if (!setEntryModelObj.getType().equalsIgnoreCase("image") && encoded_string.equalsIgnoreCase("")) {
                         imageChooserIntent();
                     } else
                         setBottomDialog();
@@ -233,9 +224,7 @@ public class ImageType extends BaseFragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
-
-                 getActivity().setResult(Activity.RESULT_CANCELED);
-                 getActivity().finish();
+                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
                 }
                 return true;
             }
@@ -291,7 +280,7 @@ public class ImageType extends BaseFragment {
                         // rl_audio_player.setVisibility(View.GONE);
                         switch (position) {
                             case 1:
-                                if (userModule.getType().equalsIgnoreCase("image"))
+                                if (setEntryModelObj.getType().equalsIgnoreCase("image"))
                                     encoded_string = "image_to_text";
                                 else
                                     encoded_string = "";
@@ -329,7 +318,7 @@ public class ImageType extends BaseFragment {
         } else if (encoded_string.equals("") || encoded_string.length() == 0 || encoded_string.equalsIgnoreCase("image_to_text")) {
            /* new CustomToast().Show_Toast(getActivity(), image_cardImage,
                     "Image is required.");*/
-            if(userModule.getType().equals("image")){
+            if(setEntryModelObj.getType().equals("image")){
                 if(encoded_string.equalsIgnoreCase("image_to_text"))
                     type = "text";
                 else {
@@ -479,7 +468,7 @@ public class ImageType extends BaseFragment {
                 if (isCreateCard) {
                     callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList(type, userId, set_id, card_name, card_description, encoded_string, image_name);
                 } else
-                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList(type, userId, set_id, userModule.getCard_id(), card_name, card_description, encoded_string, image_name);
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList(type, userId, set_id, setEntryModelObj.getCard_id(), card_name, card_description, encoded_string, image_name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -533,11 +522,13 @@ public class ImageType extends BaseFragment {
             intent.putExtra("set_id", set_id);
             intent.putExtra("set_name", set_name);
             intent.putExtra("userId", userId);*/
-            getActivity().setResult(Activity.RESULT_OK);
+            /*getActivity().setResult(Activity.RESULT_OK);
             getActivity().finish();
-           /* getActivity().finish();
-            startActivity(intent);*/
-            getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+           *//* getActivity().finish();
+            startActivity(intent);*//*
+            getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            //Fragment fragment=new CardDetailFragment();
+            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
         } else {
             showLongToast(getActivity(), message);
         }

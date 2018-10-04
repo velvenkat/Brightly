@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".Activities.MyChannel"
+    tools:context=".Activities.BrightlyNavigationActivity"
     android:orientation="vertical"
     tools:showIn="@layout/app_bar_my_channel">
 
@@ -17,13 +17,13 @@
         android:padding="50dp"
         android:src="@drawable/ic_no_datafound"/>-->
     <FrameLayout
-        android:id="@+id/profileContainer"
+        android:id="@+id/frag_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:visibility="gone"
+
         />
 
-    <RelativeLayout
+   <!-- <RelativeLayout
         android:id="@+id/channel_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -61,7 +61,7 @@
         android:layout_alignParentRight="true"
         android:src="@drawable/add_image_white"/>
 
-    </RelativeLayout>
+    </RelativeLayout>-->
 
 
 

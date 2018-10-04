@@ -27,7 +27,7 @@ public class BaseActivity extends AppCompatActivity {
      */
 
     /**
-     * @param editText
+     * @param
      * @return check is fiels is empty  if empty request focus to that field
      */
 

@@ -5,8 +5,8 @@
     tools:context="com.purplefront.brightly.Activities.BrightlyNavigationActivity"
     >
     <item
-        android:id="@+id/action_bell"
+        android:id="@+id/action_multi_sel"
         app:showAsAction="always"
-        android:icon="@drawable/notification_menu"
-        android:title="@string/alert" />
+        android:icon="@drawable/check_list"
+        android:title="Multi Select" />
 </menu>

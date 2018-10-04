@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.purplefront.brightly.Activities.BaseActivity;
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.TimeFormat;
 
@@ -275,8 +276,10 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
 
     }
 
-    public void frwdAnimIntent(Activity activity, Class activityClass) {
+    public void frwdAnimIntent(Activity activity, Class activityClass, RealmModel realmModel) {
         Intent intent = new Intent(activity, activityClass);
+        if(realmModel!=null)
+        intent.putExtra("user_obj",realmModel);
         startActivity(intent);
         activity.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
     }

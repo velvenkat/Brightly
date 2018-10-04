@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
 import com.purplefront.brightly.Fragments.Multimedia_CardFragment;
-import com.purplefront.brightly.Fragments.ItemsAddFragment;
 import com.purplefront.brightly.Modules.CardsListModel;
 
 import java.util.List;

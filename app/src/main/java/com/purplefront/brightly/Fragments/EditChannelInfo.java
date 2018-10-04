@@ -1,32 +1,35 @@
-package com.purplefront.brightly.Activities;
+package com.purplefront.brightly.Fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.DeleteChannelResponse;
@@ -34,6 +37,7 @@ import com.purplefront.brightly.Modules.UpdateChannelResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
+import com.purplefront.brightly.Utils.Util;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -41,10 +45,14 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class EditChannelInfo extends BaseActivity {
+import static android.app.Activity.RESULT_OK;
+
+public class EditChannelInfo extends BaseFragment {
 
     SimpleDraweeView imageView_editChannelImage;
     EditText edit_channelName;
@@ -62,25 +70,32 @@ public class EditChannelInfo extends BaseActivity {
     ResizeOptions img_resize_opts;
     ChannelListModel chl_modl_obj;
     ImageChooser_Crop imgImageChooser_crop;
+    View rootView;
 
+
+    RealmModel user_obj;
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_channel_info);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.activity_edit_channel_info, container, false);
+        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+//        setContentView(R.layout.activity_edit_channel_info);
+       /* Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+*/
 
-
-        userId = getIntent().getStringExtra("userId");
+       Bundle bundle=getArguments();
+        userId = user_obj.getUser_Id();
         /*channel_id = getIntent().getStringExtra("channel_id");
         channel_name = getIntent().getStringExtra("channel_name");
         channel_description = getIntent().getStringExtra("channel_description");
         encoded_string = getIntent().getStringExtra("encoded_string");
         image_name = getIntent().getStringExtra("image_name");*/
 
-        chl_modl_obj = getIntent().getParcelableExtra("model_obj");
+        chl_modl_obj = bundle.getParcelable("model_obj");
         channel_id = chl_modl_obj.getChannel_id();
         channel_name = chl_modl_obj.getChannel_name();
         channel_description = chl_modl_obj.getDescription();
@@ -88,10 +103,10 @@ public class EditChannelInfo extends BaseActivity {
         image_name = chl_modl_obj.getImage_name();
 
 
-        imageView_editChannelImage = (SimpleDraweeView) findViewById(R.id.imageView_editChannelImage);
-        edit_channelName = (EditText) findViewById(R.id.edit_channelName);
-        edit_channelDescription = (EditText) findViewById(R.id.edit_channelDescription);
-        btn_editChannel = (Button) findViewById(R.id.btn_editChannel);
+        imageView_editChannelImage = (SimpleDraweeView)rootView. findViewById(R.id.imageView_editChannelImage);
+        edit_channelName = (EditText) rootView.findViewById(R.id.edit_channelName);
+        edit_channelDescription = (EditText) rootView.findViewById(R.id.edit_channelDescription);
+        btn_editChannel = (Button) rootView.findViewById(R.id.btn_editChannel);
 
         edit_channelName.setText(channel_name);
         edit_channelDescription.setText(channel_description);
@@ -100,11 +115,13 @@ public class EditChannelInfo extends BaseActivity {
             edit_channelName.setEnabled(false);
             edit_channelDescription.setEnabled(false);
             btn_editChannel.setVisibility(View.GONE);
-            setTitle("Channel Info");
+          //  setTitle("Channel Info");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Channel Info");
         }
         else {
             btn_editChannel.setVisibility(View.VISIBLE);
-            setTitle("Edit Channel Info");
+         //   setTitle("Edit Channel Info");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Edit Channel Info");
         }
         btn_editChannel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +134,7 @@ public class EditChannelInfo extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(userId.equalsIgnoreCase(chl_modl_obj.getCreated_by())) {
-                    imgImageChooser_crop = new ImageChooser_Crop(EditChannelInfo.this);
+                    imgImageChooser_crop = new ImageChooser_Crop(getActivity());
                     Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
                     if (intent == null) {
                         //PermissionUtil.
@@ -154,7 +171,7 @@ public class EditChannelInfo extends BaseActivity {
             imageView_editChannelImage.setImageRequest(imageRequest2);*/
         }
 
-
+return rootView;
     }
 
     // Check Validation Method
@@ -168,7 +185,7 @@ public class EditChannelInfo extends BaseActivity {
         if (channel_name.equals("") || channel_name.length() == 0
                 || channel_description.equals("") || channel_description.length() == 0) {
 
-            new CustomToast().Show_Toast(EditChannelInfo.this, edit_channelName,
+            new CustomToast().Show_Toast(getContext(), edit_channelName,
                     "Both fields are required.");
         }
 
@@ -179,7 +196,7 @@ public class EditChannelInfo extends BaseActivity {
     }
 
     public void showAlertDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(EditChannelInfo.this);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
 
         // Setting Dialog Title
         alertDialog.setTitle("Confirm Delete....");
@@ -214,22 +231,22 @@ public class EditChannelInfo extends BaseActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         if(chl_modl_obj.getCreated_by().equalsIgnoreCase(userId))
-        getMenuInflater().inflate(R.menu.delete, menu);
-        return true;
+        inflater.inflate(R.menu.delete, menu);
+       // return true;
     }
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
+           /* case android.R.id.home:
                 // app icon in action bar clicked; goto parent activity.
                 this.finish();
                 overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-                return true;
+                return true;*/
 
             case R.id.delete:
 
@@ -244,10 +261,10 @@ public class EditChannelInfo extends BaseActivity {
     public void getDeleteChannel() {
         try {
 
-            if (CheckNetworkConnection.isOnline(EditChannelInfo.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<DeleteChannelResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(EditChannelInfo.this).getDeleteChannels(channel_id);
-                callRegisterUser.enqueue(new ApiCallback<DeleteChannelResponse>(EditChannelInfo.this) {
+                Call<DeleteChannelResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteChannels(channel_id);
+                callRegisterUser.enqueue(new ApiCallback<DeleteChannelResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<DeleteChannelResponse> response, boolean isSuccess, String message) {
                         DeleteChannelResponse deleteChannelResponse = response.body();
@@ -292,12 +309,14 @@ public class EditChannelInfo extends BaseActivity {
         String message = deleteChannelResponse.getMessage();
 
         if (message.equals("success")) {
-            stackClearIntent(EditChannelInfo.this, MyChannel.class);
-            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+/*            stackClearIntent(EditChannelInfo.this, BrightlyNavigationActivity.class);
+            overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            Fragment fragment=new ChannelFragment();
+            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,fragment,false);
 
 
         } else {
-            showLongToast(EditChannelInfo.this, message);
+            showLongToast(getActivity(), message);
         }
     }
 
@@ -319,7 +338,7 @@ public class EditChannelInfo extends BaseActivity {
                 try {
 
                     Uri picUri = imgImageChooser_crop.getPickImageResultUri(data);
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditChannelInfo.this.getContentResolver(), picUri);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), picUri);
                     if (picUri != null) {
                        /* Intent intent = imgImageChooser_crop.performCrop(picUri, false, 150, 150);
                         startActivityForResult(intent, PIC_CROP);*/
@@ -329,10 +348,10 @@ public class EditChannelInfo extends BaseActivity {
                                 .setMaxCropResultSize(bitmap.getWidth(), bitmap.getHeight())
 //                                .setAspectRatio(1, 1)
                                 .setCropShape(CropImageView.CropShape.RECTANGLE)
-                                .start(EditChannelInfo.this);
+                                .start(getContext(),this);
                     }
                 } catch (Exception e) {
-                    Toast.makeText(EditChannelInfo.this, "Error" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -343,7 +362,7 @@ public class EditChannelInfo extends BaseActivity {
 
 
                     Uri resultUri = result.getUri();
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditChannelInfo.this.getContentResolver(), resultUri);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), resultUri);
 
                     encoded_string = getStringImage(bitmap);
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
@@ -359,7 +378,7 @@ public class EditChannelInfo extends BaseActivity {
                                     .build();
                     imageView_editChannelImage.setImageRequest(imageRequest2);*/
 
-                    Glide.with(EditChannelInfo.this)
+                    Glide.with(getContext())
                             .load(resultUri)
                             .fitCenter()
                             /*.transform(new CircleTransform(HomeActivity.this))
@@ -412,10 +431,10 @@ public class EditChannelInfo extends BaseActivity {
     public void getUpdateChannels() {
         try {
 
-            if (CheckNetworkConnection.isOnline(EditChannelInfo.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<UpdateChannelResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(EditChannelInfo.this).getUpdateChannels(userId, channel_name, channel_description, encoded_string, image_name, channel_id);
-                callRegisterUser.enqueue(new ApiCallback<UpdateChannelResponse>(EditChannelInfo.this) {
+                Call<UpdateChannelResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getUpdateChannels(userId, channel_name, channel_description, encoded_string, image_name, channel_id);
+                callRegisterUser.enqueue(new ApiCallback<UpdateChannelResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<UpdateChannelResponse> response, boolean isSuccess, String message) {
                         UpdateChannelResponse updateChannelResponse = response.body();
@@ -460,19 +479,20 @@ public class EditChannelInfo extends BaseActivity {
         String message = updateChannelResponse.getMessage();
 
         if (message.equals("success")) {
-            stackClearIntent(EditChannelInfo.this, MyChannel.class);
-            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+          /*  stackClearIntent(EditChannelInfo.this, BrightlyNavigationActivity.class);
+            overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,new ChannelFragment(),false);
 
 
         } else {
-            showLongToast(EditChannelInfo.this, message);
+            showLongToast(getActivity(), message);
         }
     }
 
-    @Override
+  /*  @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-    }
+    }*/
 }

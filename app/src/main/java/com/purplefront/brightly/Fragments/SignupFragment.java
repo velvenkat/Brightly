@@ -22,7 +22,7 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.Login;
-import com.purplefront.brightly.Activities.MyChannel;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.SignUpResponse;
@@ -264,7 +264,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
             showLongToast(getActivity(), signUpResponse.getMessage());
             getActivity().finish();
-            finishIntent(getActivity(), MyChannel.class);
+            frwdAnimIntent(getActivity(), BrightlyNavigationActivity.class,realmModel);
 
         }
         else

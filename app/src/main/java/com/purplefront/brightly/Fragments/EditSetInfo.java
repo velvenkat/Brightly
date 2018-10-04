@@ -1,41 +1,46 @@
-package com.purplefront.brightly.Activities;
+package com.purplefront.brightly.Fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Adapters.SharedListAdapter;
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.SetInfoSharedResponse;
 import com.purplefront.brightly.Modules.SetsListModel;
-import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
-
-import java.util.ArrayList;
+import com.purplefront.brightly.Utils.Util;
 
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class EditSetInfo extends BaseActivity {
+public class EditSetInfo extends BaseFragment implements SharedListAdapter.SharedListInterface {
 
     RecyclerView shared_listview;
     SharedListAdapter sharedListAdapter;
@@ -44,10 +49,10 @@ public class EditSetInfo extends BaseActivity {
     Button btn_editSet;
     TextView text_share_title;
 
-    ImageView share, delete;
+   // ImageView share, delete;
 
     boolean isNotification;
-    String userId;
+  //  String userId;
     String channel_id = "";
     String set_description = "";
     String set_name = "";
@@ -59,24 +64,41 @@ public class EditSetInfo extends BaseActivity {
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
     NotificationsModel notificationsModel;
+    View rootView;
+
+
+    RealmModel user_obj;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_set_info);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        if (Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
+          inflater.inflate(R.menu.edit_set_menu,menu);
+        }
+    }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+         rootView=inflater.inflate(R.layout.activity_edit_set_info,container,false);
+         user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+         setHasOptionsMenu(true);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         setTitle("Edit Set Info");
-
-        isNotification = getIntent().getBooleanExtra("isNotification", false);
+*/
+        Bundle bundle =getArguments();
+        isNotification = bundle.getBoolean("isNotification", false);
 
         if (isNotification) {
-            notificationsModel = getIntent().getParcelableExtra("notfy_modl_obj");
+            notificationsModel = bundle.getParcelable("notfy_modl_obj");
             channel_id = notificationsModel.getChannel_id();
             set_description = notificationsModel.getNotificationsSetDetail().getDescription();
             set_name = notificationsModel.getNotificationsSetDetail().getName();
@@ -86,12 +108,12 @@ public class EditSetInfo extends BaseActivity {
 
         } else {
 
-            chl_list_obj = getIntent().getParcelableExtra("model_obj");
+            chl_list_obj = bundle.getParcelable("model_obj");
             channel_id = chl_list_obj.getChannel_id();
             channel_name = chl_list_obj.getChannel_name();
             Created_By = chl_list_obj.getCreated_by();
-            userId = getIntent().getStringExtra("userId");
-            setsListModel = getIntent().getParcelableExtra("setsListModel");
+            //userId = bundle.getString("userId");
+            setsListModel = bundle.getParcelable("setsListModel");
             set_description = setsListModel.getDescription();
             set_name = setsListModel.getSet_name();
             set_id = setsListModel.getSet_id();
@@ -100,20 +122,18 @@ public class EditSetInfo extends BaseActivity {
 
         }
 
-        edit_setName = (EditText) findViewById(R.id.edit_setName);
-        edit_setDescription = (EditText) findViewById(R.id.edit_setDescription);
-        text_share_title = (TextView) findViewById(R.id.text_share_title);
-        btn_editSet = (Button) findViewById(R.id.btn_editSet);
+        edit_setName = (EditText) rootView.findViewById(R.id.edit_setName);
+        edit_setDescription = (EditText) rootView.findViewById(R.id.edit_setDescription);
+        text_share_title = (TextView) rootView.findViewById(R.id.text_share_title);
+        btn_editSet = (Button)rootView.findViewById(R.id.btn_editSet);
 
-        share = (ImageView) findViewById(R.id.share);
-        delete = (ImageView) findViewById(R.id.delete);
-        shared_listview = (RecyclerView) findViewById(R.id.shared_listview);
+
+        shared_listview = (RecyclerView) rootView.findViewById(R.id.shared_listview);
 
         edit_setName.setText(set_name);
         edit_setDescription.setText(set_description);
-        if (!Created_By.equalsIgnoreCase(userId)) {
-            share.setVisibility(View.GONE);
-            delete.setVisibility(View.GONE);
+        if (!Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
+
             btn_editSet.setVisibility(View.GONE);
             edit_setName.setEnabled(false);
             edit_setDescription.setEnabled(false);
@@ -121,7 +141,8 @@ public class EditSetInfo extends BaseActivity {
                 text_share_title.setVisibility(View.VISIBLE);
                 text_share_title.setText("Shared by : " + shared_by);
             }
-            setTitle("Set Info");
+         //   setTitle("Set Info");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Set Info");
 
           /*  shared_listview.setLayoutManager(new LinearLayoutManager(this));
             sharedListAdapter = new SharedListAdapter(EditSetInfo.this, sharedDataModels, set_id);
@@ -129,7 +150,8 @@ public class EditSetInfo extends BaseActivity {
 
         } else {
 
-            setTitle("Edit Set Info");
+
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Edit Set Info");
             getSetSharedInfo();
 
 
@@ -140,26 +162,22 @@ public class EditSetInfo extends BaseActivity {
                 checkValidation();
             }
         });
-
-        delete.setOnClickListener(new View.OnClickListener() {
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+        rootView.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void onClick(View view) {
-                showAlertDialog();
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                    //         getActivity().finish();
+                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                    return true;
+                }
+                return false;
             }
         });
 
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                Intent intent = new Intent(EditSetInfo.this, SharePage.class);
-                intent.putExtra("userId", userId);
-                intent.putExtra("model_obj", chl_list_obj);
-                intent.putExtra("setsListModel", setsListModel);
-                startActivity(intent);
-                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
-            }
-        });
+        return rootView;
     }
 
     // Check Validation Method
@@ -173,7 +191,7 @@ public class EditSetInfo extends BaseActivity {
         if (set_name.equals("") || set_name.length() == 0
                 || set_description.equals("") || set_description.length() == 0) {
 
-            new CustomToast().Show_Toast(EditSetInfo.this, edit_setName,
+            new CustomToast().Show_Toast(getActivity(), edit_setName,
                     "Both fields are required.");
         }
 
@@ -184,7 +202,7 @@ public class EditSetInfo extends BaseActivity {
     }
 
     public void showAlertDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(EditSetInfo.this);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
 
         // Setting Dialog Title
         alertDialog.setTitle("Confirm Delete....");
@@ -222,13 +240,24 @@ public class EditSetInfo extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
+          /*  case android.R.id.home:
                 // app icon in action bar clicked; goto parent activity.
 
                 finish();
                 overridePendingTransition(R.anim.left_enter, R.anim.right_out);
                 return true;
-
+*/
+            case R.id.action_share:
+                Fragment fragment =new SharePage();
+                Bundle bundle1=new Bundle();
+                bundle1.putParcelable("model_obj", chl_list_obj);
+                bundle1.putParcelable("setsListModel", setsListModel);
+                fragment.setArguments(bundle1);
+                ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.share_page,fragment,true);
+                return true;
+            case R.id.action_delete:
+                showAlertDialog();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -238,10 +267,10 @@ public class EditSetInfo extends BaseActivity {
 
         try {
 
-            if (CheckNetworkConnection.isOnline(EditSetInfo.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
 //                showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(EditSetInfo.this).getRevokeSet(set_id, assigned_to);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(EditSetInfo.this) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getRevokeSet(set_id, assigned_to);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         AddMessageResponse addMessageResponse = response.body();
@@ -289,10 +318,10 @@ public class EditSetInfo extends BaseActivity {
 
         if (message.equals("success")) {
             getSetSharedInfo();
-            showLongToast(EditSetInfo.this, addMessageResponse.getMessage());
+            showLongToast(getActivity(), addMessageResponse.getMessage());
             dismissProgress();
         } else {
-            showLongToast(EditSetInfo.this, message);
+            showLongToast(getActivity(), message);
             dismissProgress();
         }
     }
@@ -301,10 +330,10 @@ public class EditSetInfo extends BaseActivity {
     public void getDeleteSet() {
         try {
 
-            if (CheckNetworkConnection.isOnline(EditSetInfo.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(EditSetInfo.this).getDeleteSet(set_id);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(EditSetInfo.this) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteSet(set_id);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         AddMessageResponse deleteSetResponse = response.body();
@@ -349,28 +378,34 @@ public class EditSetInfo extends BaseActivity {
         String message = deleteSetResponse.getMessage();
 
         if (message.equals("success")) {
-            Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
+          /*  Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
             intent.putExtra("model_obj", chl_list_obj);
             intent.putExtra("userId", userId);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             onBackPressed();
-            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+            overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+
+            Fragment fragment=new SetsFragment();
+            Bundle bundle=new Bundle();
+            bundle.putParcelable("model_obj", chl_list_obj);
+            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List,fragment,false);
+
 
 
         } else {
-            showLongToast(EditSetInfo.this, message);
+            showLongToast(getActivity(), message);
         }
     }
 
     public void getUpdateSet() {
         try {
 
-            if (CheckNetworkConnection.isOnline(EditSetInfo.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(EditSetInfo.this).getUpdateSet(userId, channel_id, set_name, set_description, set_id);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(EditSetInfo.this) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getUpdateSet(user_obj.getUser_Id(), channel_id, set_name, set_description, set_id);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         AddMessageResponse updateSetResponse = response.body();
@@ -415,7 +450,8 @@ public class EditSetInfo extends BaseActivity {
         String message = updateSetResponse.getMessage();
 
         if (message.equals("success")) {
-            Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
+            dismissProgress();
+            /*   Intent intent = new Intent(EditSetInfo.this, MyChannelsSet.class);
             intent.putExtra("model_obj", chl_list_obj);
             intent.putExtra("userId", userId);
 //            intent.putExtra("setsListModel", setsListModel);
@@ -423,21 +459,27 @@ public class EditSetInfo extends BaseActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
-            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-            dismissProgress();
+            overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            /*Fragment fragment=new SetsFragment();
+            Bundle bundle=new Bundle();
+            bundle.putParcelable("model_obj", chl_list_obj);
+            fragment.setArguments(bundle);
+            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List,fragment,false);*/
+            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
         } else {
-            showLongToast(EditSetInfo.this, message);
             dismissProgress();
+            showLongToast(getActivity(), message);
+
         }
     }
 
     public void getSetSharedInfo() {
         try {
 
-            if (CheckNetworkConnection.isOnline(EditSetInfo.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<SetInfoSharedResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(EditSetInfo.this).getSetSharedInfo(userId, channel_id, set_id);
-                callRegisterUser.enqueue(new ApiCallback<SetInfoSharedResponse>(EditSetInfo.this) {
+                Call<SetInfoSharedResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSetSharedInfo(user_obj.getUser_Id(), channel_id, set_id);
+                callRegisterUser.enqueue(new ApiCallback<SetInfoSharedResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SetInfoSharedResponse> response, boolean isSuccess, String message) {
                         SetInfoSharedResponse infoSharedResponse = response.body();
@@ -482,8 +524,8 @@ public class EditSetInfo extends BaseActivity {
 
         if (!setsListModel.getShared_data().isEmpty() && setsListModel.getShared_data() != null) {
             text_share_title.setVisibility(View.VISIBLE);
-            shared_listview.setLayoutManager(new LinearLayoutManager(this));
-            sharedListAdapter = new SharedListAdapter(EditSetInfo.this, infoSharedResponse.getShared_data(), set_id);
+            shared_listview.setLayoutManager(new LinearLayoutManager(getContext()));
+            sharedListAdapter = new SharedListAdapter(getContext(), infoSharedResponse.getShared_data(), set_id,this);
             shared_listview.setAdapter(sharedListAdapter);
             dismissProgress();
         } else {
@@ -492,9 +534,14 @@ public class EditSetInfo extends BaseActivity {
     }
 
     @Override
+    public void call_revoke(String set_id, String assigned_to) {
+        getRevokeSet(set_id,assigned_to);
+    }
+
+   /* @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-    }
+    }*/
 }

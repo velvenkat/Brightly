@@ -263,4 +263,5 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 //                            Utils.logError(TAG, "Could not initialize YouTubePlayer");
 
     }
+
 }

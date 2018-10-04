@@ -1,22 +1,20 @@
 package com.purplefront.brightly.Adapters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.CardView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.purplefront.brightly.Activities.ShareWithContacts;
+import com.purplefront.brightly.Fragments.ShareWithContacts;
 import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.R;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class ContactsAdapter extends BaseAdapter {
@@ -25,18 +23,18 @@ public class ContactsAdapter extends BaseAdapter {
     private ArrayList<ContactShare> arraylist;
     private ArrayList<String> selectedNumber = new ArrayList<String>();
 
-    Activity context;
+    Context scrn_context;
     LayoutInflater inflater;
     String string;
 
-    public ContactsAdapter(ShareWithContacts shareWithContacts, ArrayList<ContactShare> getContactShares) {
+    public ContactsAdapter(Context shareWithContacts, ArrayList<ContactShare> getContactShares) {
 
-        this.context = shareWithContacts;
+        this.scrn_context = shareWithContacts;
         this.contactShares = getContactShares;
 //        this.contactListFiltered = contactShares;
         this.arraylist = new ArrayList<ContactShare>();
         this.arraylist.addAll(getContactShares);
-        inflater = (LayoutInflater.from(context));
+        inflater = (LayoutInflater.from(scrn_context));
 
     }
 
@@ -140,7 +138,7 @@ public class ContactsAdapter extends BaseAdapter {
                     }
 
                        /* string = TextUtils.join(", ", selectedNumber);
-                        Toast.makeText(context, string, Toast.LENGTH_LONG).show();*/
+                        Toast.makeText(scrn_context, string, Toast.LENGTH_LONG).show();*/
 
 
             }

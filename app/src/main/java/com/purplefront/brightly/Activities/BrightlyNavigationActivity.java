@@ -2,41 +2,31 @@ package com.purplefront.brightly.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,38 +35,30 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
-import com.purplefront.brightly.Adapters.MyChannelsAdapter;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.BadgeDrawable;
-import com.purplefront.brightly.Fragments.LoginFragment;
+import com.purplefront.brightly.Fragments.ChannelFragment;
 import com.purplefront.brightly.Fragments.MyProfile;
 import com.purplefront.brightly.Fragments.Notifications;
 import com.purplefront.brightly.Modules.AddMessageResponse;
-import com.purplefront.brightly.Modules.ChannelListModel;
-import com.purplefront.brightly.Modules.ChannelListResponse;
 import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.NotificationsResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.CircleTransform;
-import com.purplefront.brightly.Utils.SharedPrefUtils;
 import com.purplefront.brightly.Utils.Util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
-import uk.co.deanwild.materialshowcaseview.target.Target;
-import uk.co.deanwild.materialshowcaseview.target.ViewTarget;
 
-public class MyChannel extends BaseActivity
+public class BrightlyNavigationActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String SHOWCASE_ID = "1";
@@ -84,18 +66,14 @@ public class MyChannel extends BaseActivity
     ArrayList<ContactShare> contactShares = new ArrayList<>();
     private static final int REQUEST_PERMISSION = 1;
     ContactShare contacts;
-    private static FragmentManager fragmentManager;
+    private FragmentManager fragmentManager;
     public ActionBarDrawerToggle toggle;
+    public DrawerLayout drawer;
     public Toolbar toolbar;
-    List<ChannelListModel> channelListModels = new ArrayList<>();
-    MyChannelsAdapter myChannelsAdapter;
-    RelativeLayout channel_layout;
-    TextView view_nodata;
-    FrameLayout profileContainer;
-    ImageView image_createChannel;
-    RecyclerView channels_listview;
-    Realm realm;
-    RealmResults<RealmModel> realmModel;
+    FrameLayout frag_container;
+
+    /*Realm realm;
+    RealmResults<RealmModel> realmModel;*/
     String userId;
     String userName;
     String userPhone;
@@ -104,40 +82,41 @@ public class MyChannel extends BaseActivity
     String Title = "All Channels";
     String count = "0";
     String deviceToken;
+
     boolean isNotification;
     View target_menu;
+
+    private RealmModel user_obj;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_channel);
+        setContentView(R.layout.activity_navigation);
 
         isNotification = getIntent().getBooleanExtra("isNotification", false);
 
+
+        user_obj = getIntent().getParcelableExtra("user_obj");
         fragmentManager = getSupportFragmentManager();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.my_channel);
         setSupportActionBar(toolbar);
         target_menu = (toolbar.findViewById(R.id.action_bell));
 
-        setTitle(Title);
 
         setActionBarTitle(Title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        realm = Realm.getDefaultInstance();
+        //realm = Realm.getDefaultInstance();
         contactShares = new ArrayList<>();
-        realmModel = realm.where(RealmModel.class).findAllAsync();
-        realmModel.load();
-        for (RealmModel model : realmModel) {
-            userId = model.getUser_Id();
-            userName = model.getUser_Name();
-            userPhone = model.getUser_PhoneNumber();
-            userPicture = model.getImage();
-            deviceToken = model.getDeviceToken();
-        }
-//        getNotificationCount();
+
+        userId = user_obj.getUser_Id();
+        userName = user_obj.getUser_Name();
+        userPhone = user_obj.getUser_PhoneNumber();
+        userPicture = user_obj.getImage();
+        deviceToken = user_obj.getDeviceToken();
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -158,39 +137,39 @@ public class MyChannel extends BaseActivity
             requestLocationPermission();
         }
 
-        channel_layout = (RelativeLayout) findViewById(R.id.channel_layout);
-        profileContainer = (FrameLayout) findViewById(R.id.profileContainer);
 
-        profileContainer.setVisibility(View.GONE);
-        channel_layout.setVisibility(View.VISIBLE);
+        frag_container = (FrameLayout) findViewById(R.id.frag_container);
 
-        if(isNotification)
-        {
-            fragmentManager
+
+        if (isNotification) {
+            Fragment nfy_frag = new Notifications();
+            /*fragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
-                    .replace(R.id.profileContainer, new Notifications(),
+                    .replace(R.id.frag_container, new Notifications(),
                             Util.NOTIFICATIONS).commit();
+*/
+            onFragmentCall(Util.NOTIFICATIONS, nfy_frag, false);
+            // setActionBarTitle("Notification");
+            // frag_container.setVisibility(View.VISIBLE);
 
-            setActionBarTitle("Notification");
-            profileContainer.setVisibility(View.VISIBLE);
-            channel_layout.setVisibility(View.GONE);
+        } else {
+
+            Bundle bundle = new Bundle();
+            bundle.putString("type", type);
+            Fragment chl_frag = new ChannelFragment();
+            chl_frag.setArguments(bundle);
+            /*fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
+                    .replace(R.id.frag_container, new ChannelFragment(),
+                            Util.CHANNELS).commit();
+
+            //  setActionBarTitle("Notification");
+            frag_container.setVisibility(View.VISIBLE);*/
+            onFragmentCall(Util.CHANNELS, chl_frag, false);
         }
 
-        image_createChannel = (ImageView) findViewById(R.id.image_createChannel);
-        image_createChannel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(MyChannel.this, CreateChannel.class);
-                intent.putExtra("userId", userId);
-                startActivity(intent);
-                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
-            }
-        });
-
-        view_nodata = (TextView) findViewById(R.id.view_nodata);
-        channels_listview = (RecyclerView) findViewById(R.id.channels_listview);
 
       /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -201,11 +180,12 @@ public class MyChannel extends BaseActivity
             }
         });*/
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        toggle.setDrawerIndicatorEnabled(true);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         TextView headerText_Name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Name);
@@ -215,17 +195,17 @@ public class MyChannel extends BaseActivity
         ImageView headerImage_Profile = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.image_profile);
         if (userPicture != null) {
 
-            Glide.with(MyChannel.this)
+            Glide.with(BrightlyNavigationActivity.this)
                     .load(userPicture)
                     .centerCrop()
-                    .transform(new CircleTransform(MyChannel.this))
+                    .transform(new CircleTransform(BrightlyNavigationActivity.this))
 //                        .override(50, 50)
                     .into(headerImage_Profile);
         } else {
-            Glide.with(MyChannel.this)
+            Glide.with(BrightlyNavigationActivity.this)
                     .load(R.drawable.default_user_image)
                     .centerCrop()
-                    .transform(new CircleTransform(MyChannel.this))
+                    .transform(new CircleTransform(BrightlyNavigationActivity.this))
                     /*.override(50, 50)*/
                     .into(headerImage_Profile);
         }
@@ -233,12 +213,16 @@ public class MyChannel extends BaseActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        getChannelsLists();
-        MaterialShowcaseView.resetSingleUse(MyChannel.this, SHOWCASE_ID);
+        //getChannelsLists();
+        MaterialShowcaseView.resetSingleUse(BrightlyNavigationActivity.this, SHOWCASE_ID);
 //        ShowcaseSingle();
         MultipleShowcase();
     }
 
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+        getSupportActionBar().setSubtitle(null);
+    }
   /*  private void ShowcaseSingle() {
 
 
@@ -255,6 +239,30 @@ public class MyChannel extends BaseActivity
 
     private void MultipleShowcase()
     {
+// sequence example
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(1000); // half second between each showcase view
+        config.setMaskColor(Color.parseColor("#AA000000"));
+        config.setContentTextColor(Color.WHITE);
+        config.setDismissTextColor(Color.CYAN);
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(target_menu,
+                "Here all types of Set, Cards Notifications shown","GOT IT");
+
+       /* sequence.addSequenceItem(image_createChannel,
+                "Click this to Create a Channel", "GOT IT");
+*/
+/* sequence.addSequenceItem(mButtonThree,
+"This is button three", "GOT IT");*/
+
+        sequence.start();
+    }
+
+    /*private void MultipleShowcase() {
         // sequence example
         ShowcaseConfig config = new ShowcaseConfig();
         config.setDelay(500); // half second between each showcase view
@@ -264,16 +272,15 @@ public class MyChannel extends BaseActivity
         sequence.setConfig(config);
 
         sequence.addSequenceItem(target_menu,
-                "Here all types of Set, Cards Notifications shown","GOT IT");
+                "Here all types of Set, Cards Notifications shown", "GOT IT");
 
-        sequence.addSequenceItem(image_createChannel,
-                "Click this to Create a Channel", "GOT IT");
 
-       /* sequence.addSequenceItem(mButtonThree,
-                "This is button three", "GOT IT");*/
+
+       *//* sequence.addSequenceItem(mButtonThree,
+                "This is button three", "GOT IT");*//*
 
         sequence.start();
-    }
+    }*/
 
    /* @Override
     protected void onResume(){
@@ -283,58 +290,6 @@ public class MyChannel extends BaseActivity
 
     }*/
 
-    public void setActionBarTitle(String title) {
-        getSupportActionBar().setTitle(title);
-    }
-
-    public void getNotificationCount() {
-        try {
-
-            if (CheckNetworkConnection.isOnline(MyChannel.this)) {
-//                showProgress();
-                Call<NotificationsResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).getNotificationCounts(userId);
-                callRegisterUser.enqueue(new ApiCallback<NotificationsResponse>(MyChannel.this) {
-                    @Override
-                    public void onApiResponse(Response<NotificationsResponse> response, boolean isSuccess, String message) {
-                        NotificationsResponse notificationsResponse = response.body();
-
-                        if (isSuccess) {
-
-                            if (notificationsResponse != null) {
-
-                                setNotificationCounts(notificationsResponse);
-                                dismissProgress();
-
-                            } else {
-
-                                dismissProgress();
-                            }
-
-                        } else {
-
-                            dismissProgress();
-                        }
-
-                    }
-
-                    @Override
-                    public void onApiFailure(boolean isSuccess, String message) {
-//                        showLongToast(MyChannel.this, message);
-                        dismissProgress();
-                    }
-                });
-            } else {
-
-//                showLongToast(MyChannel.this, "Network Error");
-                dismissProgress();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-//            showLongToast(MyChannel.this, "Something went Wrong, Please try Later");
-
-
-        }
-    }
 
     private void setNotificationCounts(NotificationsResponse notificationsResponse) {
 
@@ -347,107 +302,46 @@ public class MyChannel extends BaseActivity
         }
     }
 
-    public void getChannelsLists() {
-        try {
-
-            if (CheckNetworkConnection.isOnline(MyChannel.this)) {
-//                showProgress();
-                Call<ChannelListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).getMyChannelsList(userId, type);
-                callRegisterUser.enqueue(new ApiCallback<ChannelListResponse>(MyChannel.this) {
-                    @Override
-                    public void onApiResponse(Response<ChannelListResponse> response, boolean isSuccess, String message) {
-                        ChannelListResponse channelListResponse = response.body();
-                        if (isSuccess) {
-
-                            if (channelListResponse != null && channelListResponse.getChannels() != null && channelListResponse.getChannels().size() != 0) {
-
-                                channelListModels.clear();
-                                channelListModels = channelListResponse.getChannels();
-                                setAdapter(channelListModels);
-                                channels_listview.setVisibility(View.VISIBLE);
-                                view_nodata.setVisibility(View.GONE);
-                                dismissProgress();
-
-                            } else {
-                                channels_listview.setVisibility(View.GONE);
-                                view_nodata.setVisibility(View.VISIBLE);
-                                dismissProgress();
-                            }
-
-                        } else {
-                            showLongToast(MyChannel.this, message);
-                            dismissProgress();
-                        }
-                    }
-
-                    @Override
-                    public void onApiFailure(boolean isSuccess, String message) {
-
-                        dismissProgress();
-                    }
-                });
-            } else {
-
-                dismissProgress();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            dismissProgress();
-        }
-
-    }
-
-    private void setAdapter(List<ChannelListModel> channelListModels) {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(MyChannel.this, 3);
-        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        channels_listview.setLayoutManager(gridLayoutManager);
-        myChannelsAdapter = new MyChannelsAdapter(MyChannel.this, channelListModels);
-        channels_listview.setAdapter(myChannelsAdapter);
-        myChannelsAdapter.notifyDataSetChanged();
-
-    }
 
     // Replace Login Fragment with animation
     public void replaceLoginFragment() {
-        fragmentManager
+        Fragment prof_frag = new MyProfile();
+        onFragmentCall(Util.My_Profile, prof_frag, false);
+        /*fragmentManager
                 .beginTransaction()
                 .setCustomAnimations(R.anim.left_enter, R.anim.right_out)
-                .replace(R.id.profileContainer, new MyProfile(),
-                        Util.My_Profile).commit();
+                .replace(R.id.frag_container, new MyProfile(),
+                        Util.My_Profile).commit();*/
     }
 
     @Override
     public void onBackPressed() {
-        Fragment EditProfile_Fragment = fragmentManager
+        /*Fragment EditProfile_Fragment = fragmentManager
                 .findFragmentByTag(Util.Edit_Profile);
         Fragment Profile_Fragment = fragmentManager
                 .findFragmentByTag(Util.My_Profile);
         Fragment Notification_Fragment = fragmentManager
                 .findFragmentByTag(Util.NOTIFICATIONS);
-
+*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (channel_layout.getVisibility() == View.VISIBLE) {
-            finish();
-            super.onBackPressed();
-        } else if (EditProfile_Fragment != null) {
+        } /*else if (EditProfile_Fragment != null) {
             toggle.setDrawerIndicatorEnabled(true);
             replaceLoginFragment();
         } else if (Profile_Fragment != null) {
 //            setActionBarTitle(Title);
-            backAnimIntent(this, MyChannel.class);
-         /*   profileContainer.setVisibility(View.GONE);
-            channel_layout.setVisibility(View.VISIBLE);*/
+            backAnimIntent(this, BrightlyNavigationActivity.class);
+         *//*   frag_container.setVisibility(View.GONE);
+            channel_layout.setVisibility(View.VISIBLE);*//*
         } else if (Notification_Fragment != null) {
 //            setActionBarTitle(Title);
-            backAnimIntent(this, MyChannel.class);
-            /*profileContainer.setVisibility(View.GONE);
-            channel_layout.setVisibility(View.VISIBLE);*/
-        } else {
-            finish();
+            backAnimIntent(this, BrightlyNavigationActivity.class);
+            *//*frag_container.setVisibility(View.GONE);
+            channel_layout.setVisibility(View.VISIBLE);*//*
+        } */ else {
+            //    finish();
             super.onBackPressed();
         }
     }
@@ -463,43 +357,6 @@ public class MyChannel extends BaseActivity
         String url = "https://play.google.com/store/apps/details?id=purplefront.com.kriddrpetparent";
         share.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_msg_text) + "\n " + url);
         startActivity(Intent.createChooser(share, "Share link!"));
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        invalidateOptionsMenu();
-        getNotificationCount();
-        getMenuInflater().inflate(R.menu.my_channel, menu);
-        MenuItem itemCart = menu.findItem(R.id.action_bell);
-        LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
-        setBadgeCount(this, icon, count);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_bell) {
-
-            fragmentManager
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
-                    .replace(R.id.profileContainer, new Notifications(),
-                            Util.NOTIFICATIONS).commit();
-
-            setActionBarTitle("Notification");
-            profileContainer.setVisibility(View.VISIBLE);
-            channel_layout.setVisibility(View.GONE);
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public static void setBadgeCount(Context context, LayerDrawable icon, String count) {
@@ -524,71 +381,67 @@ public class MyChannel extends BaseActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        boolean isChannelScrn = false;
         if (id == R.id.nav_profile) {
 
-            fragmentManager
+            /*fragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
-                    .replace(R.id.profileContainer, new MyProfile(),
+                    .replace(R.id.frag_container, new MyProfile(),
                             Util.My_Profile).commit();
+*/
 
-            setActionBarTitle("My Profile");
-            profileContainer.setVisibility(View.VISIBLE);
-            channel_layout.setVisibility(View.GONE);
-
-
+            onFragmentCall(Util.My_Profile, new MyProfile(), false);
             // Handle the camera action
         } else if (id == R.id.nav_mysubscription) {
 
             type = "subscribe";
-            setActionBarTitle("Shared With Me");
-            profileContainer.setVisibility(View.GONE);
-            channel_layout.setVisibility(View.VISIBLE);
-            image_createChannel.setVisibility(View.GONE);
-            getChannelsLists();
+            isChannelScrn = true;
+            //setActionBarTitle("Shared With Me");
 
         } else if (id == R.id.nav_myChannels) {
 
             type = "my";
-            setActionBarTitle("My Channels");
-            profileContainer.setVisibility(View.GONE);
-            channel_layout.setVisibility(View.VISIBLE);
-            image_createChannel.setVisibility(View.VISIBLE);
-            getChannelsLists();
+            isChannelScrn = true;
+            //setActionBarTitle("My Channels");
+
 
         } else if (id == R.id.nav_allChannels) {
 
             type = "all";
-            setActionBarTitle("All Channels");
-            profileContainer.setVisibility(View.GONE);
-            channel_layout.setVisibility(View.VISIBLE);
-            image_createChannel.setVisibility(View.VISIBLE);
-            getChannelsLists();
+            isChannelScrn = true;
+//            setActionBarTitle("All Channels");
+
 
         } else if (id == R.id.nav_notifications) {
 
-            fragmentManager
+            /*fragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
-                    .replace(R.id.profileContainer, new Notifications(),
-                            Util.NOTIFICATIONS).commit();
+                    .replace(R.id.frag_container, new Notifications(),
+                            Util.NOTIFICATIONS).commit();*/
+            Fragment nfy_fragment = new Notifications();
 
-            setActionBarTitle("Notification");
-            profileContainer.setVisibility(View.VISIBLE);
-            channel_layout.setVisibility(View.GONE);
+
+            /*fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
+                    .replace(R.id.frag_container, new ChannelFragment(),
+                            Util.CHANNELS).commit();*/
+            onFragmentCall(Util.NOTIFICATIONS, nfy_fragment, false);
+
 
         } else if (id == R.id.nav_about) {
 
 
-            showLongToast(MyChannel.this, "Comming Soon");
+            showLongToast(BrightlyNavigationActivity.this, "Comming Soon");
 
         } else if (id == R.id.nav_invite) {
 
             shareTextUrl();
 
         } else if (id == R.id.nav_logout) {
-
+            Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
 
             // delete all realm objects
@@ -596,14 +449,14 @@ public class MyChannel extends BaseActivity
 
             //commit realm changes
             realm.commitTransaction();
-            if (CheckNetworkConnection.isOnline(MyChannel.this)) {
+            if (CheckNetworkConnection.isOnline(BrightlyNavigationActivity.this)) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannel.this).call_logout_user(userId, deviceToken);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(MyChannel.this) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(BrightlyNavigationActivity.this).call_logout_user(userId, deviceToken);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(BrightlyNavigationActivity.this) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         dismissProgress();
-                        Toast.makeText(MyChannel.this, "Message:" + response.message(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(BrightlyNavigationActivity.this, "Message:" + response.message(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -616,7 +469,7 @@ public class MyChannel extends BaseActivity
 
                 dismissProgress();
             }*/ else {
-                Toast.makeText(MyChannel.this, "Check network connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(BrightlyNavigationActivity.this, "Check network connection", Toast.LENGTH_LONG).show();
             }
             /*realm.executeTransaction(new Realm.Transaction() {
                 @Override
@@ -628,10 +481,22 @@ public class MyChannel extends BaseActivity
 
                 }
             });*/
-            finishIntent(MyChannel.this, Login.class);
+            finishIntent(BrightlyNavigationActivity.this, Login.class);
 
         }
+        if (isChannelScrn) {
+            Fragment fragment = new ChannelFragment();
 
+            Bundle bundle = new Bundle();
+            bundle.putString("type", type);
+            fragment.setArguments(bundle);
+            /*fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
+                    .replace(R.id.frag_container, new ChannelFragment(),
+                            Util.CHANNELS).commit();*/
+            onFragmentCall(Util.CHANNELS, fragment, false);
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -675,6 +540,82 @@ public class MyChannel extends BaseActivity
             }
 
         }
+    }
+
+
+    public void setUserModel(RealmModel userMode) {
+        user_obj = userMode;
+    }
+
+
+    public RealmModel getUserModel() {
+        return user_obj;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+              /*
+                Toast.makeText(BrightlyNavigationActivity.this,"Welcome",Toast.LENGTH_LONG).show();*/
+                //  getSupportFragmentManager().popBackStackImmediate();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void onFragmentBackKeyHandler(boolean DisableHomeBtn) {
+        if (DisableHomeBtn) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            toggle.setDrawerIndicatorEnabled(true);
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+
+        }
+        getSupportFragmentManager().popBackStackImmediate();
+
+    }
+
+    public void onFragmentCall(String tag, Fragment call_fragment, boolean enableHomeBtn) {
+        if (enableHomeBtn) {
+            // Remove hamburger
+            toggle.setDrawerIndicatorEnabled(false);
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+                    toggle.setDrawerIndicatorEnabled(true);
+                    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                    onBackPressed();
+                }
+            });
+            // Show back button
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        } else {
+            // Remove hamburger
+//            toggle.setDrawerIndicatorEnabled(true);
+//             Show back button
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            if(toggle!=null)
+            toggle.setDrawerIndicatorEnabled(true);
+            if(drawer!=null)
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+        }
+
+        fragmentManager
+                .beginTransaction()
+
+                .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
+                .addToBackStack(tag)
+                .replace(R.id.frag_container, call_fragment,
+                        tag).commit();
     }
 
 

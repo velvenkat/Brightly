@@ -1,16 +1,13 @@
 package com.purplefront.brightly.Adapters;
 
 import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Parcelable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,20 +15,16 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.purplefront.brightly.Activities.MyChannelsSet;
-import com.purplefront.brightly.Activities.MySetCards;
+
+import com.purplefront.brightly.Fragments.CardDetailFragment;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.SetsListModel;
-import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -40,8 +33,8 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
     ArrayList<SetsListModel> setsListModels;
     ChannelListModel chl_list_obj;
-    Activity context;
-    LayoutInflater inflater;
+    Context scrn_contxt;
+
     Realm realm;
     RealmResults<RealmModel> realmModel;
     String userId;
@@ -53,13 +46,12 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
     String Created_By;
 
 
-    public SetsAdapter(MyChannelsSet myChannelsSet, ArrayList<SetsListModel> setsListModels,  ChannelListModel chl_list_obj, Set_sel_interface listenr) {
+    public SetsAdapter(Context context, ArrayList<SetsListModel> setsListModels,  ChannelListModel chl_list_obj, Set_sel_interface listenr) {
 
 
-        this.context = myChannelsSet;
+        this.scrn_contxt = context;
         this.setsListModels = setsListModels;
         this.chl_list_obj = chl_list_obj;
-        inflater = (LayoutInflater.from(context));
         mListener = listenr;
     }
 
@@ -118,14 +110,14 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
         }
         if (!setsListModel.getThumbnail().isEmpty()) {
 
-            Glide.with(context)
+            Glide.with(scrn_contxt)
                     .load(setsListModel.getThumbnail())
                     .fitCenter()
                     /*.transform(new CircleTransform(HomeActivity.this))
                     .override(50, 50)*/
                     .into(holder.imageView_setImage);
         } else {
-            Glide.with(context)
+            Glide.with(scrn_contxt)
                     .load(R.drawable.no_image_available)
                     .centerCrop()
                     /*.transform(new CircleTransform(HomeActivity.this))
@@ -156,18 +148,25 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
             @Override
             public void onClick(View view) {
 
-//                Toast.makeText(context, "Working", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(scrn_context, "Working", Toast.LENGTH_SHORT).show();
 
                 if (isSelToDel) {
                     mListener.onSelect(position, setsListModel);
                 } else {
-                    Intent intent = new Intent(context, MySetCards.class);
+                    /*Intent intent = new Intent(context, CardDetailFragment.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("model_obj", chl_list_obj);
                     intent.putExtra("setsListModel", setsListModel);
                     intent.putExtra("isNotification", false);
                     context.startActivity(intent);
-                    context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                    context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    Fragment card_dtl_frag=new CardDetailFragment();
+                    Bundle bundle =new Bundle();
+                    bundle.putParcelable("model_obj", chl_list_obj);
+                    bundle.putParcelable("setsListModel", setsListModel);
+                    bundle.putBoolean("isNotification", false);
+                    card_dtl_frag.setArguments(bundle);
+                    mListener.onCardShow(card_dtl_frag);
                 }
             }
         });
@@ -199,6 +198,6 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
     public interface Set_sel_interface {
         public void onSelect(int position, SetsListModel modelObj);
-      //  public void onUnSelect(int position, SetsListModel modelObj);
+        public void onCardShow(Fragment call_frag);
     }
 }

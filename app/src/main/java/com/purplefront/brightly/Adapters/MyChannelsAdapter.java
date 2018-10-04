@@ -1,9 +1,10 @@
 package com.purplefront.brightly.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,13 +14,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.purplefront.brightly.Activities.EditChannelInfo;
-import com.purplefront.brightly.Activities.MyChannel;
-import com.purplefront.brightly.Activities.MyChannelsSet;
+
 import com.purplefront.brightly.Application.RealmModel;
+import com.purplefront.brightly.Fragments.SetsFragment;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.R;
-import com.purplefront.brightly.Utils.CircleTransform;
 
 import java.util.List;
 
@@ -29,19 +28,22 @@ import io.realm.RealmResults;
 public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.ViewHolder>{
 
     List<ChannelListModel> channelListModels;
-    Activity context;
+    Context scrn_context;
     LayoutInflater inflater;
     Realm realm;
     RealmResults<RealmModel> realmModel;
     String userId;
     String Created_by;
+    ChannelListItemClickListener mListener;
 
 
-    public MyChannelsAdapter(MyChannel myChannel, List<ChannelListModel> channelListModels) {
+    public MyChannelsAdapter(Context context, List<ChannelListModel> channelListModels,ChannelListItemClickListener listener) {
 
-        this.context = myChannel;
+        this.scrn_context = context;
         this.channelListModels = channelListModels;
-        inflater = (LayoutInflater.from(context));
+        inflater = (LayoutInflater.from(scrn_context));
+        mListener=listener;
+
     }
 
     @NonNull
@@ -82,21 +84,21 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
 
         if(!channelListModel.getCover_image().isEmpty()) {
 
-            Glide.with(context)
+            Glide.with(scrn_context)
                     .load(channelListModel.getCover_image())
                     .asBitmap()
                     .fitCenter()
-//                    .transform(new CircleTransform(context))
+//                    .transform(new CircleTransform(scrn_context))
                     /*.override(50, 50)*/
                     .into(holder.imageView_channelImage);
         }
         else
         {
-            Glide.with(context)
+            Glide.with(scrn_context)
                     .load(R.drawable.no_image_available)
                     .asBitmap()
                     .fitCenter()
-//                    .transform(new CircleTransform(context))
+//                    .transform(new CircleTransform(scrn_context))
                     /*.transform(new CircleTransform(HomeActivity.this))
                     .override(50, 50)*/
                     .into(holder.imageView_channelImage);
@@ -106,15 +108,20 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(context, MyChannelsSet.class);
-              /*  intent.putExtra("channel_id", channelListModel.getChannel_id());
+            /*    Intent intent = new Intent(scrn_context, MyChannelsSet.class);
+              *//*  intent.putExtra("channel_id", channelListModel.getChannel_id());
                 intent.putExtra("channel_name", channelListModel.getChannel_name());
                 intent.putExtra("channel_description", channelListModel.getDescription());
                 intent.putExtra("encoded_string", channelListModel.getCover_image());
-                intent.putExtra("image_name", channelListModel.getImage_name());*/
+                intent.putExtra("image_name", channelListModel.getImage_name());*//*
                 intent.putExtra("model_obj",channelListModel);
-                context.startActivity(intent);
-                context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                scrn_context.startActivity(intent);
+                scrn_context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                Fragment fragment=new SetsFragment();
+                Bundle bundle=new Bundle();
+                bundle.putParcelable("model_obj",channelListModel);
+                fragment.setArguments(bundle);
+                mListener.OnChannelItemClick(fragment);
             }
         });
 
@@ -140,5 +147,8 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
             subscribed_icon = itemView.findViewById(R.id.shared_icon);
             textView_channelName = itemView.findViewById(R.id.textView_channelName);
         }
+    }
+    public interface ChannelListItemClickListener{
+        public void OnChannelItemClick(Fragment call_frag);
     }
 }

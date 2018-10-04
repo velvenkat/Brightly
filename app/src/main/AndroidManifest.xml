@@ -55,37 +55,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
-            android:name=".Activities.MyChannel"
+            android:name=".Activities.BrightlyNavigationActivity"
             android:label="@string/title_activity_my_channel"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Activities.CreateChannel"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activities.EditChannelInfo"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activities.MyChannelsSet"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activities.CreateSet"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activities.MySetCards"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activities.EditSetInfo"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activities.CreateCards"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activities.EditCardInfo"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activities.CardList"
-            android:screenOrientation="portrait" />
 
         <!-- [START firebase_service] -->
         <service android:name=".Firebase.MyFirebaseMessagingService"
@@ -106,8 +79,8 @@
         </service>
         <!-- [END firebase_iid_service] -->
 
-        <activity android:name=".Activities.ShareWithContacts" />
-        <activity android:name=".Activities.SharePage"></activity>
+        <activity android:name=".Fragments.ShareWithContacts" />
+        <activity android:name=".Fragments.SharePage"></activity>
     </application>
 
 </manifest>

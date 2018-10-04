@@ -1,25 +1,31 @@
-package com.purplefront.brightly.Activities;
+package com.purplefront.brightly.Fragments;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Adapters.CardListAdapter;
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
@@ -34,7 +40,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class CardList extends BaseActivity implements BaseActivity.alert_dlg_interface, CardListAdapter.Card_sel_interface {
+public class CardList extends BaseFragment implements BaseFragment.alert_dlg_interface, CardListAdapter.Card_sel_interface {
 
     List<CardsListModel> cardsListModels = new ArrayList<>();
     CardListAdapter cardListAdapter;
@@ -50,35 +56,44 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
     TextView txtItemSel;
     CheckBox chk_sel_all;
     ItemTouchHelper ith;
-    ImageView img_mutli_sel;
+    //ImageView img_mutli_sel;
     boolean isReorder;
     boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
     SetsListModel setsListModel;
+    View rootView;
 
+    RealmModel user_obj;
+
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_card_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.activity_card_list, container, false);
+        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        // setContentView(R.layout.activity_card_list);
+        /*Toolbar toolbar = (Toolbar)rootView. findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        userId = getIntent().getStringExtra("userId");
-        setsListModel = getIntent().getParcelableExtra("setsListModel");
-        isReorder = getIntent().getBooleanExtra("re_order", false);
+*/
+        Bundle bundle = getArguments();
+        userId = user_obj.getUser_Id();
+        setsListModel = bundle.getParcelable("setsListModel");
+        isReorder = bundle.getBoolean("re_order", false);
+        String chl_name=bundle.getString("chl_name");
         set_name = setsListModel.getSet_name();
         set_id = setsListModel.getSet_id();
-        setTitle(set_name);
-
-        view_nodata = (TextView) findViewById(R.id.view_nodata);
-        card_listview = (RecyclerView) findViewById(R.id.card_listview);
-        del_contr = (RelativeLayout) findViewById(R.id.set_del_contr);
-        btn_cancel = (Button) findViewById(R.id.btn_cancel);
-        btn_delete = (Button) findViewById(R.id.btn_delete);
-        chk_sel_all = (CheckBox) findViewById(R.id.chk_sel_all);
-        txtItemSel = (TextView) findViewById(R.id.txtCntSelected);
-        img_mutli_sel = (ImageView) findViewById(R.id.menu_multi_sel);
+        //setTitle(set_name);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(chl_name);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(set_name);
+        view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
+        card_listview = (RecyclerView) rootView.findViewById(R.id.card_listview);
+        del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
+        btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
+        btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
+        chk_sel_all = (CheckBox) rootView.findViewById(R.id.chk_sel_all);
+        txtItemSel = (TextView) rootView.findViewById(R.id.txtCntSelected);
+      //  img_mutli_sel = (ImageView) rootView.findViewById(R.id.menu_multi_sel);
 
         setDlgListener(this);
         chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -118,29 +133,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
                 cardListAdapter.notifyDataSetChanged();
             }
         });
-        img_mutli_sel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(MyChannelsSet.this,"HI",Toast.LENGTH_LONG).show();
-                if (cardsListModels.size() > 0) {
-                    getSupportActionBar().hide();
-                    del_contr.setVisibility(View.VISIBLE);
-                    txtItemSel.setText("");
-                    btn_delete.setEnabled(false);
-                    if (isReorder)
-                        ith.attachToRecyclerView(null);
-                    cardListAdapter.set_SelToDel(true);
-                    cardListAdapter.notifyDataSetChanged();
-                    // isMultiSelChoosed=true;
-                    //   ith = new ItemTouchHelper(dragCallback);
 
-                } else {
-
-                }
-
-
-            }
-        });
 
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -260,10 +253,32 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
             ith = new ItemTouchHelper(dragCallback);
             ith.attachToRecyclerView(card_listview);
 
-        } else
-            img_mutli_sel.setVisibility(View.INVISIBLE);
+        }
 
         getCardsLists();
+
+        return rootView;
+    }
+
+    public void multi_sel_actions()
+    {
+        if (cardsListModels.size() > 0) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+            del_contr.setVisibility(View.VISIBLE);
+            txtItemSel.setText("");
+            btn_delete.setEnabled(false);
+            if (isReorder)
+                ith.attachToRecyclerView(null);
+            cardListAdapter.set_SelToDel(true);
+            cardListAdapter.notifyDataSetChanged();
+            // isMultiSelChoosed=true;
+            //   ith = new ItemTouchHelper(dragCallback);
+
+        } else {
+
+        }
+
+
     }
 
     public void call_card_reorder() {
@@ -279,14 +294,14 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
         }
         try {
 
-            if (CheckNetworkConnection.isOnline(CardList.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(CardList.this).card_reorder_set(userId, cardId);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(CardList.this) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).card_reorder_set(userId, cardId);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         dismissProgress();
-                        Toast.makeText(CardList.this, "Message:" + response.message(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Message:" + response.message(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -299,7 +314,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
 
                 dismissProgress();
             }*/ else {
-                Toast.makeText(CardList.this, "Check network connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Check network connection", Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -311,7 +326,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
 
 
     public void reset_view() {
-        getSupportActionBar().show();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         del_contr.setVisibility(View.GONE);
         del_sel_id = new ArrayList<>();
 
@@ -319,13 +334,30 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
 
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        if(!isReorder){
+           inflater.inflate(R.menu.multi_sel_menu,menu);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==R.id.action_multi_sel){
+          multi_sel_actions();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void getCardsLists() {
         try {
 
-            if (CheckNetworkConnection.isOnline(CardList.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(CardList.this).getCardsList(set_id);
-                callRegisterUser.enqueue(new ApiCallback<CardsListResponse>(CardList.this) {
+                Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(set_id);
+                callRegisterUser.enqueue(new ApiCallback<CardsListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<CardsListResponse> response, boolean isSuccess, String message) {
                         CardsListResponse cardsListResponse = response.body();
@@ -345,7 +377,7 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
 
 
                         } else {
-                            showLongToast(CardList.this, message);
+                            showLongToast(getActivity(), message);
                             dismissProgress();
                         }
                     }
@@ -369,13 +401,13 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
     }
 
     private void setAdapter(List<CardsListModel> cardsListModels) {
-        card_listview.setLayoutManager(new GridLayoutManager(CardList.this, 1));
-        cardListAdapter = new CardListAdapter(CardList.this, cardsListModels, this);
+        card_listview.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        cardListAdapter = new CardListAdapter(getContext(), cardsListModels, this);
         card_listview.setAdapter(cardListAdapter);
 
     }
 
-    @Override
+   /* @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -387,16 +419,16 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    @Override
+*/
+    /*@Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-    }
+    }*/
 
     @Override
     public void onSelect(int position, CardsListModel modelObj) {
-        getSupportActionBar().hide();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         del_contr.setVisibility(View.VISIBLE);
         if (modelObj.isDelSel()) {
             modelObj.setDelSel(false);
@@ -443,10 +475,10 @@ public class CardList extends BaseActivity implements BaseActivity.alert_dlg_int
     public void call_api_del_multi_cards() {
         try {
 
-            if (CheckNetworkConnection.isOnline(CardList.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(CardList.this).getDeleteCard(strDelSelId);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(CardList.this) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteCard(strDelSelId);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         AddMessageResponse deleteSetResponse = response.body();

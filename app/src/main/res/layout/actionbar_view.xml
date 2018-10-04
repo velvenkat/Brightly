@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:gravity="center_vertical"
+    android:layout_height="match_parent">
+
+
+
+    <ImageView
+        android:id="@+id/img_actionBarBack"
+        android:layout_width="20dp"
+        android:layout_centerVertical="true"
+        android:layout_height="30dp"
+        android:visibility="invisible"
+
+        android:layout_alignParentLeft="true"
+
+
+        />
+
+    <ImageView
+        android:id="@+id/img_Notify"
+        android:layout_width="30dp"
+        android:layout_centerVertical="true"
+        android:layout_height="30dp"
+
+        android:visibility="visible"
+        android:layout_alignParentLeft="true"
+
+
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/img_actionBarBack"
+
+
+        android:layout_toLeftOf="@+id/img_settings_menu"
+        android:layout_centerVertical="true"
+        android:textColor="#000000"
+        android:layout_marginLeft="10dp"
+        android:text="Hello"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:id="@+id/textBarTitle"
+        />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/img_actionBarBack"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/imgSearch"
+        android:hint="Enter phone number"
+
+        android:inputType="phone"
+
+        android:textColor="#000000"
+        android:layout_marginLeft="10dp"
+        android:textColorHint="#404040"
+        android:textSize="18sp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:id="@+id/edtSearchText"
+        />
+
+    <ImageView
+        android:id="@+id/img_settings_menu"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+
+       android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:layout_alignParentRight="true"
+
+/>
+    <ImageView
+        android:id="@+id/imgSharePet"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:layout_alignParentRight="true"
+
+/>
+    <ImageView
+        android:id="@+id/imgSearch"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+
+      android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:layout_alignParentRight="true"
+
+ />
+
+
+</RelativeLayout>

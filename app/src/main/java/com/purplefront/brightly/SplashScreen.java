@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.purplefront.brightly.Activities.Login;
-import com.purplefront.brightly.Activities.MyChannel;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Utils.SharedPrefUtils;
 import com.purplefront.brightly.Utils.Util;
@@ -29,6 +29,7 @@ public class SplashScreen extends AppCompatActivity {
     Realm realm;
     ImageView logo;
     TextView logo_title;
+    RealmModel model = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +42,12 @@ public class SplashScreen extends AppCompatActivity {
 
         RealmResults<RealmModel> realmModel = realm.where(RealmModel.class).findAllAsync();
         realmModel.load();
-        for(RealmModel model:realmModel){
-            User_ID = model.getUser_Id();
+
+        if(realmModel.size()==1){
+            model=realmModel.get(0);
+          User_ID= model.getUser_Id();
         }
+
 
         //User_ID = SharedPrefUtils.getString(SplashScreen.this, Util.User_Id, "");
 
@@ -54,7 +58,8 @@ public class SplashScreen extends AppCompatActivity {
             public void run() {
 
                 if (User_ID != null && !User_ID.isEmpty()){
-                    Intent intent = new Intent(SplashScreen.this, MyChannel.class);
+                    Intent intent = new Intent(SplashScreen.this, BrightlyNavigationActivity.class);
+                    intent.putExtra("user_obj",model);
                     startActivity(intent);
                     overridePendingTransition(R.anim.right_enter, R.anim.left_out);
                     SplashScreen.this.finish();

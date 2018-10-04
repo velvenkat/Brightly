@@ -1,150 +1,157 @@
-package com.purplefront.brightly.Activities;
+package com.purplefront.brightly.Fragments;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Base64;
+import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
-import com.purplefront.brightly.Application.UserInterface;
-import com.purplefront.brightly.CustomToast;
-import com.purplefront.brightly.Fragments.AudioType;
-import com.purplefront.brightly.Fragments.FileType;
-import com.purplefront.brightly.Fragments.ImageType;
-import com.purplefront.brightly.Fragments.YoutubeType;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.SetsListModel;
-import com.purplefront.brightly.Modules.UserModule;
+import com.purplefront.brightly.Modules.SetEntryModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
-import com.purplefront.brightly.Utils.ImageChooser_Crop;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
+import com.purplefront.brightly.Utils.Util;
 
-import java.io.ByteArrayOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class CreateCards extends BaseActivity implements UserInterface, BaseActivity.alert_dlg_interface {
+public class CreateCardsFragment extends BaseFragment implements  BaseFragment.alert_dlg_interface {
 
-    String userId;
     String set_id;
     String set_name;
 
-    UserModule userModule;
+    SetEntryModel setEntryModel;
     private TabLayout tabs_creatCard;
     private ViewPager viewpager_creatCard;
     String Created_By;
-    boolean isCreate_Crd;
+    boolean isCreate_Crd=false;
     CardsListModel cardModelObj;
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
-    ;
+    RealmModel user_obj;
 
+
+    View rootView;
+
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_cards);
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        rootView=inflater.inflate(R.layout.activity_create_cards,container,false);
+        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+/*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
         setDlgListener(this);
-        isCreate_Crd=getIntent().getBooleanExtra("isCreate_Crd",false);
+        Bundle bundle =getArguments();
+        isCreate_Crd=bundle.getBoolean("isCreate_Crd",false);
 
-        chl_list_obj=getIntent().getParcelableExtra("model_obj");
+        chl_list_obj=bundle.getParcelable("model_obj");
         Created_By = chl_list_obj.getCreated_by();
-        userId = getIntent().getStringExtra("userId");
-        setsListModel=getIntent().getParcelableExtra("setsListModel");
+
+        setsListModel=bundle.getParcelable("setsListModel");
         set_id = setsListModel.getSet_id();
         set_name = setsListModel.getSet_name();
 
-        userModule = new UserModule();
-        userModule.setSet_id(set_id);
-        userModule.setSet_name(set_name);
-        userModule.setUserId(userId);
+
+        setEntryModel = new SetEntryModel();
+        setEntryModel.setSet_id(set_id);
+        setEntryModel.setSet_name(set_name);
+        //setEntryModel.setUserId(userId);
         if(!isCreate_Crd) {
-            setTitle("Edit Card Info");
+            //setTitle("Edit Card Info");
+          //  actionBarUtilObj.setTitle("Edit Card Info");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Edit Card Info");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(null);
             if (Created_By != null) {
-                cardModelObj = getIntent().getParcelableExtra("Card_Dtls");
+                cardModelObj = bundle.getParcelable("Card_Dtls");
                 if (cardModelObj != null) {
-                    userModule.setCard_id(cardModelObj.getCard_id());
-                    userModule.setCard_name(cardModelObj.getTitle());
-                    userModule.setCard_description(cardModelObj.getDescription());
-                    userModule.setCard_multimedia_url(cardModelObj.getUrl());
-                    userModule.setImage_name(cardModelObj.getName());
-                    userModule.setType(cardModelObj.getType());
+                    setEntryModel.setCard_id(cardModelObj.getCard_id());
+                    setEntryModel.setCard_name(cardModelObj.getTitle());
+                    setEntryModel.setCard_description(cardModelObj.getDescription());
+                    setEntryModel.setCard_multimedia_url(cardModelObj.getUrl());
+                    setEntryModel.setImage_name(cardModelObj.getName());
+                    setEntryModel.setType(cardModelObj.getType());
                 }
             }
         }
         else
         {
-            setTitle("Create Card");
+
+          //  actionBarUtilObj.setTitle("Create Card");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Create Card");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(null);
         }
 
-        viewpager_creatCard = (ViewPager) findViewById(R.id.viewpager_creatCard);
+        viewpager_creatCard = (ViewPager)rootView. findViewById(R.id.viewpager_creatCard);
 
         setupViewPager(viewpager_creatCard);
-        tabs_creatCard = (TabLayout) findViewById(R.id.tabs_creatCard);
+        tabs_creatCard = (TabLayout) rootView.findViewById(R.id.tabs_creatCard);
         tabs_creatCard.setupWithViewPager(viewpager_creatCard);
         setupTabIcons();
 
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                    //         getActivity().finish();
+                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                    return true;
+                }
+                return false;
+            }
+        });
+        return rootView;
     }
+
 
     private void setupTabIcons() {
 
-        final TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        final TextView tabOne = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.custom_tab, null);
         tabOne.setText("Image");
         // tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_creatCard.getTabAt(0).setCustomView(tabOne);
 
         // Supplier id for free Version "RcJ1L4mWaZeIe2wRO3ejHOmcSxf2" =====
-        final TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        final TextView tabTwo = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.custom_tab, null);
         tabTwo.setText("Video");
         // tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_creatCard.getTabAt(1).setCustomView(tabTwo);
 
-        final TextView tabThree = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        final TextView tabThree = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.custom_tab, null);
         tabThree.setText("Audio");
         // tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_creatCard.getTabAt(2).setCustomView(tabThree);
 
-        final TextView tabFour = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        final TextView tabFour = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.custom_tab, null);
         tabFour.setText("File");
         // tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_creatCard.getTabAt(3).setCustomView(tabFour);
@@ -152,7 +159,7 @@ public class CreateCards extends BaseActivity implements UserInterface, BaseActi
 
     private void setupViewPager(ViewPager viewpager_creatCard) {
 
-        CreateCards.ViewPagerAdapter adapter = new CreateCards.ViewPagerAdapter(getSupportFragmentManager());
+        CreateCardsFragment.ViewPagerAdapter adapter = new CreateCardsFragment.ViewPagerAdapter(this.getChildFragmentManager());
 
         Bundle bundle = new Bundle();
         if (isCreate_Crd)
@@ -161,6 +168,7 @@ public class CreateCards extends BaseActivity implements UserInterface, BaseActi
             bundle.putBoolean("isCreate", false);
             bundle.putString("created_by", Created_By);
         }
+        bundle.putParcelable("set_entry_obj",setEntryModel);
 
 
         Fragment create_imgType = new ImageType();
@@ -208,6 +216,23 @@ public class CreateCards extends BaseActivity implements UserInterface, BaseActi
 
     }
 
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.delete:
+
+                showAlertDialog("Your about to delete the Card, the information contained in the Card will be lost", "Confirm Delete....", "Delete", "Cancel");
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
@@ -239,30 +264,13 @@ public class CreateCards extends BaseActivity implements UserInterface, BaseActi
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu,MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if(!isCreate_Crd) {
-            getMenuInflater().inflate(R.menu.delete, menu);
-        }
-        return true;
+        menu.clear(); // Remove all existing items from the menu, leaving it empty as if it had just been created.
+        if (!isCreate_Crd) {
+            inflater.inflate(R.menu.delete, menu);
 
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
-                this.finish();
-                overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-                return true;
 
-            case R.id.delete:
-
-                showAlertDialog("Your about to delete the Card, the information contained in the Card will be lost", "Confirm Delete....", "Delete", "Cancel");
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -270,10 +278,10 @@ public class CreateCards extends BaseActivity implements UserInterface, BaseActi
     public void getDeleteCard() {
         try {
 
-            if (CheckNetworkConnection.isOnline(CreateCards.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(CreateCards.this).getDeleteCard(cardModelObj.getCard_id());
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(CreateCards.this) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteCard(cardModelObj.getCard_id());
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         AddMessageResponse deleteSetResponse = response.body();
@@ -319,28 +327,24 @@ public class CreateCards extends BaseActivity implements UserInterface, BaseActi
 
         if(message.equals("success"))
         {
-            Intent intent = new Intent(CreateCards.this, MySetCards.class);
+            /*Intent intent = new Intent(CreateCardsFragment.this, MySetCards.class);
             intent.putExtra("model_obj", chl_list_obj);
             intent.putExtra("setsListModel", setsListModel);
             intent.putExtra("userId", userId);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            onBackPressed();
-            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+            startActivity(intent);*/
+            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+            /*onBackPressed();
+            overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
 
         }
         else {
-            showLongToast(CreateCards.this, message);
+            showLongToast(getActivity(), message);
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-        overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-    }
+
 
 
 
@@ -355,14 +359,5 @@ public class CreateCards extends BaseActivity implements UserInterface, BaseActi
     }
 
 
-    @Override
-    public void setUserMode(UserModule userMode) {
-        userModule = userMode;
 
-    }
-
-    @Override
-    public UserModule getUserMode() {
-        return userModule;
-    }
 }

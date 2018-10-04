@@ -1,8 +1,11 @@
 package com.purplefront.brightly.Modules;
 
-public class UserModule {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    String userId;
+public class SetEntryModel implements Parcelable {
+
+ //   String userId;
     String set_id;
     String set_name;
     String card_name = "";
@@ -12,8 +15,31 @@ public class UserModule {
     String image_name = "";
     String type = "";
 
-    public UserModule() {
+    public SetEntryModel() {
     }
+
+    protected SetEntryModel(Parcel in) {
+        set_id = in.readString();
+        set_name = in.readString();
+        card_name = in.readString();
+        card_id = in.readString();
+        card_description = in.readString();
+        card_multimedia_url = in.readString();
+        image_name = in.readString();
+        type = in.readString();
+    }
+
+    public static final Creator<SetEntryModel> CREATOR = new Creator<SetEntryModel>() {
+        @Override
+        public SetEntryModel createFromParcel(Parcel in) {
+            return new SetEntryModel(in);
+        }
+
+        @Override
+        public SetEntryModel[] newArray(int size) {
+            return new SetEntryModel[size];
+        }
+    };
 
     public String getType() {
         return type;
@@ -23,14 +49,14 @@ public class UserModule {
         this.type = type;
     }
 
-    public String getUserId() {
+   /* public String getUserId() {
         return userId;
     }
 
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
+*/
     public String getSet_id() {
         return set_id;
     }
@@ -85,5 +111,22 @@ public class UserModule {
 
     public void setImage_name(String image_name) {
         this.image_name = image_name;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(set_id);
+        dest.writeString(set_name);
+        dest.writeString(card_name);
+        dest.writeString(card_id);
+        dest.writeString(card_description);
+        dest.writeString(card_multimedia_url);
+        dest.writeString(image_name);
+        dest.writeString(type);
     }
 }

@@ -3,8 +3,6 @@ package com.purplefront.brightly.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -13,17 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
-import com.purplefront.brightly.Activities.MySetCards;
-import com.purplefront.brightly.Application.UserInterface;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
-import com.purplefront.brightly.Modules.UserModule;
+import com.purplefront.brightly.Modules.SetEntryModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.Util;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -41,7 +39,7 @@ public class FileType extends BaseFragment {
     Button btn_createCard;
 
     Context context;
-    UserModule userModule;
+    SetEntryModel setEntryModelObj;
 
     String userId;
     String set_id;
@@ -51,22 +49,15 @@ public class FileType extends BaseFragment {
     //    String youtube_url = "";
     String image_name;
     String type = "";
+    RealmModel realmModelObj;
 
     boolean isCreateCard;
+
 
     public FileType() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if(context instanceof UserInterface)
-        {
-            userModule=((UserInterface)context).getUserMode();
-
-        }
-    }
 
 
     @Override
@@ -74,27 +65,30 @@ public class FileType extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         frag_rootView = inflater.inflate(R.layout.fragment_file_type, container, false);
+        realmModelObj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        Bundle bundle=getArguments();
+        setEntryModelObj=bundle.getParcelable("set_entry_obj");
 
-        userId = userModule.getUserId();
-        set_id = userModule.getSet_id();
-        set_name = userModule.getSet_name();
+        userId = realmModelObj.getUser_Id();
+        set_id = setEntryModelObj.getSet_id();
+        set_name = setEntryModelObj.getSet_name();
 
         create_cardURL = (EditText) frag_rootView.findViewById(R.id.create_cardURL);
         create_cardName = (EditText) frag_rootView.findViewById(R.id.create_cardName);
         create_cardDescription = (EditText) frag_rootView.findViewById(R.id.create_cardDescription);
         btn_createCard = (Button)frag_rootView.findViewById(R.id.btn_createCard);
 
-        Bundle bundle=getArguments();
+
         isCreateCard=bundle.getBoolean("isCreate");
         if(isCreateCard){
 
         }
         else{
             btn_createCard.setText("UPDATE CARD");
-            create_cardName.setText(userModule.getCard_name());
-            create_cardDescription.setText(userModule.getCard_description());
-            if(userModule.getType().equalsIgnoreCase("file"))
-            create_cardURL.setText(userModule.getCard_multimedia_url());
+            create_cardName.setText(setEntryModelObj.getCard_name());
+            create_cardDescription.setText(setEntryModelObj.getCard_description());
+            if(setEntryModelObj.getType().equalsIgnoreCase("file"))
+            create_cardURL.setText(setEntryModelObj.getCard_multimedia_url());
         }
         btn_createCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,8 +113,7 @@ public class FileType extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
 
-                    getActivity().setResult(Activity.RESULT_CANCELED);
-                    getActivity().finish();
+                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
                 }
                 return true;
             }
@@ -167,7 +160,7 @@ public class FileType extends BaseFragment {
                 if(isCreateCard)
                     callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList("file", userId, set_id, card_name, card_description, "", image_name );
                 else
-                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("file", userId, set_id, userModule.getCard_id(),card_name, card_description, "", image_name );
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("file", userId, set_id, setEntryModelObj.getCard_id(),card_name, card_description, "", image_name );
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -224,9 +217,10 @@ public class FileType extends BaseFragment {
             intent.putExtra("set_name", set_name);
             intent.putExtra("userId", userId);
             startActivity(intent);*/
-            getActivity().setResult(Activity.RESULT_OK);
+          /*  getActivity().setResult(Activity.RESULT_OK);
             getActivity().finish();
-            getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+            getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
         }
 
         else {

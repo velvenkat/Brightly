@@ -8,13 +8,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -38,15 +35,16 @@ import android.widget.TextView;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
-import com.purplefront.brightly.Activities.MySetCards;
-import com.purplefront.brightly.Application.UserInterface;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Custom.SiriWaveView;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
-import com.purplefront.brightly.Modules.UserModule;
+import com.purplefront.brightly.Modules.SetEntryModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.TimeFormat;
+import com.purplefront.brightly.Utils.Util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -79,7 +77,7 @@ public class AudioType extends BaseFragment {
     private int mediaFileLengthInMilliseconds; // this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
     boolean  isAudioPlay = false;
     String TotalTime;*/
-    UserModule userModule;
+    SetEntryModel setEntryModel;
 
     String userId;
     String set_id;
@@ -108,20 +106,12 @@ public class AudioType extends BaseFragment {
     LinearLayout rec_contr;
     LinearLayout crt_contr;
     boolean isCreateScreen;
-
+    RealmModel user_obj;
 
     public AudioType() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof UserInterface) {
-            userModule = ((UserInterface) context).getUserMode();
-
-        }
-    }
 
 
     @Override
@@ -129,15 +119,16 @@ public class AudioType extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_audio_type, container, false);
-
+        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
         Bundle bundle = getArguments();
         isCreateScreen = bundle.getBoolean("isCreate");
+        setEntryModel=bundle.getParcelable("set_entry_obj");
         CreatedBy=bundle.getString("created_by");
 
 
-                userId = userModule.getUserId();
-        set_id = userModule.getSet_id();
-        set_name = userModule.getSet_name();
+                userId = user_obj.getUser_Id();
+        set_id = setEntryModel.getSet_id();
+        set_name = setEntryModel.getSet_name();
 
         img_play_stop = (ImageView) rootView.findViewById(R.id.img_play_stop);
         audio_seek_bar = (SeekBar) rootView.findViewById(R.id.seek_audio_rec);
@@ -167,13 +158,13 @@ public class AudioType extends BaseFragment {
             if(!CreatedBy.equalsIgnoreCase(userId)){
 
             }
-            if(userModule.getType().equalsIgnoreCase("audio")) {
+            if(setEntryModel.getType().equalsIgnoreCase("audio")) {
                 rl_audio_player.setVisibility(View.VISIBLE);
                 text_audioFile.setVisibility(View.GONE);
-                setMediaPlayer(null, userModule.getCard_multimedia_url());
+                setMediaPlayer(null, setEntryModel.getCard_multimedia_url());
             }
-            create_cardName.setText(userModule.getCard_name());
-            create_cardDescription.setText(userModule.getCard_description());
+            create_cardName.setText(setEntryModel.getCard_name());
+            create_cardDescription.setText(setEntryModel.getCard_description());
             btn_createCard.setText("UPDATE CARD");
         }
 
@@ -248,8 +239,11 @@ public class AudioType extends BaseFragment {
                         return false;
                     } else {
                         release_media();
+/*
                         getActivity().setResult(Activity.RESULT_CANCELED);
                         getActivity().finish();
+*/
+                        ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
                     }
                 }
                 return true;
@@ -562,7 +556,7 @@ public class AudioType extends BaseFragment {
                     "Both fields are required.");
         } else if (encoded_string.equals("") || encoded_string.length() == 0) {
 
-            if(userModule.getType().equalsIgnoreCase("audio")){
+            if(setEntryModel.getType().equalsIgnoreCase("audio")){
                 encoded_string="old";
             }
             else {
@@ -589,7 +583,7 @@ public class AudioType extends BaseFragment {
                     callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList("audio", userId, set_id, card_name, card_description, encoded_string, image_name);
                 else
 
-                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("audio", userId, set_id, userModule.getCard_id(), card_name, card_description, encoded_string, image_name);
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("audio", userId, set_id, setEntryModel.getCard_id(), card_name, card_description, encoded_string, image_name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -693,10 +687,11 @@ public class AudioType extends BaseFragment {
             intent.putExtra("set_name", set_name);
             intent.putExtra("userId", userId);*/
             release_media();
-            getActivity().setResult(Activity.RESULT_OK);
+           /* getActivity().setResult(Activity.RESULT_OK);
             getActivity().finish();
 
-            getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+            getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
         } else {
             showLongToast(getActivity(), message);
         }

@@ -8,11 +8,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,19 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
-import com.purplefront.brightly.Activities.MyChannel;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.EditProfileResponse;
@@ -64,7 +56,7 @@ import static android.app.Activity.RESULT_OK;
  */
 public class EditProfile extends BaseFragment{
 
-    View view;
+    View rootView;
     Context context;
     FragmentManager fragmentManager;
     private EditText input_email, input_company, input_name, input_phone;
@@ -84,7 +76,7 @@ public class EditProfile extends BaseFragment{
     String phoneNumber = "";
     String imageProfile = "";
     String image_name = "";
-
+    RealmModel user_obj;
     public EditProfile() {
         // Required empty public constructor
     }
@@ -94,18 +86,33 @@ public class EditProfile extends BaseFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        rootView = inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
         // Set title bar
         setHasOptionsMenu(true);
-        context = view.getContext();
-        ((MyChannel) getActivity()).setActionBarTitle("Edit Profile");
-        ((MyChannel) getActivity()).toggle.setDrawerIndicatorEnabled(true);
+        context = getContext();
+        ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("Edit Profile");
+
+        //((BrightlyNavigationActivity) getActivity()).toggle.setDrawerIndicatorEnabled(true);
 
         realm = Realm.getDefaultInstance();
         realmModel = realm.where(RealmModel.class).findAllAsync();
 
         initViews();
-        return  view;
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                    //         getActivity().finish();
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                    return true;
+                }
+                return false;
+            }
+        });
+        return  rootView;
     }
 
 
@@ -113,24 +120,24 @@ public class EditProfile extends BaseFragment{
     private void initViews() {
 
 
-        input_email = (EditText) view.findViewById(R.id.input_email);
-        input_company = (EditText) view.findViewById(R.id.input_company);
-        Image_profile = (SimpleDraweeView) view.findViewById(R.id.Image_profile);
-        input_name = (EditText) view.findViewById(R.id.input_name);
-        input_phone = (EditText) view.findViewById(R.id.input_phone);
+        input_email = (EditText) rootView.findViewById(R.id.input_email);
+        input_company = (EditText) rootView.findViewById(R.id.input_company);
+        Image_profile = (SimpleDraweeView) rootView.findViewById(R.id.Image_profile);
+        input_name = (EditText) rootView.findViewById(R.id.input_name);
+        input_phone = (EditText) rootView.findViewById(R.id.input_phone);
 
-        realmModel.load();
-        for(RealmModel model:realmModel){
-            user_ID = model.getUser_Id();
-            input_name.setText( model.getUser_Name());
-            input_phone.setText(model.getUser_PhoneNumber());
-            input_email.setText(model.getUser_Email());
-            input_company.setText(model.getUser_CompanyName());
-            imageProfile = model.getImage();
-            image_name = model.getImage_name();
+       // realmModel.load();
+       // for(RealmModel model:realmModel){
+            user_ID = user_obj.getUser_Id();
+            input_name.setText( user_obj.getUser_Name());
+            input_phone.setText(user_obj.getUser_PhoneNumber());
+            input_email.setText(user_obj.getUser_Email());
+            input_company.setText(user_obj.getUser_CompanyName());
+            imageProfile = user_obj.getImage();
+            image_name = user_obj.getImage_name();
 
 
-        }
+        //}
 
         if(imageProfile != null) {
 
@@ -189,13 +196,13 @@ public class EditProfile extends BaseFragment{
                 || userEmail.equals("") || userEmail.length() == 0
                 || phoneNumber.equals("") || phoneNumber.length() == 0) {
 
-            new CustomToast().Show_Toast(getActivity(), view,
+            new CustomToast().Show_Toast(getActivity(), rootView,
                     "All fields are required.");
         }
 
         // Check if email id valid or not
         else if (!m.find()) {
-            new CustomToast().Show_Toast(getActivity(), view,
+            new CustomToast().Show_Toast(getActivity(), rootView,
                     "Your Email Id is Invalid.");
         }
 
@@ -286,7 +293,14 @@ public class EditProfile extends BaseFragment{
         userCompanyName = editProfileResponse.getCompany_name();
         imageProfile = editProfileResponse.getImage();
         userEmail = editProfileResponse.getEmail();
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
 
+        // delete all realm objects
+        realm.deleteAll();
+
+        //commit realm changes
+        realm.commitTransaction();
         if (phoneNumber != null) {
 
             realm.beginTransaction();
@@ -304,6 +318,8 @@ public class EditProfile extends BaseFragment{
             input_phone.setText(realmModel.getUser_PhoneNumber());
             input_email.setText(realmModel.getUser_Email());
             input_company.setText(realmModel.getUser_CompanyName());
+
+//            ((BrightlyNavigationActivity)getActivity()).setUserModel(realmModel);
 
             if (!realmModel.getImage().isEmpty()) {
 
@@ -325,7 +341,7 @@ public class EditProfile extends BaseFragment{
             String message = editProfileResponse.getMessage();
 
             if (message.equals("success")) {
-                getActivity().onBackPressed();
+                ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
             } else {
                 showLongToast(getActivity(), message);
             }

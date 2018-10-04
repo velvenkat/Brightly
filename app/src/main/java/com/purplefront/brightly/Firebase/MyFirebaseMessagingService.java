@@ -7,41 +7,24 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.purplefront.brightly.Activities.MyChannel;
-import com.purplefront.brightly.Activities.MySetCards;
-import com.purplefront.brightly.Fragments.Notifications;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
+import com.purplefront.brightly.Fragments.CardDetailFragment;
 import com.purplefront.brightly.Modules.NotificationsModel;
-import com.purplefront.brightly.Modules.NotificationsSetDetail;
 import com.purplefront.brightly.R;
-import com.purplefront.brightly.SplashScreen;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.StringReader;
 import java.util.List;
-
-
-
-import static android.app.Notification.DEFAULT_VIBRATE;
 
 
 /**
@@ -98,25 +81,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             if((gsonObj.getType().equals("set")) && gsonObj.getAction().equals("deleted")) {
 
-                intent = new Intent(this, MyChannel.class);
+                intent = new Intent(this, BrightlyNavigationActivity.class);
 //                Toast.makeText(this, "This Set is Deleted...", Toast.LENGTH_SHORT).show();
 
             }
             else if((gsonObj.getType().equals("card")) && gsonObj.getAction().equals("deleted")) {
 
-                intent = new Intent(this, MyChannel.class);
+                intent = new Intent(this, BrightlyNavigationActivity.class);
 //                Toast.makeText(this, "This Card is Deleted...", Toast.LENGTH_SHORT).show();
 
             }
             else if(gsonObj.getAction().equals("revoked"))
             {
-                intent = new Intent(this, MyChannel.class);
+                intent = new Intent(this, BrightlyNavigationActivity.class);
 //                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
             }
 
             else
             {
-                 intent = new Intent(this, MySetCards.class);
+                 intent = new Intent(this, CardDetailFragment.class);
 
             }
 
@@ -161,25 +144,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d("DAFARE", "DAFARE");
             if((gsonObj.getType().equals("set")) && gsonObj.getAction().equals("deleted")) {
 
-                intent = new Intent(this, MyChannel.class);
+                intent = new Intent(this, BrightlyNavigationActivity.class);
 //                Toast.makeText(this, "This Set is Deleted...", Toast.LENGTH_SHORT).show();
 
             }
             else if((gsonObj.getType().equals("card")) && gsonObj.getAction().equals("deleted")) {
 
-                intent = new Intent(this, MyChannel.class);
+                intent = new Intent(this, BrightlyNavigationActivity.class);
 //                Toast.makeText(this, "This Card is Deleted...", Toast.LENGTH_SHORT).show();
 
             }
             else if(gsonObj.getAction().equals("revoked"))
             {
-                intent = new Intent(this, MyChannel.class);
+                intent = new Intent(this, BrightlyNavigationActivity.class);
 //                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
             }
 
             else
             {
-                intent = new Intent(this, MySetCards.class);
+                intent = new Intent(this, CardDetailFragment.class);
 
             }
 

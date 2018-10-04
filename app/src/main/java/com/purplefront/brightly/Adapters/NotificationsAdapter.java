@@ -3,7 +3,9 @@ package com.purplefront.brightly.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,8 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.purplefront.brightly.Activities.MyChannel;
-import com.purplefront.brightly.Activities.MySetCards;
+import com.purplefront.brightly.Fragments.CardDetailFragment;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.NotificationsSetDetail;
 import com.purplefront.brightly.R;
@@ -34,15 +35,16 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     String userId;
     String channel_id = "";
+    MessagePassInterface mListener;
 
 
-
-    public NotificationsAdapter(FragmentActivity activity, List<NotificationsModel> notificationsModels, String user_ID) {
+    public NotificationsAdapter(MessagePassInterface listener,FragmentActivity activity, List<NotificationsModel> notificationsModels, String user_ID) {
 
         this.context = activity;
         this.userId = user_ID;
         this.notificationsModels = notificationsModels;
         inflater = (LayoutInflater.from(context));
+        mListener=listener;
     }
 
     @NonNull
@@ -121,12 +123,17 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                 else
                 {
-                    Intent intent = new Intent(context, MySetCards.class);
+                    /*Intent intent = new Intent(context, CardDetailFragment.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("notfy_modl_obj", notificationsModel);
                     intent.putExtra("isNotification", true);
                     context.startActivity(intent);
-                    context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                    context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    Fragment fragment=new CardDetailFragment();
+                    Bundle bundle =new Bundle();
+                    bundle.putParcelable("notfy_modl_obj", notificationsModel);
+                    bundle.putBoolean("isNotification", true);
+                    mListener.onMessagePass(fragment);
                 }
 
             }
@@ -154,5 +161,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             notification_dateTime = itemView.findViewById(R.id.notification_dateTime);
             notification_layout = itemView.findViewById(R.id.notification_layout);
         }
+    }
+
+    public interface MessagePassInterface{
+        public void onMessagePass(Fragment fragment);
     }
 }

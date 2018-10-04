@@ -1,15 +1,19 @@
-package com.purplefront.brightly.Activities;
+package com.purplefront.brightly.Fragments;
 
-import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -20,6 +24,7 @@ import android.widget.Toast;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Adapters.SetsAdapter;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.AddMessageResponse;
@@ -28,17 +33,19 @@ import com.purplefront.brightly.Modules.SetListResponse;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+
+import javax.annotation.Nullable;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_interface, BaseActivity.alert_dlg_interface {
+public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_interface, BaseFragment.alert_dlg_interface {
 
     ArrayList<SetsListModel> setsListModelList = new ArrayList<>();
     SetsAdapter channelsSetAdapter;
@@ -66,80 +73,63 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     CheckBox chk_sel_all;
     ChannelListModel chl_list_obj;
 
-    ImageView img_mutli_sel;
+    //ImageView img_mutli_sel;
+    View rootView;
     boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
+   // ActionBarUtil actionBarUtilObj;
 
-   // boolean isMultiSelChoosed;
-
+    RealmModel user_obj;
+    // boolean isMultiSelChoosed;
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_channels_set);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        realm = Realm.getDefaultInstance();
-        del_contr = (RelativeLayout) findViewById(R.id.set_del_contr);
-        btn_cancel = (Button) findViewById(R.id.btn_cancel);
-        btn_delete = (Button) findViewById(R.id.btn_delete);
-        chk_sel_all = (CheckBox) findViewById(R.id.chk_sel_all);
-        img_mutli_sel=(ImageView)findViewById(R.id.menu_multi_sel);
-        realmModel = realm.where(RealmModel.class).findAllAsync();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.activity_my_channels_set, container, false);
+        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+
+
+       // realm = Realm.getDefaultInstance();
+        Bundle bundle=getArguments();
+        del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
+        btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
+        btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
+        chk_sel_all = (CheckBox) rootView.findViewById(R.id.chk_sel_all);
+        setHasOptionsMenu(true);
+      /*  realmModel = realm.where(RealmModel.class).findAllAsync();
         realmModel.load();
         for (RealmModel model : realmModel) {
             userId = model.getUser_Id();
         }
-
+*/
        /* channel_id = getIntent().getStringExtra("channel_id");
         channel_name = getIntent().getStringExtra("channel_name");
         channel_description = getIntent().getStringExtra("channel_description");
         encoded_string = getIntent().getStringExtra("encoded_string");
         image_name = getIntent().getStringExtra("image_name");*/
 
-        chl_list_obj=getIntent().getParcelableExtra("model_obj");
-        channel_id=chl_list_obj.getChannel_id();
-        channel_name=chl_list_obj.getChannel_name();
-        channel_description=chl_list_obj.getDescription();
-        encoded_string=chl_list_obj.getCover_image();
-        image_name=chl_list_obj.getImage_name();
+        userId=user_obj.getUser_Id();
+        chl_list_obj = bundle.getParcelable("model_obj");
+        channel_id = chl_list_obj.getChannel_id();
+        channel_name = chl_list_obj.getChannel_name();
+        channel_description = chl_list_obj.getDescription();
+        encoded_string = chl_list_obj.getCover_image();
+        image_name = chl_list_obj.getImage_name();
         Created_By = chl_list_obj.getCreated_by();
 
-        view_nodata = (TextView) findViewById(R.id.view_nodata);
-        txtItemSel = (TextView) findViewById(R.id.txtCntSelected);
-        channelSet_listview = (RecyclerView) findViewById(R.id.channelSet_listview);
-        setTitle(channel_name);
-
-        image_createChannelSet = (ImageView) findViewById(R.id.image_createChannelSet);
+        view_nodata = (TextView)rootView. findViewById(R.id.view_nodata);
+        txtItemSel = (TextView) rootView.findViewById(R.id.txtCntSelected);
+        channelSet_listview = (RecyclerView)rootView. findViewById(R.id.channelSet_listview);
+        //setTitle(channel_name);
+       /* actionBarUtilObj.setViewInvisible();
+        actionBarUtilObj.getTitle().setVisibility(View.VISIBLE);*/
+        ((BrightlyNavigationActivity)getActivity()).getSupportActionBar().setTitle(channel_name);
+        ((BrightlyNavigationActivity)getActivity()).getSupportActionBar().setSubtitle(null);
+        image_createChannelSet = (ImageView)rootView. findViewById(R.id.image_createChannelSet);
         setDlgListener(this);
-        if(!userId.equalsIgnoreCase(chl_list_obj.getCreated_by())){
-            img_mutli_sel.setVisibility(View.GONE);
+        if (!userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
+            //img_mutli_sel.setVisibility(View.GONE);
             image_createChannelSet.setVisibility(View.GONE);
         }
-        img_mutli_sel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(MyChannelsSet.this,"HI",Toast.LENGTH_LONG).show();
-                if(setsListModelList.size()>0) {
-                    getSupportActionBar().hide();
-                    del_contr.setVisibility(View.VISIBLE);
-                    txtItemSel.setText("");
-                    btn_delete.setEnabled(false);
-                    if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
-                    ith.attachToRecyclerView(null);
-                    channelsSetAdapter.set_SelToDel(true);
-                    channelsSetAdapter.notifyDataSetChanged();
-                    // isMultiSelChoosed=true;
-                    //   ith = new ItemTouchHelper(dragCallback);
 
-                }
-                else {
-
-                }
-
-
-            }
-        });
         chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -218,8 +208,8 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                 }
                 channelsSetAdapter.set_SelToDel(false);
                 channelsSetAdapter.notifyDataSetChanged();
-                if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
-                ith.attachToRecyclerView(channelSet_listview);
+                if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
+                    ith.attachToRecyclerView(channelSet_listview);
             }
         });
 // Extend the Callback class
@@ -262,7 +252,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
         ith.attachToRecyclerView(channelSet_listview);
 */
-        if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
+        if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
             ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
 
                 int dragFrom = -1;
@@ -338,29 +328,34 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(MyChannelsSet.this, CreateSet.class);
+              /*  Intent intent = new Intent(SetsFragment.this, CreateSet.class);
                 intent.putExtra("userId", userId);
                 intent.putExtra("model_obj", chl_list_obj);
                 startActivity(intent);
                 finish();
                 onBackPressed();
-                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+              Fragment create_set_frag=new CreateSet();
+              Bundle bundle1=new Bundle();
+              bundle1.putParcelable("model_obj", chl_list_obj);
+              create_set_frag.setArguments(bundle1);
+              ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Create_Set,create_set_frag,true);
             }
         });
 
         getSetLists();
 
+      return rootView;
     }
-
 
 
     public void getSetLists() {
         try {
 
-            if (CheckNetworkConnection.isOnline(MyChannelsSet.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<SetListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannelsSet.this).getMySetsList(userId, channel_id);
-                callRegisterUser.enqueue(new ApiCallback<SetListResponse>(MyChannelsSet.this) {
+                Call<SetListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getMySetsList(userId, channel_id);
+                callRegisterUser.enqueue(new ApiCallback<SetListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SetListResponse> response, boolean isSuccess, String message) {
                         SetListResponse setListResponse = response.body();
@@ -379,7 +374,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
                             }
 
                         } else {
-                            showLongToast(MyChannelsSet.this, message);
+                            showLongToast(getActivity(), message);
                             dismissProgress();
                         }
                     }
@@ -415,14 +410,14 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         }
         try {
 
-            if (CheckNetworkConnection.isOnline(MyChannelsSet.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannelsSet.this).set_reorder_set(userId, setId);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(MyChannelsSet.this) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).set_reorder_set(userId, setId);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         dismissProgress();
-                        Toast.makeText(MyChannelsSet.this, "Message:" + response.message(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Message:" + response.message(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -435,7 +430,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
 
                 dismissProgress();
             }*/ else {
-                Toast.makeText(MyChannelsSet.this, "Check network connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Check network connection", Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -446,7 +441,7 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     }
 
     public void reset_view() {
-        getSupportActionBar().show();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         del_contr.setVisibility(View.GONE);
         del_sel_id = new ArrayList<>();
 
@@ -456,8 +451,8 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
 
     private void setAdapter(ArrayList<SetsListModel> setsListModels) {
 
-        channelSet_listview.setLayoutManager(new GridLayoutManager(MyChannelsSet.this, 3));
-        channelsSetAdapter = new SetsAdapter(MyChannelsSet.this, setsListModels, chl_list_obj, this);
+        channelSet_listview.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        channelsSetAdapter = new SetsAdapter(getContext(), setsListModels, chl_list_obj, this);
         channelSet_listview.setAdapter(channelsSetAdapter);
         //  channelsSetAdapter.notifyDataSetChanged();
     }
@@ -465,10 +460,10 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     public void call_api_del_multi_set() {
         try {
 
-            if (CheckNetworkConnection.isOnline(MyChannelsSet.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(MyChannelsSet.this).getDeleteSet(strDelSelId);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(MyChannelsSet.this) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteSet(strDelSelId);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         AddMessageResponse deleteSetResponse = response.body();
@@ -507,14 +502,14 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-       // if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
+        // if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
         if (userId.equalsIgnoreCase(Created_By)) {
-            getMenuInflater().inflate(R.menu.my_channel_set, menu);
-        }else
-            getMenuInflater().inflate(R.menu.my_channel_sub_set, menu);
-            return true;
+            inflater.inflate(R.menu.my_channel_set, menu);
+        } else
+           inflater.inflate(R.menu.my_channel_sub_set, menu);
+     //   return true;
 
     }
 
@@ -523,22 +518,45 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         switch (item.getItemId()) {
             case android.R.id.home:
                 // app icon in action bar clicked; goto parent activity.
-                this.finish();
-                overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+               /* this.finish();
+                overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+                ((AppCompatActivity)getActivity()).getSupportFragmentManager().popBackStackImmediate();
                 return true;
+            case R.id.action_multi_sel:
 
+                if (setsListModelList.size() > 0) {
+                    ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+                    del_contr.setVisibility(View.VISIBLE);
+                    txtItemSel.setText("");
+                    btn_delete.setEnabled(false);
+                    if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
+                        ith.attachToRecyclerView(null);
+                    channelsSetAdapter.set_SelToDel(true);
+                    channelsSetAdapter.notifyDataSetChanged();
+                    // isMultiSelChoosed=true;
+                    //   ith = new ItemTouchHelper(dragCallback);
+
+                } else {
+
+                }
+
+                return true;
             case R.id.channelInfo_Edit:
-                Intent intent = new Intent(MyChannelsSet.this, EditChannelInfo.class);
+               /* Intent intent = new Intent(SetsFragment.this, EditChannelInfo.class);
                 intent.putExtra("userId", userId);
-              /*  intent.putExtra("channel_name", channel_name);
+              *//*  intent.putExtra("channel_name", channel_name);
                 intent.putExtra("channel_description", channel_description);
                 intent.putExtra("encoded_string", encoded_string);
                 intent.putExtra("image_name", image_name);
-                intent.putExtra("channel_id", channel_id);*/
-                intent.putExtra("model_obj",chl_list_obj);
+                intent.putExtra("channel_id", channel_id);*//*
+                intent.putExtra("model_obj", chl_list_obj);
                 startActivity(intent);
-                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
-
+                overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                Fragment fragment=new EditChannelInfo();
+                Bundle bundle=new Bundle();
+                bundle.putParcelable("model_obj", chl_list_obj);
+                fragment.setArguments(bundle);
+                ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Edit_Channel,fragment,true);
                 return true;
 
             default:
@@ -547,12 +565,12 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
     }
 
 
-    @Override
+  /*  @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-    }
+    }*/
 
     @Override
     public void onSelect(int position, SetsListModel modelObj) {
@@ -597,6 +615,11 @@ public class MyChannelsSet extends BaseActivity implements SetsAdapter.Set_sel_i
         setsListModelList.add(position, modelObj);
         channelsSetAdapter.notifyDataSetChanged();
         // Toast.makeText(MyChannelsSet.this,"Selected set id:"+Sel_id,Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onCardShow(Fragment call_frag) {
+        ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.view_card,call_frag,false);
     }
 
     @Override

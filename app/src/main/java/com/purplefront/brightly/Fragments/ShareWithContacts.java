@@ -1,31 +1,26 @@
-package com.purplefront.brightly.Activities;
+package com.purplefront.brightly.Fragments;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.Intent;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 
@@ -33,26 +28,29 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Adapters.ContactsAdapter;
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.SetsListModel;
-import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.Util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
+
+import javax.annotation.Nullable;
 
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ShareWithContacts extends BaseActivity {
+import static android.content.Context.MODE_PRIVATE;
+
+public class ShareWithContacts extends BaseFragment {
 
     private static final int REQUEST_PERMISSION = 1;
 
@@ -74,30 +72,38 @@ public class ShareWithContacts extends BaseActivity {
     String share_link;
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
+   // ActionBarUtil actionBarUtilObj;
+    RealmModel user_obj;
+    View rootView;
 
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_share_with_contacts);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.activity_share_with_contacts, container, false);
+        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
 
-        contacts_listview = (ListView) findViewById(R.id.contacts_listview);
+//        setContentView(R.layout.activity_share_with_contacts);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        contacts_listview = (ListView)rootView. findViewById(R.id.contacts_listview);
         contacts_listview.setTextFilterEnabled(true);
-        conatcts_searchView = (EditText) findViewById(R.id.conatcts_searchView);
+        conatcts_searchView = (EditText)rootView. findViewById(R.id.conatcts_searchView);
 
-        btn_share = (ImageView) findViewById(R.id.btn_share);
-        btn_sync = (ImageView) findViewById(R.id.btn_sync);
+        btn_share = (ImageView) rootView.findViewById(R.id.btn_share);
+        btn_sync = (ImageView) rootView.findViewById(R.id.btn_sync);
 
-        chl_list_obj = getIntent().getParcelableExtra("model_obj");
-        setsListModel = getIntent().getParcelableExtra("setsListModel");
+        Bundle bundle =getArguments();
+        chl_list_obj = bundle.getParcelable("model_obj");
+        setsListModel = bundle.getParcelable("setsListModel");
         set_description = setsListModel.getDescription();
         set_name = setsListModel.getSet_name();
         set_id = setsListModel.getSet_id();
         share_link = setsListModel.getShare_link();
-        userId = getIntent().getStringExtra("userId");
+        userId = user_obj.getUser_Id();
 
-
-        SharedPreferences mPrefs = getSharedPreferences("contactShares", MODE_PRIVATE);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Share with Contacts");
+        SharedPreferences mPrefs = getActivity().getSharedPreferences("contactShares", MODE_PRIVATE);
         Gson gson = new Gson();
         String json = mPrefs.getString("contactShares", "");
         Type type = new TypeToken<ArrayList<ContactShare>>() {
@@ -121,8 +127,8 @@ public class ShareWithContacts extends BaseActivity {
 
             @Override
             public void onClick(View view) {
-                showLongToast(ShareWithContacts.this, "Loading New Contacts");
-                if (ActivityCompat.checkSelfPermission(ShareWithContacts.this, android.Manifest.permission.READ_CONTACTS)
+                showLongToast(getActivity(), "Loading New Contacts");
+                if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_CONTACTS)
                         == PackageManager.PERMISSION_GRANTED) {
                     getAllContacts();
                 } else {
@@ -146,7 +152,7 @@ public class ShareWithContacts extends BaseActivity {
                     if (contactAdapter != null) {
                         contactAdapter.filter(text);
                     } else {
-                        Toast.makeText(ShareWithContacts.this, "Could't able to find the Data ,Please try after some time.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Could't able to find the Data ,Please try after some time.", Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -164,6 +170,7 @@ public class ShareWithContacts extends BaseActivity {
                 // TODO Auto-generated method stub
             }
         });
+        return rootView;
 
     }
 
@@ -175,7 +182,7 @@ public class ShareWithContacts extends BaseActivity {
         split_num = android.text.TextUtils.join(",", sel_num);
 
         if (split_num.equals("") || split_num.length() <= 9) {
-            new CustomToast().Show_Toast(ShareWithContacts.this, btn_share,
+            new CustomToast().Show_Toast(getActivity(), btn_share,
                     "Please select the Phone Number.");
 
         }
@@ -191,10 +198,10 @@ public class ShareWithContacts extends BaseActivity {
 
         try {
 
-            if (CheckNetworkConnection.isOnline(ShareWithContacts.this)) {
+            if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(ShareWithContacts.this).getShareSet(userId, set_id, split_num);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(ShareWithContacts.this) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getShareSet(userId, set_id, split_num);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         AddMessageResponse addMessageResponse = response.body();
@@ -238,10 +245,10 @@ public class ShareWithContacts extends BaseActivity {
 
 
         String message = addMessageResponse.getMsg();
-        showLongToast(ShareWithContacts.this, addMessageResponse.getMessage());
+        showLongToast(getActivity(), addMessageResponse.getMessage());
 
         if (message.equals("success")) {
-            Intent intent = new Intent(ShareWithContacts.this, EditSetInfo.class);
+         /*   Intent intent = new Intent(ShareWithContacts.this, EditSetInfo.class);
             intent.putExtra("userId", userId);
             intent.putExtra("model_obj", chl_list_obj);
             intent.putExtra("setsListModel", setsListModel);
@@ -249,21 +256,26 @@ public class ShareWithContacts extends BaseActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
-            overridePendingTransition(R.anim.left_enter, R.anim.right_out);
+            overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            Fragment fragment=new EditSetInfo();
+            Bundle bundle=new Bundle();
+            bundle.putParcelable("model_obj", chl_list_obj);
+            bundle.putParcelable("setsListModel", setsListModel);
+            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Edit_Set,fragment,true);
         } else {
-            showLongToast(ShareWithContacts.this, message);
+            showLongToast(getActivity(), message);
         }
     }
 
 
     protected void requestLocationPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                 android.Manifest.permission.READ_CONTACTS)) {
             // show UI part if you want here to show some rationale !!!
 
         } else {
 
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS,
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS,
                     Manifest.permission.WRITE_CONTACTS}, REQUEST_PERMISSION);
 
           /*  ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS},
@@ -284,7 +296,7 @@ public class ShareWithContacts extends BaseActivity {
 
                 } else {
 
-                    showLongToast(ShareWithContacts.this, "Contacts not Updated. Please provide permission");
+                    showLongToast(getActivity(), "Contacts not Updated. Please provide permission");
                 }
                 return;
             }
@@ -292,17 +304,17 @@ public class ShareWithContacts extends BaseActivity {
         }
     }
 
-    @Override
+   /* @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
         overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-    }
+    }*/
 
     private void getAllContacts() {
 //        showProgress();
         contactShares.clear();
-        ContentResolver contentResolver = getContentResolver();
+        ContentResolver contentResolver = getActivity().getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
@@ -359,7 +371,7 @@ public class ShareWithContacts extends BaseActivity {
             }while (cursor.moveToNext());
 
             setConatcts(contactShares);
-            showLongToast(ShareWithContacts.this, "Contacts Updated");
+            showLongToast(getActivity(), "Contacts Updated");
             cursor.close();
         }
     }
@@ -369,9 +381,9 @@ public class ShareWithContacts extends BaseActivity {
 
         this.getContactShares = contactShares;
 
-        contactAdapter = new ContactsAdapter(ShareWithContacts.this, getContactShares);
+        contactAdapter = new ContactsAdapter(getContext(), getContactShares);
         contacts_listview.setAdapter(contactAdapter);
-        SharedPreferences mPrefs = getSharedPreferences("contactShares", MODE_PRIVATE);
+        SharedPreferences mPrefs = getActivity().getSharedPreferences("contactShares", MODE_PRIVATE);
 //      SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(MyChannel.this);
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
         Gson gson = new Gson();

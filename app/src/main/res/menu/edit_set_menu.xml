@@ -5,8 +5,13 @@
     tools:context="com.purplefront.brightly.Activities.BrightlyNavigationActivity"
     >
     <item
-        android:id="@+id/action_bell"
+        android:id="@+id/action_share"
         app:showAsAction="always"
-        android:icon="@drawable/notification_menu"
-        android:title="@string/alert" />
+        android:icon="@drawable/share_white_icon"
+        android:title="Share" />
+    <item
+        android:id="@+id/action_delete"
+        app:showAsAction="always"
+        android:icon="@drawable/delete_white_icon"
+        android:title="Delete" />
 </menu>
