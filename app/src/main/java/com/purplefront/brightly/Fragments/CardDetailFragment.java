@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -102,7 +103,9 @@ public class CardDetailFragment extends BaseFragment {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 */
-        isNotification = bundle.getBoolean("isNotification", false);
+        if (bundle != null) {
+            isNotification = bundle.getBoolean("isNotification", false);
+        }
 
         if (isNotification) {
             notificationsModel = bundle.getParcelable("notfy_modl_obj");
@@ -171,6 +174,26 @@ public class CardDetailFragment extends BaseFragment {
 
 
         getCardsLists();
+
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                    /*getActivity().finish();*/
+                    Fragment set_frag = new SetsFragment();
+                    Bundle bundle1=new Bundle();
+
+                    bundle1.putParcelable("model_obj", chl_list_obj);
+                    set_frag.setArguments(bundle1);
+
+                    ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List, set_frag, false);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         return rootView;
     }

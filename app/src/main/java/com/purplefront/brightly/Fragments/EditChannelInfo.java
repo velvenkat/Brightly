@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -170,8 +171,22 @@ public class EditChannelInfo extends BaseFragment {
                             .build();
             imageView_editChannelImage.setImageRequest(imageRequest2);*/
         }
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                    //         getActivity().finish();
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                    return true;
+                }
+                return false;
+            }
+        });
 
-return rootView;
+
+        return rootView;
     }
 
     // Check Validation Method

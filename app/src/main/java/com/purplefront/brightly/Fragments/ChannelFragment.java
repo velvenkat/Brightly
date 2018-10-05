@@ -120,6 +120,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     }
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
         getActivity().invalidateOptionsMenu();
         getNotificationCount();
         getActivity().getMenuInflater().inflate(R.menu.my_channel, menu);

@@ -460,12 +460,13 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            /*Fragment fragment=new SetsFragment();
+            Fragment fragment=new CardDetailFragment();
             Bundle bundle=new Bundle();
             bundle.putParcelable("model_obj", chl_list_obj);
+            bundle.putParcelable("setsListModel", setsListModel);
             fragment.setArguments(bundle);
-            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List,fragment,false);*/
-            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.view_card,fragment,false);
+//            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
         } else {
             dismissProgress();
             showLongToast(getActivity(), message);
