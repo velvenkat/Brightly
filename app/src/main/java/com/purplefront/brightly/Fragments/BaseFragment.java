@@ -57,7 +57,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
 
     public void showAlertDialog(String message,String Title,String Pos_Title,String Neg_Title)
     {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
 
         // Setting Dialog Title
         alertDialog.setTitle(Title);
@@ -311,7 +311,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
             mProgress.setIndeterminate(false);
             mProgress.setTitle("Please wait....");
             mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mProgress.setCancelable(true);
+            mProgress.setCancelable(false);
             mProgress.show();
         } catch (Exception e) {
             e.printStackTrace();

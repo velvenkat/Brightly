@@ -60,6 +60,7 @@ public class ViewCardFragmentPagerAdapter extends FragmentStatePagerAdapter
 
                 card_frag = new Multimedia_CardFragment();
 
+
             bundle.putString("set_id", set_id);
             bundle.putString("userId", userId);
             bundle.putString("set_name", set_name);

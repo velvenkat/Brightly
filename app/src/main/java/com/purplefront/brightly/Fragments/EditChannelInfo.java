@@ -81,6 +81,7 @@ public class EditChannelInfo extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_edit_channel_info, container, false);
         user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        setHasOptionsMenu(true);
 //        setContentView(R.layout.activity_edit_channel_info);
        /* Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -286,9 +287,9 @@ public class EditChannelInfo extends BaseFragment {
                         if (isSuccess) {
 
                             if (deleteChannelResponse != null) {
-
-                                setAddChannelCredentials(deleteChannelResponse);
                                 dismissProgress();
+                                setAddChannelCredentials(deleteChannelResponse);
+
 
                             } else {
                                 dismissProgress();
@@ -326,8 +327,9 @@ public class EditChannelInfo extends BaseFragment {
         if (message.equals("success")) {
 /*            stackClearIntent(EditChannelInfo.this, BrightlyNavigationActivity.class);
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            Fragment fragment=new ChannelFragment();
-            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,fragment,false);
+          /*  Fragment fragment=new ChannelFragment();
+            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,fragment,false);*/
+            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true,2);
 
 
         } else {
@@ -496,7 +498,8 @@ public class EditChannelInfo extends BaseFragment {
         if (message.equals("success")) {
           /*  stackClearIntent(EditChannelInfo.this, BrightlyNavigationActivity.class);
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,new ChannelFragment(),false);
+            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true,2);
+     //       ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,new ChannelFragment(),false);
 
 
         } else {

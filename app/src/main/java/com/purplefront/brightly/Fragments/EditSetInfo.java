@@ -187,6 +187,8 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         set_name = edit_setName.getText().toString();
         set_description = edit_setDescription.getText().toString();
 
+
+
         // Check if all strings are null or not
         if (set_name.equals("") || set_name.length() == 0
                 || set_description.equals("") || set_description.length() == 0) {
@@ -340,9 +342,9 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                         if (isSuccess) {
 
                             if (deleteSetResponse != null) {
-
-                                setDeleteCredentials(deleteSetResponse);
                                 dismissProgress();
+                                setDeleteCredentials(deleteSetResponse);
+
 
                             } else {
                                 dismissProgress();
@@ -387,10 +389,11 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             onBackPressed();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
 
-            Fragment fragment=new SetsFragment();
+          /*  Fragment fragment=new SetsFragment();
             Bundle bundle=new Bundle();
             bundle.putParcelable("model_obj", chl_list_obj);
-            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List,fragment,false);
+            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List,fragment,false);*/
+            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true,2);
 
 
 
@@ -460,13 +463,25 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            Fragment fragment=new CardDetailFragment();
+            /*Fragment fragment=new CardDetailFragment();
             Bundle bundle=new Bundle();
             bundle.putParcelable("model_obj", chl_list_obj);
             bundle.putParcelable("setsListModel", setsListModel);
             fragment.setArguments(bundle);
-            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.view_card,fragment,false);
-//            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.view_card,fragment,false);*/
+            if (isNotification) {
+                notificationsModel.getNotificationsSetDetail().setName(set_name);
+                notificationsModel.getNotificationsSetDetail().setDescription(set_description);
+            } else
+            {
+                setsListModel.setSet_name(set_name);
+                setsListModel.setDescription(set_description);
+            }
+            CardDetailFragment Card_dtl_frag=(CardDetailFragment) ((BrightlyNavigationActivity)getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
+            Card_dtl_frag.chl_list_obj=chl_list_obj;
+            Card_dtl_frag.setsListModel=setsListModel;
+            Card_dtl_frag.notificationsModel=notificationsModel;
+            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
         } else {
             dismissProgress();
             showLongToast(getActivity(), message);

@@ -23,6 +23,7 @@ import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Fragments.CardDetailFragment;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.R;
+import com.purplefront.brightly.SplashScreen;
 
 import java.util.List;
 
@@ -81,25 +82,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             if((gsonObj.getType().equals("set")) && gsonObj.getAction().equals("deleted")) {
 
-                intent = new Intent(this, BrightlyNavigationActivity.class);
+                intent = new Intent(this, SplashScreen.class);
 //                Toast.makeText(this, "This Set is Deleted...", Toast.LENGTH_SHORT).show();
 
             }
             else if((gsonObj.getType().equals("card")) && gsonObj.getAction().equals("deleted")) {
 
-                intent = new Intent(this, BrightlyNavigationActivity.class);
+                intent = new Intent(this, SplashScreen.class);
 //                Toast.makeText(this, "This Card is Deleted...", Toast.LENGTH_SHORT).show();
 
             }
             else if(gsonObj.getAction().equals("revoked"))
             {
-                intent = new Intent(this, BrightlyNavigationActivity.class);
+                intent = new Intent(this, SplashScreen.class);
 //                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
             }
 
             else
             {
-                 intent = new Intent(this, CardDetailFragment.class);
+                 intent = new Intent(this, SplashScreen.class);
+                intent.putExtra("isCardNotification",true);
 
             }
 
@@ -109,6 +111,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             intent.putExtra("title_name", remoteMessage.getData().get("title"));*/
            intent.putExtra("isNotification",true);
           intent.putExtra("notfy_modl_obj",gsonObj);
+
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
@@ -144,25 +147,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d("DAFARE", "DAFARE");
             if((gsonObj.getType().equals("set")) && gsonObj.getAction().equals("deleted")) {
 
-                intent = new Intent(this, BrightlyNavigationActivity.class);
+                intent = new Intent(this, SplashScreen.class);
 //                Toast.makeText(this, "This Set is Deleted...", Toast.LENGTH_SHORT).show();
 
             }
             else if((gsonObj.getType().equals("card")) && gsonObj.getAction().equals("deleted")) {
 
-                intent = new Intent(this, BrightlyNavigationActivity.class);
+                intent = new Intent(this, SplashScreen.class);
 //                Toast.makeText(this, "This Card is Deleted...", Toast.LENGTH_SHORT).show();
 
             }
             else if(gsonObj.getAction().equals("revoked"))
             {
-                intent = new Intent(this, BrightlyNavigationActivity.class);
+                intent = new Intent(this, SplashScreen.class);
 //                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
             }
 
             else
             {
-                intent = new Intent(this, CardDetailFragment.class);
+                intent = new Intent(this, SplashScreen.class);
+                intent.putExtra("isCardNotification",true);
 
             }
 

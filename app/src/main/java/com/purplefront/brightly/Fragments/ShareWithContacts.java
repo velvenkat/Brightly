@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,7 +73,7 @@ public class ShareWithContacts extends BaseFragment {
     String share_link;
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
-   // ActionBarUtil actionBarUtilObj;
+    // ActionBarUtil actionBarUtilObj;
     RealmModel user_obj;
     View rootView;
 
@@ -81,19 +82,19 @@ public class ShareWithContacts extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_share_with_contacts, container, false);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
-
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
+        ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
 //        setContentView(R.layout.activity_share_with_contacts);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        contacts_listview = (ListView)rootView. findViewById(R.id.contacts_listview);
+        contacts_listview = (ListView) rootView.findViewById(R.id.contacts_listview);
         contacts_listview.setTextFilterEnabled(true);
-        conatcts_searchView = (EditText)rootView. findViewById(R.id.conatcts_searchView);
+        conatcts_searchView = (EditText) rootView.findViewById(R.id.conatcts_searchView);
 
         btn_share = (ImageView) rootView.findViewById(R.id.btn_share);
         btn_sync = (ImageView) rootView.findViewById(R.id.btn_sync);
 
-        Bundle bundle =getArguments();
+        Bundle bundle = getArguments();
         chl_list_obj = bundle.getParcelable("model_obj");
         setsListModel = bundle.getParcelable("setsListModel");
         set_description = setsListModel.getDescription();
@@ -102,7 +103,7 @@ public class ShareWithContacts extends BaseFragment {
         share_link = setsListModel.getShare_link();
         userId = user_obj.getUser_Id();
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Share with Contacts");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share with Contacts");
         SharedPreferences mPrefs = getActivity().getSharedPreferences("contactShares", MODE_PRIVATE);
         Gson gson = new Gson();
         String json = mPrefs.getString("contactShares", "");
@@ -170,6 +171,20 @@ public class ShareWithContacts extends BaseFragment {
                 // TODO Auto-generated method stub
             }
         });
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
+                    return true;
+                }
+                return false;
+            }
+        });
+
         return rootView;
 
     }
@@ -208,9 +223,9 @@ public class ShareWithContacts extends BaseFragment {
                         if (isSuccess) {
 
                             if (addMessageResponse != null) {
-
-                                setAddSetCredentials(addMessageResponse);
                                 dismissProgress();
+                                setAddSetCredentials(addMessageResponse);
+
 
                             } else {
                                 dismissProgress();
@@ -257,11 +272,7 @@ public class ShareWithContacts extends BaseFragment {
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            Fragment fragment=new EditSetInfo();
-            Bundle bundle=new Bundle();
-            bundle.putParcelable("model_obj", chl_list_obj);
-            bundle.putParcelable("setsListModel", setsListModel);
-            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Edit_Set,fragment,true);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false, 2);
         } else {
             showLongToast(getActivity(), message);
         }
@@ -318,7 +329,7 @@ public class ShareWithContacts extends BaseFragment {
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
-            do{
+            do {
                 int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
                 if (hasPhoneNumber > 0) {
                     String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
@@ -366,9 +377,8 @@ public class ShareWithContacts extends BaseFragment {
                     }*/
 
 
-
                 }
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
 
             setConatcts(contactShares);
             showLongToast(getActivity(), "Contacts Updated");

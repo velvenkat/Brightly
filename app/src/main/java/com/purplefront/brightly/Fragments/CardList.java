@@ -76,6 +76,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 */
+        setHasOptionsMenu(true);
         Bundle bundle = getArguments();
         userId = user_obj.getUser_Id();
         setsListModel = bundle.getParcelable("setsListModel");

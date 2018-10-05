@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
@@ -64,6 +65,16 @@ public class CardDetailFragment extends BaseFragment {
     String userId;
     String channel_id = "";
     String channel_name = "";
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!hidden){
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(channel_name);
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(setsListModel.getSet_name());
+        }
+    }
+
     String set_description = "";
     String set_name = "";
     String set_id = "";
@@ -84,6 +95,7 @@ public class CardDetailFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_my_set_cards, container, false);
         //  setContentView(R.layout.activity_my_set_cards);
+       Toast.makeText(getContext(),"On Create Called",Toast.LENGTH_LONG).show();
         user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
         setHasOptionsMenu(true);
         userId = user_obj.getUser_Id();
@@ -175,13 +187,13 @@ public class CardDetailFragment extends BaseFragment {
 
         getCardsLists();
 
-        rootView.setFocusableInTouchMode(true);
+      /*  rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
         rootView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
-                    /*getActivity().finish();*/
+                    *//*getActivity().finish();*//*
                     Fragment set_frag = new SetsFragment();
                     Bundle bundle1=new Bundle();
 
@@ -193,7 +205,7 @@ public class CardDetailFragment extends BaseFragment {
                 }
                 return false;
             }
-        });
+        });*/
 
         return rootView;
     }

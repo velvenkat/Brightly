@@ -17,6 +17,7 @@ import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -37,11 +38,14 @@ import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.BadgeDrawable;
+import com.purplefront.brightly.Fragments.CardDetailFragment;
 import com.purplefront.brightly.Fragments.ChannelFragment;
+import com.purplefront.brightly.Fragments.EditSetInfo;
 import com.purplefront.brightly.Fragments.MyProfile;
 import com.purplefront.brightly.Fragments.Notifications;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ContactShare;
+import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.NotificationsResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -83,11 +87,15 @@ public class BrightlyNavigationActivity extends BaseActivity
     String count = "0";
     String deviceToken;
 
-    boolean isNotification;
+    boolean isNotification=false;
     View target_menu;
+    boolean isCardNotification=false;
 
     private RealmModel user_obj;
-
+    /**Default true
+     *
+     */
+    public  boolean DisableBackBtn=true;  //Default should be true
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +103,7 @@ public class BrightlyNavigationActivity extends BaseActivity
         setContentView(R.layout.activity_navigation);
 
         isNotification = getIntent().getBooleanExtra("isNotification", false);
+        isCardNotification=getIntent().getBooleanExtra("isCardNotification",false);
 
 
         user_obj = getIntent().getParcelableExtra("user_obj");
@@ -142,14 +151,25 @@ public class BrightlyNavigationActivity extends BaseActivity
 
 
         if (isNotification) {
-            Fragment nfy_frag = new Notifications();
+            if(isCardNotification){
+                NotificationsModel nfy_model=getIntent().getParcelableExtra("notfy_modl_obj");
+               Fragment card_frag=new CardDetailFragment();
+               Bundle bundle=new Bundle();
+               bundle.putBoolean("isNotification",true);
+               bundle.putParcelable("notfy_modl_obj",nfy_model);
+               card_frag.setArguments(bundle);
+                onFragmentCall(Util.view_card, card_frag, false);
+            }
+            else {
+                Fragment nfy_frag = new Notifications();
             /*fragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
                     .replace(R.id.frag_container, new Notifications(),
                             Util.NOTIFICATIONS).commit();
 */
-            onFragmentCall(Util.NOTIFICATIONS, nfy_frag, false);
+                onFragmentCall(Util.NOTIFICATIONS, nfy_frag, false);
+            }
             // setActionBarTitle("Notification");
             // frag_container.setVisibility(View.VISIBLE);
 
@@ -575,10 +595,30 @@ public class BrightlyNavigationActivity extends BaseActivity
 
 
         }
+
         getSupportFragmentManager().popBackStackImmediate();
 
     }
 
+    /**Removing back stack multiple manner acheive by counts given on PopBackStackCount Parameter
+     *
+     * @param DisableHomeBtn
+     * @param PopBackStackCount
+     */
+    public void onFragmentBackKeyHandler(boolean DisableHomeBtn,int PopBackStackCount) {
+       for(int i=0;i<PopBackStackCount;i++){
+           getSupportFragmentManager().popBackStackImmediate();
+       }
+
+        if (DisableHomeBtn) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            toggle.setDrawerIndicatorEnabled(true);
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+
+        }
+
+    }
     public void onFragmentCall(String tag, Fragment call_fragment, boolean enableHomeBtn) {
         if (enableHomeBtn) {
             // Remove hamburger
@@ -587,10 +627,13 @@ public class BrightlyNavigationActivity extends BaseActivity
             toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                    if(DisableBackBtn) {
+                        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-                    toggle.setDrawerIndicatorEnabled(true);
-                    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                        toggle.setDrawerIndicatorEnabled(true);
+                        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                    }
+
                     onBackPressed();
                 }
             });
@@ -608,14 +651,21 @@ public class BrightlyNavigationActivity extends BaseActivity
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
         }
+        FragmentTransaction transaction=fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
+        if(call_fragment instanceof EditSetInfo){
+            Fragment card_dtl_frag=fragmentManager.findFragmentByTag(Util.view_card);
+            transaction.hide(card_dtl_frag);
+            transaction.addToBackStack(tag);
+            transaction.add(R.id.frag_container, call_fragment, tag).commit();
+        }
+          else {
+            transaction
 
-        fragmentManager
-                .beginTransaction()
-
-                .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
-                .addToBackStack(tag)
-                .replace(R.id.frag_container, call_fragment,
-                        tag).commit();
+                    .addToBackStack(tag)
+                    .replace(R.id.frag_container, call_fragment,
+                            tag).commit();
+        }
     }
 
 
