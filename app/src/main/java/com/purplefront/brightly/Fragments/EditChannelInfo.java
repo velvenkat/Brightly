@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -72,7 +73,10 @@ public class EditChannelInfo extends BaseFragment {
     ChannelListModel chl_modl_obj;
     ImageChooser_Crop imgImageChooser_crop;
     View rootView;
+    TextView shared_by;
 
+    String sharedName;
+    String shareTime;
 
     RealmModel user_obj;
 
@@ -103,12 +107,15 @@ public class EditChannelInfo extends BaseFragment {
         channel_description = chl_modl_obj.getDescription();
         encoded_string = chl_modl_obj.getCover_image();
         image_name = chl_modl_obj.getImage_name();
+        sharedName = chl_modl_obj.getShared_by();
+        shareTime = chl_modl_obj.getShared_time();
 
 
         imageView_editChannelImage = (SimpleDraweeView)rootView. findViewById(R.id.imageView_editChannelImage);
         edit_channelName = (EditText) rootView.findViewById(R.id.edit_channelName);
         edit_channelDescription = (EditText) rootView.findViewById(R.id.edit_channelDescription);
         btn_editChannel = (Button) rootView.findViewById(R.id.btn_editChannel);
+        shared_by = (TextView) rootView.findViewById(R.id.shared_by);
 
         edit_channelName.setText(channel_name);
         edit_channelDescription.setText(channel_description);
@@ -117,10 +124,13 @@ public class EditChannelInfo extends BaseFragment {
             edit_channelName.setEnabled(false);
             edit_channelDescription.setEnabled(false);
             btn_editChannel.setVisibility(View.GONE);
+            shared_by.setVisibility(View.VISIBLE);
+            shared_by.setText("Shared by : " + sharedName+ "\n" +"On : " +shareTime);
           //  setTitle("Channel Info");
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Channel Info");
         }
         else {
+            shared_by.setVisibility(View.GONE);
             btn_editChannel.setVisibility(View.VISIBLE);
          //   setTitle("Edit Channel Info");
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Edit Channel Info");

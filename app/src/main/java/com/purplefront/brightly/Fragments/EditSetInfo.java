@@ -95,7 +95,10 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         setTitle("Edit Set Info");
 */
         Bundle bundle =getArguments();
-        isNotification = bundle.getBoolean("isNotification", false);
+
+        if (bundle != null) {
+            isNotification = bundle.getBoolean("isNotification", false);
+        }
 
         if (isNotification) {
             notificationsModel = bundle.getParcelable("notfy_modl_obj");
@@ -541,7 +544,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         if (!setsListModel.getShared_data().isEmpty() && setsListModel.getShared_data() != null) {
             text_share_title.setVisibility(View.VISIBLE);
             shared_listview.setLayoutManager(new LinearLayoutManager(getContext()));
-            sharedListAdapter = new SharedListAdapter(getContext(), infoSharedResponse.getShared_data(), set_id,this);
+            sharedListAdapter = new SharedListAdapter(getContext(), infoSharedResponse.getShared_data(), set_id, share_link,this);
             shared_listview.setAdapter(sharedListAdapter);
             dismissProgress();
         } else {

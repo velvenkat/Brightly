@@ -20,6 +20,15 @@ public class SharedDataModel implements Parcelable{
     @Expose
     private String phone;
 
+    @SerializedName("shared_by")
+    @Expose
+    private String shared_by;
+
+    @SerializedName("instlled")
+    @Expose
+    private String instlled;
+
+
     public SharedDataModel(String id, String name, String phone) {
         this.id = id;
         this.name = name;
@@ -30,6 +39,9 @@ public class SharedDataModel implements Parcelable{
         id = in.readString();
         name = in.readString();
         phone = in.readString();
+        shared_by = in.readString();
+        instlled = in.readString();
+
     }
 
     public static final Creator<SharedDataModel> CREATOR = new Creator<SharedDataModel>() {
@@ -68,6 +80,22 @@ public class SharedDataModel implements Parcelable{
         this.phone = phone;
     }
 
+    public String getShared_by() {
+        return shared_by;
+    }
+
+    public void setShared_by(String shared_by) {
+        this.shared_by = shared_by;
+    }
+
+    public String getInstlled() {
+        return instlled;
+    }
+
+    public void setInstlled(String instlled) {
+        this.instlled = instlled;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -78,5 +106,7 @@ public class SharedDataModel implements Parcelable{
         parcel.writeString(id);
         parcel.writeString(name);
         parcel.writeString(phone);
+        parcel.writeString(shared_by);
+        parcel.writeString(instlled);
     }
 }

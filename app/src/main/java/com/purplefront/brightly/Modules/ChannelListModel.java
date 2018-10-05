@@ -32,6 +32,14 @@ public class ChannelListModel implements Parcelable {
     @Expose
     private String total_set_count;
 
+    @SerializedName("shared_by")
+    @Expose
+    private String shared_by;
+
+    @SerializedName("shared_time")
+    @Expose
+    private String shared_time;
+
 
 
     protected ChannelListModel(Parcel in) {
@@ -44,6 +52,8 @@ public class ChannelListModel implements Parcelable {
         created_time = in.readString();
         created_date = in.readString();
         total_set_count = in.readString();
+        shared_by = in.readString();
+        shared_time = in.readString();
     }
 
     public static final Creator<ChannelListModel> CREATOR = new Creator<ChannelListModel>() {
@@ -82,6 +92,22 @@ public class ChannelListModel implements Parcelable {
         this.created_date = created_date;
     }
 
+    public String getShared_by() {
+        return shared_by;
+    }
+
+    public void setShared_by(String shared_by) {
+        this.shared_by = shared_by;
+    }
+
+    public String getShared_time() {
+        return shared_time;
+    }
+
+    public void setShared_time(String shared_time) {
+        this.shared_time = shared_time;
+    }
+
     @SerializedName("created_by")
     @Expose
     private String created_by;
@@ -95,13 +121,15 @@ public class ChannelListModel implements Parcelable {
     private String created_date;
 
 
-    public ChannelListModel(String channel_id, String channel_name, String description, String cover_image, String image_name, String total_set_count) {
+    public ChannelListModel(String channel_id, String channel_name, String description, String cover_image, String image_name, String total_set_count, String shared_by, String shared_time) {
         this.channel_id = channel_id;
         this.channel_name = channel_name;
         this.description = description;
         this.cover_image = cover_image;
         this.image_name = image_name;
         this.total_set_count = total_set_count;
+        this.shared_by = shared_by;
+        this.shared_time = shared_time;
     }
 
     public String getChannel_id() {
@@ -168,5 +196,7 @@ public class ChannelListModel implements Parcelable {
         dest.writeString(created_time);
         dest.writeString(created_date);
         dest.writeString(total_set_count);
+        dest.writeString(shared_by);
+        dest.writeString(shared_time);
     }
 }

@@ -234,7 +234,7 @@ public class BrightlyNavigationActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //getChannelsLists();
-        MaterialShowcaseView.resetSingleUse(BrightlyNavigationActivity.this, SHOWCASE_ID);
+//        MaterialShowcaseView.resetSingleUse(BrightlyNavigationActivity.this, SHOWCASE_ID);
 //        ShowcaseSingle();
         MultipleShowcase();
     }

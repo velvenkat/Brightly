@@ -72,13 +72,27 @@
     <Button
         android:id="@+id/btn_editChannel"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.4"
+        android:layout_height="45dp"
         android:background="@drawable/login_btn_background"
         android:padding="3dp"
         android:text="@string/edit_channel"
         android:textColor="@color/white"
         android:textSize="@dimen/mediumtextsize"
         />
+
+    <TextView
+        android:id="@+id/shared_by"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.4"
+        android:textColor="@color/black"
+        android:layout_marginTop="@dimen/dimen_10"
+        android:layout_marginLeft="@dimen/dimen_16"
+        android:layout_marginRight="@dimen/dimen_16"
+        android:visibility="gone"
+        android:textStyle="bold"
+        />
+
+
 
 </LinearLayout>
