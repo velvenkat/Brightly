@@ -178,7 +178,7 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
 
         Fragment create_UTubeType = new YoutubeType();
         create_UTubeType.setArguments(bundle);
-        adapter.addFrag(create_UTubeType, "youtube");
+        adapter.addFrag(create_UTubeType, "video");
 
 //        adapter.addFrag(new YoutubeType(), "youtube");
 

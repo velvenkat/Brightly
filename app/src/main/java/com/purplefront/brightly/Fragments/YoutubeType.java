@@ -69,7 +69,7 @@ public class YoutubeType extends BaseFragment {
         Bundle bundle=getArguments();
         setEntryModel=bundle.getParcelable("set_entry_obj");
         isCreateCard=bundle.getBoolean("isCreate");
-
+        userId=user_obj.getUser_Id();
         set_id = setEntryModel.getSet_id();
         set_name = setEntryModel.getSet_name();
 
