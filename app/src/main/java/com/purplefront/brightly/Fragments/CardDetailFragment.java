@@ -275,7 +275,26 @@ public class CardDetailFragment extends BaseFragment {
         // Pass results to ViewPagerAdapter Class
         // cardsPagerAdapter = new ViewPagerAdapter(MySetCards.this, cardsListModels, set_id, userId, set_name);
         // Binds the Adapter to the ViewPager
-        cardsPagerAdapter = new ViewCardFragmentPagerAdapter(getContext(), getChildFragmentManager(), cardsListModels, set_id, userId, set_name);
+        List<Fragment> cardFragList=new ArrayList<>();
+        for(int i=0;i<cardsListModels.size();i++){
+            Fragment card_frag = null;
+
+                CardsListModel cardObj = cardsListModels.get(i);
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("card_mdl_obj", cardObj);
+
+
+                card_frag = new Multimedia_CardFragment();
+
+
+                bundle.putString("set_id", set_id);
+                bundle.putString("userId", userId);
+                bundle.putString("set_name", set_name);
+                card_frag.setArguments(bundle);
+            cardFragList.add(card_frag);
+        }
+        cardsPagerAdapter = new ViewCardFragmentPagerAdapter(getContext(), getChildFragmentManager(), cardFragList, set_id, userId, set_name);
         viewPager_Cards.setAdapter(cardsPagerAdapter);
         // cardsPagerAdapter.notifyDataSetChanged();
         viewPager_Cards.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

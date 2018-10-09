@@ -39,7 +39,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     YouTubePlayer UTubePlayer;
     YouTubePlayerSupportFragment youTubePlayerFragment;
     RelativeLayout rl_audio_player;
-    String DEVELOPER_KEY="AIzaSyDPwTq4xr0Fq-e1z0tDEBaj3qgAgi5VJ44";
+    String DEVELOPER_KEY = "AIzaSyDPwTq4xr0Fq-e1z0tDEBaj3qgAgi5VJ44";
     ImageView img_audio_play_stop;
     SeekBar audio_seek_bar;
     TextView txt_PlayProgTime;
@@ -106,7 +106,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
                         LayoutInflater inflater = LayoutInflater.from(getActivity());
                         View imgEntryView = inflater.inflate(R.layout.dialog_fullscreen, null);
-                        final Dialog dialog=new Dialog(getActivity(),android.R.style.Theme_Black_NoTitleBar_Fullscreen); //default fullscreen titlebar
+                        final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen); //default fullscreen titlebar
                         ImageView img = (ImageView) imgEntryView.findViewById(R.id.usericon_large);
 
                         Glide.with(getContext())
@@ -136,16 +136,12 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                         .override(50, 50)*/
                         .into(image_cardImage);
             }
-        }
-        else if (cardModelObj.getType().equalsIgnoreCase("text"))
-        {
+        } else if (cardModelObj.getType().equalsIgnoreCase("text")) {
             image_cardImage.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
-        }
-        else if (cardModelObj.getType().equalsIgnoreCase("video"))
-        {
+        } else if (cardModelObj.getType().equalsIgnoreCase("video")) {
             image_cardImage.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.VISIBLE);
             rl_audio_player.setVisibility(View.GONE);
@@ -164,17 +160,14 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             frame_youtube.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(UTubePlayer!=null){
-                        if(UTubePlayer.isPlaying()){
+                    if (UTubePlayer != null) {
+                        if (UTubePlayer.isPlaying()) {
                             UTubePlayer.pause();
-                        }
-                        else {
+                        } else {
                             UTubePlayer.play();
                         }
-                        Toast.makeText(getContext(),"Not NULL",Toast.LENGTH_LONG).show();
-                    }
-
-                    else {
+                        Toast.makeText(getContext(), "Not NULL", Toast.LENGTH_LONG).show();
+                    } else {
 
 
                         //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frame_youtube, youTubePlayerFragment,cardModelObj.getName()).addToBackStack(null).commit();
@@ -184,18 +177,16 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
                 }
             });
-        }
-        else if (cardModelObj.getType().equalsIgnoreCase("audio")) {
+        } else if (cardModelObj.getType().equalsIgnoreCase("audio")) {
             image_cardImage.setVisibility(View.VISIBLE);
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.VISIBLE);
             file_cardLink.setVisibility(View.GONE);
             image_cardImage.setImageResource(R.drawable.audio_hdr_img);
 
-            audio_player_initialize(audio_seek_bar,txt_PlayProgTime,img_audio_play_stop);
-            setMediaPlayer(null,cardModelObj.getUrl());
-        }
-        else if(cardModelObj.getType().equalsIgnoreCase("file")){
+            audio_player_initialize(audio_seek_bar, txt_PlayProgTime, img_audio_play_stop);
+            setMediaPlayer(null, cardModelObj.getUrl());
+        } else if (cardModelObj.getType().equalsIgnoreCase("file")) {
 
             image_cardImage.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.GONE);
@@ -231,18 +222,35 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (!isVisibleToUser && UTubePlayer != null) {
-           // Log.v (TAG, "Releasing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
+            // Log.v (TAG, "Releasing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
             UTubePlayer.release();
-            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.remove( youTubePlayerFragment).commit();
+            if (getChildFragmentManager() != null) {
+                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                transaction.remove(youTubePlayerFragment).commit();
+            }
+            UTubePlayer = null;
+        }
+        if (!isVisibleToUser && mediaPlayer != null) {
+            release_media();
+        }
+        if (cardModelObj!=null && cardModelObj.getType().equalsIgnoreCase("audio")) {
+
+            if (isVisibleToUser && mediaPlayer == null && img_play_stop!=null) {
+               // isAudioPlay=false;
+                setMediaPlayer(null, cardModelObj.getUrl());
+            }
+
         }
         if (isVisibleToUser && youTubePlayerFragment != null) {
-          //  Log.v (TAG, "Initializing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
-            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
-            youTubePlayerFragment.initialize(DEVELOPER_KEY, this);
+            //  Log.v (TAG, "Initializing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
+            if (getChildFragmentManager() != null) {
+                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
+                youTubePlayerFragment.initialize(DEVELOPER_KEY, this);
+            }
         }
     }
+
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
 //                            Utils.logDebug(TAG, "onInitializationSuccess");
