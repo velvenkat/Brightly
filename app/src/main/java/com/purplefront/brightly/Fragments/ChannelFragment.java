@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
@@ -32,11 +33,14 @@ import com.purplefront.brightly.Modules.ChannelListResponse;
 import com.purplefront.brightly.Modules.NotificationsResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.CircleTransform;
 import com.purplefront.brightly.Utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -52,9 +56,14 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     View rootView;
     RealmModel user_obj;
 
+    Realm realm;
+    RealmResults<RealmModel> realmModel;
+
   //  ActionBarUtil actionBarUtilObj;
     String count="0";
-
+    String userName;
+    String userPhone;
+    String userPicture;
 
 
     @Nullable
@@ -94,6 +103,38 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                 ((BrightlyNavigationActivity)getActivity()).onFragmentCall( Util.Create_Channel,fragment,true);
             }
         });
+
+        realm = Realm.getDefaultInstance();
+        realmModel = realm.where(RealmModel.class).findAllAsync();
+
+        realmModel.load();
+        for(RealmModel model:realmModel){
+            userName =  model.getUser_Name();
+            userPhone = model.getUser_PhoneNumber();
+            userPicture = model.getImage();
+
+        }
+
+        ((BrightlyNavigationActivity)getActivity()).headerText_Name.setText(userName);
+        ((BrightlyNavigationActivity)getActivity()).headerText_Phone.setText(userPhone);
+
+        if (userPicture != null) {
+
+            Glide.with(getActivity())
+                    .load(userPicture)
+                    .centerCrop()
+                    .transform(new CircleTransform(getActivity()))
+//                        .override(50, 50)
+                    .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
+        } else {
+            Glide.with(getActivity())
+                    .load(R.drawable.default_user_image)
+                    .centerCrop()
+                    .transform(new CircleTransform(getActivity()))
+                    /*.override(50, 50)*/
+                    .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
+        }
+
 
         view_nodata = (TextView)rootView.findViewById(R.id.view_nodata);
         channels_listview = (RecyclerView)rootView. findViewById(R.id.channels_listview);
@@ -288,7 +329,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         channels_listview.setLayoutManager(gridLayoutManager);
-        myChannelsAdapter = new MyChannelsAdapter(getContext(), channelListModels,this);
+        myChannelsAdapter = new MyChannelsAdapter(getActivity(), channelListModels,this);
         channels_listview.setAdapter(myChannelsAdapter);
         myChannelsAdapter.notifyDataSetChanged();
 

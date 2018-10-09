@@ -29,6 +29,10 @@ public class SignUpResponse {
     @Expose
     private String company_name;
 
+    @SerializedName("otp")
+    @Expose
+    private String otp;
+
     public String getMessage() {
         return message;
     }
@@ -75,5 +79,13 @@ public class SignUpResponse {
 
     public void setCompany_name(String company_name) {
         this.company_name = company_name;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
     }
 }

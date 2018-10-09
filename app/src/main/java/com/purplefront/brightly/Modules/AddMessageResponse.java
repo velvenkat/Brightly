@@ -9,6 +9,10 @@ public class AddMessageResponse {
     @Expose
     private String message;
 
+    @SerializedName("otp")
+    @Expose
+    private String otp;
+
     @SerializedName("msg")
     @Expose
     private String msg;
@@ -27,5 +31,13 @@ public class AddMessageResponse {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
     }
 }

@@ -1,5 +1,6 @@
 package com.purplefront.brightly.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,7 +29,7 @@ import io.realm.RealmResults;
 public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.ViewHolder>{
 
     List<ChannelListModel> channelListModels;
-    Context scrn_context;
+    Activity scrn_context;
     LayoutInflater inflater;
     Realm realm;
     RealmResults<RealmModel> realmModel;
@@ -37,7 +38,7 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
     ChannelListItemClickListener mListener;
 
 
-    public MyChannelsAdapter(Context context, List<ChannelListModel> channelListModels,ChannelListItemClickListener listener) {
+    public MyChannelsAdapter(Activity context, List<ChannelListModel> channelListModels,ChannelListItemClickListener listener) {
 
         this.scrn_context = context;
         this.channelListModels = channelListModels;
@@ -122,6 +123,7 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
                 bundle.putParcelable("model_obj",channelListModel);
                 fragment.setArguments(bundle);
                 mListener.OnChannelItemClick(fragment);
+                scrn_context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
         });
 

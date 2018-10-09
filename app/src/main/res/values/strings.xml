@@ -86,5 +86,9 @@
     <string name="paste_file_upload_link_below">Paste File Upload Link Below</string>
     <string name="active_installed">Active (Installed)</string>
     <string name="inactive_not_installed">Inactive (Not Installed)</string>
+    <string name="verify_otp">Verify OTP</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="verify">Verify</string>
+    <string name="resend_otp">Resend OTP</string>
 
 </resources>

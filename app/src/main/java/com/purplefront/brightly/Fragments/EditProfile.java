@@ -126,18 +126,18 @@ public class EditProfile extends BaseFragment{
         input_name = (EditText) rootView.findViewById(R.id.input_name);
         input_phone = (EditText) rootView.findViewById(R.id.input_phone);
 
-       // realmModel.load();
-       // for(RealmModel model:realmModel){
-            user_ID = user_obj.getUser_Id();
-            input_name.setText( user_obj.getUser_Name());
-            input_phone.setText(user_obj.getUser_PhoneNumber());
-            input_email.setText(user_obj.getUser_Email());
-            input_company.setText(user_obj.getUser_CompanyName());
-            imageProfile = user_obj.getImage();
-            image_name = user_obj.getImage_name();
+        realmModel.load();
+        for(RealmModel model:realmModel){
+            user_ID = model.getUser_Id();
+            input_name.setText( model.getUser_Name());
+            input_phone.setText(model.getUser_PhoneNumber());
+            input_email.setText(model.getUser_Email());
+            input_company.setText(model.getUser_CompanyName());
+            imageProfile = model.getImage();
+            image_name = model.getImage_name();
 
 
-        //}
+        }
 
         if(imageProfile != null) {
 

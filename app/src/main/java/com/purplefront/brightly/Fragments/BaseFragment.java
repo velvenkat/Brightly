@@ -308,10 +308,9 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     public void showProgress() {
         try {
             mProgress = new ProgressDialog(getActivity());
-            mProgress.setIndeterminate(false);
-            mProgress.setTitle("Please wait....");
-            mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgress.setMessage("Please wait...");
             mProgress.setCancelable(false);
+            mProgress.setCanceledOnTouchOutside(false);
             mProgress.show();
         } catch (Exception e) {
             e.printStackTrace();

@@ -56,6 +56,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
@@ -76,8 +77,9 @@ public class BrightlyNavigationActivity extends BaseActivity
     public Toolbar toolbar;
     FrameLayout frag_container;
 
-    /*Realm realm;
-    RealmResults<RealmModel> realmModel;*/
+    Realm realm;
+    RealmResults<RealmModel> realmModel;
+
     String userId;
     String userName;
     String userPhone;
@@ -90,6 +92,11 @@ public class BrightlyNavigationActivity extends BaseActivity
     boolean isNotification=false;
     View target_menu;
     boolean isCardNotification=false;
+
+    public NavigationView navigationView;
+    public TextView headerText_Name;
+    public TextView headerText_Phone;
+    public ImageView headerImage_Profile;
 
     private RealmModel user_obj;
     /**Default true
@@ -118,14 +125,19 @@ public class BrightlyNavigationActivity extends BaseActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        //realm = Realm.getDefaultInstance();
+        realm = Realm.getDefaultInstance();
+        realmModel = realm.where(RealmModel.class).findAllAsync();
         contactShares = new ArrayList<>();
 
-        userId = user_obj.getUser_Id();
-        userName = user_obj.getUser_Name();
-        userPhone = user_obj.getUser_PhoneNumber();
-        userPicture = user_obj.getImage();
-        deviceToken = user_obj.getDeviceToken();
+        realmModel.load();
+        for(RealmModel model:realmModel){
+            userId = model.getUser_Id();
+            userName =  model.getUser_Name();
+            userPhone = model.getUser_PhoneNumber();
+            userPicture = model.getImage();
+            deviceToken = model.getDeviceToken();
+
+        }
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -207,12 +219,14 @@ public class BrightlyNavigationActivity extends BaseActivity
         toggle.syncState();
         toggle.setDrawerIndicatorEnabled(true);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        TextView headerText_Name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Name);
+
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        headerText_Name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Name);
         headerText_Name.setText(userName);
-        TextView headerText_Phone = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Number);
+        headerText_Phone = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Number);
         headerText_Phone.setText(userPhone);
-        ImageView headerImage_Profile = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.image_profile);
+        headerImage_Profile = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.image_profile);
         if (userPicture != null) {
 
             Glide.with(BrightlyNavigationActivity.this)
@@ -238,6 +252,8 @@ public class BrightlyNavigationActivity extends BaseActivity
 //        ShowcaseSingle();
         MultipleShowcase();
     }
+
+
 
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
@@ -657,12 +673,14 @@ public class BrightlyNavigationActivity extends BaseActivity
             Fragment card_dtl_frag=fragmentManager.findFragmentByTag(Util.view_card);
             transaction.hide(card_dtl_frag);
             transaction.addToBackStack(tag);
+            transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
             transaction.add(R.id.frag_container, call_fragment, tag).commit();
         }
           else {
             transaction
 
                     .addToBackStack(tag)
+                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
                     .replace(R.id.frag_container, call_fragment,
                             tag).commit();
         }

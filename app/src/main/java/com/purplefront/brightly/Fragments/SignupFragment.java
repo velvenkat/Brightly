@@ -1,20 +1,29 @@
 package com.purplefront.brightly.Fragments;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -25,23 +34,30 @@ import com.purplefront.brightly.Activities.Login;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
+import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.SignUpResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.Util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Response;
+import swarajsaaj.smscodereader.interfaces.OTPListener;
+import swarajsaaj.smscodereader.receivers.OtpReader;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SignupFragment extends BaseFragment implements View.OnClickListener{
+public class SignupFragment extends BaseFragment implements View.OnClickListener, OTPListener{
 
+
+    private static final int PERMISSION_REQUEST_ID = 100;
     private View view;
     Context mContext;
     private static FragmentManager fragmentManager;
@@ -57,6 +73,8 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     String getPassword;
     String getConfirmPassword;
     String message;
+    String otp_msg;
+    String otp_resonse;
 
     Realm realm;
 
@@ -66,6 +84,11 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     String User_Email;
     String phoneNumber;
     String deviceToken;
+
+    EditText edit_otp;
+    Button btn_Verify;
+    TextView text_resend, resend_in;
+    ImageView close_dialog;
 
 
     public SignupFragment() {
@@ -79,6 +102,10 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_signup, container, false);
         realm = Realm.getDefaultInstance();
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+        requestRuntimePermissions(android.Manifest.permission.READ_SMS, android.Manifest.permission.RECEIVE_SMS, android.Manifest.permission.SEND_SMS);
+
         initViews();
         setListeners();
         //final String[] deviceToken = new String[1];
@@ -91,6 +118,8 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
                 // or directly send it to server
             }
         });
+
+
 
         return view;
     }
@@ -235,6 +264,89 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
+    private void otpDialog()
+    {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(view.getContext());
+        View mView = getLayoutInflater().inflate(R.layout.dialog_otp, null);
+
+        OtpReader.bind(this, "611332");
+
+        edit_otp = (EditText) mView.findViewById(R.id.edit_otp);
+        btn_Verify = (Button) mView.findViewById(R.id.btn_Verify);
+        text_resend = (TextView) mView.findViewById(R.id.text_resend);
+        resend_in = (TextView) mView.findViewById(R.id.resend_in);
+        close_dialog = (ImageView) mView.findViewById(R.id.close_dialog);
+
+
+        new CountDownTimer(30000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+                text_resend.setEnabled(false);
+                text_resend.setText(+ millisUntilFinished / 1000 + " sec");
+                text_resend.setTextSize(22);
+                resend_in.setText("resend OTP in");
+                //here you can have your logic to set text to edittext
+            }
+
+            public void onFinish() {
+                text_resend.setTextSize(18);
+                text_resend.setText("Resend OTP");
+                text_resend.setEnabled(true);
+                resend_in.setText("Or");
+            }
+
+        }.start();
+
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.show();
+        dialog.setCanceledOnTouchOutside(false);
+        close_dialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        text_resend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getResendOtp();
+            }
+        });
+
+        btn_Verify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!edit_otp.getText().toString().isEmpty() && otp_msg.equals(otp_resonse)){
+
+                    getValidateOtp();
+
+                    //method
+//                    Toast.makeText(MainActivity.this, R.string.success_login_msg, Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }else{
+                    Toast.makeText(getActivity(), "Please enter the OTP", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    private void requestRuntimePermissions(String... permissions) {
+        for (String perm : permissions) {
+
+            if (ContextCompat.checkSelfPermission(getActivity(), perm) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(getActivity(), new String[]{perm}, PERMISSION_REQUEST_ID);
+
+            }
+        }
+    }
+
+
     /**
      * @param signUpResponse
      */
@@ -243,6 +355,8 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         /*Name = signInResponse.getName();
         companyName = signInResponse.getCompany_name();
         Email = signInResponse.getEmail();*/
+
+        otp_resonse = signUpResponse.getOtp();
         message = signUpResponse.getMessage();
         phoneNumber = signUpResponse.getMobile();
         User_ID = signUpResponse.getId();
@@ -252,6 +366,136 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
         if(message.equals("success")) {
 
+            otpDialog();
+
+        }
+        else
+        {
+            showLongToast(getActivity(), signUpResponse.getMessage());
+        }
+    }
+
+    public void  getResendOtp() {
+        // String Token= FirebaseInstanceId.getInstance().getToken();
+
+        try {
+
+            if (CheckNetworkConnection.isOnline(getActivity())) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getResendOtp(User_ID, phoneNumber);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        AddMessageResponse addMessageResponse = response.body();
+
+                        if (isSuccess) {
+
+                            if (addMessageResponse != null) {
+
+                                setResendOtp(addMessageResponse);
+                                dismissProgress();
+
+                            } else {
+                                dismissProgress();
+
+                            }
+
+                        } else {
+
+                            dismissProgress();
+                        }
+
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+//                        showLongToast(getActivity(), message);
+                        dismissProgress();
+                    }
+                });
+            } else {
+
+                showLongToast(getActivity(), "Network Error");
+                dismissProgress();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showLongToast(getActivity(), "Something went Wrong, Please try Later");
+
+
+        }
+    }
+
+    private void setResendOtp(AddMessageResponse addMessageResponse) {
+
+        String message = addMessageResponse.getMessage();
+        String otp_resonse = addMessageResponse.getOtp();
+
+        if(message.equals("success") && otp_msg.equals(otp_resonse))
+        {
+            getValidateOtp();
+        }
+        else {
+            showLongToast(getActivity(), message);
+        }
+    }
+
+
+    public void  getValidateOtp() {
+        // String Token= FirebaseInstanceId.getInstance().getToken();
+
+        try {
+
+            if (CheckNetworkConnection.isOnline(getActivity())) {
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getValidateOtp(User_ID);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        AddMessageResponse addMessageResponse = response.body();
+
+                        if (isSuccess) {
+
+                            if (addMessageResponse != null) {
+
+                                setValidateOtp(addMessageResponse);
+                                dismissProgress();
+
+                            } else {
+                                dismissProgress();
+
+                            }
+
+                        } else {
+
+                            dismissProgress();
+                        }
+
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+//                        showLongToast(getActivity(), message);
+                        dismissProgress();
+                    }
+                });
+            } else {
+
+                showLongToast(getActivity(), "Network Error");
+                dismissProgress();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showLongToast(getActivity(), "Something went Wrong, Please try Later");
+
+
+        }
+    }
+
+    private void setValidateOtp(AddMessageResponse addMessageResponse) {
+
+        String message = addMessageResponse.getMessage();
+
+        if(message.equals("success"))
+        {
             realm.beginTransaction();
             RealmModel realmModel=realm.createObject(RealmModel.class);
             realmModel.setDeviceToken(deviceToken);
@@ -261,15 +505,23 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
             realmModel.setUser_PhoneNumber(phoneNumber);
             realmModel.setUser_CompanyName(User_CompanyName);
             realm.commitTransaction();
-
-            showLongToast(getActivity(), signUpResponse.getMessage());
             getActivity().finish();
             frwdAnimIntent(getActivity(), BrightlyNavigationActivity.class,realmModel);
+            dismissProgress();
+        }
+        else {
+            showLongToast(getActivity(), message);
+        }
+    }
 
+    @Override
+    public void otpReceived(String messageText) {
+
+        Toast.makeText(getActivity(),"OTP : "+messageText,Toast.LENGTH_LONG).show();
+        otp_msg=messageText;
+        if(otp_msg!=null) {
+            edit_otp.setText(otp_msg);
         }
-        else
-        {
-            showLongToast(getActivity(), getPhoneNumber+" is already Registered");
-        }
+
     }
 }

@@ -131,11 +131,15 @@ public class BaseActivity extends AppCompatActivity {
      * show progress dialog for api calls
      */
     public void showProgress() {
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("Please wait...");
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+        try {
+            dialog = new ProgressDialog(this);
+            dialog.setMessage("Please wait...");
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -143,9 +147,10 @@ public class BaseActivity extends AppCompatActivity {
      * dismiss progress dialog after api calls
      */
     public void dismissProgress() {
-        if (dialog != null) {
-            dialog.cancel();
+        try {
             dialog.dismiss();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

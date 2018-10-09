@@ -33,7 +33,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
     ArrayList<SetsListModel> setsListModels;
     ChannelListModel chl_list_obj;
-    Context scrn_contxt;
+    Activity scrn_contxt;
 
     Realm realm;
     RealmResults<RealmModel> realmModel;
@@ -46,7 +46,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
     String Created_By;
 
 
-    public SetsAdapter(Context context, ArrayList<SetsListModel> setsListModels,  ChannelListModel chl_list_obj, Set_sel_interface listenr) {
+    public SetsAdapter(Activity context, ArrayList<SetsListModel> setsListModels,  ChannelListModel chl_list_obj, Set_sel_interface listenr) {
 
 
         this.scrn_contxt = context;
@@ -167,6 +167,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     bundle.putBoolean("isNotification", false);
                     card_dtl_frag.setArguments(bundle);
                     mListener.onCardShow(card_dtl_frag);
+                    scrn_contxt.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
                 }
             }
         });

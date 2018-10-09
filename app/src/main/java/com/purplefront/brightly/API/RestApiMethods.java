@@ -48,6 +48,14 @@ public interface RestApiMethods {
     @POST("users/forgot_password.php")
     Call<AddMessageResponse> getForgetPassword(@Query("email_id") String email_id);
 
+    //Validate OTP
+    @POST("users/validateotp.php")
+    Call<AddMessageResponse> getValidateOtp(@Query("user_id") String user_id);
+
+    //Resend OTP
+    @POST("users/resendotp.php")
+    Call<AddMessageResponse> getResendOtp(@Query("user_id") String user_id, @Query("mobile_no") String mobile_no);
+
 
     //ChannelsList
     @POST("channels/list_channels.php")

@@ -7,7 +7,7 @@
         />
 
     <stroke
-        android:width="0.4dp"
+        android:width="1dp"
         android:color="@color/white_greyish"/>
 
     <corners

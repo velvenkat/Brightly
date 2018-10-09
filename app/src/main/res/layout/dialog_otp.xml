@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:orientation="vertical"
+    app:layout_constraintCircleRadius="@dimen/dimen_16"
+    >
+
+    <ImageView
+        android:id="@+id/close_dialog"
+        android:layout_width="@dimen/dimen_40"
+        android:layout_height="@dimen/dimen_40"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="top|end"
+        android:layout_margin="@dimen/dimen10"
+        android:padding="5dp"
+        android:src="@drawable/cancel_icon" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/verify_otp"
+        android:textSize="@dimen/title"
+        android:gravity="center"
+        android:textColor="@color/black" />
+
+    <EditText
+        android:id="@+id/edit_otp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/sub_title"
+        android:textColor="@color/black"
+        android:padding="@dimen/dimen_4"
+        android:gravity="center"
+        android:layout_margin="@dimen/dimen_37"
+        android:maxLength="6"
+        android:background="@drawable/edit_text_bg"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:hint="@string/enter_otp"
+        android:inputType="number" />
+
+
+    <Button
+        android:id="@+id/btn_Verify"
+        android:layout_width="90dp"
+        android:layout_height="35dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="@string/verify"
+        android:textSize="@dimen/mediumtextsize"
+        android:layout_gravity="center"
+        android:textColor="@android:color/white" />
+
+
+    <TextView
+        android:id="@+id/resend_in"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dimen10"
+        android:text="Or"
+        android:textSize="@dimen/mediumtextsize"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/text_resend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dimen10"
+        android:text="@string/resend_otp"
+        android:textSize="@dimen/sub_title"
+        android:layout_marginBottom="@dimen/dimen_25"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold" />
+
+</LinearLayout>

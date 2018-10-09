@@ -452,7 +452,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     private void setAdapter(ArrayList<SetsListModel> setsListModels) {
 
         channelSet_listview.setLayoutManager(new GridLayoutManager(getContext(), 3));
-        channelsSetAdapter = new SetsAdapter(getContext(), setsListModels, chl_list_obj, this);
+        channelsSetAdapter = new SetsAdapter(getActivity(), setsListModels, chl_list_obj, this);
         channelSet_listview.setAdapter(channelsSetAdapter);
         //  channelsSetAdapter.notifyDataSetChanged();
     }
