@@ -231,16 +231,21 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             UTubePlayer = null;
         }
         if (!isVisibleToUser && mediaPlayer != null) {
-            release_media();
+            //release_media();
+            if (isAudioPlay) {
+                mediaPlayer.pause();
+                isAudioPlay = false;
+                img_play_stop.setImageResource(R.drawable.play_rec);
+            }
         }
-        if (cardModelObj!=null && cardModelObj.getType().equalsIgnoreCase("audio")) {
+      /*  if (cardModelObj!=null && cardModelObj.getType().equalsIgnoreCase("audio")) {
 
             if (isVisibleToUser && mediaPlayer == null && img_play_stop!=null) {
                // isAudioPlay=false;
-                setMediaPlayer(null, cardModelObj.getUrl());
+              //  setMediaPlayer(null, cardModelObj.getUrl());
             }
 
-        }
+        }*/
         if (isVisibleToUser && youTubePlayerFragment != null) {
             //  Log.v (TAG, "Initializing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
             if (getChildFragmentManager() != null) {
