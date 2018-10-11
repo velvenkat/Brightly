@@ -580,6 +580,7 @@ public class BrightlyNavigationActivity extends BaseActivity
 
                     // permission denied,Disable the
                     // functionality that depends on this permission.
+                    showLongToast(BrightlyNavigationActivity.this, "Contacts not Updated. Please provide permission");
                 }
                 return;
             }

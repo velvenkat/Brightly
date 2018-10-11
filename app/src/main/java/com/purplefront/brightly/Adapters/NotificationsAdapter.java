@@ -133,6 +133,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     Bundle bundle =new Bundle();
                     bundle.putParcelable("notfy_modl_obj", notificationsModel);
                     bundle.putBoolean("isNotification", true);
+                    fragment.setArguments(bundle);
                     mListener.onMessagePass(fragment);
                 }
 

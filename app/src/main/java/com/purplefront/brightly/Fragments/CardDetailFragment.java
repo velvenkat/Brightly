@@ -88,6 +88,7 @@ public class CardDetailFragment extends BaseFragment {
     NotificationsModel notificationsModel;
     View rootView;
     RealmModel user_obj;
+    String card_order_position;
 
 
     @Nullable
@@ -126,6 +127,8 @@ public class CardDetailFragment extends BaseFragment {
             set_name = notificationsModel.getNotificationsSetDetail().getName();
             set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
             Created_By = notificationsModel.getNotificationsSetDetail().getCreated_by();
+            card_order_position = notificationsModel.getCard_order_position();
+
 
         } else {
 
@@ -296,6 +299,10 @@ public class CardDetailFragment extends BaseFragment {
         }
         cardsPagerAdapter = new ViewCardFragmentPagerAdapter(getContext(), getChildFragmentManager(), cardFragList, set_id, userId, set_name);
         viewPager_Cards.setAdapter(cardsPagerAdapter);
+        if(isNotification && card_order_position != null){
+            viewPager_Cards.setCurrentItem(Integer.parseInt(card_order_position));
+        }
+//        viewPager_Cards.setCurrentItem(3);
         // cardsPagerAdapter.notifyDataSetChanged();
         viewPager_Cards.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

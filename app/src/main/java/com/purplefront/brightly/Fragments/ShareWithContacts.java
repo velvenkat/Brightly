@@ -104,14 +104,21 @@ public class ShareWithContacts extends BaseFragment {
         userId = user_obj.getUser_Id();
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share with Contacts");
-        SharedPreferences mPrefs = getActivity().getSharedPreferences("contactShares", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = mPrefs.getString("contactShares", "");
-        Type type = new TypeToken<ArrayList<ContactShare>>() {
-        }.getType();
-        contactShares = gson.fromJson(json, type);
-        setConatcts(contactShares);
 
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED) {
+            SharedPreferences mPrefs = getActivity().getSharedPreferences("contactShares", MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = mPrefs.getString("contactShares", "");
+            Type type = new TypeToken<ArrayList<ContactShare>>() {
+            }.getType();
+            contactShares = gson.fromJson(json, type);
+            setConatcts(contactShares);
+        }
+        else {
+
+            requestLocationPermission();
+        }
         btn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,9 +135,9 @@ public class ShareWithContacts extends BaseFragment {
 
             @Override
             public void onClick(View view) {
-                showLongToast(getActivity(), "Loading New Contacts");
                 if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_CONTACTS)
                         == PackageManager.PERMISSION_GRANTED) {
+                    showLongToast(getActivity(), "Loading New Contacts");
                     getAllContacts();
                 } else {
                     requestLocationPermission();
@@ -280,19 +287,10 @@ public class ShareWithContacts extends BaseFragment {
 
 
     protected void requestLocationPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                android.Manifest.permission.READ_CONTACTS)) {
-            // show UI part if you want here to show some rationale !!!
-
-        } else {
 
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS,
                     Manifest.permission.WRITE_CONTACTS}, REQUEST_PERMISSION);
-
-          /*  ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS},
-                    REQUEST_PERMISSION);*/
-        }
-
+            // show UI part if you want here to show some rationale !!!
     }
 
     @Override
@@ -303,7 +301,7 @@ public class ShareWithContacts extends BaseFragment {
 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // getAllContacts();
+                        getAllContacts();
 
                 } else {
 

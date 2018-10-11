@@ -61,12 +61,14 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView=inflater.inflate(R.layout.activity_create_cards,container,false);
+        setHasOptionsMenu(true);
         user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
 /*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);*/
+
         setDlgListener(this);
         Bundle bundle =getArguments();
         isCreate_Crd=bundle.getBoolean("isCreate_Crd",false);
