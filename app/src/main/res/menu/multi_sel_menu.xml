@@ -7,6 +7,6 @@
     <item
         android:id="@+id/action_multi_sel"
         app:showAsAction="always"
-        android:icon="@drawable/check_list"
+        android:icon="@mipmap/check_list"
         android:title="Multi Select" />
 </menu>

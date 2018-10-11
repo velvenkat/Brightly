@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_card_list"
         app:showAsAction="always"
-        android:icon="@drawable/list_order"
+        android:icon="@mipmap/list_order"
         android:title="List Order" />
     <item
         android:id="@+id/setInfo_Edit"

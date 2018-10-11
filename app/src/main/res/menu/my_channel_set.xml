@@ -6,7 +6,7 @@
         android:orderInCategory="99"
         app:showAsAction="always"
         android:visible="true"
-        android:icon="@drawable/check_list"
+        android:icon="@mipmap/check_list"
         android:title="Multi Select" />
     <item
         android:id="@+id/channelInfo_Edit"

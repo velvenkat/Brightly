@@ -7,11 +7,11 @@
     <item
         android:id="@+id/action_share"
         app:showAsAction="always"
-        android:icon="@drawable/share_white_icon"
+        android:icon="@mipmap/share_icon"
         android:title="Share" />
     <item
         android:id="@+id/action_delete"
         app:showAsAction="always"
-        android:icon="@drawable/delete_white_icon"
+        android:icon="@mipmap/delete_icon"
         android:title="Delete" />
 </menu>

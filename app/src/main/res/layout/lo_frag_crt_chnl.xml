@@ -73,8 +73,7 @@
     <Button
         android:id="@+id/btn_createChannel"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.4"
+        android:layout_height="45dp"
         android:background="@drawable/login_btn_background"
         android:padding="3dp"
         android:text="@string/create_channel"

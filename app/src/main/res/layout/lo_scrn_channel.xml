@@ -20,6 +20,8 @@
             android:id="@+id/channels_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_12"
+            android:paddingBottom="@dimen/dimen_25"
             android:visibility="visible"
             android:nestedScrollingEnabled="false"/>
 

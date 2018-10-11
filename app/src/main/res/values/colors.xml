@@ -4,8 +4,8 @@
     <color name="colorPrimaryDark">#E64A19</color>
     <color name="colorAccent">#4CAF50</color>-->
 
-    <color name="colorPrimary">#FF5722</color>
-    <color name="colorPrimaryDark">#E64A19</color>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#757575</color>
     <color name="colorAccent">#4CAF50</color>
 
     //colors
@@ -13,11 +13,12 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="white_90">#11FFFFFF</color>
+    <color name="white_bg">#99FFFFFF</color>
     <color name="white_greyish">#EEEEEE</color>
     <color name="light_gery">#9E9E9E</color>
 
     <color name="btn_login">#E64A19</color>
-    <color name="action_bar">#FF5722</color>
+    <color name="action_bar">#EEEEEE</color>
 
     //text color
     <color name="primary_text">#212121</color>

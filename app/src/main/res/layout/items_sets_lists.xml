@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/set_layout"
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:layout_margin="@dimen/dimen_4"
-    app:cardElevation="@dimen/dimen_2">
+   >
+
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <android.support.v7.widget.CardView
             android:id="@+id/image_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="@dimen/dimen_2"
+            app:cardCornerRadius="@dimen/dimen_8"
+
+            >
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="110dp">
 
@@ -26,6 +35,8 @@
                 android:src="@drawable/no_image_available" />
         </RelativeLayout>
 
+    </android.support.v7.widget.CardView>
+
         <CheckBox
             android:id="@+id/chk_set_sel"
             android:layout_width="wrap_content"
@@ -34,14 +45,7 @@
             android:layout_alignParentTop="true"
             android:clickable="false"
             android:focusable="false"
-            android:visibility="invisible" />
-
-        <View
-            android:id="@+id/view_line"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/image_layout"
-            android:background="@color/light_gery" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textView_setName"
@@ -55,7 +59,7 @@
             android:paddingTop="@dimen/dimen_2"
             android:text="No Channels Available"
             android:textColor="@color/black"
-            android:textSize="@dimen/smalltextSize"
+            android:textSize="@dimen/microtextSize"
             android:visibility="visible" />
 
         <TextView
@@ -64,7 +68,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView_setName"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/dimen_1"
             android:background="@color/white"
             android:gravity="center"
             android:lines="1"
@@ -74,4 +77,4 @@
             android:visibility="visible" />
 
     </RelativeLayout>
-</android.support.v7.widget.CardView>
+</LinearLayout>

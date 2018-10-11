@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.MyChannelsSet">
+    android:background="@color/white"
+    >
 
 
 
@@ -77,6 +78,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/chk_sel_all"
         android:visibility="visible"
+        android:layout_marginTop="@dimen/dimen_12"
+        android:paddingBottom="@dimen/dimen_25"
         android:nestedScrollingEnabled="false"/>
 
 

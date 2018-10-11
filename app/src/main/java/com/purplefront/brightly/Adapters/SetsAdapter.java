@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -184,7 +185,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
         TextView textView_setName;
         TextView textView_setCount;
         ImageView imageView_setImage;
-        CardView channel_layout;
+        LinearLayout channel_layout;
         CheckBox chkbx_del_set;
 
         public ViewHolder(View itemView) {

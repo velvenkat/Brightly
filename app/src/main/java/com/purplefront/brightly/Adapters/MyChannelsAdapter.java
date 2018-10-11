@@ -71,8 +71,9 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
 
 
         ChannelListModel channelListModel = channelListModels.get(position);
-        String count = "("+channelListModel.getTotal_set_count()+")";
-        holder.textView_channelName.setText(channelListModel.getChannel_name()+ " " + count);
+        String count = channelListModel.getTotal_set_count();
+        holder.textView_channelName.setText(channelListModel.getChannel_name());
+        holder.textView_channelCount.setText(count);
         Created_by = channelListModel.getCreated_by();
 
         if(!Created_by.equals(userId))
@@ -140,6 +141,7 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
         ImageView imageView_channelImage;
         CardView channel_layout;
         ImageView subscribed_icon;
+        TextView textView_channelCount;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -148,6 +150,7 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
             imageView_channelImage = itemView.findViewById(R.id.imageView_channelImage);
             subscribed_icon = itemView.findViewById(R.id.shared_icon);
             textView_channelName = itemView.findViewById(R.id.textView_channelName);
+            textView_channelCount = itemView.findViewById(R.id.textView_channelCount);
         }
     }
     public interface ChannelListItemClickListener{
