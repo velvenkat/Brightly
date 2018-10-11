@@ -51,8 +51,8 @@
     <string name="card_file_url_hint">https://</string>
     <string name="card_description">Card Description</string>
     <string name="password">Password</string>
-    <string name="all_channels">All Channels</string>
-    <string name="my_channels">My Channels</string>
+    <string name="all_channels">All Category</string>
+    <string name="my_channels">My Category</string>
     <string name="my_subscription">Shared With Me</string>
     <string name="profile">Profile</string>
     <string name="logout">Logout</string>

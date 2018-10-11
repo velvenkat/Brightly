@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/chl_grp"
+
+        android:checkableBehavior="none">
+
         <item
             android:id="@+id/nav_allChannels"
             android:title="@string/all_channels" />
@@ -15,7 +18,13 @@
         <item
             android:id="@+id/nav_mysubscription"
             android:title="@string/my_subscription" />
+    </group>
 
+    <group
+         android:id="@+id/act_grp"
+        android:checkableBehavior="none"
+
+        >
         <item
             android:id="@+id/nav_profile"
             android:title="@string/profile" />

@@ -69,7 +69,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_card_list, container, false);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         // setContentView(R.layout.activity_card_list);
         /*Toolbar toolbar = (Toolbar)rootView. findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -81,12 +81,12 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         userId = user_obj.getUser_Id();
         setsListModel = bundle.getParcelable("setsListModel");
         isReorder = bundle.getBoolean("re_order", false);
-        String chl_name=bundle.getString("chl_name");
+        String chl_name = bundle.getString("chl_name");
         set_name = setsListModel.getSet_name();
         set_id = setsListModel.getSet_id();
         //setTitle(set_name);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(chl_name);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(set_name);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(chl_name);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
         view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
         card_listview = (RecyclerView) rootView.findViewById(R.id.card_listview);
         del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
@@ -94,7 +94,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
         chk_sel_all = (CheckBox) rootView.findViewById(R.id.chk_sel_all);
         txtItemSel = (TextView) rootView.findViewById(R.id.txtCntSelected);
-      //  img_mutli_sel = (ImageView) rootView.findViewById(R.id.menu_multi_sel);
+        //  img_mutli_sel = (ImageView) rootView.findViewById(R.id.menu_multi_sel);
 
         setDlgListener(this);
         chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -261,8 +261,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         return rootView;
     }
 
-    public void multi_sel_actions()
-    {
+    public void multi_sel_actions() {
         if (cardsListModels.size() > 0) {
             ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
             del_contr.setVisibility(View.VISIBLE);
@@ -338,16 +337,16 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        if(!isReorder){
-           inflater.inflate(R.menu.multi_sel_menu,menu);
+        if (isReorder) {
+            inflater.inflate(R.menu.multi_sel_menu, menu);
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==R.id.action_multi_sel){
-          multi_sel_actions();
+        if (item.getItemId() == R.id.action_multi_sel) {
+            multi_sel_actions();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -471,6 +470,14 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         cardsListModels.add(position, modelObj);
         cardListAdapter.notifyDataSetChanged();
         // Toast.makeText(MyChannelsSet.this,"Selected set id:"+Sel_id,Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onCardClick(int position) {
+        ((BrightlyNavigationActivity) getActivity()).isCardClicked = true;
+        ((BrightlyNavigationActivity) getActivity()).card_toPosition = position;
+        ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+
     }
 
     public void call_api_del_multi_cards() {

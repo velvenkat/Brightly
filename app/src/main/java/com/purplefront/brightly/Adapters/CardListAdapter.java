@@ -180,6 +180,9 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
                 if (isSelToDel) {
                     mListener.onSelect(position, cardsListModel);
                 }
+                else{
+                    mListener.onCardClick(position);
+                }
             }
         });
 
@@ -211,6 +214,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
     public interface Card_sel_interface {
         public void onSelect(int position, CardsListModel modelObj);
+        public void onCardClick(int position);
         //  public void onUnSelect(int position, SetsListModel modelObj);
     }
 }

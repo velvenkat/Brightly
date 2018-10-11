@@ -40,6 +40,7 @@ import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.BadgeDrawable;
 import com.purplefront.brightly.Fragments.CardDetailFragment;
+import com.purplefront.brightly.Fragments.CardList;
 import com.purplefront.brightly.Fragments.ChannelFragment;
 import com.purplefront.brightly.Fragments.EditSetInfo;
 import com.purplefront.brightly.Fragments.MyProfile;
@@ -98,7 +99,8 @@ public class BrightlyNavigationActivity extends BaseActivity
     public TextView headerText_Name;
     public TextView headerText_Phone;
     public ImageView headerImage_Profile;
-
+    public boolean isCardClicked=false;
+    public int card_toPosition=0;
     public YouTubePlayer uTubePlayer;
 
     private RealmModel user_obj;
@@ -680,7 +682,7 @@ public class BrightlyNavigationActivity extends BaseActivity
         }
         FragmentTransaction transaction=fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
-        if(call_fragment instanceof EditSetInfo){
+        if(call_fragment instanceof EditSetInfo || call_fragment instanceof CardList){
             Fragment card_dtl_frag=fragmentManager.findFragmentByTag(Util.view_card);
             transaction.hide(card_dtl_frag);
             transaction.addToBackStack(tag);

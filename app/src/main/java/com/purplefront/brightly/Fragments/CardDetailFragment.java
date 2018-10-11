@@ -69,9 +69,16 @@ public class CardDetailFragment extends BaseFragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden){
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(channel_name);
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(setsListModel.getSet_name());
+        Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
+        if (!hidden) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(channel_name);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(setsListModel.getSet_name());
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+            boolean isCardClicked = ((BrightlyNavigationActivity) getActivity()).isCardClicked;
+            if (isCardClicked) {
+                int card_toPosition = ((BrightlyNavigationActivity) getActivity()).card_toPosition;
+                viewPager_Cards.setCurrentItem(card_toPosition);
+            }
         }
     }
 
@@ -96,8 +103,8 @@ public class CardDetailFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_my_set_cards, container, false);
         //  setContentView(R.layout.activity_my_set_cards);
-       Toast.makeText(getContext(),"On Create Called",Toast.LENGTH_LONG).show();
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        Toast.makeText(getContext(), "On Create Called", Toast.LENGTH_LONG).show();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         setHasOptionsMenu(true);
         userId = user_obj.getUser_Id();
         //  userId = getIntent().getStringExtra("userId");
@@ -182,7 +189,7 @@ public class CardDetailFragment extends BaseFragment {
                 bundle.putBoolean("isCreate_Crd", true);
                 Fragment crt_crd_frag = new CreateCardsFragment();
                 crt_crd_frag.setArguments(bundle);
-                ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Create_Card, crt_crd_frag,true);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Card, crt_crd_frag, true);
 
             }
         });
@@ -278,28 +285,28 @@ public class CardDetailFragment extends BaseFragment {
         // Pass results to ViewPagerAdapter Class
         // cardsPagerAdapter = new ViewPagerAdapter(MySetCards.this, cardsListModels, set_id, userId, set_name);
         // Binds the Adapter to the ViewPager
-        List<Fragment> cardFragList=new ArrayList<>();
-        for(int i=0;i<cardsListModels.size();i++){
+        List<Fragment> cardFragList = new ArrayList<>();
+        for (int i = 0; i < cardsListModels.size(); i++) {
             Fragment card_frag = null;
 
-                CardsListModel cardObj = cardsListModels.get(i);
+            CardsListModel cardObj = cardsListModels.get(i);
 
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("card_mdl_obj", cardObj);
-
-
-                card_frag = new Multimedia_CardFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("card_mdl_obj", cardObj);
 
 
-                bundle.putString("set_id", set_id);
-                bundle.putString("userId", userId);
-                bundle.putString("set_name", set_name);
-                card_frag.setArguments(bundle);
+            card_frag = new Multimedia_CardFragment();
+
+
+            bundle.putString("set_id", set_id);
+            bundle.putString("userId", userId);
+            bundle.putString("set_name", set_name);
+            card_frag.setArguments(bundle);
             cardFragList.add(card_frag);
         }
         cardsPagerAdapter = new ViewCardFragmentPagerAdapter(getContext(), getChildFragmentManager(), cardFragList, set_id, userId, set_name);
         viewPager_Cards.setAdapter(cardsPagerAdapter);
-        if(isNotification && card_order_position != null){
+        if (isNotification && card_order_position != null) {
             viewPager_Cards.setCurrentItem(Integer.parseInt(card_order_position));
         }
 //        viewPager_Cards.setCurrentItem(3);
@@ -340,7 +347,6 @@ public class CardDetailFragment extends BaseFragment {
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle bundle = new Bundle();
@@ -361,7 +367,7 @@ public class CardDetailFragment extends BaseFragment {
                     bundle.putParcelable("notfy_modl_obj", notificationsModel);
                     bundle.putBoolean("isNotification", true);
                     edit_set_info.setArguments(bundle);
-                    ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info,true);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
 
                 } else {
                     /*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
@@ -376,7 +382,7 @@ public class CardDetailFragment extends BaseFragment {
                     bundle.putParcelable("setsListModel", setsListModel);
                     bundle.putBoolean("isNotification", false);
                     edit_set_info.setArguments(bundle);
-                    ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info,true);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
                 }
 
                 return true;
@@ -402,7 +408,7 @@ public class CardDetailFragment extends BaseFragment {
                     bundle.putBoolean("isCreate_Crd", false);
                     bundle.putParcelable("Card_Dtls", cardsListModels.get(Cur_PagrPosition));
                     frag.setArguments(bundle);
-                    ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Create_Card, frag,true);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Card, frag, true);
 
                 } else {
                     showLongToast(getActivity(), "No Card to Edit");
@@ -425,7 +431,7 @@ public class CardDetailFragment extends BaseFragment {
                 bundle1.putBoolean("re_order", true);
                 bundle1.putString("chl_name", channel_name);
                 frag.setArguments(bundle1);
-                ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Card_List, frag,false);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, frag, false);
 
                 return true;
             case R.id.action_card_list:
@@ -436,7 +442,7 @@ public class CardDetailFragment extends BaseFragment {
                 bundle2.putString("chl_name", channel_name);
                 bundle2.putInt("card_position", Cur_PagrPosition);
                 frag1.setArguments(bundle2);
-                ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Card_List, frag1,false);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, frag1, false);
                 return true;
 
 

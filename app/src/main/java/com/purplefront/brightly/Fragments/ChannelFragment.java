@@ -74,17 +74,18 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         image_createChannel = (ImageView)rootView. findViewById(R.id.image_createChannel);
         channels_listview=(RecyclerView)rootView.findViewById(R.id.channels_listview);
         setHasOptionsMenu(true);
+        ((BrightlyNavigationActivity)getActivity()).getSupportActionBar().show();
         Bundle bundle=getArguments();
         channel_type=bundle.getString("type");
 
         if(channel_type.equalsIgnoreCase("all")){
-            setActionBarTitle("All Channel");
+            setActionBarTitle(getResources().getString(R.string.all_channels));
         }
         else if(channel_type.equalsIgnoreCase("subscribe")){
-            setActionBarTitle("Shared with me");
+            setActionBarTitle(getResources().getString(R.string.my_subscription));
         }
         else if(channel_type.equalsIgnoreCase("my")){
-            setActionBarTitle("My Channel");
+            setActionBarTitle(getResources().getString(R.string.my_channels));
         }
         getChannelsLists(channel_type);
         image_createChannel.setOnClickListener(new View.OnClickListener() {
