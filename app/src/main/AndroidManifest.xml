@@ -66,6 +66,7 @@
             android:name=".Activities.BrightlyNavigationActivity"
             android:label="@string/title_activity_my_channel"
             android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/AppTheme" />
 
         <!-- [START firebase_service] -->

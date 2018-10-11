@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.method.LinkMovementMethod;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.R;
 
@@ -44,6 +46,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     SeekBar audio_seek_bar;
     TextView txt_PlayProgTime;
     TextView file_cardLink;
+    boolean isUTubePlayFullScreen=false;
 
     @Nullable
     @Override
@@ -147,13 +150,14 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             rl_audio_player.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
             youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
+
             if (getUserVisibleHint()) {
 
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
                 //  mYouTubePlayerSupportFragment.initialize(DeveloperKey.DEVELOPER_KEY, this);
 
-                youTubePlayerFragment.initialize(DEVELOPER_KEY, Multimedia_CardFragment.this);
+                 youTubePlayerFragment.initialize(DEVELOPER_KEY, Multimedia_CardFragment.this);
 
             }
 
@@ -214,7 +218,25 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         }
 
         // Add viewpager_item.xml to ViewPager
-
+/*
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                    //((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                   Toast.makeText(getContext(),"Utubefull"+isUTubePlayFullScreen,Toast.LENGTH_LONG).show();
+                    if(UTubePlayer!=null){
+                        if(isUTubePlayFullScreen){
+                            UTubePlayer.setFullscreen(false);
+                        }
+                    }
+                }
+                return true;
+            }
+        });
+*/
         return rootView;
     }
 
@@ -229,6 +251,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 transaction.remove(youTubePlayerFragment).commit();
             }
             UTubePlayer = null;
+            ((BrightlyNavigationActivity)getActivity()).uTubePlayer=null;
         }
         if (!isVisibleToUser && mediaPlayer != null) {
             //release_media();
@@ -261,11 +284,27 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 //                            Utils.logDebug(TAG, "onInitializationSuccess");
 
         UTubePlayer = youTubePlayer;
+        ((BrightlyNavigationActivity)getActivity()).uTubePlayer=UTubePlayer;
+        UTubePlayer.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
+            @Override
+            public void onFullscreen(boolean b) {
+
+             if(b){
+                 isUTubePlayFullScreen=true;
+                 ((BrightlyNavigationActivity)getActivity()).isUTubePlayerFullScreen=true;
+             }
+             else {
+                 isUTubePlayFullScreen = false;
+                 ((BrightlyNavigationActivity) getActivity()).isUTubePlayerFullScreen = false;
+             }
+            }
+        });
         if (!wasRestored) {
             youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
             youTubePlayer.cueVideo(cardModelObj.getName());
             // youTubePlayer.loadVideo(image_name);
             youTubePlayer.setShowFullscreenButton(true);
+            youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
             youTubePlayer.pause();
         }
 

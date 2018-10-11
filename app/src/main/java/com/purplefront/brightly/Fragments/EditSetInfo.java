@@ -85,6 +85,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
          rootView=inflater.inflate(R.layout.activity_edit_set_info,container,false);
          user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
          setHasOptionsMenu(true);
+        ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

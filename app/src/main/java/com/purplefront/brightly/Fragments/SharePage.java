@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +45,9 @@ public class SharePage extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_share_page, container, false);
-
+        ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
         user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+
        // setContentView(R.layout.activity_share_page);
 
       /*  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -103,19 +106,6 @@ public class SharePage extends BaseFragment {
             }
         });
         return rootView;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-           /* case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
-                finish();
-                overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-                return true;*/
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     /*@Override

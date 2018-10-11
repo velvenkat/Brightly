@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.youtube.player.YouTubePlayer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.purplefront.brightly.API.ApiCallback;
@@ -92,11 +93,13 @@ public class BrightlyNavigationActivity extends BaseActivity
     boolean isNotification=false;
     View target_menu;
     boolean isCardNotification=false;
-
+    public boolean isUTubePlayerFullScreen=false;
     public NavigationView navigationView;
     public TextView headerText_Name;
     public TextView headerText_Phone;
     public ImageView headerImage_Profile;
+
+    public YouTubePlayer uTubePlayer;
 
     private RealmModel user_obj;
     /**Default true
@@ -376,7 +379,13 @@ public class BrightlyNavigationActivity extends BaseActivity
             backAnimIntent(this, BrightlyNavigationActivity.class);
             *//*frag_container.setVisibility(View.GONE);
             channel_layout.setVisibility(View.VISIBLE);*//*
-        } */ else {
+
+        } */
+        else if(uTubePlayer!=null && isUTubePlayerFullScreen){
+
+            uTubePlayer.setFullscreen(false);
+        }
+        else {
             //    finish();
             super.onBackPressed();
         }
@@ -597,6 +606,7 @@ public class BrightlyNavigationActivity extends BaseActivity
               /*
                 Toast.makeText(BrightlyNavigationActivity.this,"Welcome",Toast.LENGTH_LONG).show();*/
                 //  getSupportFragmentManager().popBackStackImmediate();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
