@@ -79,6 +79,11 @@ public class CardDetailFragment extends BaseFragment {
                 int card_toPosition = ((BrightlyNavigationActivity) getActivity()).card_toPosition;
                 viewPager_Cards.setCurrentItem(card_toPosition);
             }
+            boolean isCardRefresh = ((BrightlyNavigationActivity) getActivity()).isCardRefresh;
+            if (isCardRefresh) {
+                ((BrightlyNavigationActivity)getActivity()).isCardRefresh=false;
+                getCardsLists();
+            }
         }
     }
 
@@ -430,6 +435,7 @@ public class CardDetailFragment extends BaseFragment {
                 bundle1.putParcelable("setsListModel", setsListModel);
                 bundle1.putBoolean("re_order", true);
                 bundle1.putString("chl_name", channel_name);
+                bundle1.putInt("card_position", Cur_PagrPosition);
                 frag.setArguments(bundle1);
                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, frag, false);
 

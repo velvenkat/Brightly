@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -61,6 +62,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
     SetsListModel setsListModel;
     View rootView;
+    int CurPagrPos;
 
     RealmModel user_obj;
 
@@ -82,6 +84,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         setsListModel = bundle.getParcelable("setsListModel");
         isReorder = bundle.getBoolean("re_order", false);
         String chl_name = bundle.getString("chl_name");
+        CurPagrPos = bundle.getInt("card_position");
         set_name = setsListModel.getSet_name();
         set_id = setsListModel.getSet_id();
         //setTitle(set_name);
@@ -301,6 +304,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         dismissProgress();
+                        ((BrightlyNavigationActivity) getActivity()).isCardRefresh = true;
                         Toast.makeText(getContext(), "Message:" + response.message(), Toast.LENGTH_LONG).show();
                     }
 
@@ -404,6 +408,17 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         card_listview.setLayoutManager(new GridLayoutManager(getContext(), 1));
         cardListAdapter = new CardListAdapter(getContext(), cardsListModels, this);
         card_listview.setAdapter(cardListAdapter);
+        card_listview.getLayoutManager().scrollToPosition(CurPagrPos);
+        cardListAdapter.isCardHighlight = true;
+        cardListAdapter.SelectedPos = CurPagrPos;
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                cardListAdapter.isCardHighlight = false;
+                cardListAdapter.notifyItemChanged(CurPagrPos);
+            }
+        }, 2000);
 
     }
 
@@ -492,7 +507,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                         AddMessageResponse deleteSetResponse = response.body();
                         dismissProgress();
                         if (isSuccess) {
-
+                            ((BrightlyNavigationActivity) getActivity()).isCardRefresh = true;
                             if (deleteSetResponse != null) {
 
                                 if (deleteSetResponse.getMessage().equalsIgnoreCase("success")) {

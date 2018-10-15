@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,7 @@ import com.purplefront.brightly.R;
 
 import java.util.List;
 
-public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHolder>{
+public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHolder> {
 
     private ProgressDialog dialog;
     String image_name;
@@ -30,13 +31,16 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
     Card_sel_interface mListener;
 
-    boolean isSelToDel=false;
+    boolean isSelToDel = false;
+    public boolean isCardHighlight = false;
+    public int SelectedPos = -1;
 
-    public CardListAdapter(Context context, List<CardsListModel> cardsListModels,Card_sel_interface listener) {
+
+    public CardListAdapter(Context context, List<CardsListModel> cardsListModels, Card_sel_interface listener) {
 
         this.scrn_context = context;
         this.cardsListModels = cardsListModels;
-        mListener=listener;
+        mListener = listener;
     }
 
     @NonNull
@@ -49,14 +53,16 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         // Return a new holder instance
         return new ViewHolder(contactView);
     }
+
     public void set_SelToDel(boolean value) {
         isSelToDel = value;
 
     }
+
     @Override
     public int getItemViewType(int position) {
-        if(isSelToDel)
-        return position;
+        if (isSelToDel)
+            return position;
         else
             return super.getItemViewType(position);
 
@@ -72,7 +78,15 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     public void onBindViewHolder(@NonNull CardListAdapter.ViewHolder holder, int position) {
 
         CardsListModel cardsListModel = cardsListModels.get(position);
-
+        if(SelectedPos==position){
+            if(isCardHighlight){
+                holder.itemView.setBackgroundColor(scrn_context.getResources().getColor(R.color.light_gery));
+            }
+        }
+        else
+        {
+            holder.cardView.setBackgroundColor(scrn_context.getResources().getColor(R.color.white));
+        }
         if (cardsListModel.getTitle() != null) {
             holder.text_cardName.setText(cardsListModel.getTitle());
         }
@@ -117,7 +131,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
                 break;
             case "audio":
 
-                holder.image_cardImage.setPadding(0,20,0,20);
+                holder.image_cardImage.setPadding(0, 20, 0, 20);
 
                 Glide.with(scrn_context)
                         .load(R.drawable.audio_list_icon)
@@ -141,7 +155,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
                 break;
             case "file":
 
-                holder.image_cardImage.setPadding(0,20,0,20);
+                holder.image_cardImage.setPadding(0, 20, 0, 20);
 
                 Glide.with(scrn_context)
                         .load(R.drawable.file_list_icon)
@@ -177,17 +191,15 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
 //                Toast.makeText(scrn_context, "Working", Toast.LENGTH_SHORT).show();
 
-                if (isSelToDel) {
+                 if (isSelToDel) {
                     mListener.onSelect(position, cardsListModel);
-                }
-                else{
+                } else {
                     mListener.onCardClick(position);
                 }
             }
         });
 
-            }
-
+    }
 
 
     @Override
@@ -201,6 +213,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         TextView text_cardDescription;
         ImageView image_cardImage;
         CheckBox chkbx_del_set;
+        CardView cardView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -208,12 +221,14 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
             image_cardImage = itemView.findViewById(R.id.image_cardImage);
             text_cardName = itemView.findViewById(R.id.text_cardName);
             text_cardDescription = itemView.findViewById(R.id.text_cardDescription);
-            chkbx_del_set=itemView.findViewById(R.id.chk_card_sel);
+            chkbx_del_set = itemView.findViewById(R.id.chk_card_sel);
+            cardView=itemView.findViewById(R.id.cardVw_card_list);
         }
     }
 
     public interface Card_sel_interface {
         public void onSelect(int position, CardsListModel modelObj);
+
         public void onCardClick(int position);
         //  public void onUnSelect(int position, SetsListModel modelObj);
     }

@@ -102,6 +102,10 @@ public class BrightlyNavigationActivity extends BaseActivity
     public boolean isCardClicked=false;
     public int card_toPosition=0;
     public YouTubePlayer uTubePlayer;
+    /**
+     * isCardRefresh flag is needed to refresh card from CardList page to CardDetail called
+     */
+    public boolean isCardRefresh=false;
 
     private RealmModel user_obj;
     /**Default true
