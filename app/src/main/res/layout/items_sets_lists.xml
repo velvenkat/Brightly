@@ -16,7 +16,7 @@
             android:id="@+id/image_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardElevation="@dimen/dimen_2"
+            app:cardElevation="@dimen/dimen_8"
             app:cardCornerRadius="@dimen/dimen_8"
 
             >
@@ -56,6 +56,7 @@
             android:layout_marginTop="@dimen/dimen_1"
             android:background="@color/white"
             android:gravity="center"
+            android:singleLine="true"
             android:paddingTop="@dimen/dimen_2"
             android:text="No Channels Available"
             android:textColor="@color/black"

@@ -65,6 +65,7 @@ public class ShareWithContacts extends BaseFragment {
     ContactsAdapter contactAdapter;
 
     String split_num = "";
+    String split_name = "";
 
     String set_description = "";
     String set_name = "";
@@ -201,7 +202,9 @@ public class ShareWithContacts extends BaseFragment {
     private void checkValidation() {
         // Get phonenumber
         ArrayList<String> sel_num = new ArrayList<>(contactAdapter.getContact_Share());
+        ArrayList<String> sel_name = new ArrayList<>(contactAdapter.getContactName_Share());
         split_num = android.text.TextUtils.join(",", sel_num);
+        split_name = android.text.TextUtils.join(",", sel_name);
 
         if (split_num.equals("") || split_num.length() <= 9) {
             new CustomToast().Show_Toast(getActivity(), btn_share,
@@ -222,7 +225,7 @@ public class ShareWithContacts extends BaseFragment {
 
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getShareSet(userId, set_id, split_num);
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getShareSet(userId, set_id, split_num, split_name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {

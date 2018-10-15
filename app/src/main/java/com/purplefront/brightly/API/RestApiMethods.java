@@ -99,7 +99,7 @@ public interface RestApiMethods {
 
     //Share Sets
     @POST("share/share_set_multiple.php")
-    Call<AddMessageResponse> getShareSet(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("phone_no") String phone_no );
+    Call<AddMessageResponse> getShareSet(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("phone_no") String phone_no, @Query("names") String names  );
 
     //Revoke Sets
     @POST("share/revoke_set.php")

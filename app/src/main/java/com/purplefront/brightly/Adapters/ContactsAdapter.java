@@ -3,12 +3,14 @@ package com.purplefront.brightly.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.purplefront.brightly.Fragments.ShareWithContacts;
 import com.purplefront.brightly.Modules.ContactShare;
@@ -22,6 +24,7 @@ public class ContactsAdapter extends BaseAdapter {
     private List<ContactShare> contactShares = null;
     private ArrayList<ContactShare> arraylist;
     private ArrayList<String> selectedNumber = new ArrayList<String>();
+    private ArrayList<String> selectedName = new ArrayList<String>();
 
     Context scrn_context;
     LayoutInflater inflater;
@@ -81,6 +84,11 @@ public class ContactsAdapter extends BaseAdapter {
     public ArrayList<String> getContact_Share(){
         return selectedNumber;
     }
+
+    public ArrayList<String> getContactName_Share(){
+        return selectedName;
+    }
+
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
         final ViewHolder holder;
@@ -116,19 +124,32 @@ public class ContactsAdapter extends BaseAdapter {
                     model_view.setSelected(false);
                     int pos = 0;
                  String mob_no=model_view.getContactNumber();
+                 String cont_name = model_view.getContactName();
                  mob_no=mob_no.replaceAll("[^0-9]","").trim();
                     for (String num : selectedNumber) {
                         if (num.equals(mob_no)) {
                             selectedNumber.remove(pos);
+                            break;
                         }
                         pos++;
                     }
+                 pos=0;
+                 for (String name : selectedName) {
+                     if (cont_name.equals(name)) {
+                         selectedName.remove(pos);
+                         break;
+                     }
+                     pos++;
+                 }
+
                 } else
                     {
                         String mob_no=model_view.getContactNumber();
+                        String cont_name = model_view.getContactName();
                         mob_no=mob_no.replaceAll("[^0-9]","").trim();
                         if(mob_no.length()>=10) {
                             selectedNumber.add(mob_no);
+                            selectedName.add(cont_name);
                             holder.tick_selected.setImageResource(R.mipmap.ic_right_tick);
                             model_view.setSelected(true);
                         }
@@ -137,7 +158,9 @@ public class ContactsAdapter extends BaseAdapter {
                 List<String> listWithoutDuplicates = new ArrayList<String>(listToSet);*/
                     }
 
-                       /* string = TextUtils.join(", ", selectedNumber);
+                       /* string = TextUtils.join(", ", selectedName);
+                        Toast.makeText(scrn_context, string, Toast.LENGTH_LONG).show();
+                        String string = TextUtils.join(", ", selectedNumber);
                         Toast.makeText(scrn_context, string, Toast.LENGTH_LONG).show();*/
 
 

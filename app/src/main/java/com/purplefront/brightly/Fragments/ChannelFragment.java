@@ -216,8 +216,8 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
 
                             if (notificationsResponse != null) {
 
-                                setNotificationCounts(notificationsResponse);
                                 dismissProgress();
+                                setNotificationCounts(notificationsResponse);
 
                             } else {
 

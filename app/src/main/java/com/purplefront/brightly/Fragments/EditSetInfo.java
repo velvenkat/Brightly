@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.purplefront.brightly.API.ApiCallback;
@@ -48,6 +49,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
     EditText edit_setDescription;
     Button btn_editSet;
     TextView text_share_title;
+    LinearLayout layout_act_inact;
 
    // ImageView share, delete;
 
@@ -131,7 +133,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         text_share_title = (TextView) rootView.findViewById(R.id.text_share_title);
         btn_editSet = (Button)rootView.findViewById(R.id.btn_editSet);
 
-
+        layout_act_inact = (LinearLayout) rootView.findViewById(R.id.layout_act_inact);
         shared_listview = (RecyclerView) rootView.findViewById(R.id.shared_listview);
 
         edit_setName.setText(set_name);
@@ -505,14 +507,17 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                         SetInfoSharedResponse infoSharedResponse = response.body();
                         if (isSuccess) {
 
-                            if (infoSharedResponse != null) {
+                            if (infoSharedResponse != null && infoSharedResponse.getShared_data().size()!=0) {
 
                                 setSharedCredentials(infoSharedResponse);
+                                text_share_title.setVisibility(View.VISIBLE);
+                                layout_act_inact.setVisibility(View.VISIBLE);
                                 dismissProgress();
 
                             } else {
                                 dismissProgress();
                                 text_share_title.setVisibility(View.GONE);
+                                layout_act_inact.setVisibility(View.GONE);
 
                             }
 

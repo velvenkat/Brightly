@@ -8,7 +8,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="@dimen/dimen_8"
     android:layout_margin="@dimen/dimen_4"
-    app:cardElevation="@dimen/dimen_2">
+    app:cardElevation="@dimen/dimen_8">
 
     <RelativeLayout
         android:layout_width="match_parent"
