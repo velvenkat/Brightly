@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.freesoulapps.preview.android.Preview;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
@@ -32,8 +33,9 @@ import com.purplefront.brightly.R;
 import java.util.Locale;
 
 
-public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener {
+public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener, Preview.PreviewListener {
     View rootView;
+    Preview mPreview;
     CardsListModel cardModelObj;
     ProgressDialog dialog;
     String user_id, set_id, set_name;
@@ -60,6 +62,8 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         TextView text_cardDescription;
         ImageView image_cardImage;
 
+
+
         // Locate the TextViews in viewpager_item.xml
         text_cardName = (TextView) rootView.findViewById(R.id.text_cardName);
         rl_audio_player = (RelativeLayout) rootView.findViewById(R.id.rl_audio_player);
@@ -70,7 +74,10 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         audio_seek_bar = (SeekBar) rootView.findViewById(R.id.seek_audio_rec);
         txt_PlayProgTime = (TextView) rootView.findViewById(R.id.txt_PlayProgTime);
         file_cardLink = (TextView) rootView.findViewById(R.id.file_cardLink);
+        mPreview = (Preview) rootView.findViewById(R.id.preview);
 
+        //mPreview=new Preview(getContext());
+        mPreview.setListener(this);
 
         if (cardModelObj.getTitle() != null) {
             text_cardName.setText(cardModelObj.getTitle());
@@ -84,6 +91,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
+            mPreview.setVisibility(View.GONE);
 
             if (!cardModelObj.getUrl().isEmpty() && cardModelObj.getUrl() != null) {
 
@@ -144,11 +152,13 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
+            mPreview.setVisibility(View.GONE);
         } else if (cardModelObj.getType().equalsIgnoreCase("video")) {
             image_cardImage.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.VISIBLE);
             rl_audio_player.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
+            mPreview.setVisibility(View.GONE);
             youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
 
             if (getUserVisibleHint()) {
@@ -186,7 +196,9 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.VISIBLE);
             file_cardLink.setVisibility(View.GONE);
+            mPreview.setVisibility(View.GONE);
             image_cardImage.setImageResource(R.drawable.audio_hdr_img);
+            image_cardImage.getLayoutParams().height = 360;
 
             audio_player_initialize(audio_seek_bar, txt_PlayProgTime, img_audio_play_stop);
             setMediaPlayer(null, cardModelObj.getUrl());
@@ -195,8 +207,33 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             image_cardImage.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
-            file_cardLink.setVisibility(View.VISIBLE);
+            file_cardLink.setVisibility(View.GONE);
+            mPreview.setVisibility(View.VISIBLE);
             file_cardLink.setText(cardModelObj.getUrl());
+            if(file_cardLink!=null && file_cardLink.getText()!=null && !file_cardLink.getText().toString().equals(""))
+            {
+
+                    file_cardLink.setVisibility(View.GONE);
+                    mPreview.setVisibility(View.VISIBLE);
+                    mPreview.setData(file_cardLink.getText().toString());
+
+                mPreview.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View arg0) {
+                       /* String url = file_cardLink.toString();
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        intent.setPackage("com.google.android.youtube");
+                        startActivity(intent);*/
+
+                        String fullPath = cardModelObj.getUrl();
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fullPath));
+                        startActivity(browserIntent);
+                    }
+                });
+
+            }
             file_cardLink.setMovementMethod(LinkMovementMethod.getInstance());
             /*Glide.with(getActivity())
                     .load(R.drawable.open_pdf_icon)
@@ -241,6 +278,11 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     }
 
     @Override
+    public void onDataReady(Preview preview) {
+        mPreview.setMessage(preview.getLink());
+    }
+
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (!isVisibleToUser && UTubePlayer != null) {
@@ -270,12 +312,12 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
         }*/
         if (isVisibleToUser && youTubePlayerFragment != null) {
+
+            if (!isAdded()) return;
             //  Log.v (TAG, "Initializing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
-            if (getChildFragmentManager() != null) {
-                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
-                youTubePlayerFragment.initialize(DEVELOPER_KEY, this);
-            }
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
+            youTubePlayerFragment.initialize(DEVELOPER_KEY, this);
         }
     }
 
