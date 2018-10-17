@@ -75,13 +75,13 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/chk_sel_all">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/channelSet_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/chk_sel_all"
         android:visibility="visible"
         android:layout_marginTop="@dimen/dimen_12"
         android:paddingBottom="@dimen/dimen_100"
