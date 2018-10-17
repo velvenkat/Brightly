@@ -59,6 +59,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/login_btn_background"
         android:padding="3dp"
+        android:layout_margin="@dimen/dimen_8"
         android:text="@string/create_set"
         android:textColor="@color/white"
         android:textSize="@dimen/mediumtextsize"

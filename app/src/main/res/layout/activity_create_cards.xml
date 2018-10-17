@@ -21,7 +21,7 @@
         android:layout_margin="@dimen/dimen_10"
         app:tabBackground="@drawable/tab_selector"
         app:tabSelectedTextColor="@color/btn_login"
-        app:tabIndicatorColor="@color/btn_login"
+        app:tabIndicatorColor="@color/orange_color"
 
         />
 

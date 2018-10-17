@@ -255,6 +255,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             }
             //   setTitle("Set Info");
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Set Info");
+            getSetSharedInfo();
 
           /*  shared_listview.setLayoutManager(new LinearLayoutManager(this));
             sharedListAdapter = new SharedListAdapter(EditSetInfo.this, sharedDataModels, set_id);

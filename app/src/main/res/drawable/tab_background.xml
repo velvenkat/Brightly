@@ -2,12 +2,12 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
     <gradient
-        android:endColor="#FF5722"
-        android:startColor="@color/btn_login" />
+        android:endColor="#4bb6ef"
+        android:startColor="#4bb6ef" />
 
     <stroke
         android:width="0.4dp"
-        android:color="@color/light_gery"/>
+        android:color="@color/btn_login"/>
 
     <corners
         android:bottomLeftRadius="1dp"

@@ -5,10 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".Activities.CreateChannel">
-
-
+    android:orientation="vertical">
 
 
     <LinearLayout
@@ -74,6 +71,7 @@
         android:id="@+id/btn_createChannel"
         android:layout_width="fill_parent"
         android:layout_height="45dp"
+        android:layout_margin="@dimen/dimen_8"
         android:background="@drawable/login_btn_background"
         android:padding="3dp"
         android:text="@string/create_channel"

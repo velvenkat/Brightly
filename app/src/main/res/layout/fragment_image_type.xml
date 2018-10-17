@@ -74,6 +74,7 @@
         android:layout_height="50dp"
         android:background="@drawable/login_btn_background"
         android:padding="3dp"
+        android:layout_margin="@dimen/dimen_8"
         android:text="@string/create_card"
         android:layout_alignParentBottom="true"
         android:textColor="@color/white"
