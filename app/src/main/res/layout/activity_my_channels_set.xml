@@ -72,6 +72,11 @@
          android:visibility="gone"
          android:layout_below="@+id/set_del_contr"
          android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/channelSet_listview"
         android:layout_width="match_parent"
@@ -79,8 +84,10 @@
         android:layout_below="@+id/chk_sel_all"
         android:visibility="visible"
         android:layout_marginTop="@dimen/dimen_12"
-        android:paddingBottom="@dimen/dimen_25"
+        android:paddingBottom="@dimen/dimen_100"
         android:nestedScrollingEnabled="false"/>
+
+    </ScrollView>
 
 
     <ImageView

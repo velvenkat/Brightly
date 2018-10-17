@@ -2,6 +2,7 @@ package com.purplefront.brightly.Fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static android.content.Context.MODE_PRIVATE;
 
 public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.ChannelListItemClickListener, BaseFragment.alert_dlg_interface {
     List<ChannelListModel> channelListModels = new ArrayList<>();
@@ -165,11 +167,18 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     public void onPrepareOptionsMenu(Menu menu) {
         menu.clear();
         getActivity().invalidateOptionsMenu();
-        getNotificationCount();
+//        getNotificationCount();
+
+        SharedPreferences prefs = getActivity().getSharedPreferences("Noti_Cnt", MODE_PRIVATE);
+        count = prefs.getString("count", "");
         getActivity().getMenuInflater().inflate(R.menu.my_channel, menu);
         MenuItem itemCart = menu.findItem(R.id.action_bell);
         LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
-        setBadgeCount(getContext(), icon, count);
+        if (!count.equals("")) {
+            setBadgeCount(getContext(), icon, count);
+        }
+
+
 
         super.onPrepareOptionsMenu(menu);
 
@@ -191,67 +200,6 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         icon.mutate();
         icon.setDrawableByLayerId(R.id.ic_badge, badge);
     }
-
-    private void setNotificationCounts(NotificationsResponse notificationsResponse) {
-
-        String message = notificationsResponse.getMessage();
-
-        if (message.equals("success")) {
-            count = notificationsResponse.getCount();
-        } else {
-            count = "0";
-        }
-    }
-
-    public void getNotificationCount() {
-        try {
-
-            if (CheckNetworkConnection.isOnline(getContext())) {
-//                showProgress();
-                Call<NotificationsResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getNotificationCounts(user_obj.getUser_Id());
-                callRegisterUser.enqueue(new ApiCallback<NotificationsResponse>(getActivity()) {
-                    @Override
-                    public void onApiResponse(Response<NotificationsResponse> response, boolean isSuccess, String message) {
-                        NotificationsResponse notificationsResponse = response.body();
-
-                        if (isSuccess) {
-
-                            if (notificationsResponse != null) {
-
-                                dismissProgress();
-                                setNotificationCounts(notificationsResponse);
-
-                            } else {
-
-                                dismissProgress();
-                            }
-
-                        } else {
-
-                            dismissProgress();
-                        }
-
-                    }
-
-                    @Override
-                    public void onApiFailure(boolean isSuccess, String message) {
-//                        showLongToast(MyChannel.this, message);
-                        dismissProgress();
-                    }
-                });
-            } else {
-
-//                showLongToast(MyChannel.this, "Network Error");
-                dismissProgress();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-//            showLongToast(MyChannel.this, "Something went Wrong, Please try Later");
-
-
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

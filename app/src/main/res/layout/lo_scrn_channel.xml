@@ -15,15 +15,21 @@
             android:textSize="@dimen/dimen_20"
             android:visibility="gone"
             />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/channels_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_12"
-            android:paddingBottom="@dimen/dimen_25"
+            android:paddingBottom="@dimen/dimen_100"
             android:visibility="visible"
             android:nestedScrollingEnabled="false"/>
+
+    </ScrollView>
 
 
         <ImageView

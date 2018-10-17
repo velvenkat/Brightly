@@ -30,6 +30,7 @@ import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
+import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -49,6 +50,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     TextView view_nodata;
     String userId;
     String set_name = "";
+    String chl_name;
     String set_id = "";
     ArrayList<String> del_sel_id = new ArrayList<>();
     RelativeLayout del_contr;
@@ -62,8 +64,9 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
     SetsListModel setsListModel;
     View rootView;
+    NotificationsModel notificationsModel;
     int CurPagrPos;
-
+    boolean isNotification;
     RealmModel user_obj;
 
 
@@ -81,13 +84,33 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         setHasOptionsMenu(true);
         Bundle bundle = getArguments();
         userId = user_obj.getUser_Id();
-        setsListModel = bundle.getParcelable("setsListModel");
-        isReorder = bundle.getBoolean("re_order", false);
-        String chl_name = bundle.getString("chl_name");
-        CurPagrPos = bundle.getInt("card_position");
-        set_name = setsListModel.getSet_name();
-        set_id = setsListModel.getSet_id();
+        isNotification=bundle.getBoolean("isNotification", false);
+
+
+        if (isNotification) {
+            notificationsModel = bundle.getParcelable("notfy_modl_obj");
+            if (notificationsModel != null) {
+                set_name = notificationsModel.getNotificationsSetDetail().getName();
+                set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
+                chl_name = notificationsModel.getChannel_name();
+            }
+            /*channel_id = notificationsModel.getChannel_id();
+            set_description = notificationsModel.getNotificationsSetDetail().getDescription();
+            Created_By = notificationsModel.getNotificationsSetDetail().getCreated_by();
+            card_order_position = notificationsModel.getCard_order_position();*/
+
+
+        }
+        else {
+
+            setsListModel = bundle.getParcelable("setsListModel");
+            isReorder = bundle.getBoolean("re_order", false);
+            chl_name = bundle.getString("chl_name");
+            set_name = setsListModel.getSet_name();
+            set_id = setsListModel.getSet_id();
+        }
         //setTitle(set_name);
+         CurPagrPos = bundle.getInt("card_position");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(chl_name);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
         view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);

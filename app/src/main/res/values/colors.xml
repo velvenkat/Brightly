@@ -17,7 +17,8 @@
     <color name="white_greyish">#EEEEEE</color>
     <color name="light_gery">#9E9E9E</color>
 
-    <color name="btn_login">#E64A19</color>
+    <color name="btn_login">#4bb6ef</color>
+    <color name="orange_color">#E64A19</color>
     <color name="action_bar">#EEEEEE</color>
 
     //text color

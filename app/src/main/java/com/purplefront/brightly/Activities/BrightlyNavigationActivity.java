@@ -82,7 +82,7 @@ public class BrightlyNavigationActivity extends BaseActivity
     Realm realm;
     RealmResults<RealmModel> realmModel;
 
-    String userId;
+    public String userId;
     String userName;
     String userPhone;
     String userPicture;
@@ -121,8 +121,6 @@ public class BrightlyNavigationActivity extends BaseActivity
         isNotification = getIntent().getBooleanExtra("isNotification", false);
         isCardNotification=getIntent().getBooleanExtra("isCardNotification",false);
 
-
-        user_obj = getIntent().getParcelableExtra("user_obj");
         fragmentManager = getSupportFragmentManager();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.my_channel);
@@ -138,6 +136,8 @@ public class BrightlyNavigationActivity extends BaseActivity
         realmModel = realm.where(RealmModel.class).findAllAsync();
         contactShares = new ArrayList<>();
 
+        user_obj = getIntent().getParcelableExtra("user_obj");
+
         realmModel.load();
         for(RealmModel model:realmModel){
             userId = model.getUser_Id();
@@ -145,6 +145,11 @@ public class BrightlyNavigationActivity extends BaseActivity
             userPhone = model.getUser_PhoneNumber();
             userPicture = model.getImage();
             deviceToken = model.getDeviceToken();
+
+            if(user_obj == null)
+            {
+                user_obj=model;
+            }
 
         }
 
@@ -238,14 +243,14 @@ public class BrightlyNavigationActivity extends BaseActivity
         headerImage_Profile = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.image_profile);
         if (userPicture != null) {
 
-            Glide.with(BrightlyNavigationActivity.this)
+            Glide.with(getApplicationContext())
                     .load(userPicture)
                     .centerCrop()
                     .transform(new CircleTransform(BrightlyNavigationActivity.this))
 //                        .override(50, 50)
                     .into(headerImage_Profile);
         } else {
-            Glide.with(BrightlyNavigationActivity.this)
+            Glide.with(getApplicationContext())
                     .load(R.drawable.default_user_image)
                     .centerCrop()
                     .transform(new CircleTransform(BrightlyNavigationActivity.this))

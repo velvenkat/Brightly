@@ -71,8 +71,6 @@ public class CardDetailFragment extends BaseFragment {
         super.onHiddenChanged(hidden);
         Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
         if (!hidden) {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(channel_name);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(setsListModel.getSet_name());
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
             boolean isCardClicked = ((BrightlyNavigationActivity) getActivity()).isCardClicked;
             if (isCardClicked) {
@@ -81,10 +79,20 @@ public class CardDetailFragment extends BaseFragment {
             }
             boolean isCardRefresh = ((BrightlyNavigationActivity) getActivity()).isCardRefresh;
             if (isCardRefresh) {
-                ((BrightlyNavigationActivity)getActivity()).isCardRefresh=false;
+                ((BrightlyNavigationActivity) getActivity()).isCardRefresh = false;
                 getCardsLists();
             }
-        }
+            if(isNotification){
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(notificationsModel.getChannel_name());
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(notificationsModel.getNotificationsSetDetail().getName());
+            }
+            else {
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(channel_name);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(setsListModel.getSet_name());
+
+            }
+            }
+
     }
 
     String set_description = "";
@@ -99,7 +107,6 @@ public class CardDetailFragment extends BaseFragment {
     ChannelListModel chl_list_obj;
     NotificationsModel notificationsModel;
     View rootView;
-    RealmModel user_obj;
     String card_order_position;
 
 
@@ -108,10 +115,9 @@ public class CardDetailFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_my_set_cards, container, false);
         //  setContentView(R.layout.activity_my_set_cards);
-        Toast.makeText(getContext(), "On Create Called", Toast.LENGTH_LONG).show();
-        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
+//        Toast.makeText(getContext(), "On Create Called", Toast.LENGTH_LONG).show();
+        userId = ((BrightlyNavigationActivity) getActivity()).userId;
         setHasOptionsMenu(true);
-        userId = user_obj.getUser_Id();
         //  userId = getIntent().getStringExtra("userId");
 /*
         realm = Realm.getDefaultInstance();
@@ -140,6 +146,7 @@ public class CardDetailFragment extends BaseFragment {
             set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
             Created_By = notificationsModel.getNotificationsSetDetail().getCreated_by();
             card_order_position = notificationsModel.getCard_order_position();
+            channel_name = notificationsModel.getChannel_name();
 
 
         } else {
@@ -221,6 +228,36 @@ public class CardDetailFragment extends BaseFragment {
                 return false;
             }
         });*/
+
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                    //         getActivity().finish();
+
+                    if(isNotification) {
+                       /* Fragment chnl_frag = new ChannelFragment();
+            *//*fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
+                    .replace(R.id.frag_container, new Notifications(),
+                            Util.NOTIFICATIONS).commit();
+*//*
+                        ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.CHANNELS, chnl_frag, false);*/
+                        getActivity().finish();
+                        simpleIntent(getActivity(), BrightlyNavigationActivity.class);
+                    }
+                    else {
+
+                        ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
 
         return rootView;
     }
@@ -444,6 +481,13 @@ public class CardDetailFragment extends BaseFragment {
                 Fragment frag1 = new CardList();
                 Bundle bundle2 = new Bundle();
                 bundle2.putParcelable("setsListModel", setsListModel);
+                bundle2.putParcelable("notfy_modl_obj",notificationsModel);
+                if(isNotification) {
+                    bundle2.putBoolean("isNotification", true);
+                }
+                else {
+                    bundle2.putBoolean("isNotification", false);
+                }
                 bundle2.putBoolean("re_order", false);
                 bundle2.putString("chl_name", channel_name);
                 bundle2.putInt("card_position", Cur_PagrPosition);

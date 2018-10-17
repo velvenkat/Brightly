@@ -2,6 +2,7 @@ package com.purplefront.brightly.Fragments;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,6 +29,8 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,6 +67,10 @@ public class Notifications extends BaseFragment implements NotificationsAdapter.
         fragmentManager = getActivity().getSupportFragmentManager();
         // Set title bar
         ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("Notifications");
+
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences("Noti_Cnt", MODE_PRIVATE).edit();
+        editor.clear();
+        editor.apply();
 
         /*realm = Realm.getDefaultInstance();
         realmModel = realm.where(RealmModel.class).findAllAsync();*/

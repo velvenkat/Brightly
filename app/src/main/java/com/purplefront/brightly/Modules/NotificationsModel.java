@@ -28,6 +28,14 @@ public class NotificationsModel implements Parcelable {
     @Expose
     private String channel_id;
 
+    @SerializedName("channel_name")
+    @Expose
+    private String channel_name;
+
+    @SerializedName("badge")
+    @Expose
+    private String badge;
+
     @SerializedName("shared_user_profile_pic")
     @Expose
     private String shared_user_profile_pic;
@@ -55,6 +63,8 @@ public class NotificationsModel implements Parcelable {
         date_time = in.readString();
         action = in.readString();
         channel_id = in.readString();
+        channel_name = in.readString();
+        badge = in.readString();
         card_order_position = in.readString();
         shared_user_profile_pic = in.readString();
         notificationsSetDetail = in.readParcelable(NotificationsSetDetail.class.getClassLoader());
@@ -128,6 +138,22 @@ public class NotificationsModel implements Parcelable {
         this.channel_id = channel_id;
     }
 
+    public String getChannel_name() {
+        return channel_name;
+    }
+
+    public void setChannel_name(String channel_name) {
+        this.channel_name = channel_name;
+    }
+
+    public String getBadge() {
+        return badge;
+    }
+
+    public void setBadge(String badge) {
+        this.badge = badge;
+    }
+
     public NotificationsSetDetail getNotificationsSetDetail() {
         return notificationsSetDetail;
     }
@@ -148,6 +174,8 @@ public class NotificationsModel implements Parcelable {
         dest.writeString(date_time);
         dest.writeString(action);
         dest.writeString(channel_id);
+        dest.writeString(channel_name);
+        dest.writeString(badge);
         dest.writeString(card_order_position);
         dest.writeString(shared_user_profile_pic);
         dest.writeParcelable(notificationsSetDetail, flags);
