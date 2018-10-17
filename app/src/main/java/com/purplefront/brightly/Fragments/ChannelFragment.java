@@ -81,10 +81,13 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         channel_type = bundle.getString("type");
         setDlgListener(this);
         if (channel_type.equalsIgnoreCase("all")) {
+            image_createChannel.setVisibility(View.VISIBLE);
             setActionBarTitle(getResources().getString(R.string.all_channels));
         } else if (channel_type.equalsIgnoreCase("subscribe")) {
+            image_createChannel.setVisibility(View.GONE);
             setActionBarTitle(getResources().getString(R.string.my_subscription));
         } else if (channel_type.equalsIgnoreCase("my")) {
+            image_createChannel.setVisibility(View.VISIBLE);
             setActionBarTitle(getResources().getString(R.string.my_channels));
         }
         getChannelsLists(channel_type);
