@@ -5,10 +5,11 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.purplefront.brightly"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
@@ -92,6 +93,10 @@ dependencies {
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation 'swarajsaaj:otpreader:1.1'
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
+    implementation 'com.freesoulapps:preview-android:0.3.3'
+    implementation 'com.android.support:percent:27.1.1'
+    implementation 'org.jsoup:jsoup:1.10.3'
+    implementation 'com.victor:lib:1.0.1'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
