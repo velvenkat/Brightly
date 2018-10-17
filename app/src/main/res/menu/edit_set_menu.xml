@@ -4,14 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.purplefront.brightly.Activities.BrightlyNavigationActivity"
     >
+
     <item
         android:id="@+id/action_share"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:icon="@mipmap/share_icon"
         android:title="Share" />
     <item
         android:id="@+id/action_delete"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:icon="@mipmap/delete_icon"
         android:title="Delete" />
+
 </menu>

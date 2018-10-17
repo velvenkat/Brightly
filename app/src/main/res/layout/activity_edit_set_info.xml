@@ -8,29 +8,59 @@
     tools:context=".Fragments.EditSetInfo">
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginTop="@dimen/dimen10"
+        android:layout_weight="1"
         android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:id="@+id/toggle_contr"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content">
+
+            <!-- <ToggleButton
+                 android:id="@+id/switch_show_protected"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+
+                 android:textOff=""
+                 android:textOn=""/>-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                 android:id="@+id/txtShrAccess"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/switch_toggle_access"
+                android:text="Share Access" />
+
+            <Switch
+                android:id="@+id/switch_toggle_access"
+                android:layout_alignParentRight="true"
+                android:layout_width="100dp"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
 
         <EditText
             android:id="@+id/edit_setName"
-            android:singleLine="true"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="@dimen/dimen_10"
             android:layout_marginBottom="@dimen/dimen_5"
             android:layout_marginLeft="@dimen/dimen_20"
             android:layout_marginRight="@dimen/dimen_20"
-            android:inputType="textCapSentences"
+            android:layout_marginTop="@dimen/dimen_10"
             android:background="@drawable/edit_text_background"
             android:gravity="center_vertical"
             android:hint="@string/set_name"
+            android:inputType="textCapSentences"
             android:maxLength="25"
             android:padding="@dimen/dimen_4"
+            android:singleLine="true"
             android:textColor="@color/black"
             android:textSize="@dimen/mediumtextsize" />
 
@@ -38,14 +68,14 @@
             android:id="@+id/edit_setDescription"
             android:layout_width="fill_parent"
             android:layout_height="100dp"
-            android:layout_marginTop="@dimen/dimen_20"
             android:layout_marginBottom="@dimen/dimen_10"
             android:layout_marginLeft="@dimen/dimen_20"
             android:layout_marginRight="@dimen/dimen_20"
-            android:inputType="textCapSentences"
+            android:layout_marginTop="@dimen/dimen_20"
             android:background="@drawable/edit_text_background"
             android:gravity="start"
             android:hint="@string/set_description"
+            android:inputType="textCapSentences"
             android:padding="@dimen/dimen_4"
             android:textColor="@color/black"
             android:textSize="@dimen/mediumtextsize" />
@@ -55,13 +85,13 @@
             android:id="@+id/text_share_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:layout_marginTop="@dimen/dimen_10"
             android:layout_marginLeft="@dimen/dimen_16"
             android:layout_marginRight="@dimen/dimen_16"
-            android:visibility="gone"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:text="@string/sharing_content_title_text"
+            android:textColor="@color/black"
             android:textStyle="bold"
-            android:text="@string/sharing_content_title_text"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/layout_act_inact"
@@ -75,38 +105,34 @@
             <TextView
                 android:layout_width="8dp"
                 android:layout_height="8dp"
-                android:background="@android:color/holo_green_dark"
                 android:layout_gravity="center_vertical"
-                android:visibility="visible"
-                />
+                android:background="@android:color/holo_green_dark"
+                android:visibility="visible" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/active_installed"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/dimen10"
-                android:visibility="visible"
-                />
+                android:text="@string/active_installed"
+                android:visibility="visible" />
 
 
             <TextView
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:layout_gravity="center_vertical"
-                android:background="@android:color/holo_red_dark"
                 android:layout_marginLeft="@dimen/dimen_25"
-                android:visibility="visible"
-                />
+                android:background="@android:color/holo_red_dark"
+                android:visibility="visible" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/inactive_not_installed"
-                android:layout_marginLeft="@dimen/dimen10"
                 android:layout_gravity="center_vertical"
-                android:visibility="visible"
-                />
+                android:layout_marginLeft="@dimen/dimen10"
+                android:text="@string/inactive_not_installed"
+                android:visibility="visible" />
 
         </LinearLayout>
 
@@ -115,12 +141,12 @@
             android:id="@+id/shared_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
-            android:layout_marginTop="@dimen/dimen_10"
             android:layout_marginLeft="@dimen/dimen_16"
             android:layout_marginRight="@dimen/dimen_16"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:nestedScrollingEnabled="false"
             android:paddingBottom="@dimen/dimen_4"
-            android:nestedScrollingEnabled="false"/>
+            android:visibility="visible" />
 
     </LinearLayout>
 
@@ -132,7 +158,6 @@
         android:padding="3dp"
         android:text="@string/edit_set"
         android:textColor="@color/white"
-        android:textSize="@dimen/mediumtextsize"
-        />
+        android:textSize="@dimen/mediumtextsize" />
 
 </LinearLayout>

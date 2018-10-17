@@ -19,9 +19,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
@@ -51,10 +56,11 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
     TextView text_share_title;
     LinearLayout layout_act_inact;
 
-   // ImageView share, delete;
+
+    // ImageView share, delete;
 
     boolean isNotification;
-  //  String userId;
+    //  String userId;
     String channel_id = "";
     String set_description = "";
     String set_name = "";
@@ -63,11 +69,12 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
     String channel_name;
     String Created_By;
     String shared_by;
+    String shareAccess;
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
     NotificationsModel notificationsModel;
     View rootView;
-
+    RelativeLayout toggle_contr;
 
     RealmModel user_obj;
 
@@ -76,18 +83,81 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
+
         if (Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
-          inflater.inflate(R.menu.edit_set_menu,menu);
+            inflater.inflate(R.menu.edit_set_menu, menu);
+
+        } else if (setsListModel.getShare_access().equals("1")) {
+            inflater.inflate(R.menu.edit_set_other, menu);
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+    }
+
+    public void api_call_share_access_update(String value) {
+
+        try {
+
+            if (CheckNetworkConnection.isOnline(getContext())) {
+                showProgress();
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_share_access_update(user_obj.getUser_Id(), set_id, value);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        AddMessageResponse infoSharedResponse = response.body();
+                        if (isSuccess) {
+
+                            dismissProgress();
+
+                            if (isNotification) {
+                                notificationsModel.getNotificationsSetDetail().setShare_access(value);
+
+                            } else {
+                                setsListModel.setShare_access(value);
+                            }
+                            CardDetailFragment Card_dtl_frag = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
+
+                            Card_dtl_frag.setsListModel = setsListModel;
+                            Card_dtl_frag.notificationsModel = notificationsModel;
+                        } else {
+
+                            dismissProgress();
+                        }
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                    }
+                });
+            } else {
+
+                dismissProgress();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
+
+
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-         rootView=inflater.inflate(R.layout.activity_edit_set_info,container,false);
-         user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
-         setHasOptionsMenu(true);
+        rootView = inflater.inflate(R.layout.activity_edit_set_info, container, false);
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
+        toggle_contr=(RelativeLayout)rootView.findViewById(R.id.toggle_contr);
+        Switch toggle_share_access = rootView.findViewById(R.id.switch_toggle_access);
+        setHasOptionsMenu(true);
         ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
+//        toolbar=(Toolbar)rootView.findViewById(R.id.toolbar);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -97,8 +167,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
         setTitle("Edit Set Info");
 */
-        Bundle bundle =getArguments();
-
+        Bundle bundle = getArguments();
         if (bundle != null) {
             isNotification = bundle.getBoolean("isNotification", false);
         }
@@ -128,10 +197,47 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
         }
 
+
+        //  switchAB.setChecked(false);
+        if (Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
+            toggle_contr.setVisibility(View.VISIBLE);
+            toggle_share_access.setShowText(true);
+        }
+        else{
+            toggle_contr.setVisibility(View.GONE);
+        }
+        if (setsListModel.getShare_access().equals("0")) {
+            toggle_share_access.setChecked(false);
+
+        } else {
+            toggle_share_access.setChecked(true);
+        }
+        toggle_share_access.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+
+                if (isChecked) {
+                   /* Toast.makeText(getContext(), "ON", Toast.LENGTH_SHORT)
+                            .show();*/
+                    //menu.getItem()
+                    //share_item.setVisible(true);
+
+                    api_call_share_access_update("1");
+                } else {
+                    //share_item.setVisible(false);
+                    api_call_share_access_update("0");
+                }
+
+
+            }
+        });
+
+
         edit_setName = (EditText) rootView.findViewById(R.id.edit_setName);
         edit_setDescription = (EditText) rootView.findViewById(R.id.edit_setDescription);
         text_share_title = (TextView) rootView.findViewById(R.id.text_share_title);
-        btn_editSet = (Button)rootView.findViewById(R.id.btn_editSet);
+        btn_editSet = (Button) rootView.findViewById(R.id.btn_editSet);
 
         layout_act_inact = (LinearLayout) rootView.findViewById(R.id.layout_act_inact);
         shared_listview = (RecyclerView) rootView.findViewById(R.id.shared_listview);
@@ -143,12 +249,12 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             btn_editSet.setVisibility(View.GONE);
             edit_setName.setEnabled(false);
             edit_setDescription.setEnabled(false);
-            if(shared_by != null) {
+            if (shared_by != null) {
                 text_share_title.setVisibility(View.VISIBLE);
                 text_share_title.setText("Shared by : " + shared_by);
             }
-         //   setTitle("Set Info");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Set Info");
+            //   setTitle("Set Info");
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Set Info");
 
           /*  shared_listview.setLayoutManager(new LinearLayoutManager(this));
             sharedListAdapter = new SharedListAdapter(EditSetInfo.this, sharedDataModels, set_id);
@@ -157,7 +263,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         } else {
 
 
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Edit Set Info");
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Edit Set Info");
             getSetSharedInfo();
 
 
@@ -175,7 +281,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
                     //         getActivity().finish();
-                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                     return true;
                 }
                 return false;
@@ -192,7 +298,6 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         // Get all edittext texts
         set_name = edit_setName.getText().toString();
         set_description = edit_setDescription.getText().toString();
-
 
 
         // Check if all strings are null or not
@@ -256,12 +361,13 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                 return true;
 */
             case R.id.action_share:
-                Fragment fragment =new SharePage();
-                Bundle bundle1=new Bundle();
+
+                Fragment fragment = new SharePage();
+                Bundle bundle1 = new Bundle();
                 bundle1.putParcelable("model_obj", chl_list_obj);
                 bundle1.putParcelable("setsListModel", setsListModel);
                 fragment.setArguments(bundle1);
-                ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.share_page,fragment,true);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.share_page, fragment, true);
                 return true;
             case R.id.action_delete:
                 showAlertDialog();
@@ -399,8 +505,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             Bundle bundle=new Bundle();
             bundle.putParcelable("model_obj", chl_list_obj);
             ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List,fragment,false);*/
-            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true,2);
-
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
 
 
         } else {
@@ -478,16 +583,15 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             if (isNotification) {
                 notificationsModel.getNotificationsSetDetail().setName(set_name);
                 notificationsModel.getNotificationsSetDetail().setDescription(set_description);
-            } else
-            {
+            } else {
                 setsListModel.setSet_name(set_name);
                 setsListModel.setDescription(set_description);
             }
-            CardDetailFragment Card_dtl_frag=(CardDetailFragment) ((BrightlyNavigationActivity)getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
-            Card_dtl_frag.chl_list_obj=chl_list_obj;
-            Card_dtl_frag.setsListModel=setsListModel;
-            Card_dtl_frag.notificationsModel=notificationsModel;
-            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+            CardDetailFragment Card_dtl_frag = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
+            Card_dtl_frag.chl_list_obj = chl_list_obj;
+            Card_dtl_frag.setsListModel = setsListModel;
+            Card_dtl_frag.notificationsModel = notificationsModel;
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
         } else {
             dismissProgress();
             showLongToast(getActivity(), message);
@@ -507,7 +611,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                         SetInfoSharedResponse infoSharedResponse = response.body();
                         if (isSuccess) {
 
-                            if (infoSharedResponse != null && infoSharedResponse.getShared_data().size()!=0) {
+                            if (infoSharedResponse != null && infoSharedResponse.getShared_data().size() != 0) {
 
                                 setSharedCredentials(infoSharedResponse);
                                 text_share_title.setVisibility(View.VISIBLE);
@@ -550,7 +654,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         if (!setsListModel.getShared_data().isEmpty() && setsListModel.getShared_data() != null) {
             text_share_title.setVisibility(View.VISIBLE);
             shared_listview.setLayoutManager(new LinearLayoutManager(getContext()));
-            sharedListAdapter = new SharedListAdapter(getContext(), infoSharedResponse.getShared_data(), set_id, share_link,this);
+            sharedListAdapter = new SharedListAdapter(getContext(), infoSharedResponse.getShared_data(), set_id, share_link, this);
             shared_listview.setAdapter(sharedListAdapter);
             dismissProgress();
         } else {
@@ -560,7 +664,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
     @Override
     public void call_revoke(String set_id, String assigned_to) {
-        getRevokeSet(set_id,assigned_to);
+        getRevokeSet(set_id, assigned_to);
     }
 
    /* @Override

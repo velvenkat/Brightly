@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class NotificationsSetDetail implements Parcelable{
+public class NotificationsSetDetail implements Parcelable {
 
     @SerializedName("set_id")
     @Expose
@@ -29,19 +29,13 @@ public class NotificationsSetDetail implements Parcelable{
     private String shared_by;
 
 
-    public NotificationsSetDetail(String set_id, String name, String description, String created_by) {
-        this.set_id = set_id;
-        this.name = name;
-        this.description = description;
-        this.created_by = created_by;
-    }
-
     protected NotificationsSetDetail(Parcel in) {
         set_id = in.readString();
         name = in.readString();
         description = in.readString();
         created_by = in.readString();
         shared_by = in.readString();
+        share_access = in.readString();
     }
 
     public static final Creator<NotificationsSetDetail> CREATOR = new Creator<NotificationsSetDetail>() {
@@ -55,6 +49,26 @@ public class NotificationsSetDetail implements Parcelable{
             return new NotificationsSetDetail[size];
         }
     };
+
+    public String getShare_access() {
+        return share_access;
+    }
+
+    public void setShare_access(String share_access) {
+        this.share_access = share_access;
+    }
+
+    @SerializedName("share_access")
+    @Expose
+    private String share_access;
+
+
+    public NotificationsSetDetail(String set_id, String name, String description, String created_by) {
+        this.set_id = set_id;
+        this.name = name;
+        this.description = description;
+        this.created_by = created_by;
+    }
 
     public String getSet_id() {
         return set_id;
@@ -96,17 +110,19 @@ public class NotificationsSetDetail implements Parcelable{
         this.shared_by = shared_by;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(set_id);
-        parcel.writeString(name);
-        parcel.writeString(description);
-        parcel.writeString(created_by);
-        parcel.writeString(shared_by);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(set_id);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeString(created_by);
+        dest.writeString(shared_by);
+        dest.writeString(share_access);
     }
 }

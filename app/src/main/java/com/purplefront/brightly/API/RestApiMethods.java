@@ -146,5 +146,8 @@ public interface RestApiMethods {
     @POST("users/logout.php")
     Call<AddMessageResponse> call_logout_user(@Query("user_id") String user_id,@Query("token") String token);
 
+    @POST("sets/share_link.php")
+    Call<AddMessageResponse> call_share_access_update(@Query("user_id") String user_id,@Query("set_id") String set_id,@Query("value") String acc_value);
+
 
 }

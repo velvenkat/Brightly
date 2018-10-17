@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -45,8 +46,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 
-
-public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.ChannelListItemClickListener {
+public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.ChannelListItemClickListener, BaseFragment.alert_dlg_interface {
     List<ChannelListModel> channelListModels = new ArrayList<>();
     MyChannelsAdapter myChannelsAdapter;
     ImageView image_createChannel;
@@ -59,8 +59,8 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     Realm realm;
     RealmResults<RealmModel> realmModel;
 
-  //  ActionBarUtil actionBarUtilObj;
-    String count="0";
+    //  ActionBarUtil actionBarUtilObj;
+    String count = "0";
     String userName;
     String userPhone;
     String userPicture;
@@ -69,22 +69,20 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView=inflater.inflate(R.layout.lo_scrn_channel,container,false);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
-        image_createChannel = (ImageView)rootView. findViewById(R.id.image_createChannel);
-        channels_listview=(RecyclerView)rootView.findViewById(R.id.channels_listview);
+        rootView = inflater.inflate(R.layout.lo_scrn_channel, container, false);
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
+        image_createChannel = (ImageView) rootView.findViewById(R.id.image_createChannel);
+        channels_listview = (RecyclerView) rootView.findViewById(R.id.channels_listview);
         setHasOptionsMenu(true);
-        ((BrightlyNavigationActivity)getActivity()).getSupportActionBar().show();
-        Bundle bundle=getArguments();
-        channel_type=bundle.getString("type");
-
-        if(channel_type.equalsIgnoreCase("all")){
+        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+        Bundle bundle = getArguments();
+        channel_type = bundle.getString("type");
+        setDlgListener(this);
+        if (channel_type.equalsIgnoreCase("all")) {
             setActionBarTitle(getResources().getString(R.string.all_channels));
-        }
-        else if(channel_type.equalsIgnoreCase("subscribe")){
+        } else if (channel_type.equalsIgnoreCase("subscribe")) {
             setActionBarTitle(getResources().getString(R.string.my_subscription));
-        }
-        else if(channel_type.equalsIgnoreCase("my")){
+        } else if (channel_type.equalsIgnoreCase("my")) {
             setActionBarTitle(getResources().getString(R.string.my_channels));
         }
         getChannelsLists(channel_type);
@@ -97,11 +95,11 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                 intent.putExtra("userId", user_obj.getUser_Id());
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-                Fragment fragment=new CreateChannelFragment();
-                Bundle bundle=new Bundle();
-                bundle.putString("type",channel_type);
+                Fragment fragment = new CreateChannelFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("type", channel_type);
                 fragment.setArguments(bundle);
-                ((BrightlyNavigationActivity)getActivity()).onFragmentCall( Util.Create_Channel,fragment,true);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Channel, fragment, true);
             }
         });
 
@@ -109,15 +107,15 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         realmModel = realm.where(RealmModel.class).findAllAsync();
 
         realmModel.load();
-        for(RealmModel model:realmModel){
-            userName =  model.getUser_Name();
+        for (RealmModel model : realmModel) {
+            userName = model.getUser_Name();
             userPhone = model.getUser_PhoneNumber();
             userPicture = model.getImage();
 
         }
 
-        ((BrightlyNavigationActivity)getActivity()).headerText_Name.setText(userName);
-        ((BrightlyNavigationActivity)getActivity()).headerText_Phone.setText(userPhone);
+        ((BrightlyNavigationActivity) getActivity()).headerText_Name.setText(userName);
+        ((BrightlyNavigationActivity) getActivity()).headerText_Phone.setText(userPhone);
 
         if (userPicture != null) {
 
@@ -137,8 +135,8 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         }
 
 
-        view_nodata = (TextView)rootView.findViewById(R.id.view_nodata);
-        channels_listview = (RecyclerView)rootView. findViewById(R.id.channels_listview);
+        view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
+        channels_listview = (RecyclerView) rootView.findViewById(R.id.channels_listview);
 
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
@@ -147,7 +145,8 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
-                    getActivity().finish();
+                    // getActivity().finish();
+                    showAlertDialog("Do you want to exit?", "", "Yes", "No");
                     return true;
                 }
                 return false;
@@ -156,10 +155,12 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
 
         return rootView;
     }
-    private void setActionBarTitle(String titleVal){
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(titleVal);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(null);
+
+    private void setActionBarTitle(String titleVal) {
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(titleVal);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(null);
     }
+
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         menu.clear();
@@ -190,6 +191,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         icon.mutate();
         icon.setDrawableByLayerId(R.id.ic_badge, badge);
     }
+
     private void setNotificationCounts(NotificationsResponse notificationsResponse) {
 
         String message = notificationsResponse.getMessage();
@@ -249,6 +251,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
 
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -265,7 +268,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                             Util.NOTIFICATIONS).commit();
 */
             Fragment nfy_frag = new Notifications();
-            ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.NOTIFICATIONS, nfy_frag,false);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.NOTIFICATIONS, nfy_frag, false);
             //          frag_container.setVisibility(View.VISIBLE);
 
 
@@ -330,7 +333,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         channels_listview.setLayoutManager(gridLayoutManager);
-        myChannelsAdapter = new MyChannelsAdapter(getActivity(), channelListModels,this);
+        myChannelsAdapter = new MyChannelsAdapter(getActivity(), channelListModels, this);
         channels_listview.setAdapter(myChannelsAdapter);
         myChannelsAdapter.notifyDataSetChanged();
 
@@ -338,6 +341,16 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
 
     @Override
     public void OnChannelItemClick(Fragment frag_args) {
-        ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List,frag_args,false);
+        ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Set_List, frag_args, false);
+    }
+
+    @Override
+    public void postive_btn_clicked() {
+        getActivity().finish();
+    }
+
+    @Override
+    public void negative_btn_clicked() {
+
     }
 }
