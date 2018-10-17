@@ -4,6 +4,7 @@ package com.purplefront.brightly.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -66,6 +67,7 @@ public class CardDetailFragment extends BaseFragment {
     String channel_id = "";
     String channel_name = "";
 
+
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -82,16 +84,15 @@ public class CardDetailFragment extends BaseFragment {
                 ((BrightlyNavigationActivity) getActivity()).isCardRefresh = false;
                 getCardsLists();
             }
-            if(isNotification){
+            if (isNotification) {
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(notificationsModel.getChannel_name());
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(notificationsModel.getNotificationsSetDetail().getName());
-            }
-            else {
+            } else {
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(channel_name);
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(setsListModel.getSet_name());
 
             }
-            }
+        }
 
     }
 
@@ -237,9 +238,9 @@ public class CardDetailFragment extends BaseFragment {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
                     //         getActivity().finish();
 
-                    if(isNotification) {
-                       /* Fragment chnl_frag = new ChannelFragment();
-            *//*fragmentManager
+                    if (isNotification) {
+                        /* Fragment chnl_frag = new ChannelFragment();
+                         *//*fragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
                     .replace(R.id.frag_container, new Notifications(),
@@ -248,8 +249,7 @@ public class CardDetailFragment extends BaseFragment {
                         ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.CHANNELS, chnl_frag, false);*/
                         getActivity().finish();
                         simpleIntent(getActivity(), BrightlyNavigationActivity.class);
-                    }
-                    else {
+                    } else {
 
                         ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
                     }
@@ -348,9 +348,16 @@ public class CardDetailFragment extends BaseFragment {
         }
         cardsPagerAdapter = new ViewCardFragmentPagerAdapter(getContext(), getChildFragmentManager(), cardFragList, set_id, userId, set_name);
         viewPager_Cards.setAdapter(cardsPagerAdapter);
-        if (isNotification && card_order_position != null) {
-            viewPager_Cards.setCurrentItem(Integer.parseInt(card_order_position));
-        }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isNotification && card_order_position != null) {
+                    viewPager_Cards.setCurrentItem(Integer.parseInt(card_order_position));
+                }
+            }
+        }, 500);
+
 //        viewPager_Cards.setCurrentItem(3);
         // cardsPagerAdapter.notifyDataSetChanged();
         viewPager_Cards.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -481,11 +488,10 @@ public class CardDetailFragment extends BaseFragment {
                 Fragment frag1 = new CardList();
                 Bundle bundle2 = new Bundle();
                 bundle2.putParcelable("setsListModel", setsListModel);
-                bundle2.putParcelable("notfy_modl_obj",notificationsModel);
-                if(isNotification) {
+                bundle2.putParcelable("notfy_modl_obj", notificationsModel);
+                if (isNotification) {
                     bundle2.putBoolean("isNotification", true);
-                }
-                else {
+                } else {
                     bundle2.putBoolean("isNotification", false);
                 }
                 bundle2.putBoolean("re_order", false);
