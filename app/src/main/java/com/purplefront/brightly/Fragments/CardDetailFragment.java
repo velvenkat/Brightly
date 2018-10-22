@@ -66,6 +66,7 @@ public class CardDetailFragment extends BaseFragment {
     String userId;
     String channel_id = "";
     String channel_name = "";
+    public boolean isYouTubeInitializing = false;
 
 
     @Override
@@ -352,11 +353,14 @@ public class CardDetailFragment extends BaseFragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (isNotification && card_order_position != null) {
-                    viewPager_Cards.setCurrentItem(Integer.parseInt(card_order_position));
+                if (!isYouTubeInitializing) {
+                    if (isNotification && card_order_position != null) {
+                        viewPager_Cards.setCurrentItem(Integer.parseInt(card_order_position));
+                        card_order_position = null;
+                    }
                 }
             }
-        }, 500);
+        }, 100);
 
 //        viewPager_Cards.setCurrentItem(3);
         // cardsPagerAdapter.notifyDataSetChanged();
@@ -507,5 +511,13 @@ public class CardDetailFragment extends BaseFragment {
         }
     }
 
+    public void move_card() {
 
+        if (isNotification && card_order_position != null) {
+            viewPager_Cards.setCurrentItem(Integer.parseInt(card_order_position));
+            card_order_position = null;
+
+        }
+        isYouTubeInitializing = false;
+    }
 }

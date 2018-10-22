@@ -29,6 +29,7 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.R;
+import com.purplefront.brightly.Utils.Util;
 
 import java.util.Locale;
 
@@ -48,7 +49,8 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     SeekBar audio_seek_bar;
     TextView txt_PlayProgTime;
     TextView file_cardLink;
-    boolean isUTubePlayFullScreen=false;
+    CardDetailFragment parent_frag_Card_dtl;
+    boolean isUTubePlayFullScreen = false;
 
     @Nullable
     @Override
@@ -61,7 +63,6 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         TextView text_cardName;
         TextView text_cardDescription;
         ImageView image_cardImage;
-
 
 
         // Locate the TextViews in viewpager_item.xml
@@ -166,8 +167,9 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
                 //  mYouTubePlayerSupportFragment.initialize(DeveloperKey.DEVELOPER_KEY, this);
-
-                 youTubePlayerFragment.initialize(DEVELOPER_KEY, Multimedia_CardFragment.this);
+                parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
+                parent_frag_Card_dtl.isYouTubeInitializing = true;
+                youTubePlayerFragment.initialize(DEVELOPER_KEY, Multimedia_CardFragment.this);
 
             }
 
@@ -210,12 +212,11 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             file_cardLink.setVisibility(View.GONE);
             mPreview.setVisibility(View.VISIBLE);
             file_cardLink.setText(cardModelObj.getUrl());
-            if(file_cardLink!=null && file_cardLink.getText()!=null && !file_cardLink.getText().toString().equals(""))
-            {
+            if (file_cardLink != null && file_cardLink.getText() != null && !file_cardLink.getText().toString().equals("")) {
 
-                    file_cardLink.setVisibility(View.GONE);
-                    mPreview.setVisibility(View.VISIBLE);
-                    mPreview.setData(file_cardLink.getText().toString());
+                file_cardLink.setVisibility(View.GONE);
+                mPreview.setVisibility(View.VISIBLE);
+                mPreview.setData(file_cardLink.getText().toString());
 
                 mPreview.setOnClickListener(new View.OnClickListener() {
 
@@ -293,7 +294,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 transaction.remove(youTubePlayerFragment).commit();
             }
             UTubePlayer = null;
-            ((BrightlyNavigationActivity)getActivity()).uTubePlayer=null;
+            ((BrightlyNavigationActivity) getActivity()).uTubePlayer = null;
         }
         if (!isVisibleToUser && mediaPlayer != null) {
             //release_media();
@@ -317,6 +318,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             //  Log.v (TAG, "Initializing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
+
             youTubePlayerFragment.initialize(DEVELOPER_KEY, this);
         }
     }
@@ -325,20 +327,20 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
 //                            Utils.logDebug(TAG, "onInitializationSuccess");
 
+        parent_frag_Card_dtl.move_card();
         UTubePlayer = youTubePlayer;
-        ((BrightlyNavigationActivity)getActivity()).uTubePlayer=UTubePlayer;
+        ((BrightlyNavigationActivity) getActivity()).uTubePlayer = UTubePlayer;
         UTubePlayer.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
             @Override
             public void onFullscreen(boolean b) {
 
-             if(b){
-                 isUTubePlayFullScreen=true;
-                 ((BrightlyNavigationActivity)getActivity()).isUTubePlayerFullScreen=true;
-             }
-             else {
-                 isUTubePlayFullScreen = false;
-                 ((BrightlyNavigationActivity) getActivity()).isUTubePlayerFullScreen = false;
-             }
+                if (b) {
+                    isUTubePlayFullScreen = true;
+                    ((BrightlyNavigationActivity) getActivity()).isUTubePlayerFullScreen = true;
+                } else {
+                    isUTubePlayFullScreen = false;
+                    ((BrightlyNavigationActivity) getActivity()).isUTubePlayerFullScreen = false;
+                }
             }
         });
         if (!wasRestored) {
@@ -356,6 +358,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
 //                            Utils.logError(TAG, "Could not initialize YouTubePlayer");
 
+        parent_frag_Card_dtl.move_card();
     }
 
 }
