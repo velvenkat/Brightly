@@ -318,7 +318,8 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             //  Log.v (TAG, "Initializing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
-
+            parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
+            parent_frag_Card_dtl.isYouTubeInitializing = true;
             youTubePlayerFragment.initialize(DEVELOPER_KEY, this);
         }
     }
