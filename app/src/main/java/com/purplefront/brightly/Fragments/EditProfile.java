@@ -75,6 +75,7 @@ public class EditProfile extends BaseFragment{
     String userEmail = "";
     String phoneNumber = "";
     String imageProfile = "";
+    String image_old = "";
     String image_name = "";
     RealmModel user_obj;
     public EditProfile() {
@@ -126,6 +127,7 @@ public class EditProfile extends BaseFragment{
         input_name = (EditText) rootView.findViewById(R.id.input_name);
         input_phone = (EditText) rootView.findViewById(R.id.input_phone);
 
+
         realmModel.load();
         for(RealmModel model:realmModel){
             user_ID = model.getUser_Id();
@@ -136,27 +138,33 @@ public class EditProfile extends BaseFragment{
             imageProfile = model.getImage();
             image_name = model.getImage_name();
 
+            if (!model.getImage().isEmpty()) {
 
-        }
-
-        if(imageProfile != null) {
-
-            Glide.with(getActivity())
-                    .load(imageProfile)
-                    .centerCrop()
-                    .transform(new CircleTransform(getActivity()))
+                Glide.with(getActivity())
+                        .load(model.getImage())
+                        .centerCrop()
+                        .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)
-                    .into(Image_profile);
+                        .into(Image_profile);
+            }
+            else
+            {
+                Glide.with(getActivity())
+                        .load(R.drawable.default_user_image)
+                        .centerCrop()
+                        .transform(new CircleTransform(getActivity()))
+                        /*.override(50, 50)*/
+                        .into(Image_profile);
+            }
+
         }
-        else
+
+
+        if(!imageProfile.isEmpty())
         {
-            Glide.with(getActivity())
-                    .load(R.drawable.default_user_image)
-                    .centerCrop()
-                    .transform(new CircleTransform(getActivity()))
-                    /*.override(50, 50)*/
-                    .into(Image_profile);
+            imageProfile = "old";
         }
+
 
         Image_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +182,8 @@ public class EditProfile extends BaseFragment{
         });
 
 
+
+
     }
 
     // Check Validation Method
@@ -184,7 +194,6 @@ public class EditProfile extends BaseFragment{
         userCompanyName = input_company.getText().toString();
         userEmail = input_email.getText().toString();
         phoneNumber = input_phone.getText().toString();
-
 
         // Pattern match for email id
         Pattern p = Pattern.compile(Util.regEx);
@@ -228,7 +237,9 @@ public class EditProfile extends BaseFragment{
             case R.id.save_edit:
 
 //                getActivity().onBackPressed();
+
                 checkValidation();
+
 //                ((MyChannel) getActivity()).toggle.setDrawerIndicatorEnabled(true);
                 return true;
             default:
@@ -282,25 +293,26 @@ public class EditProfile extends BaseFragment{
             e.printStackTrace();
             showLongToast(getActivity(), "Something went Wrong, Please try Later");
 
-
         }
     }
 
     private void setEditProfileCredentials(EditProfileResponse editProfileResponse) {
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        // delete all realm objects
+        realm.deleteAll();
+
+        //commit realm changes
+        realm.commitTransaction();
 
         phoneNumber = editProfileResponse.getMobile();
         userName = editProfileResponse.getName();
         userCompanyName = editProfileResponse.getCompany_name();
         imageProfile = editProfileResponse.getImage();
         userEmail = editProfileResponse.getEmail();
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        image_name = editProfileResponse.getImage_name();
 
-        // delete all realm objects
-        realm.deleteAll();
-
-        //commit realm changes
-        realm.commitTransaction();
         if (phoneNumber != null) {
 
             realm.beginTransaction();
@@ -321,10 +333,10 @@ public class EditProfile extends BaseFragment{
 
 //            ((BrightlyNavigationActivity)getActivity()).setUserModel(realmModel);
 
-            if (!realmModel.getImage().isEmpty()) {
+            if (!imageProfile.isEmpty()) {
 
                 Glide.with(getActivity())
-                        .load(realmModel.getImage())
+                        .load(imageProfile)
                         .centerCrop()
                         .transform(new CircleTransform(getActivity()))
 //                            .override(60, 60)

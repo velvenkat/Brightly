@@ -73,10 +73,8 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
 
         realm = Realm.getDefaultInstance();
         realmModel = realm.where(RealmModel.class).findAllAsync();
+
         initViews();
-        getMyProfile();
-
-
         return view;
     }
 
@@ -92,25 +90,25 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
         User_Name = (TextView) view.findViewById(R.id.User_Name);
         User_Phone = (TextView) view.findViewById(R.id.User_Phone);
 
-      //  realmModel.load();
-       // for(RealmModel model:realmModel){
-            user_ID = user_obj.getUser_Id();
-            User_Name.setText( user_obj.getUser_Name());
-            User_Phone.setText(user_obj.getUser_PhoneNumber());
-            input_email.setText(user_obj.getUser_Email());
-            input_company.setText(user_obj.getUser_CompanyName());
 
-            if( user_obj.getImage() != null) {
+        realmModel.load();
+        for(RealmModel model:realmModel){
+
+            user_ID = model.getUser_Id();
+            User_Name.setText(model.getUser_Name());
+            User_Phone.setText(model.getUser_PhoneNumber());
+            input_company.setText(model.getUser_CompanyName());
+            input_email.setText(model.getUser_Email());
+
+            if (!model.getImage().isEmpty()) {
 
                 Glide.with(getActivity())
-                        .load(user_obj.getImage())
+                        .load(model.getImage())
                         .centerCrop()
                         .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)
                         .into(Image_profile);
-            }
-            else
-            {
+            } else {
                 Glide.with(getActivity())
                         .load(R.drawable.default_user_image)
                         .centerCrop()
@@ -119,7 +117,8 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
                         .into(Image_profile);
             }
 
-        //}
+        }
+
 
 
     }
@@ -177,9 +176,33 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
 
         phoneNumber = profileResponse.getMobile();
         userName = profileResponse.getName();
-        userCompanyName  = profileResponse.getCompany_name();
-        imageProfile  = profileResponse.getImage();
-        userEmail  = profileResponse.getEmail();
+        userCompanyName = profileResponse.getCompany_name();
+        imageProfile = profileResponse.getImage();
+        userEmail = profileResponse.getEmail();
+        image_name = profileResponse.getImage_name();
+
+        User_Name.setText(userName);
+        User_Phone.setText(phoneNumber);
+        input_email.setText(userEmail);
+        input_company.setText(userCompanyName);
+
+        if (profileResponse.getImage() != null) {
+
+            Glide.with(getActivity())
+                    .load(imageProfile)
+                    .centerCrop()
+                    .transform(new CircleTransform(getActivity()))
+//                        .override(50, 50)
+                    .into(Image_profile);
+        } else {
+            Glide.with(getActivity())
+                    .load(R.drawable.default_user_image)
+                    .centerCrop()
+                    .transform(new CircleTransform(getActivity()))
+                    /*.override(50, 50)*/
+                    .into(Image_profile);
+        }
+
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -189,57 +212,22 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
 
         //commit realm changes
         realm.commitTransaction();
-
-        if(phoneNumber!=null) {
+        if (user_ID != null) {
 
             realm.beginTransaction();
-            RealmModel realmModel=realm.createObject(RealmModel.class);
+            RealmModel realmModel = realm.createObject(RealmModel.class);
             realmModel.setUser_Id(user_ID);
             realmModel.setUser_Name(userName);
             realmModel.setUser_Email(userEmail);
             realmModel.setUser_PhoneNumber(phoneNumber);
             realmModel.setUser_CompanyName(userCompanyName);
             realmModel.setImage(imageProfile);
+            realmModel.setImage_name(image_name);
             realm.commitTransaction();
 
-                User_Name.setText( realmModel.getUser_Name());
-                User_Phone.setText(realmModel.getUser_PhoneNumber());
-                input_email.setText(realmModel.getUser_Email());
-                input_company.setText(realmModel.getUser_CompanyName());
-//                ((BrightlyNavigationActivity)getActivity()).setUserModel(realmModel);
 
-                if(!realmModel.getImage().isEmpty()) {
-
-                    Glide.with(getActivity())
-                            .load(realmModel.getImage())
-                            .centerCrop()
-                            .transform(new CircleTransform(getActivity()))
-//                            .override(60, 60)
-                            .into(Image_profile);
-                }
-                else
-                {
-                    Glide.with(getActivity())
-                            .load(R.drawable.default_user_image)
-                            .centerCrop()
-                            .transform(new CircleTransform(getActivity()))
-//                            .override(60, 60)
-                            .into(Image_profile);
-                }
-
-
-
-
-            showShortToast(getActivity(), "Profile is up-to-date");
-
-
-        }
-        else
-        {
-            showLongToast(getActivity(), "Profile is not Updated");
         }
     }
-
 
         @Override
         public void onClick(View v) {

@@ -247,18 +247,17 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
         edit_setName.setText(set_name);
         edit_setDescription.setText(set_description);
+
+
+
         if (!Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
 
             btn_editSet.setVisibility(View.GONE);
             edit_setName.setEnabled(false);
             edit_setDescription.setEnabled(false);
-            if (shared_by != null) {
-                text_share_title.setVisibility(View.VISIBLE);
-                text_share_title.setText("Shared by : " + shared_by);
-            }
             //   setTitle("Set Info");
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Set Info");
-            getSetSharedInfo();
+
 
           /*  shared_listview.setLayoutManager(new LinearLayoutManager(this));
             sharedListAdapter = new SharedListAdapter(EditSetInfo.this, sharedDataModels, set_id);
@@ -268,9 +267,13 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
 
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Edit Set Info");
-            getSetSharedInfo();
 
+        }
 
+        getSetSharedInfo();
+        if (shared_by != null) {
+            text_share_title.setVisibility(View.VISIBLE);
+            text_share_title.setText("Shared by : " + shared_by);
         }
         btn_editSet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -632,7 +635,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
                             } else {
                                 dismissProgress();
-                                text_share_title.setVisibility(View.GONE);
+//                                text_share_title.setVisibility(View.GONE);
                                 layout_act_inact.setVisibility(View.GONE);
 
                             }
