@@ -61,16 +61,17 @@ public class Preview extends RelativeLayout {
     }
 
     private void initialize(Context context){
-        mContext=context;
-        inflate(context, R.layout.preview_layout, this);
-        mImgViewImage=(ImageView)findViewById(com.freesoulapps.preview.android.R.id.imgViewImage);
-        mTxtViewTitle=(TextView)findViewById(com.freesoulapps.preview.android.R.id.txtViewTitle);
-        mTxtViewDescription=(TextView)findViewById(com.freesoulapps.preview.android.R.id.txtViewDescription);
-        mTxtViewSiteName=(TextView)findViewById(com.freesoulapps.preview.android.R.id.txtViewSiteName);
-        mLoadingDialog=(RotateLoading)findViewById(com.freesoulapps.preview.android.R.id.rotateloading);
-        mTxtViewMessage=(TextView)findViewById(com.freesoulapps.preview.android.R.id.txtViewMessage);
+        mContext=context.getApplicationContext();
 
-        mFrameLayout=(FrameLayout)findViewById(com.freesoulapps.preview.android.R.id.frameLoading);
+        inflate(context.getApplicationContext(), R.layout.preview_layout, this);
+        mImgViewImage=(ImageView)findViewById(R.id.imgViewImage);
+        mTxtViewTitle=(TextView)findViewById(R.id.txtViewTitle);
+        mTxtViewDescription=(TextView)findViewById(R.id.txtViewDescription);
+        mTxtViewSiteName=(TextView)findViewById(R.id.txtViewSiteName);
+        mLoadingDialog=(RotateLoading)findViewById(R.id.rotateloading);
+        mTxtViewMessage=(TextView)findViewById(R.id.txtViewMessage);
+
+        mFrameLayout=(FrameLayout)findViewById(R.id.frameLoading);
         mFrameLayout.setVisibility(GONE);
         mHandler = new Handler(mContext.getMainLooper());
     }
@@ -282,7 +283,7 @@ public class Preview extends RelativeLayout {
                                 @Override
                                 public void run() {
                                     Glide.with(mContext)
-                                            .load(com.freesoulapps.preview.android.R.drawable.noimage)
+                                            .load(R.drawable.noimage)
                                             .into(mImgViewImage);
                                 }
                             });
