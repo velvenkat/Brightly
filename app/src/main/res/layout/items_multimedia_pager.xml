@@ -33,7 +33,7 @@
             android:autoLink="all"
             />
 
-        <com.freesoulapps.preview.android.Preview
+        <com.purplefront.brightly.Preview
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:visibility="gone"

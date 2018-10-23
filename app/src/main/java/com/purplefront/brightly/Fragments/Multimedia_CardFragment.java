@@ -22,12 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.freesoulapps.preview.android.Preview;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Modules.CardsListModel;
+import com.purplefront.brightly.Preview;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.Util;
 
@@ -36,7 +36,7 @@ import java.util.Locale;
 
 public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener, Preview.PreviewListener {
     View rootView;
-    Preview mPreview;
+    com.purplefront.brightly.Preview mPreview;
     CardsListModel cardModelObj;
     ProgressDialog dialog;
     String user_id, set_id, set_name;
