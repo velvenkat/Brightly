@@ -17,6 +17,7 @@ import android.widget.Button;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.ChannelListModel;
+import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.Util;
@@ -35,7 +36,8 @@ public class SharePage extends BaseFragment {
     String share_link;
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
-
+    NotificationsModel notificationsModel;
+    boolean isNotification;
     RealmModel user_obj;
     View rootView;
 
@@ -59,12 +61,27 @@ public class SharePage extends BaseFragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Share Set");
         Bundle bundle=getArguments();
 
-        chl_list_obj=bundle.getParcelable("model_obj");
-        setsListModel=bundle.getParcelable("setsListModel");
-        set_description = setsListModel.getDescription();
-        set_name = setsListModel.getSet_name();
-        set_id = setsListModel.getSet_id();
-        share_link = setsListModel.getShare_link();
+        if (bundle != null) {
+            isNotification = bundle.getBoolean("isNotification", false);
+        }
+
+        if (isNotification) {
+            notificationsModel = bundle.getParcelable("notfy_modl_obj");
+            set_description = notificationsModel.getNotificationsSetDetail().getDescription();
+            set_name = notificationsModel.getNotificationsSetDetail().getName();
+            set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
+            share_link = notificationsModel.getNotificationsSetDetail().getShare_link();
+        }
+        else {
+
+            chl_list_obj = bundle.getParcelable("model_obj");
+            setsListModel = bundle.getParcelable("setsListModel");
+            set_description = setsListModel.getDescription();
+            set_name = setsListModel.getSet_name();
+            set_id = setsListModel.getSet_id();
+            share_link = setsListModel.getShare_link();
+        }
+
         userId = user_obj.getUser_Id();
 
         share_inApp = (Button) rootView.findViewById(R.id.share_inApp);
@@ -82,8 +99,15 @@ public class SharePage extends BaseFragment {
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
                 Fragment fragment=new ShareWithContacts();
                 Bundle bundle1=new Bundle();
-                bundle1.putParcelable("model_obj", chl_list_obj);
-                bundle1.putParcelable("setsListModel", setsListModel);
+                if(isNotification)
+                {
+                    bundle1.putBoolean("isNotification",true);
+                    bundle1.putParcelable("notfy_modl_obj", notificationsModel);
+                }else {
+                    bundle1.putBoolean("isNotification",false);
+                    bundle1.putParcelable("model_obj", chl_list_obj);
+                    bundle1.putParcelable("setsListModel", setsListModel);
+                }
                 fragment.setArguments(bundle1);
                 ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.share_with_contact,fragment,true);
 

@@ -69,7 +69,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
     String channel_name;
     String Created_By;
     String shared_by;
-    String shareAccess;
+    String share_access;
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
     NotificationsModel notificationsModel;
@@ -87,7 +87,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         if (Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
             inflater.inflate(R.menu.edit_set_menu, menu);
 
-        } else if (setsListModel.getShare_access().equals("1")) {
+        } else if (share_access.equals("1")) {
             inflater.inflate(R.menu.edit_set_other, menu);
         }
     }
@@ -180,6 +180,8 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
             Created_By = notificationsModel.getNotificationsSetDetail().getCreated_by();
             shared_by = notificationsModel.getNotificationsSetDetail().getShared_by();
+            share_access = notificationsModel.getNotificationsSetDetail().getShare_access();
+            share_link = notificationsModel.getNotificationsSetDetail().getShare_link();
 
         } else {
 
@@ -194,6 +196,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             set_id = setsListModel.getSet_id();
             share_link = setsListModel.getShare_link();
             shared_by = setsListModel.getShared_by();
+            share_access = setsListModel.getShare_access();
 
         }
 
@@ -206,7 +209,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         else{
             toggle_contr.setVisibility(View.GONE);
         }
-        if (setsListModel.getShare_access().equals("0")) {
+        if (share_access.equals("0")) {
             toggle_share_access.setChecked(false);
 
         } else {
@@ -365,8 +368,16 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
                 Fragment fragment = new SharePage();
                 Bundle bundle1 = new Bundle();
-                bundle1.putParcelable("model_obj", chl_list_obj);
-                bundle1.putParcelable("setsListModel", setsListModel);
+                if(isNotification)
+                {
+                    bundle1.putBoolean("isNotification",true);
+                    bundle1.putParcelable("notfy_modl_obj", notificationsModel);
+                }
+                else {
+                    bundle1.putBoolean("isNotification",false);
+                    bundle1.putParcelable("model_obj", chl_list_obj);
+                    bundle1.putParcelable("setsListModel", setsListModel);
+                }
                 fragment.setArguments(bundle1);
                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.share_page, fragment, true);
                 return true;

@@ -28,6 +28,14 @@ public class NotificationsSetDetail implements Parcelable {
     @Expose
     private String shared_by;
 
+    @SerializedName("share_access")
+    @Expose
+    private String share_access;
+
+    @SerializedName("share_link")
+    @Expose
+    private String share_link;
+
 
     protected NotificationsSetDetail(Parcel in) {
         set_id = in.readString();
@@ -36,6 +44,7 @@ public class NotificationsSetDetail implements Parcelable {
         created_by = in.readString();
         shared_by = in.readString();
         share_access = in.readString();
+        share_link = in.readString();
     }
 
     public static final Creator<NotificationsSetDetail> CREATOR = new Creator<NotificationsSetDetail>() {
@@ -57,11 +66,6 @@ public class NotificationsSetDetail implements Parcelable {
     public void setShare_access(String share_access) {
         this.share_access = share_access;
     }
-
-    @SerializedName("share_access")
-    @Expose
-    private String share_access;
-
 
     public NotificationsSetDetail(String set_id, String name, String description, String created_by) {
         this.set_id = set_id;
@@ -110,6 +114,13 @@ public class NotificationsSetDetail implements Parcelable {
         this.shared_by = shared_by;
     }
 
+    public String getShare_link() {
+        return share_link;
+    }
+
+    public void setShare_link(String share_link) {
+        this.share_link = share_link;
+    }
 
     @Override
     public int describeContents() {
@@ -124,5 +135,6 @@ public class NotificationsSetDetail implements Parcelable {
         dest.writeString(created_by);
         dest.writeString(shared_by);
         dest.writeString(share_access);
+        dest.writeString(share_link);
     }
 }

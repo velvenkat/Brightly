@@ -36,6 +36,7 @@ import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ContactShare;
+import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -75,6 +76,8 @@ public class ShareWithContacts extends BaseFragment {
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
     // ActionBarUtil actionBarUtilObj;
+    NotificationsModel notificationsModel;
+    boolean isNotification;
     RealmModel user_obj;
     View rootView;
 
@@ -96,12 +99,26 @@ public class ShareWithContacts extends BaseFragment {
         btn_sync = (ImageView) rootView.findViewById(R.id.btn_sync);
 
         Bundle bundle = getArguments();
-        chl_list_obj = bundle.getParcelable("model_obj");
-        setsListModel = bundle.getParcelable("setsListModel");
-        set_description = setsListModel.getDescription();
-        set_name = setsListModel.getSet_name();
-        set_id = setsListModel.getSet_id();
-        share_link = setsListModel.getShare_link();
+
+        if (bundle != null) {
+            isNotification = bundle.getBoolean("isNotification", false);
+        }
+
+        if (isNotification) {
+            notificationsModel = bundle.getParcelable("notfy_modl_obj");
+            set_description = notificationsModel.getNotificationsSetDetail().getDescription();
+            set_name = notificationsModel.getNotificationsSetDetail().getName();
+            set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
+            share_link = notificationsModel.getNotificationsSetDetail().getShare_link();
+        }
+        else {
+            chl_list_obj = bundle.getParcelable("model_obj");
+            setsListModel = bundle.getParcelable("setsListModel");
+            set_description = setsListModel.getDescription();
+            set_name = setsListModel.getSet_name();
+            set_id = setsListModel.getSet_id();
+            share_link = setsListModel.getShare_link();
+        }
         userId = user_obj.getUser_Id();
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share with Contacts");
