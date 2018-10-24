@@ -120,6 +120,9 @@ public class EditChannelInfo extends BaseFragment {
         edit_channelName.setText(channel_name);
         edit_channelDescription.setText(channel_description);
 
+        clear_edit_text_focus(edit_channelName);
+        clear_edit_text_focus(edit_channelDescription);
+
         if(!userId.equalsIgnoreCase(chl_modl_obj.getCreated_by())) {
             edit_channelName.setEnabled(false);
             edit_channelDescription.setEnabled(false);

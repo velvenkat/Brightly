@@ -150,6 +150,8 @@ public class AudioType extends BaseFragment {
 
         rec_contr.setVisibility(View.GONE);
         crt_contr.setVisibility(View.VISIBLE);
+        clear_edit_text_focus(create_cardDescription);
+        clear_edit_text_focus(create_cardName);
         audio_player_initialize(audio_seek_bar, txt_PlayProgTime, img_play_stop);
         if (isCreateScreen) {
             rl_audio_player.setVisibility(View.GONE);

@@ -100,6 +100,10 @@ public class EditProfile extends BaseFragment{
         realmModel = realm.where(RealmModel.class).findAllAsync();
 
         initViews();
+        clear_edit_text_focus(input_email);
+        clear_edit_text_focus(input_company);
+        clear_edit_text_focus(input_name);
+        clear_edit_text_focus(input_phone);
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
         rootView.setOnKeyListener(new View.OnKeyListener() {

@@ -75,6 +75,10 @@ public class CreateSet extends BaseFragment {
                 checkValidation();
             }
         });
+
+        clear_edit_text_focus(create_setName);
+        clear_edit_text_focus(create_setDescription);
+
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
 

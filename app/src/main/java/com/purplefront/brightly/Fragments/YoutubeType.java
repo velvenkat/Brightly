@@ -78,7 +78,9 @@ public class YoutubeType extends BaseFragment {
         create_cardName = (EditText) rootView.findViewById(R.id.create_cardName);
         create_cardDescription = (EditText) rootView.findViewById(R.id.create_cardDescription);
         btn_createCard = (Button)rootView.findViewById(R.id.btn_createCard);
-
+        clear_edit_text_focus(create_cardDescription);
+        clear_edit_text_focus(create_cardName);
+        clear_edit_text_focus(create_cardURL);
 
         if(isCreateCard){
 

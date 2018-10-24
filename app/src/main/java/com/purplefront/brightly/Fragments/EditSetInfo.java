@@ -248,7 +248,8 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         edit_setName.setText(set_name);
         edit_setDescription.setText(set_description);
 
-
+        clear_edit_text_focus(edit_setName);
+        clear_edit_text_focus(edit_setDescription);
 
         if (!Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
 

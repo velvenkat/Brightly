@@ -80,6 +80,9 @@ public class FileType extends BaseFragment {
 
 
         isCreateCard=bundle.getBoolean("isCreate");
+        clear_edit_text_focus(create_cardDescription);
+        clear_edit_text_focus(create_cardName);
+        clear_edit_text_focus(create_cardURL);
         if(isCreateCard){
 
         }

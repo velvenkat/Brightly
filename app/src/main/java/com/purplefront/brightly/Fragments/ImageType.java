@@ -102,6 +102,10 @@ public class ImageType extends BaseFragment {
         create_cardDescription = (EditText) frag_rootView.findViewById(R.id.create_cardDescription);
         btn_createCard = (Button) frag_rootView.findViewById(R.id.btn_createCard);
 
+
+        clear_edit_text_focus(create_cardDescription);
+        clear_edit_text_focus(create_cardName);
+
         Bundle bundle = getArguments();
         isCreateCard = bundle.getBoolean("isCreate");
         Created_by=bundle.getString("created_by");

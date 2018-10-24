@@ -87,6 +87,9 @@ public class CreateChannelFragment extends BaseFragment {
        // ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
+        clear_edit_text_focus(create_channelName);
+        clear_edit_text_focus(create_channelDescription);
+
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Create Channel");
         Glide.with(CreateChannelFragment.this)
                 .load(R.drawable.no_image_available)
