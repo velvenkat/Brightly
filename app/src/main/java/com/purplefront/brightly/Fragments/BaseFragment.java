@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,18 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
         mListener=listener;
     }
 
+    public void clear_edit_text_focus(EditText editText){
+        editText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    editText.clearFocus();
+                }
+                return false;
+            }
+        });
+
+    }
 
     public void showAlertDialog(String message,String Title,String Pos_Title,String Neg_Title)
     {
