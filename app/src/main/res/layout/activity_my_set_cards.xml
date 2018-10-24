@@ -55,4 +55,15 @@
         android:layout_alignParentRight="true"
         android:background="@drawable/circular_image_drawable"
         android:src="@drawable/add_image_white"/>
+
+    <ImageView
+        android:id="@+id/image_Comment"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_margin="@dimen/dimen_20"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/circular_image_drawable"
+        android:visibility="gone"
+        android:src="@drawable/ic_comment"/>
 </RelativeLayout>

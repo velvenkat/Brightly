@@ -104,7 +104,7 @@ public class CardDetailFragment extends BaseFragment {
     boolean isNotification;
     int Cur_PagrPosition;
     int UPDATECARD = 102;
-    ImageView image_createCard;
+    ImageView image_createCard, image_Comment;
     SetsListModel setsListModel;
     ChannelListModel chl_list_obj;
     NotificationsModel notificationsModel;
@@ -174,12 +174,14 @@ public class CardDetailFragment extends BaseFragment {
         // Locate the ViewPager in viewpager_main.xml
         viewPager_Cards = (ViewPager) rootView.findViewById(R.id.viewPager_Cards);
         image_createCard = (ImageView) rootView.findViewById(R.id.image_createCard);
-        // card_list_icon = (ImageView) rootView.findViewById(R.id.card_list_icon);
+        image_Comment = (ImageView) rootView.findViewById(R.id.image_Comment);
 
         if (!userId.equalsIgnoreCase(Created_By)) {
             image_createCard.setVisibility(View.GONE);
+            image_Comment.setVisibility(View.VISIBLE);
         } else {
             image_createCard.setVisibility(View.VISIBLE);
+            image_Comment.setVisibility(View.GONE);
         }
         image_createCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,6 +206,22 @@ public class CardDetailFragment extends BaseFragment {
                 Fragment crt_crd_frag = new CreateCardsFragment();
                 crt_crd_frag.setArguments(bundle);
                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Card, crt_crd_frag, true);
+
+            }
+        });
+
+        image_Comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Bundle bundle = new Bundle();
+                bundle.putString("set_id", set_id);
+                bundle.putString("set_name", set_name);
+                bundle.putString("userId", userId);
+                bundle.putString("channel_name", channel_name);
+                Fragment cmt_frag = new CommentsFragment();
+                cmt_frag.setArguments(bundle);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Comments, cmt_frag, true);
 
             }
         });
@@ -404,6 +422,19 @@ public class CardDetailFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle bundle = new Bundle();
         switch (item.getItemId()) {
+
+            case R.id.set_CommentsList:
+
+                Bundle bundle_list = new Bundle();
+                bundle_list.putString("set_id", set_id);
+                bundle_list.putString("set_name", set_name);
+                bundle_list.putString("userId", userId);
+                bundle_list.putString("channel_name", channel_name);
+                Fragment cmt_list_frag = new CommentListFragment();
+                cmt_list_frag.setArguments(bundle_list);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Comments_List, cmt_list_frag, true);
+
+                return true;
 
             case R.id.setInfo_Edit:
 

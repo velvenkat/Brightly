@@ -90,5 +90,8 @@
     <string name="enter_otp">Enter OTP</string>
     <string name="verify">Verify</string>
     <string name="resend_otp">Resend OTP</string>
+    <string name="set_comments">Comments List</string>
+    <string name="comments_title">Leave your comments here :</string>
+    <string name="comments">Enter 250 characters only....</string>
 
 </resources>
