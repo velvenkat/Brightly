@@ -153,4 +153,8 @@ public interface RestApiMethods {
     Call<AddMessageResponse> call_copy_card(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("card_id") String card_ids);
 
 
+    //Comments Set
+    @POST("comment/add_comment.php")
+    Call<AddMessageResponse> getSetComments(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("comment") String comment);
+
 }
