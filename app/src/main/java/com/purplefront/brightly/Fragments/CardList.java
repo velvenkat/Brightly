@@ -68,6 +68,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     int CurPagrPos;
     boolean isNotification;
     RealmModel user_obj;
+    String set_id_toCreateCard;
 
 
     @Nullable
@@ -84,7 +85,8 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         setHasOptionsMenu(true);
         Bundle bundle = getArguments();
         userId = user_obj.getUser_Id();
-        isNotification=bundle.getBoolean("isNotification", false);
+        isNotification = bundle.getBoolean("isNotification", false);
+        set_id_toCreateCard = bundle.getString("set_id_toCreateCard", null);
 
 
         if (isNotification) {
@@ -100,8 +102,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             card_order_position = notificationsModel.getCard_order_position();*/
 
 
-        }
-        else {
+        } else {
 
             setsListModel = bundle.getParcelable("setsListModel");
             isReorder = bundle.getBoolean("re_order", false);
@@ -110,7 +111,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             set_id = setsListModel.getSet_id();
         }
         //setTitle(set_name);
-         CurPagrPos = bundle.getInt("card_position");
+        CurPagrPos = bundle.getInt("card_position");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(chl_name);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
         view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
@@ -167,7 +168,11 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             public void onClick(View v) {
 
                 strDelSelId = android.text.TextUtils.join(",", del_sel_id);
-                showAlertDialog("You are about to delete selected Cards. All the information contained in the Cards will be lost.", "Confirm Delete...", "Delete", "Cancel");
+                if (set_id_toCreateCard != null) {
+                    //showAlertDialog("You are about to delete selected Cards. All the information contained in the Cards will be lost.", "Confirm Delete...", "Delete", "Cancel");
+                    call_copy_card(strDelSelId);
+                } else
+                    showAlertDialog("You are about to delete selected Cards. All the information contained in the Cards will be lost.", "Confirm Delete...", "Delete", "Cancel");
                 // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
             }
         });
@@ -293,6 +298,9 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             del_contr.setVisibility(View.VISIBLE);
             txtItemSel.setText("");
             btn_delete.setEnabled(false);
+            if (set_id_toCreateCard != null) {
+                btn_delete.setText("Done");
+            }
             if (isReorder)
                 ith.attachToRecyclerView(null);
             cardListAdapter.set_SelToDel(true);
@@ -364,7 +372,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        if (isReorder) {
+        if (isReorder || set_id_toCreateCard != null) {
             inflater.inflate(R.menu.multi_sel_menu, menu);
         }
         super.onCreateOptionsMenu(menu, inflater);
@@ -373,9 +381,47 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_multi_sel) {
+
             multi_sel_actions();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void call_copy_card(String CardIds) {
+        {
+            try {
+
+                if (CheckNetworkConnection.isOnline(getContext())) {
+                    showProgress();
+                    Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_copy_card(user_obj.getUser_Id(), set_id_toCreateCard, CardIds);
+                    callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
+                        @Override
+                        public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+
+                            dismissProgress();
+                            if (isSuccess) {
+                                ((BrightlyNavigationActivity) getActivity()).DontRun = true;
+                                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 3);
+                            }
+                        }
+
+                        @Override
+                        public void onApiFailure(boolean isSuccess, String message) {
+
+                            dismissProgress();
+                        }
+                    });
+                } else {
+
+                    dismissProgress();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                dismissProgress();
+            }
+
+        }
     }
 
     public void getCardsLists() {
@@ -512,9 +558,15 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
     @Override
     public void onCardClick(int position) {
-        ((BrightlyNavigationActivity) getActivity()).isCardClicked = true;
-        ((BrightlyNavigationActivity) getActivity()).card_toPosition = position;
-        ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+        if(set_id_toCreateCard==null) {
+            ((BrightlyNavigationActivity) getActivity()).isCardClicked = true;
+            ((BrightlyNavigationActivity) getActivity()).card_toPosition = position;
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+        }
+        else{
+            if(cardListAdapter.isSelToDel())
+            onSelect(position,cardsListModels.get(position));
+        }
 
     }
 

@@ -38,7 +38,7 @@ public interface RestApiMethods {
 
     //Register or SignUp
     @POST("users/newregister.php")
-    Call<SignUpResponse> getSignup(@Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Query("password") String password,@Query("token") String token,@Query("os") String os_type);
+    Call<SignUpResponse> getSignup(@Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Query("password") String password, @Query("token") String token, @Query("os") String os_type);
 
     //SignIn
     @POST("users/newlogin.php")
@@ -99,11 +99,11 @@ public interface RestApiMethods {
 
     //Share Sets
     @POST("share/share_set_multiple.php")
-    Call<AddMessageResponse> getShareSet(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("phone_no") String phone_no, @Query("names") String names  );
+    Call<AddMessageResponse> getShareSet(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("phone_no") String phone_no, @Query("names") String names);
 
     //Revoke Sets
     @POST("share/revoke_set.php")
-    Call<AddMessageResponse> getRevokeSet(@Query("set_id") String set_id, @Query("assigned_to") String assigned_to );
+    Call<AddMessageResponse> getRevokeSet(@Query("set_id") String set_id, @Query("assigned_to") String assigned_to);
 
 
     //CardList
@@ -118,7 +118,7 @@ public interface RestApiMethods {
 
     //Set_Reorder
     @POST("sets/display_setorder.php")
-    Call<AddMessageResponse> set_reorder_set(@Query("user_id") String user_id,  @Query("set_id") String set_id);
+    Call<AddMessageResponse> set_reorder_set(@Query("user_id") String user_id, @Query("set_id") String set_id);
 
 
     //Update Card
@@ -133,7 +133,7 @@ public interface RestApiMethods {
 
     //Card_Reorder
     @POST("cards/display_order.php")
-    Call<AddMessageResponse> card_reorder_set(@Query("user_id") String user_id,  @Query("card_ids") String card_id);
+    Call<AddMessageResponse> card_reorder_set(@Query("user_id") String user_id, @Query("card_ids") String card_id);
 
     //Notifications
     @POST("notification/in_app.php")
@@ -144,10 +144,13 @@ public interface RestApiMethods {
     Call<NotificationsResponse> getNotificationCounts(@Query("user_id") String user_id);
 
     @POST("users/logout.php")
-    Call<AddMessageResponse> call_logout_user(@Query("user_id") String user_id,@Query("token") String token);
+    Call<AddMessageResponse> call_logout_user(@Query("user_id") String user_id, @Query("token") String token);
 
     @POST("sets/share_link.php")
-    Call<AddMessageResponse> call_share_access_update(@Query("user_id") String user_id,@Query("set_id") String set_id,@Query("value") String acc_value);
+    Call<AddMessageResponse> call_share_access_update(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("value") String acc_value);
+
+    @POST("cardsetassoc/link_card.php")
+    Call<AddMessageResponse> call_copy_card(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("card_id") String card_ids);
 
 
 }

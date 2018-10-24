@@ -33,6 +33,7 @@ import com.purplefront.brightly.BadgeDrawable;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ChannelListResponse;
 import com.purplefront.brightly.Modules.NotificationsResponse;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.CircleTransform;
@@ -63,9 +64,13 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
 
     //  ActionBarUtil actionBarUtilObj;
     String count = "0";
+
     String userName;
     String userPhone;
     String userPicture;
+
+
+    String Set_ID_toCreateCard;
 
 
     @Nullable
@@ -73,91 +78,106 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.lo_scrn_channel, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
-        image_createChannel = (ImageView) rootView.findViewById(R.id.image_createChannel);
-        channels_listview = (RecyclerView) rootView.findViewById(R.id.channels_listview);
-        setHasOptionsMenu(true);
-        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
-        Bundle bundle = getArguments();
-        channel_type = bundle.getString("type");
-        setDlgListener(this);
-        if (channel_type.equalsIgnoreCase("all")) {
-            image_createChannel.setVisibility(View.VISIBLE);
-            setActionBarTitle(getResources().getString(R.string.all_channels));
-        } else if (channel_type.equalsIgnoreCase("subscribe")) {
-            image_createChannel.setVisibility(View.GONE);
-            setActionBarTitle(getResources().getString(R.string.my_subscription));
-        } else if (channel_type.equalsIgnoreCase("my")) {
-            image_createChannel.setVisibility(View.VISIBLE);
-            setActionBarTitle(getResources().getString(R.string.my_channels));
-        }
-        getChannelsLists(channel_type);
-        image_createChannel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        boolean dontrun=((BrightlyNavigationActivity)getActivity()).DontRun;
+        if(!dontrun) {
+            image_createChannel = (ImageView) rootView.findViewById(R.id.image_createChannel);
+            channels_listview = (RecyclerView) rootView.findViewById(R.id.channels_listview);
+            setHasOptionsMenu(true);
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+            Bundle bundle = getArguments();
+            channel_type = bundle.getString("type");
+
+            // Set_ID_toCreateCard=bundle.getString("set_id");
+            Set_ID_toCreateCard = bundle.getString("Set_ID_toCreateCard", null);
+
+            setDlgListener(this);
+            if (channel_type.equalsIgnoreCase("all")) {
+                if (Set_ID_toCreateCard != null) {
+                    image_createChannel.setVisibility(View.GONE);
+
+                    ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
+
+                } else
+                    image_createChannel.setVisibility(View.VISIBLE);
+                setActionBarTitle(getResources().getString(R.string.all_channels));
+            } else if (channel_type.equalsIgnoreCase("subscribe")) {
+                image_createChannel.setVisibility(View.GONE);
+                setActionBarTitle(getResources().getString(R.string.my_subscription));
+            } else if (channel_type.equalsIgnoreCase("my")) {
+                image_createChannel.setVisibility(View.VISIBLE);
+                setActionBarTitle(getResources().getString(R.string.my_channels));
+            }
+            getChannelsLists(channel_type);
+            image_createChannel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
          /*       Intent intent = new Intent(BrightlyNavigationActivity.this, CreateChannel.class);
 
                 intent.putExtra("userId", user_obj.getUser_Id());
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-                Fragment fragment = new CreateChannelFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("type", channel_type);
-                fragment.setArguments(bundle);
-                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Channel, fragment, true);
-            }
-        });
-
-        realm = Realm.getDefaultInstance();
-        realmModel = realm.where(RealmModel.class).findAllAsync();
-
-        realmModel.load();
-        for (RealmModel model : realmModel) {
-            userName = model.getUser_Name();
-            userPhone = model.getUser_PhoneNumber();
-            userPicture = model.getImage();
-
-        }
-
-        ((BrightlyNavigationActivity) getActivity()).headerText_Name.setText(userName);
-        ((BrightlyNavigationActivity) getActivity()).headerText_Phone.setText(userPhone);
-
-        if (userPicture != null) {
-
-            Glide.with(getActivity())
-                    .load(userPicture)
-                    .centerCrop()
-                    .transform(new CircleTransform(getActivity()))
-//                        .override(50, 50)
-                    .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
-        } else {
-            Glide.with(getActivity())
-                    .load(R.drawable.default_user_image)
-                    .centerCrop()
-                    .transform(new CircleTransform(getActivity()))
-                    /*.override(50, 50)*/
-                    .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
-        }
-
-
-        view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
-        channels_listview = (RecyclerView) rootView.findViewById(R.id.channels_listview);
-
-        rootView.setFocusableInTouchMode(true);
-        rootView.requestFocus();
-
-        rootView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
-                    // getActivity().finish();
-                    showAlertDialog("Do you want to exit?", "", "Yes", "No");
-                    return true;
+                    Fragment fragment = new CreateChannelFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("type", channel_type);
+                    fragment.setArguments(bundle);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Channel, fragment, true);
                 }
-                return false;
-            }
-        });
+            });
 
+            realm = Realm.getDefaultInstance();
+            realmModel = realm.where(RealmModel.class).findAllAsync();
+
+            realmModel.load();
+            for (RealmModel model : realmModel) {
+                userName = model.getUser_Name();
+                userPhone = model.getUser_PhoneNumber();
+                userPicture = model.getImage();
+
+            }
+
+            ((BrightlyNavigationActivity) getActivity()).headerText_Name.setText(userName);
+            ((BrightlyNavigationActivity) getActivity()).headerText_Phone.setText(userPhone);
+
+            if (userPicture != null) {
+
+                Glide.with(getActivity())
+                        .load(userPicture)
+                        .centerCrop()
+                        .transform(new CircleTransform(getActivity()))
+//                        .override(50, 50)
+                        .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
+            } else {
+                Glide.with(getActivity())
+                        .load(R.drawable.default_user_image)
+                        .centerCrop()
+                        .transform(new CircleTransform(getActivity()))
+                        /*.override(50, 50)*/
+                        .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
+            }
+
+
+            view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
+            channels_listview = (RecyclerView) rootView.findViewById(R.id.channels_listview);
+
+            rootView.setFocusableInTouchMode(true);
+            rootView.requestFocus();
+
+            rootView.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                        if (Set_ID_toCreateCard == null)
+                            showAlertDialog("Do you want to exit?", "", "Yes", "No");
+                        else {
+                            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
         return rootView;
     }
 
@@ -169,20 +189,20 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         menu.clear();
-        getActivity().invalidateOptionsMenu();
+        if(Set_ID_toCreateCard==null) {
+            getActivity().invalidateOptionsMenu();
 //        getNotificationCount();
 
-        SharedPreferences prefs = getActivity().getSharedPreferences("Noti_Cnt", MODE_PRIVATE);
-        count = prefs.getString("count", "");
-        getActivity().getMenuInflater().inflate(R.menu.my_channel, menu);
-        MenuItem itemCart = menu.findItem(R.id.action_bell);
-        LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
-        if (!count.equals("")) {
-            setBadgeCount(getContext(), icon, count);
+            SharedPreferences prefs = getActivity().getSharedPreferences("Noti_Cnt", MODE_PRIVATE);
+            count = prefs.getString("count", "");
+            getActivity().getMenuInflater().inflate(R.menu.my_channel, menu);
+            MenuItem itemCart = menu.findItem(R.id.action_bell);
+            LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
+            if (!count.equals("")) {
+                setBadgeCount(getContext(), icon, count);
+            }
+
         }
-
-
-
         super.onPrepareOptionsMenu(menu);
 
     }
@@ -203,6 +223,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         icon.mutate();
         icon.setDrawableByLayerId(R.id.ic_badge, badge);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -284,15 +305,25 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         channels_listview.setLayoutManager(gridLayoutManager);
-        myChannelsAdapter = new MyChannelsAdapter(getActivity(), channelListModels, this);
+        myChannelsAdapter = new MyChannelsAdapter(getContext(), channelListModels, this);
         channels_listview.setAdapter(myChannelsAdapter);
         myChannelsAdapter.notifyDataSetChanged();
 
     }
 
     @Override
-    public void OnChannelItemClick(Fragment frag_args) {
-        ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Set_List, frag_args, false);
+    public void OnChannelItemClick(Fragment frag_args,Bundle bundle) {
+        if(Set_ID_toCreateCard!=null) {
+            bundle.putString("Set_ID_toCreateCard", Set_ID_toCreateCard);
+
+
+            frag_args.setArguments(bundle);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Set_List, frag_args, true);
+        }
+        else {
+            frag_args.setArguments(bundle);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Set_List, frag_args, false);
+        }
     }
 
     @Override

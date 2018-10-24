@@ -102,6 +102,8 @@ public class BrightlyNavigationActivity extends BaseActivity
     public boolean isCardClicked=false;
     public int card_toPosition=0;
     public YouTubePlayer uTubePlayer;
+    public boolean isHide_frag=false;
+
     /**
      * isCardRefresh flag is needed to refresh card from CardList page to CardDetail called
      */
@@ -112,6 +114,7 @@ public class BrightlyNavigationActivity extends BaseActivity
      *
      */
     public  boolean DisableBackBtn=true;  //Default should be true
+    public boolean DontRun=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -691,12 +694,16 @@ public class BrightlyNavigationActivity extends BaseActivity
         }
         FragmentTransaction transaction=fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
-        if(call_fragment instanceof EditSetInfo || call_fragment instanceof CardList){
-            Fragment card_dtl_frag=fragmentManager.findFragmentByTag(Util.view_card);
-            transaction.hide(card_dtl_frag);
-            transaction.addToBackStack(tag);
-            transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
-            transaction.add(R.id.frag_container, call_fragment, tag).commit();
+        if(isHide_frag) {
+            isHide_frag=false;
+            //if (call_fragment instanceof ChannelFragment || call_fragment instanceof EditSetInfo || call_fragment instanceof CardList) {
+                Fragment card_dtl_frag = fragmentManager.findFragmentByTag(Util.view_card);
+                transaction.hide(card_dtl_frag);
+                transaction.addToBackStack(tag);
+                transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
+                transaction.add(R.id.frag_container, call_fragment, tag).commit();
+            //}
+
         }
           else {
             transaction

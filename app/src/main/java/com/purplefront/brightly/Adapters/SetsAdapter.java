@@ -161,13 +161,14 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     intent.putExtra("isNotification", false);
                     context.startActivity(intent);
                     context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-                    Fragment card_dtl_frag=new CardDetailFragment();
+                    //Fragment card_dtl_frag=new CardDetailFragment();
                     Bundle bundle =new Bundle();
                     bundle.putParcelable("model_obj", chl_list_obj);
                     bundle.putParcelable("setsListModel", setsListModel);
                     bundle.putBoolean("isNotification", false);
-                    card_dtl_frag.setArguments(bundle);
-                    mListener.onCardShow(card_dtl_frag);
+                    bundle.putString("chl_name",chl_list_obj.getChannel_name());
+                   // card_dtl_frag.setArguments(bundle);
+                    mListener.onCardShow(bundle);
                     scrn_contxt.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
                 }
             }
@@ -200,6 +201,6 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
     public interface Set_sel_interface {
         public void onSelect(int position, SetsListModel modelObj);
-        public void onCardShow(Fragment call_frag);
+        public void onCardShow(Bundle bundle_args);
     }
 }

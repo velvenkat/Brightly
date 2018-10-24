@@ -29,7 +29,7 @@ import io.realm.RealmResults;
 public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.ViewHolder>{
 
     List<ChannelListModel> channelListModels;
-    Activity scrn_context;
+    Context scrn_context;
     LayoutInflater inflater;
     Realm realm;
     RealmResults<RealmModel> realmModel;
@@ -38,11 +38,11 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
     ChannelListItemClickListener mListener;
 
 
-    public MyChannelsAdapter(Activity context, List<ChannelListModel> channelListModels,ChannelListItemClickListener listener) {
+    public MyChannelsAdapter(Context context, List<ChannelListModel> channelListModels,ChannelListItemClickListener listener) {
 
-        this.scrn_context = context;
+        this.scrn_context = context.getApplicationContext();
         this.channelListModels = channelListModels;
-        inflater = (LayoutInflater.from(scrn_context));
+
         mListener=listener;
 
     }
@@ -51,8 +51,8 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
     @Override
     public MyChannelsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+      //  Context context = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(scrn_context);
         // Inflate the custom layout
         View contactView = inflater.inflate(R.layout.items_channel_lists, parent, false);
         // Return a new holder instance
@@ -122,9 +122,9 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
                 Fragment fragment=new SetsFragment();
                 Bundle bundle=new Bundle();
                 bundle.putParcelable("model_obj",channelListModel);
-                fragment.setArguments(bundle);
-                mListener.OnChannelItemClick(fragment);
-                scrn_context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+              //  fragment.setArguments(bundle);
+                mListener.OnChannelItemClick(fragment,bundle);
+              //  scrn_context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             }
         });
 
@@ -154,6 +154,6 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
         }
     }
     public interface ChannelListItemClickListener{
-        public void OnChannelItemClick(Fragment call_frag);
+        public void OnChannelItemClick(Fragment call_frag,Bundle bundle);
     }
 }

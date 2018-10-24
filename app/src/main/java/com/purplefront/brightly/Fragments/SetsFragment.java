@@ -76,24 +76,27 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     //ImageView img_mutli_sel;
     View rootView;
     boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
-   // ActionBarUtil actionBarUtilObj;
+    // ActionBarUtil actionBarUtilObj;
+    String set_id_toCreateCard = null;
 
     RealmModel user_obj;
+
     // boolean isMultiSelChoosed;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_my_channels_set, container, false);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
 
-
-       // realm = Realm.getDefaultInstance();
-        Bundle bundle=getArguments();
-        del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
-        btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
-        btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
-        chk_sel_all = (CheckBox) rootView.findViewById(R.id.chk_sel_all);
-        setHasOptionsMenu(true);
+        boolean dontRun=((BrightlyNavigationActivity)getActivity()).DontRun;
+        // realm = Realm.getDefaultInstance();
+        if(!dontRun) {
+            Bundle bundle = getArguments();
+            del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
+            btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
+            btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
+            chk_sel_all = (CheckBox) rootView.findViewById(R.id.chk_sel_all);
+            setHasOptionsMenu(true);
       /*  realmModel = realm.where(RealmModel.class).findAllAsync();
         realmModel.load();
         for (RealmModel model : realmModel) {
@@ -106,81 +109,88 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
         encoded_string = getIntent().getStringExtra("encoded_string");
         image_name = getIntent().getStringExtra("image_name");*/
 
-        userId=user_obj.getUser_Id();
-        chl_list_obj = bundle.getParcelable("model_obj");
-        channel_id = chl_list_obj.getChannel_id();
-        channel_name = chl_list_obj.getChannel_name();
-        channel_description = chl_list_obj.getDescription();
-        encoded_string = chl_list_obj.getCover_image();
-        image_name = chl_list_obj.getImage_name();
-        Created_By = chl_list_obj.getCreated_by();
+            userId = user_obj.getUser_Id();
+            chl_list_obj = bundle.getParcelable("model_obj");
+            set_id_toCreateCard = bundle.getString("Set_ID_toCreateCard");
 
-        view_nodata = (TextView)rootView. findViewById(R.id.view_nodata);
-        txtItemSel = (TextView) rootView.findViewById(R.id.txtCntSelected);
-        channelSet_listview = (RecyclerView)rootView. findViewById(R.id.channelSet_listview);
-        //setTitle(channel_name);
+
+            channel_id = chl_list_obj.getChannel_id();
+            channel_name = chl_list_obj.getChannel_name();
+            channel_description = chl_list_obj.getDescription();
+            encoded_string = chl_list_obj.getCover_image();
+            image_name = chl_list_obj.getImage_name();
+            Created_By = chl_list_obj.getCreated_by();
+
+            view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
+            txtItemSel = (TextView) rootView.findViewById(R.id.txtCntSelected);
+            channelSet_listview = (RecyclerView) rootView.findViewById(R.id.channelSet_listview);
+            //setTitle(channel_name);
        /* actionBarUtilObj.setViewInvisible();
         actionBarUtilObj.getTitle().setVisibility(View.VISIBLE);*/
-        ((BrightlyNavigationActivity)getActivity()).getSupportActionBar().setTitle(channel_name);
-        ((BrightlyNavigationActivity)getActivity()).getSupportActionBar().setSubtitle(null);
-        image_createChannelSet = (ImageView)rootView. findViewById(R.id.image_createChannelSet);
-        setDlgListener(this);
-        if (!userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
-            //img_mutli_sel.setVisibility(View.GONE);
-            image_createChannelSet.setVisibility(View.GONE);
-        }
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle(channel_name);
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+            image_createChannelSet = (ImageView) rootView.findViewById(R.id.image_createChannelSet);
+            if (set_id_toCreateCard != null) {
+                image_createChannelSet.setVisibility(View.INVISIBLE);
+                ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
+            }
+            setDlgListener(this);
+            if (!userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
+                //img_mutli_sel.setVisibility(View.GONE);
+                image_createChannelSet.setVisibility(View.GONE);
+            }
 
-        chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (is_on_set_chg_chk_status) {
+                    if (is_on_set_chg_chk_status) {
 
-                    is_on_set_chg_chk_status = false;
-                } else {
-                    del_sel_id = new ArrayList<>();
-                    if (isChecked) {
-                        chk_sel_all.setText("Unselect all");
-                        btn_delete.setEnabled(true);
-
-                        for (int i = 0; i < setsListModelList.size(); i++) {
-                            SetsListModel modelObj = setsListModelList.get(i);
-                            modelObj.setDelSel(true);
-                            del_sel_id.add(modelObj.getSet_id());
-                            setsListModelList.remove(i);
-                            setsListModelList.add(i, modelObj);
-
-                        }
-                        txtItemSel.setText(del_sel_id.size() + " items selected");
+                        is_on_set_chg_chk_status = false;
                     } else {
-                        chk_sel_all.setText("Select all");
-                        btn_delete.setEnabled(false);
-                        for (int i = 0; i < setsListModelList.size(); i++) {
-                            SetsListModel modelObj = setsListModelList.get(i);
-                            modelObj.setDelSel(false);
-                            setsListModelList.remove(i);
-                            setsListModelList.add(i, modelObj);
+                        del_sel_id = new ArrayList<>();
+                        if (isChecked) {
+                            chk_sel_all.setText("Unselect all");
+                            btn_delete.setEnabled(true);
+
+                            for (int i = 0; i < setsListModelList.size(); i++) {
+                                SetsListModel modelObj = setsListModelList.get(i);
+                                modelObj.setDelSel(true);
+                                del_sel_id.add(modelObj.getSet_id());
+                                setsListModelList.remove(i);
+                                setsListModelList.add(i, modelObj);
+
+                            }
+                            txtItemSel.setText(del_sel_id.size() + " items selected");
+                        } else {
+                            chk_sel_all.setText("Select all");
+                            btn_delete.setEnabled(false);
+                            for (int i = 0; i < setsListModelList.size(); i++) {
+                                SetsListModel modelObj = setsListModelList.get(i);
+                                modelObj.setDelSel(false);
+                                setsListModelList.remove(i);
+                                setsListModelList.add(i, modelObj);
+                            }
+                            txtItemSel.setText("");
                         }
-                        txtItemSel.setText("");
                     }
+                    channelsSetAdapter.notifyDataSetChanged();
                 }
-                channelsSetAdapter.notifyDataSetChanged();
-            }
-        });
-        btn_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            });
+            btn_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                strDelSelId = android.text.TextUtils.join(",", del_sel_id);
-                showAlertDialog("You are about to delete the Set. All the information contained in the Sets will be lost.", "Confirm Delete...", "Delete", "Cancel");
-                // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
-                //ith.attachToRecyclerView(channelSet_listview);
-            }
-        });
+                    strDelSelId = android.text.TextUtils.join(",", del_sel_id);
+                    showAlertDialog("You are about to delete the Set. All the information contained in the Sets will be lost.", "Confirm Delete...", "Delete", "Cancel");
+                    // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
+                    //ith.attachToRecyclerView(channelSet_listview);
+                }
+            });
 
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            btn_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
             /*    getSupportActionBar().show();
                 del_contr.setVisibility(View.GONE);
                 del_sel_id=new ArrayList<>();
@@ -197,21 +207,21 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                 channelsSetAdapter.notifyDataSetChanged();
             */
 
-                reset_view();
-                for (int i = 0; i < setsListModelList.size(); i++) {
-                    SetsListModel modelObj = setsListModelList.get(i);
-                    if (modelObj.isDelSel()) {
-                        modelObj.setDelSel(false);
-                        setsListModelList.remove(i);
-                        setsListModelList.add(i, modelObj);
+                    reset_view();
+                    for (int i = 0; i < setsListModelList.size(); i++) {
+                        SetsListModel modelObj = setsListModelList.get(i);
+                        if (modelObj.isDelSel()) {
+                            modelObj.setDelSel(false);
+                            setsListModelList.remove(i);
+                            setsListModelList.add(i, modelObj);
+                        }
                     }
+                    channelsSetAdapter.set_SelToDel(false);
+                    channelsSetAdapter.notifyDataSetChanged();
+                    if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
+                        ith.attachToRecyclerView(channelSet_listview);
                 }
-                channelsSetAdapter.set_SelToDel(false);
-                channelsSetAdapter.notifyDataSetChanged();
-                if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
-                    ith.attachToRecyclerView(channelSet_listview);
-            }
-        });
+            });
 // Extend the Callback class
         /*ItemTouchHelper.Callback _ithCallback = new ItemTouchHelper.Callback() {
             //and in your imlpementaion of
@@ -252,81 +262,81 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
         ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
         ith.attachToRecyclerView(channelSet_listview);
 */
-        if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
-            ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
+            if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
+                ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
 
-                int dragFrom = -1;
-                int dragTo = -1;
+                    int dragFrom = -1;
+                    int dragTo = -1;
 
-                @Override
-                public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                    return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
-                            0);
-                }
-
-                @Override
-                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-
-
-                    int fromPosition = viewHolder.getAdapterPosition();
-                    int toPosition = target.getAdapterPosition();
-
-
-                    if (dragFrom == -1) {
-                        dragFrom = fromPosition;
-                    }
-                    dragTo = toPosition;
-
-                    //channelsSetAdapter.onItemMove(fromPosition, toPosition);
-                    Collections.swap(setsListModelList, fromPosition, toPosition);
-                    // and notify the adapter that its dataset has changed
-                    channelsSetAdapter.notifyItemMoved(fromPosition, toPosition);
-                    channelsSetAdapter.notifyItemChanged(fromPosition);
-                    channelsSetAdapter.notifyItemChanged(toPosition);
-                    return true;
-
-                }
-
-                private void reallyMoved(int from, int to) {
-                    // I guessed this was what you want...
-                    call_set_reorder();
-                }
-
-                @Override
-                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-                }
-
-                @Override
-                public boolean isLongPressDragEnabled() {
-                    return true;
-                }
-
-                @Override
-                public boolean isItemViewSwipeEnabled() {
-                    return false;
-                }
-
-                @Override
-                public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                    super.clearView(recyclerView, viewHolder);
-
-                    if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
-                        reallyMoved(dragFrom, dragTo);
+                    @Override
+                    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                        return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
+                                0);
                     }
 
-                    dragFrom = dragTo = -1;
-                }
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
 
-            };
-            // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
-            ith = new ItemTouchHelper(dragCallback);
-            ith.attachToRecyclerView(channelSet_listview);
-        }
 
-        image_createChannelSet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+                        int fromPosition = viewHolder.getAdapterPosition();
+                        int toPosition = target.getAdapterPosition();
+
+
+                        if (dragFrom == -1) {
+                            dragFrom = fromPosition;
+                        }
+                        dragTo = toPosition;
+
+                        //channelsSetAdapter.onItemMove(fromPosition, toPosition);
+                        Collections.swap(setsListModelList, fromPosition, toPosition);
+                        // and notify the adapter that its dataset has changed
+                        channelsSetAdapter.notifyItemMoved(fromPosition, toPosition);
+                        channelsSetAdapter.notifyItemChanged(fromPosition);
+                        channelsSetAdapter.notifyItemChanged(toPosition);
+                        return true;
+
+                    }
+
+                    private void reallyMoved(int from, int to) {
+                        // I guessed this was what you want...
+                        call_set_reorder();
+                    }
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+                    }
+
+                    @Override
+                    public boolean isLongPressDragEnabled() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isItemViewSwipeEnabled() {
+                        return false;
+                    }
+
+                    @Override
+                    public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                        super.clearView(recyclerView, viewHolder);
+
+                        if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+                            reallyMoved(dragFrom, dragTo);
+                        }
+
+                        dragFrom = dragTo = -1;
+                    }
+
+                };
+                // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
+                ith = new ItemTouchHelper(dragCallback);
+                ith.attachToRecyclerView(channelSet_listview);
+            }
+
+            image_createChannelSet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
               /*  Intent intent = new Intent(SetsFragment.this, CreateSet.class);
                 intent.putExtra("userId", userId);
@@ -335,17 +345,17 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                 finish();
                 onBackPressed();
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-              Fragment create_set_frag=new CreateSet();
-              Bundle bundle1=new Bundle();
-              bundle1.putParcelable("model_obj", chl_list_obj);
-              create_set_frag.setArguments(bundle1);
-              ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Create_Set,create_set_frag,true);
-            }
-        });
+                    Fragment create_set_frag = new CreateSet();
+                    Bundle bundle1 = new Bundle();
+                    bundle1.putParcelable("model_obj", chl_list_obj);
+                    create_set_frag.setArguments(bundle1);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Set, create_set_frag, true);
+                }
+            });
 
-        getSetLists();
-
-      return rootView;
+            getSetLists();
+        }
+        return rootView;
     }
 
 
@@ -441,7 +451,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     }
 
     public void reset_view() {
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         del_contr.setVisibility(View.GONE);
         del_sel_id = new ArrayList<>();
 
@@ -505,11 +515,13 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         // if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
-        if (userId.equalsIgnoreCase(Created_By)) {
-            inflater.inflate(R.menu.my_channel_set, menu);
-        } else
-           inflater.inflate(R.menu.my_channel_sub_set, menu);
-     //   return true;
+        if(set_id_toCreateCard==null) {
+            if (userId.equalsIgnoreCase(Created_By)) {
+                inflater.inflate(R.menu.my_channel_set, menu);
+            } else
+                inflater.inflate(R.menu.my_channel_sub_set, menu);
+            //   return true;
+        }
 
     }
 
@@ -520,12 +532,12 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                 // app icon in action bar clicked; goto parent activity.
                /* this.finish();
                 overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-                ((AppCompatActivity)getActivity()).getSupportFragmentManager().popBackStackImmediate();
+                ((AppCompatActivity) getActivity()).getSupportFragmentManager().popBackStackImmediate();
                 return true;
             case R.id.action_multi_sel:
 
                 if (setsListModelList.size() > 0) {
-                    ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
                     del_contr.setVisibility(View.VISIBLE);
                     txtItemSel.setText("");
                     btn_delete.setEnabled(false);
@@ -552,11 +564,11 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                 intent.putExtra("model_obj", chl_list_obj);
                 startActivity(intent);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-                Fragment fragment=new EditChannelInfo();
-                Bundle bundle=new Bundle();
+                Fragment fragment = new EditChannelInfo();
+                Bundle bundle = new Bundle();
                 bundle.putParcelable("model_obj", chl_list_obj);
                 fragment.setArguments(bundle);
-                ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Edit_Channel,fragment,true);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Channel, fragment, true);
                 return true;
 
             default:
@@ -618,8 +630,18 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     }
 
     @Override
-    public void onCardShow(Fragment call_frag) {
-        ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.view_card,call_frag,false);
+    public void onCardShow(Bundle bundle_args) {
+        Fragment fragment;
+        if (set_id_toCreateCard != null) {
+            fragment = new CardList();
+            bundle_args.putString("set_id_toCreateCard", set_id_toCreateCard);
+            fragment.setArguments(bundle_args);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, fragment, true);
+        } else {
+            fragment = new CardDetailFragment();
+            fragment.setArguments(bundle_args);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.view_card, fragment, false);
+        }
     }
 
     @Override

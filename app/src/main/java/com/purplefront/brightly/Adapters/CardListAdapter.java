@@ -58,6 +58,10 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         isSelToDel = value;
 
     }
+    public boolean isSelToDel()
+    {
+        return isSelToDel;
+    }
 
     @Override
     public int getItemViewType(int position) {

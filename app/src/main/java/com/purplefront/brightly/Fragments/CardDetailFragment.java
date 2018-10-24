@@ -2,15 +2,21 @@ package com.purplefront.brightly.Fragments;
 
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +24,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,7 +83,7 @@ public class CardDetailFragment extends BaseFragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
+       Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
         if (!hidden) {
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
             boolean isCardClicked = ((BrightlyNavigationActivity) getActivity()).isCardClicked;
@@ -83,6 +94,7 @@ public class CardDetailFragment extends BaseFragment {
             boolean isCardRefresh = ((BrightlyNavigationActivity) getActivity()).isCardRefresh;
             if (isCardRefresh) {
                 ((BrightlyNavigationActivity) getActivity()).isCardRefresh = false;
+
                 getCardsLists();
             }
             if (isNotification) {
@@ -117,7 +129,7 @@ public class CardDetailFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_my_set_cards, container, false);
         //  setContentView(R.layout.activity_my_set_cards);
-//        Toast.makeText(getContext(), "On Create Called", Toast.LENGTH_LONG).show();
+       Toast.makeText(getContext(), "On Create Called", Toast.LENGTH_LONG).show();
         userId = ((BrightlyNavigationActivity) getActivity()).userId;
         setHasOptionsMenu(true);
         //  userId = getIntent().getStringExtra("userId");
@@ -130,6 +142,7 @@ public class CardDetailFragment extends BaseFragment {
                 userId = model.getUser_Id();
             }
         }*/
+
         Bundle bundle = getArguments();
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -189,7 +202,7 @@ public class CardDetailFragment extends BaseFragment {
                 /*Fragment card_frag = new ItemsAddFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("set_id", set_id);
-                bundle.putString("userId", userId);
+                bundle.pu`tString("userId", userId);
                 bundle.putString("set_name", set_name);
                 card_frag.setArguments(bundle);*/
                /* Intent intent = new Intent(MySetCards.this, CreateCardsFragment.class);
@@ -199,13 +212,7 @@ public class CardDetailFragment extends BaseFragment {
                 intent.putExtra("isCreate_Crd",true);
                 startActivityForResult(intent,UPDATECARD);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("setsListModel", setsListModel);
-                bundle.putParcelable("model_obj", chl_list_obj);
-                bundle.putBoolean("isCreate_Crd", true);
-                Fragment crt_crd_frag = new CreateCardsFragment();
-                crt_crd_frag.setArguments(bundle);
-                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Card, crt_crd_frag, true);
+                setBottomDialog();
 
             }
         });
@@ -291,15 +298,73 @@ public class CardDetailFragment extends BaseFragment {
         }
     }
 
+    public void setBottomDialog() {
+        final Dialog mBottomSheetDialog = new Dialog(getActivity(), R.style.MaterialDialogSheet);
+        mBottomSheetDialog.setContentView(R.layout.dialog_view_layout); // your custom view.
+        mBottomSheetDialog.setCancelable(true);
+        mBottomSheetDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        mBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+        mBottomSheetDialog.show();
+        ListView list_SettingsMenu = (ListView) mBottomSheetDialog.getWindow().findViewById(R.id.list_view_dialog);
+        ArrayList<String> menu_list = new ArrayList<>();
+        menu_list.add("Create new card");
+        menu_list.add("Create card from existing set");
+
+        ArrayAdapter<String> menu_itmes = new ArrayAdapter<String>(getContext(), R.layout.menu_row_diualog, R.id.dialog_menu_textView,
+                menu_list);
+        list_SettingsMenu.setAdapter(menu_itmes);
+        list_SettingsMenu.requestFocus();
+        Button btnCancel = (Button) mBottomSheetDialog.getWindow().findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        list_SettingsMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mBottomSheetDialog.dismiss();
+                Bundle bundle = new Bundle();
+                switch (position) {
+                    case 0:
+
+                        bundle.putParcelable("setsListModel", setsListModel);
+                        bundle.putParcelable("model_obj", chl_list_obj);
+                        bundle.putBoolean("isCreate_Crd", true);
+                        Fragment crt_crd_frag = new CreateCardsFragment();
+                        crt_crd_frag.setArguments(bundle);
+                        ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Card, crt_crd_frag, true);
+                        break;
+                    case 1:
+
+                        bundle.putString("Set_ID_toCreateCard",setsListModel.getSet_id());
+
+                        bundle.putString("type","all");
+                        Fragment channel_frag = new ChannelFragment();
+                        channel_frag.setArguments(bundle);
+
+                        ((BrightlyNavigationActivity) getActivity()).isHide_frag=true;
+                        ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.CHANNELS, channel_frag, true);
+                        break;
+                }
+            }
+            }
+        );
+
+    }
+
     public void getCardsLists() {
         try {
-
+            showProgress();
             if (CheckNetworkConnection.isOnline(getContext())) {
-                showProgress();
+
                 Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(set_id);
                 callRegisterUser.enqueue(new ApiCallback<CardsListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<CardsListResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
+                        ((BrightlyNavigationActivity)getActivity()).DontRun=false;
                         CardsListResponse cardsListResponse = response.body();
                         if (isSuccess) {
 
@@ -307,11 +372,10 @@ public class CardDetailFragment extends BaseFragment {
 
                                 cardsListModels = new ArrayList<>(cardsListResponse.getData());
                                 view_nodata.setVisibility(View.GONE);
-                                dismissProgress();
+
 
                             } else {
                                 view_nodata.setVisibility(View.VISIBLE);
-                                dismissProgress();
                             }
                 /*            CardsListModel dummyCardObj=new CardsListModel();
                             cardsListModels.add(dummyCardObj);*/
@@ -319,7 +383,6 @@ public class CardDetailFragment extends BaseFragment {
 
                         } else {
                             showLongToast(getActivity(), message);
-                            dismissProgress();
                         }
                     }
 
@@ -334,9 +397,10 @@ public class CardDetailFragment extends BaseFragment {
                 dismissProgress();
             }
         } catch (Exception e) {
+            dismissProgress();
             e.printStackTrace();
 
-            dismissProgress();
+
         }
 
     }
@@ -451,6 +515,7 @@ public class CardDetailFragment extends BaseFragment {
                     bundle.putParcelable("notfy_modl_obj", notificationsModel);
                     bundle.putBoolean("isNotification", true);
                     edit_set_info.setArguments(bundle);
+                    ((BrightlyNavigationActivity) getActivity()).isHide_frag=true;
                     ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
 
                 } else {
@@ -466,6 +531,7 @@ public class CardDetailFragment extends BaseFragment {
                     bundle.putParcelable("setsListModel", setsListModel);
                     bundle.putBoolean("isNotification", false);
                     edit_set_info.setArguments(bundle);
+                    ((BrightlyNavigationActivity) getActivity()).isHide_frag=true;
                     ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
                 }
 
@@ -516,6 +582,7 @@ public class CardDetailFragment extends BaseFragment {
                 bundle1.putString("chl_name", channel_name);
                 bundle1.putInt("card_position", Cur_PagrPosition);
                 frag.setArguments(bundle1);
+                ((BrightlyNavigationActivity) getActivity()).isHide_frag=true;
                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, frag, false);
 
                 return true;
@@ -533,6 +600,7 @@ public class CardDetailFragment extends BaseFragment {
                 bundle2.putString("chl_name", channel_name);
                 bundle2.putInt("card_position", Cur_PagrPosition);
                 frag1.setArguments(bundle2);
+                ((BrightlyNavigationActivity) getActivity()).isHide_frag=true;
                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, frag1, false);
                 return true;
 
