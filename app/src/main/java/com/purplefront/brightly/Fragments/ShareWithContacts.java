@@ -110,8 +110,7 @@ public class ShareWithContacts extends BaseFragment {
             set_name = notificationsModel.getNotificationsSetDetail().getName();
             set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
             share_link = notificationsModel.getNotificationsSetDetail().getShare_link();
-        }
-        else {
+        } else {
             chl_list_obj = bundle.getParcelable("model_obj");
             setsListModel = bundle.getParcelable("setsListModel");
             set_description = setsListModel.getDescription();
@@ -132,8 +131,7 @@ public class ShareWithContacts extends BaseFragment {
             }.getType();
             contactShares = gson.fromJson(json, type);
             setConatcts(contactShares);
-        }
-        else {
+        } else {
 
             requestLocationPermission();
         }
@@ -299,6 +297,8 @@ public class ShareWithContacts extends BaseFragment {
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            EditSetInfo parent_frag = (EditSetInfo) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Edit_Set);
+            parent_frag.isShareSetChgd = true;
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false, 2);
         } else {
             showLongToast(getActivity(), message);
@@ -308,9 +308,9 @@ public class ShareWithContacts extends BaseFragment {
 
     protected void requestLocationPermission() {
 
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS,
-                    Manifest.permission.WRITE_CONTACTS}, REQUEST_PERMISSION);
-            // show UI part if you want here to show some rationale !!!
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS,
+                Manifest.permission.WRITE_CONTACTS}, REQUEST_PERMISSION);
+        // show UI part if you want here to show some rationale !!!
     }
 
     @Override
@@ -321,7 +321,7 @@ public class ShareWithContacts extends BaseFragment {
 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                        getAllContacts();
+                    getAllContacts();
 
                 } else {
 

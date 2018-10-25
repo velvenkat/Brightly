@@ -83,9 +83,10 @@ public class CardDetailFragment extends BaseFragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-       Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
+  //     Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
         if (!hidden) {
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+            ((BrightlyNavigationActivity) getActivity()).isHide_frag=false;
             boolean isCardClicked = ((BrightlyNavigationActivity) getActivity()).isCardClicked;
             if (isCardClicked) {
                 int card_toPosition = ((BrightlyNavigationActivity) getActivity()).card_toPosition;
@@ -129,7 +130,6 @@ public class CardDetailFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_my_set_cards, container, false);
         //  setContentView(R.layout.activity_my_set_cards);
-       Toast.makeText(getContext(), "On Create Called", Toast.LENGTH_LONG).show();
         userId = ((BrightlyNavigationActivity) getActivity()).userId;
         setHasOptionsMenu(true);
         //  userId = getIntent().getStringExtra("userId");

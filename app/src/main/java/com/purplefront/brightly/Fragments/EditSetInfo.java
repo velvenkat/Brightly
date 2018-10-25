@@ -59,6 +59,8 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
     // ImageView share, delete;
 
+    public boolean isShareSetChgd = false;
+
     boolean isNotification;
     //  String userId;
     String channel_id = "";
@@ -153,7 +155,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_edit_set_info, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
-        toggle_contr=(RelativeLayout)rootView.findViewById(R.id.toggle_contr);
+        toggle_contr = (RelativeLayout) rootView.findViewById(R.id.toggle_contr);
         Switch toggle_share_access = rootView.findViewById(R.id.switch_toggle_access);
         setHasOptionsMenu(true);
         ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
@@ -205,8 +207,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         if (Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
             toggle_contr.setVisibility(View.VISIBLE);
             toggle_share_access.setShowText(true);
-        }
-        else{
+        } else {
             toggle_contr.setVisibility(View.GONE);
         }
         if (share_access.equals("0")) {
@@ -359,6 +360,21 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            if (isShareSetChgd) {
+                getSetSharedInfo();
+            }
+            if (!Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Set Info");
+            } else
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Edit Set Info");
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
           /*  case android.R.id.home:
@@ -372,17 +388,16 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
                 Fragment fragment = new SharePage();
                 Bundle bundle1 = new Bundle();
-                if(isNotification)
-                {
-                    bundle1.putBoolean("isNotification",true);
+                if (isNotification) {
+                    bundle1.putBoolean("isNotification", true);
                     bundle1.putParcelable("notfy_modl_obj", notificationsModel);
-                }
-                else {
-                    bundle1.putBoolean("isNotification",false);
+                } else {
+                    bundle1.putBoolean("isNotification", false);
                     bundle1.putParcelable("model_obj", chl_list_obj);
                     bundle1.putParcelable("setsListModel", setsListModel);
                 }
                 fragment.setArguments(bundle1);
+                ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.share_page, fragment, true);
                 return true;
             case R.id.action_delete:
@@ -403,22 +418,17 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
                         AddMessageResponse addMessageResponse = response.body();
                         if (isSuccess) {
 
                             if (addMessageResponse != null) {
 
                                 setRevokeSetCredentials(addMessageResponse);
-                                dismissProgress();
 
-                            } else {
-                                dismissProgress();
 
                             }
 
-                        } else {
-
-                            dismissProgress();
                         }
                     }
 
@@ -466,22 +476,16 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
                         AddMessageResponse deleteSetResponse = response.body();
                         if (isSuccess) {
 
                             if (deleteSetResponse != null) {
-                                dismissProgress();
                                 setDeleteCredentials(deleteSetResponse);
 
 
-                            } else {
-                                dismissProgress();
-
                             }
 
-                        } else {
-
-                            dismissProgress();
                         }
                     }
 
@@ -624,6 +628,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                 callRegisterUser.enqueue(new ApiCallback<SetInfoSharedResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SetInfoSharedResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
                         SetInfoSharedResponse infoSharedResponse = response.body();
                         if (isSuccess) {
 
@@ -632,18 +637,15 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                                 setSharedCredentials(infoSharedResponse);
                                 text_share_title.setVisibility(View.VISIBLE);
                                 layout_act_inact.setVisibility(View.VISIBLE);
-                                dismissProgress();
+
 
                             } else {
-                                dismissProgress();
+
 //                                text_share_title.setVisibility(View.GONE);
                                 layout_act_inact.setVisibility(View.GONE);
 
                             }
 
-                        } else {
-
-                            dismissProgress();
                         }
                     }
 
@@ -658,9 +660,10 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                 dismissProgress();
             }
         } catch (Exception e) {
+            dismissProgress();
             e.printStackTrace();
 
-            dismissProgress();
+
         }
 
     }

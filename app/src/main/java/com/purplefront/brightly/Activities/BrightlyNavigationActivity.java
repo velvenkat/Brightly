@@ -45,6 +45,7 @@ import com.purplefront.brightly.Fragments.ChannelFragment;
 import com.purplefront.brightly.Fragments.EditSetInfo;
 import com.purplefront.brightly.Fragments.MyProfile;
 import com.purplefront.brightly.Fragments.Notifications;
+import com.purplefront.brightly.Fragments.SharePage;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.NotificationsModel;
@@ -696,13 +697,28 @@ public class BrightlyNavigationActivity extends BaseActivity
         transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
         if(isHide_frag) {
             isHide_frag=false;
-            //if (call_fragment instanceof ChannelFragment || call_fragment instanceof EditSetInfo || call_fragment instanceof CardList) {
+            if (call_fragment instanceof ChannelFragment || call_fragment instanceof EditSetInfo || call_fragment instanceof CardList) {
                 Fragment card_dtl_frag = fragmentManager.findFragmentByTag(Util.view_card);
                 transaction.hide(card_dtl_frag);
                 transaction.addToBackStack(tag);
                 transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
                 transaction.add(R.id.frag_container, call_fragment, tag).commit();
-            //}
+            }
+            else if(call_fragment instanceof SharePage){
+                Fragment toHide_frag = fragmentManager.findFragmentByTag(Util.Edit_Set);
+                transaction.hide(toHide_frag);
+                transaction.addToBackStack(tag);
+                transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
+                transaction.add(R.id.frag_container, call_fragment, tag).commit();
+            }
+            else
+            {
+                Fragment toHide_frag = fragmentManager.findFragmentByTag(Util.share_page);
+                transaction.hide(toHide_frag);
+                transaction.addToBackStack(tag);
+                transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
+                transaction.add(R.id.frag_container, call_fragment, tag).commit();
+            }
 
         }
           else {

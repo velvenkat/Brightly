@@ -42,24 +42,31 @@ public class SharePage extends BaseFragment {
     View rootView;
 
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!hidden){
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share Set");
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_share_page, container, false);
         ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
 
-       // setContentView(R.layout.activity_share_page);
+        // setContentView(R.layout.activity_share_page);
 
       /*  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 */
-       // setTitle("Share Set");
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Share Set");
-        Bundle bundle=getArguments();
+        // setTitle("Share Set");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share Set");
+        Bundle bundle = getArguments();
 
         if (bundle != null) {
             isNotification = bundle.getBoolean("isNotification", false);
@@ -71,8 +78,7 @@ public class SharePage extends BaseFragment {
             set_name = notificationsModel.getNotificationsSetDetail().getName();
             set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
             share_link = notificationsModel.getNotificationsSetDetail().getShare_link();
-        }
-        else {
+        } else {
 
             chl_list_obj = bundle.getParcelable("model_obj");
             setsListModel = bundle.getParcelable("setsListModel");
@@ -97,19 +103,19 @@ public class SharePage extends BaseFragment {
                 startActivity(intent);
                 finish();
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-                Fragment fragment=new ShareWithContacts();
-                Bundle bundle1=new Bundle();
-                if(isNotification)
-                {
-                    bundle1.putBoolean("isNotification",true);
+                Fragment fragment = new ShareWithContacts();
+                Bundle bundle1 = new Bundle();
+                if (isNotification) {
+                    bundle1.putBoolean("isNotification", true);
                     bundle1.putParcelable("notfy_modl_obj", notificationsModel);
-                }else {
-                    bundle1.putBoolean("isNotification",false);
+                } else {
+                    bundle1.putBoolean("isNotification", false);
                     bundle1.putParcelable("model_obj", chl_list_obj);
                     bundle1.putParcelable("setsListModel", setsListModel);
                 }
                 fragment.setArguments(bundle1);
-                ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.share_with_contact,fragment,true);
+                ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.share_with_contact, fragment, true);
 
             }
         });
