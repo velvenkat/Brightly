@@ -363,6 +363,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
+            ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
             if (isShareSetChgd) {
                 getSetSharedInfo();
             }
