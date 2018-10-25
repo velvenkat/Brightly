@@ -17,7 +17,7 @@
         android:id="@+id/set_CommentsList"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:visible="true"
+        android:visible="false"
         android:title="@string/set_comments" />
 
     <item

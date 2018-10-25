@@ -272,7 +272,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         }
 
         getSetSharedInfo();
-        if (shared_by != null) {
+        if (shared_by != null && !shared_by.equals("me")) {
             text_share_title.setVisibility(View.VISIBLE);
             text_share_title.setText("Shared by : " + shared_by);
         }

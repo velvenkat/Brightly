@@ -24,7 +24,7 @@ public class SharedDataModel implements Parcelable{
     @Expose
     private String shared_by;
 
-    @SerializedName("instlled")
+    @SerializedName("installed")
     @Expose
     private String instlled;
 

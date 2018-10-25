@@ -191,10 +191,10 @@ public class CardDetailFragment extends BaseFragment {
 
         if (!userId.equalsIgnoreCase(Created_By)) {
             image_createCard.setVisibility(View.GONE);
-            image_Comment.setVisibility(View.VISIBLE);
+//            image_Comment.setVisibility(View.VISIBLE);
         } else {
             image_createCard.setVisibility(View.VISIBLE);
-            image_Comment.setVisibility(View.GONE);
+//            image_Comment.setVisibility(View.GONE);
         }
         image_createCard.setOnClickListener(new View.OnClickListener() {
             @Override
