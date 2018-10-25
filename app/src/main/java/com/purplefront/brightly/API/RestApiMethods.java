@@ -103,7 +103,7 @@ public interface RestApiMethods {
 
     //Revoke Sets
     @POST("share/revoke_set.php")
-    Call<AddMessageResponse> getRevokeSet(@Query("set_id") String set_id, @Query("assigned_to") String assigned_to);
+    Call<AddMessageResponse> getRevokeSet(@Query("set_id") String set_id, @Query("assigned_to") String assigned_to, @Query("user_id") String user_id);
 
 
     //CardList
