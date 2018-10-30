@@ -93,5 +93,11 @@
     <string name="set_comments">Comments List</string>
     <string name="comments_title">Leave your comments here :</string>
     <string name="comments">Enter 250 characters only....</string>
+    <string name="share_setting">Sharing Settings : </string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+    <string name="can_view">Can View</string>
+    <string name="can_share">Can Share</string>
+    <string name="share_access">Share Link : </string>
 
 </resources>

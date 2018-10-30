@@ -24,6 +24,10 @@ public class SharedDataModel implements Parcelable{
     @Expose
     private String shared_by;
 
+    @SerializedName("share_access")
+    @Expose
+    private String share_access;
+
     @SerializedName("installed")
     @Expose
     private String instlled;
@@ -41,6 +45,7 @@ public class SharedDataModel implements Parcelable{
         phone = in.readString();
         shared_by = in.readString();
         instlled = in.readString();
+        share_access = in.readString();
 
     }
 
@@ -96,6 +101,14 @@ public class SharedDataModel implements Parcelable{
         this.instlled = instlled;
     }
 
+    public String getShare_access() {
+        return share_access;
+    }
+
+    public void setShare_access(String share_access) {
+        this.share_access = share_access;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -108,5 +121,6 @@ public class SharedDataModel implements Parcelable{
         parcel.writeString(phone);
         parcel.writeString(shared_by);
         parcel.writeString(instlled);
+        parcel.writeString(share_access);
     }
 }

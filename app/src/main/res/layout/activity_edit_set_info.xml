@@ -7,44 +7,17 @@
     android:orientation="vertical"
     tools:context=".Fragments.EditSetInfo">
 
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/dimen10"
         android:layout_weight="1"
+        >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:id="@+id/toggle_contr"
-            android:gravity="center_vertical"
-            android:layout_height="wrap_content">
-
-            <!-- <ToggleButton
-                 android:id="@+id/switch_show_protected"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-
-                 android:textOff=""
-                 android:textOn=""/>-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:id="@+id/txtShrAccess"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/switch_toggle_access"
-                android:text="Share Access" />
-
-            <Switch
-                android:id="@+id/switch_toggle_access"
-                android:layout_alignParentRight="true"
-                android:layout_width="100dp"
-                android:textOff="OFF"
-                android:textOn="ON"
-                android:layout_height="wrap_content" />
-
-        </RelativeLayout>
 
         <EditText
             android:id="@+id/edit_setName"
@@ -141,14 +114,16 @@
             android:id="@+id/shared_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dimen_16"
-            android:layout_marginRight="@dimen/dimen_16"
+            android:layout_marginLeft="@dimen/dimen_8"
+            android:layout_marginRight="@dimen/dimen_8"
             android:layout_marginTop="@dimen/dimen_10"
             android:nestedScrollingEnabled="false"
             android:paddingBottom="@dimen/dimen_4"
             android:visibility="visible" />
 
     </LinearLayout>
+
+    </ScrollView>
 
     <Button
         android:id="@+id/btn_editSet"

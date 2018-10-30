@@ -100,13 +100,13 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
     }
 
-    public void api_call_share_access_update(String value) {
+    public void api_call_share_access_update(String value, String assigned_to) {
 
         try {
 
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_share_access_update(user_obj.getUser_Id(), set_id, value);
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_share_access_update(user_obj.getUser_Id(), set_id, value, assigned_to);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -115,6 +115,9 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
                             dismissProgress();
 
+                            if (infoSharedResponse != null) {
+                                showShortToast(getActivity(), infoSharedResponse.getMessage());
+                            }
                             if (isNotification) {
                                 notificationsModel.getNotificationsSetDetail().setShare_access(value);
 
@@ -155,8 +158,8 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_edit_set_info, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
-        toggle_contr = (RelativeLayout) rootView.findViewById(R.id.toggle_contr);
-        Switch toggle_share_access = rootView.findViewById(R.id.switch_toggle_access);
+        /*toggle_contr = (RelativeLayout) rootView.findViewById(R.id.toggle_contr);
+        Switch toggle_share_access = rootView.findViewById(R.id.switch_toggle_access);*/
         setHasOptionsMenu(true);
         ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
 //        toolbar=(Toolbar)rootView.findViewById(R.id.toolbar);
@@ -203,7 +206,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         }
 
 
-        //  switchAB.setChecked(false);
+      /*  //  switchAB.setChecked(false);
         if (Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
             toggle_contr.setVisibility(View.VISIBLE);
             toggle_share_access.setShowText(true);
@@ -222,8 +225,8 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                                          boolean isChecked) {
 
                 if (isChecked) {
-                   /* Toast.makeText(getContext(), "ON", Toast.LENGTH_SHORT)
-                            .show();*/
+                   *//* Toast.makeText(getContext(), "ON", Toast.LENGTH_SHORT)
+                            .show();*//*
                     //menu.getItem()
                     //share_item.setVisible(true);
 
@@ -235,7 +238,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
 
             }
-        });
+        });*/
 
 
         edit_setName = (EditText) rootView.findViewById(R.id.edit_setName);
@@ -300,6 +303,8 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
         return rootView;
     }
+
+
 
     // Check Validation Method
     private void checkValidation() {
@@ -674,7 +679,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         if (!setsListModel.getShared_data().isEmpty() && setsListModel.getShared_data() != null) {
             text_share_title.setVisibility(View.VISIBLE);
             shared_listview.setLayoutManager(new LinearLayoutManager(getContext()));
-            sharedListAdapter = new SharedListAdapter(getContext(), infoSharedResponse.getShared_data(), set_id, share_link, this);
+            sharedListAdapter = new SharedListAdapter(getContext(), infoSharedResponse.getShared_data(), set_id, share_link, this, EditSetInfo.this);
             shared_listview.setAdapter(sharedListAdapter);
             dismissProgress();
         } else {
