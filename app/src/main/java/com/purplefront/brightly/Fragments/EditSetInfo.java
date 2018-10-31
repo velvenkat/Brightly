@@ -678,7 +678,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
     private void setSharedCredentials(SetInfoSharedResponse infoSharedResponse) {
 
-        if (!setsListModel.getShared_data().isEmpty() && setsListModel.getShared_data() != null) {
+        if (!infoSharedResponse.getShared_data().isEmpty() && infoSharedResponse.getShared_data() != null) {
             text_share_title.setVisibility(View.VISIBLE);
             shared_listview.setLayoutManager(new LinearLayoutManager(getContext()));
             sharedListAdapter = new SharedListAdapter(getContext(), infoSharedResponse.getShared_data(), set_id, share_link, this, EditSetInfo.this);
