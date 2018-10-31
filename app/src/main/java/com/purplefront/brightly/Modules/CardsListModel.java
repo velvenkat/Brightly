@@ -28,6 +28,19 @@ public class CardsListModel implements Parcelable {
     @Expose
     private String name;
 
+    public String getCreated_by() {
+        return created_by;
+    }
+
+    public void setCreated_by(String created_by) {
+        this.created_by = created_by;
+    }
+
+    @SerializedName("created_by")
+    @Expose
+    private String created_by;
+
+
     @SerializedName("type")
     @Expose
     private String type;

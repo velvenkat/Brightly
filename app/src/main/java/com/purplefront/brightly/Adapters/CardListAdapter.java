@@ -189,6 +189,8 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
             }
         });*/
 
+
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

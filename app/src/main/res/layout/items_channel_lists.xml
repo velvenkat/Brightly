@@ -6,12 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="110dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="@dimen/dimen_8"
-    android:layout_margin="@dimen/dimen_4"
+     android:layout_margin="@dimen/dimen_8"
     app:cardElevation="@dimen/dimen_8">
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:padding="@dimen/dimen_5"
         android:layout_height="match_parent">
 
         <ImageView
@@ -19,6 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="5dp"
             android:scaleType="fitXY"
             android:src="@drawable/no_image_available" />
 
@@ -28,6 +30,7 @@
             android:layout_height="20dp"
             android:layout_alignParentLeft="true"
             android:layout_margin="@dimen/dimen_4"
+            android:layout_alignTop="@+id/imageView_channelImage"
             android:src="@drawable/shared_icon"
             android:visibility="visible" />
 
@@ -35,6 +38,7 @@
             android:id="@+id/textView_channelCount"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_alignTop="@+id/imageView_channelImage"
             android:layout_alignParentRight="true"
             android:text="0"
             android:gravity="center"

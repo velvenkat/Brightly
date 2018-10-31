@@ -131,7 +131,7 @@ public class CardDetailFragment extends BaseFragment {
         rootView = inflater.inflate(R.layout.activity_my_set_cards, container, false);
         //  setContentView(R.layout.activity_my_set_cards);
         userId = ((BrightlyNavigationActivity) getActivity()).userId;
-        setHasOptionsMenu(true);
+    //    setHasOptionsMenu(true);
         //  userId = getIntent().getStringExtra("userId");
 /*
         realm = Realm.getDefaultInstance();
@@ -420,12 +420,19 @@ public class CardDetailFragment extends BaseFragment {
             bundle.putParcelable("card_mdl_obj", cardObj);
 
 
+
             card_frag = new Multimedia_CardFragment();
 
-
+            /*bundle.putString("set_createdby",Created_By);
             bundle.putString("set_id", set_id);
             bundle.putString("userId", userId);
             bundle.putString("set_name", set_name);
+            bundle.putString("chl_name",channel_name);*/
+            bundle.putParcelable("model_obj",chl_list_obj);
+            bundle.putParcelable("setListModel",setsListModel);
+            bundle.putBoolean("isNotification",isNotification);
+            bundle.putParcelable("notfy_modl_obj",notificationsModel);
+            bundle.putString("card_position",String.valueOf(i));
             card_frag.setArguments(bundle);
             cardFragList.add(card_frag);
         }
@@ -470,145 +477,7 @@ public class CardDetailFragment extends BaseFragment {
     }
 
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.clear();
-        if (userId.equalsIgnoreCase(Created_By)) {
-            inflater.inflate(R.menu.my_set_cards, menu);
-        } else
-            inflater.inflate(R.menu.my_sub_cards, menu);
 
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Bundle bundle = new Bundle();
-        switch (item.getItemId()) {
-
-            case R.id.set_CommentsList:
-
-                Bundle bundle_list = new Bundle();
-                bundle_list.putString("set_id", set_id);
-                bundle_list.putString("set_name", set_name);
-                bundle_list.putString("userId", userId);
-                bundle_list.putString("channel_name", channel_name);
-                Fragment cmt_list_frag = new CommentListFragment();
-                cmt_list_frag.setArguments(bundle_list);
-                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Comments_List, cmt_list_frag, true);
-
-                return true;
-
-            case R.id.setInfo_Edit:
-
-                if (isNotification) {
-
-                   /* Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
-                    intent.putExtra("userId", userId);
-                    intent.putExtra("notfy_modl_obj", notificationsModel);
-                    intent.putExtra("isNotification", true);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-
-                    Fragment edit_set_info = new EditSetInfo();
-                    bundle.putParcelable("notfy_modl_obj", notificationsModel);
-                    bundle.putBoolean("isNotification", true);
-                    edit_set_info.setArguments(bundle);
-                    ((BrightlyNavigationActivity) getActivity()).isHide_frag=true;
-                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
-
-                } else {
-                    /*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
-                    intent.putExtra("userId", userId);
-                    intent.putExtra("model_obj", chl_list_obj);
-                    intent.putExtra("setsListModel", setsListModel);
-                    intent.putExtra("isNotification", false);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-                    Fragment edit_set_info = new EditSetInfo();
-                    bundle.putParcelable("model_obj", chl_list_obj);
-                    bundle.putParcelable("setsListModel", setsListModel);
-                    bundle.putBoolean("isNotification", false);
-                    edit_set_info.setArguments(bundle);
-                    ((BrightlyNavigationActivity) getActivity()).isHide_frag=true;
-                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
-                }
-
-                return true;
-
-            case R.id.cardInfo_Edit:
-
-                if (cardsListModels.size() != 0) {
-
-                   /* Intent intent1 = new Intent(CardDetailFragment.this, CreateCardsFragment.class);
-
-                    intent1.putExtra("userId", userId);
-                    intent1.putExtra("setsListModel", setsListModel);
-                    intent1.putExtra("model_obj", chl_list_obj);
-                    intent1.putExtra("isCreate_Crd",false);
-                    intent1.putExtra("Card_Dtls", cardsListModels.get(Cur_PagrPosition));
-
-                    //intent1.putExtra("my_card_bundle",bundle);
-                    startActivityForResult(intent1, UPDATECARD);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-                    Fragment frag = new CreateCardsFragment();
-                    bundle.putParcelable("setsListModel", setsListModel);
-                    bundle.putParcelable("model_obj", chl_list_obj);
-                    bundle.putBoolean("isCreate_Crd", false);
-                    bundle.putParcelable("Card_Dtls", cardsListModels.get(Cur_PagrPosition));
-                    frag.setArguments(bundle);
-                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Card, frag, true);
-
-                } else {
-                    showLongToast(getActivity(), "No Card to Edit");
-
-                }
-
-                return true;
-            case R.id.card_reorder:
-
-               /* Intent intent2 = new Intent(CardDetailFragment.this, CardList.class);
-                intent2.putExtra("userId", userId);
-                intent2.putExtra("setsListModel", setsListModel);
-                intent2.putExtra("re_order", true);
-                startActivity(intent2);
-                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
-               */
-                Fragment frag = new CardList();
-                Bundle bundle1 = new Bundle();
-                bundle1.putParcelable("setsListModel", setsListModel);
-                bundle1.putBoolean("re_order", true);
-                bundle1.putString("chl_name", channel_name);
-                bundle1.putInt("card_position", Cur_PagrPosition);
-                frag.setArguments(bundle1);
-                ((BrightlyNavigationActivity) getActivity()).isHide_frag=true;
-                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, frag, false);
-
-                return true;
-            case R.id.action_card_list:
-                Fragment frag1 = new CardList();
-                Bundle bundle2 = new Bundle();
-                bundle2.putParcelable("setsListModel", setsListModel);
-                bundle2.putParcelable("notfy_modl_obj", notificationsModel);
-                if (isNotification) {
-                    bundle2.putBoolean("isNotification", true);
-                } else {
-                    bundle2.putBoolean("isNotification", false);
-                }
-                bundle2.putBoolean("re_order", false);
-                bundle2.putString("chl_name", channel_name);
-                bundle2.putInt("card_position", Cur_PagrPosition);
-                frag1.setArguments(bundle2);
-                ((BrightlyNavigationActivity) getActivity()).isHide_frag=true;
-                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, frag1, false);
-                return true;
-
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     public void move_card() {
 

@@ -86,7 +86,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         Bundle bundle = getArguments();
         userId = user_obj.getUser_Id();
         isNotification = bundle.getBoolean("isNotification", false);
-        set_id_toCreateCard = bundle.getString("set_id_toCreateCard", null);
+        set_id_toCreateCard = bundle.getString("set_id_toCreateCard", null); //Create card from existing set
 
 
         if (isNotification) {
@@ -372,7 +372,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        if (isReorder || set_id_toCreateCard != null) {
+        if (isReorder) {
             inflater.inflate(R.menu.multi_sel_menu, menu);
         }
         super.onCreateOptionsMenu(menu, inflater);
@@ -433,6 +433,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                 callRegisterUser.enqueue(new ApiCallback<CardsListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<CardsListResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
                         CardsListResponse cardsListResponse = response.body();
                         if (isSuccess) {
 
@@ -440,18 +441,20 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
                                 cardsListModels = cardsListResponse.getData();
                                 setAdapter(cardsListModels);
-                                dismissProgress();
+                                if (set_id_toCreateCard != null) {
+                                    multi_sel_actions();
+                                }
+
 
                             } else {
                                 card_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
-                                dismissProgress();
                             }
 
 
                         } else {
                             showLongToast(getActivity(), message);
-                            dismissProgress();
+
                         }
                     }
 
@@ -558,14 +561,13 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
     @Override
     public void onCardClick(int position) {
-        if(set_id_toCreateCard==null) {
+        if (set_id_toCreateCard == null) {
             ((BrightlyNavigationActivity) getActivity()).isCardClicked = true;
             ((BrightlyNavigationActivity) getActivity()).card_toPosition = position;
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
-        }
-        else{
-            if(cardListAdapter.isSelToDel())
-            onSelect(position,cardsListModels.get(position));
+        } else {
+            if (cardListAdapter.isSelToDel())
+                onSelect(position, cardsListModels.get(position));
         }
 
     }

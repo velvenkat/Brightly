@@ -12,6 +12,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -26,7 +29,11 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
+import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.CardsListModel;
+import com.purplefront.brightly.Modules.ChannelListModel;
+import com.purplefront.brightly.Modules.NotificationsModel;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Preview;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.Util;
@@ -49,16 +56,33 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     SeekBar audio_seek_bar;
     TextView txt_PlayProgTime;
     TextView file_cardLink;
+    RealmModel userObj;
+    // String setCreatedBy,channel_name;
     CardDetailFragment parent_frag_Card_dtl;
     boolean isUTubePlayFullScreen = false;
+    NotificationsModel notificationsModelObj;
+    SetsListModel setsListModelObj;
+    ChannelListModel chl_list_obj;
+    boolean isNotification;
+    String card_pos;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.items_multimedia_pager, container, false);
 
+        userObj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         Bundle bundle = getArguments();
+        setHasOptionsMenu(true);
         cardModelObj = bundle.getParcelable("card_mdl_obj");
+        chl_list_obj = bundle.getParcelable("model_obj");
+        setsListModelObj = bundle.getParcelable("setListModel");
+        notificationsModelObj = bundle.getParcelable("notfy_modl_obj");
+        isNotification = bundle.getBoolean("isNotification");
+        card_pos = bundle.getString("card_position");
+
+        //setCreatedBy=bundle.getString("set_createdby");
+        //channel_name=bundle.getString("chl_name");
 
         TextView text_cardName;
         TextView text_cardDescription;
@@ -104,7 +128,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
                 Glide.with(getContext())
                         .load(cardModelObj.getUrl())
-                        .fitCenter()
+                        .centerCrop()
                         /*.transform(new CircleTransform(HomeActivity.this))
                         .override(50, 50)*/
                         .into(image_cardImage);
@@ -276,6 +300,149 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         });
 */
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.clear();
+        if (!isNotification) {
+            if (cardModelObj.getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
+                inflater.inflate(R.menu.my_set_cards, menu);
+            } else if (chl_list_obj.getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
+                inflater.inflate(R.menu.my_set_cards_other, menu);
+            } else
+                inflater.inflate(R.menu.my_sub_cards, menu);
+
+        } else
+            inflater.inflate(R.menu.my_sub_cards, menu);
+
+    
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Bundle bundle = new Bundle();
+        switch (item.getItemId()) {
+
+            case R.id.set_CommentsList:
+
+                Bundle bundle_list = new Bundle();
+                bundle_list.putString("set_id", setsListModelObj.getSet_id());
+                bundle_list.putString("set_name", setsListModelObj.getSet_name());
+                bundle_list.putString("userId", userObj.getUser_Id());
+                bundle_list.putString("channel_name", chl_list_obj.getChannel_name());
+                Fragment cmt_list_frag = new CommentListFragment();
+                cmt_list_frag.setArguments(bundle_list);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Comments_List, cmt_list_frag, true);
+
+                return true;
+
+            case R.id.setInfo_Edit:
+
+                if (isNotification) {
+
+                   /* Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("notfy_modl_obj", notificationsModel);
+                    intent.putExtra("isNotification", true);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+
+                    Fragment edit_set_info = new EditSetInfo();
+                    bundle.putParcelable("notfy_modl_obj", notificationsModelObj);
+                    bundle.putBoolean("isNotification", true);
+                    edit_set_info.setArguments(bundle);
+                    ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
+
+                } else {
+                    /*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("model_obj", chl_list_obj);
+                    intent.putExtra("setsListModel", setsListModel);
+                    intent.putExtra("isNotification", false);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    Fragment edit_set_info = new EditSetInfo();
+                    bundle.putParcelable("model_obj", chl_list_obj);
+                    bundle.putParcelable("setsListModel", setsListModelObj);
+                    bundle.putBoolean("isNotification", false);
+                    edit_set_info.setArguments(bundle);
+                    ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
+                }
+
+                return true;
+
+            case R.id.cardInfo_Edit:
+
+
+
+                   /* Intent intent1 = new Intent(CardDetailFragment.this, CreateCardsFragment.class);
+
+                    intent1.putExtra("userId", userId);
+                    intent1.putExtra("setsListModel", setsListModel);
+                    intent1.putExtra("model_obj", chl_list_obj);
+                    intent1.putExtra("isCreate_Crd",false);
+                    intent1.putExtra("Card_Dtls", cardsListModels.get(Cur_PagrPosition));
+
+                    //intent1.putExtra("my_card_bundle",bundle);
+                    startActivityForResult(intent1, UPDATECARD);
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                Fragment frag = new CreateCardsFragment();
+                bundle.putParcelable("setsListModel", setsListModelObj);
+                bundle.putParcelable("model_obj", chl_list_obj);
+                bundle.putBoolean("isCreate_Crd", false);
+                bundle.putParcelable("Card_Dtls", cardModelObj);
+                frag.setArguments(bundle);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Card, frag, true);
+
+
+                return true;
+            case R.id.card_reorder:
+
+               /* Intent intent2 = new Intent(CardDetailFragment.this, CardList.class);
+                intent2.putExtra("userId", userId);
+                intent2.putExtra("setsListModel", setsListModel);
+                intent2.putExtra("re_order", true);
+                startActivity(intent2);
+                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+               */
+                Fragment cl_frag = new CardList();
+                Bundle bundle1 = new Bundle();
+                bundle1.putParcelable("setsListModel", setsListModelObj);
+                bundle1.putBoolean("re_order", true);
+                bundle1.putString("chl_name", chl_list_obj.getChannel_name());
+                bundle1.putInt("card_position", Integer.parseInt(card_pos));
+                cl_frag.setArguments(bundle1);
+                ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, cl_frag, false);
+
+                return true;
+            case R.id.action_card_list:
+                Fragment frag1 = new CardList();
+                Bundle bundle2 = new Bundle();
+                bundle2.putParcelable("setsListModel", setsListModelObj);
+                bundle2.putParcelable("notfy_modl_obj", notificationsModelObj);
+                if (isNotification) {
+                    bundle2.putBoolean("isNotification", true);
+                } else {
+                    bundle2.putBoolean("isNotification", false);
+                }
+                bundle2.putBoolean("re_order", false);
+                bundle2.putString("chl_name", chl_list_obj.getChannel_name());
+                bundle2.putInt("card_position", Integer.parseInt(card_pos));
+                frag1.setArguments(bundle2);
+                ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, frag1, false);
+                return true;
+
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
