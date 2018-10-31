@@ -128,6 +128,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
                             Card_dtl_frag.setsListModel = setsListModel;
                             Card_dtl_frag.notificationsModel = notificationsModel;
+                            getSetSharedInfo();
                         } else {
 
                             dismissProgress();
@@ -649,6 +650,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
 //                                text_share_title.setVisibility(View.GONE);
                                 layout_act_inact.setVisibility(View.GONE);
+                                shared_listview.setVisibility(View.GONE);
 
                             }
 

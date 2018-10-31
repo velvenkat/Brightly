@@ -80,6 +80,18 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
 
        share_access = sharedDataModels.getShare_access();
 
+        switch (share_access) {
+            case "0":
+                holder.slcted_share_access.setImageResource(R.mipmap.can_view);
+                break;
+            case "1":
+                holder.slcted_share_access.setImageResource(R.mipmap.can_share);
+                break;
+            default:
+                holder.slcted_share_access.setImageResource(R.drawable.pencil_edit_button);
+                break;
+        }
+
         if(sharedDataModels.getInstlled().equals("0"))
         {
             holder.inactive_user.setVisibility(View.VISIBLE);
@@ -227,7 +239,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
                 text_canshare.setCheckMarkDrawable(R.mipmap.ic_tick);
                 share_access = "0";
 
-                Toast.makeText(scrn_context, share_access, Toast.LENGTH_LONG).show();
+//                Toast.makeText(scrn_context, share_access, Toast.LENGTH_LONG).show();
 
 
             }
@@ -240,7 +252,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
                 text_canView.setCheckMarkDrawable(R.mipmap.ic_tick);
                 share_access = "1";
 
-                Toast.makeText(scrn_context, share_access, Toast.LENGTH_LONG).show();
+//                Toast.makeText(scrn_context, share_access, Toast.LENGTH_LONG).show();
 
             }
         });
@@ -274,7 +286,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
 
         TextView text_sharedName;
 //        TextView text_sharedNumber;
-        ImageView revoke_shared;
+        ImageView revoke_shared, slcted_share_access;
         Button app_link, web_link;
         LinearLayout inactive_layout, layout_share_setting;
         TextView active_user, inactive_user;
@@ -291,6 +303,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
             layout_share_setting = itemView.findViewById(R.id.layout_share_setting);
             active_user = itemView.findViewById(R.id.active_user);
             inactive_user = itemView.findViewById(R.id.inactive_user);
+            slcted_share_access = itemView.findViewById(R.id.slcted_share_access);
         }
     }
     public interface SharedListInterface{
