@@ -282,7 +282,7 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
 
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteCard(cardModelObj.getCard_id());
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteCard(set_id,user_obj.getUser_Id(),cardModelObj.getCreated_by(),cardModelObj.getCard_id());
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {

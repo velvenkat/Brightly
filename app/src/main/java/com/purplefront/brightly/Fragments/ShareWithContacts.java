@@ -132,7 +132,10 @@ public class ShareWithContacts extends BaseFragment {
             Type type = new TypeToken<ArrayList<ContactShare>>() {
             }.getType();
             contactShares = gson.fromJson(json, type);
-            setConatcts(contactShares);
+
+
+            if (contactShares.size() > 0)
+                setConatcts(contactShares);
         } else {
 
             requestLocationPermission();
@@ -235,13 +238,15 @@ public class ShareWithContacts extends BaseFragment {
         }
 
     }
+
     public static <T> boolean hasDuplicate(Iterable<T> all) {
         Set<T> set = new HashSet<T>();
         // Set#add returns false if the set does not change, which
         // indicates that a duplicate element has been added.
-        for (T each: all) if (!set.add(each)) return true;
+        for (T each : all) if (!set.add(each)) return true;
         return false;
     }
+
     private void getShareSet() {
 
         try {
@@ -351,7 +356,7 @@ public class ShareWithContacts extends BaseFragment {
     private void getAllContacts() {
 //        showProgress();
         contactShares.clear();
-        ArrayList<String> temp_phone_no=new ArrayList<>();
+        ArrayList<String> list_temp_phone_no = new ArrayList<>();
         ContentResolver contentResolver = getActivity().getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
         if (cursor.getCount() > 0) {
@@ -374,26 +379,37 @@ public class ShareWithContacts extends BaseFragment {
                     if (phoneCursor.getCount() > 0) {
                         do {
                             String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                            temp_phone_no.add(phoneNumber);
-                            if(hasDuplicate(temp_phone_no)){
-                             temp_phone_no.remove(temp_phone_no.size()-1);
-                            }
-                            else {
-                                contacts = new ContactShare();
-                                contacts.setContactName(name);
 
 
-                                contacts.setContactNumber(phoneNumber);
-                                contactShares.add(contacts);
+                            String temp_ph_no = phoneNumber.replaceAll("[^0-9]", "").trim();
+
+                            if (temp_ph_no.length() >= 10) {
+                                if (temp_ph_no.length() == 10) {
+
+                                } else {
+                                    temp_ph_no=temp_ph_no.substring(temp_ph_no.length() - 10);
+                                }
+                                list_temp_phone_no.add(temp_ph_no);
+
+                                if (list_temp_phone_no.size() > 0 && hasDuplicate(list_temp_phone_no)) {
+                                    list_temp_phone_no.remove(list_temp_phone_no.size() - 1);
+                                } else {
+                                    contacts = new ContactShare();
+                                    contacts.setContactName(name);
+
+
+                                    contacts.setContactNumber(phoneNumber);
+                                    contactShares.add(contacts);
+                                }
                             }
                         } while (phoneCursor.moveToNext());
                     }
-                   /* if (phoneCursor.moveToLast()) {
-                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        contacts.setContactNumber(phoneNumber);
-                    }*/
-
                     phoneCursor.close();
+
+                }
+
+
+
 /*
                     Cursor emailCursor = contentResolver.query(
                             ContactsContract.CommonDataKinds.Email.CONTENT_URI,
@@ -409,10 +425,10 @@ public class ShareWithContacts extends BaseFragment {
                     }*/
 
 
-                }
             } while (cursor.moveToNext());
 
-            setConatcts(contactShares);
+            if (contactShares.size() > 0)
+                setConatcts(contactShares);
             showLongToast(getActivity(), "Contacts Updated");
             cursor.close();
         }

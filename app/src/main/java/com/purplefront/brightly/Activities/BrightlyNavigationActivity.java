@@ -94,30 +94,30 @@ public class BrightlyNavigationActivity extends BaseActivity
     String count = "0";
     String deviceToken;
 
-    boolean isNotification=false;
+    boolean isNotification = false;
     View target_menu;
-    boolean isCardNotification=false;
-    public boolean isUTubePlayerFullScreen=false;
+    boolean isCardNotification = false;
+    public boolean isUTubePlayerFullScreen = false;
     public NavigationView navigationView;
     public TextView headerText_Name;
     public TextView headerText_Phone;
     public ImageView headerImage_Profile;
-    public boolean isCardClicked=false;
-    public int card_toPosition=0;
+    public boolean isCardClicked = false;
+    public int card_toPosition = 0;
     public YouTubePlayer uTubePlayer;
-    public boolean isHide_frag=false;
+    public boolean isHide_frag = false;
 
     /**
      * isCardRefresh flag is needed to refresh card from CardList page to CardDetail called
      */
-    public boolean isCardRefresh=false;
+    public boolean isCardRefresh = false;
 
     private RealmModel user_obj;
-    /**Default true
-     *
+    /**
+     * Default true
      */
-    public  boolean DisableBackBtn=true;  //Default should be true
-    public boolean DontRun=false;
+    public boolean DisableBackBtn = true;  //Default should be true
+    public boolean DontRun = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +125,7 @@ public class BrightlyNavigationActivity extends BaseActivity
         setContentView(R.layout.activity_navigation);
 
         isNotification = getIntent().getBooleanExtra("isNotification", false);
-        isCardNotification=getIntent().getBooleanExtra("isCardNotification",false);
+        isCardNotification = getIntent().getBooleanExtra("isCardNotification", false);
 
         fragmentManager = getSupportFragmentManager();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -145,16 +145,15 @@ public class BrightlyNavigationActivity extends BaseActivity
         user_obj = getIntent().getParcelableExtra("user_obj");
 
         realmModel.load();
-        for(RealmModel model:realmModel){
+        for (RealmModel model : realmModel) {
             userId = model.getUser_Id();
-            userName =  model.getUser_Name();
+            userName = model.getUser_Name();
             userPhone = model.getUser_PhoneNumber();
             userPicture = model.getImage();
             deviceToken = model.getDeviceToken();
 
-            if(user_obj == null)
-            {
-                user_obj=model;
+            if (user_obj == null) {
+                user_obj = model;
             }
 
         }
@@ -183,16 +182,15 @@ public class BrightlyNavigationActivity extends BaseActivity
 
 
         if (isNotification) {
-            if(isCardNotification){
-                NotificationsModel nfy_model=getIntent().getParcelableExtra("notfy_modl_obj");
-               Fragment card_frag=new CardDetailFragment();
-               Bundle bundle=new Bundle();
-               bundle.putBoolean("isNotification",true);
-               bundle.putParcelable("notfy_modl_obj",nfy_model);
-               card_frag.setArguments(bundle);
+            if (isCardNotification) {
+                NotificationsModel nfy_model = getIntent().getParcelableExtra("notfy_modl_obj");
+                Fragment card_frag = new CardDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isNotification", true);
+                bundle.putParcelable("notfy_modl_obj", nfy_model);
+                card_frag.setArguments(bundle);
                 onFragmentCall(Util.view_card, card_frag, false);
-            }
-            else {
+            } else {
                 Fragment nfy_frag = new Notifications();
             /*fragmentManager
                     .beginTransaction()
@@ -240,7 +238,6 @@ public class BrightlyNavigationActivity extends BaseActivity
         toggle.setDrawerIndicatorEnabled(true);
 
 
-
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         headerText_Name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Name);
         headerText_Name.setText(userName);
@@ -274,7 +271,6 @@ public class BrightlyNavigationActivity extends BaseActivity
     }
 
 
-
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setSubtitle(null);
@@ -293,8 +289,7 @@ public class BrightlyNavigationActivity extends BaseActivity
                 .show();
     }*/
 
-    private void MultipleShowcase()
-    {
+    private void MultipleShowcase() {
 // sequence example
         ShowcaseConfig config = new ShowcaseConfig();
         config.setDelay(1000); // half second between each showcase view
@@ -307,7 +302,7 @@ public class BrightlyNavigationActivity extends BaseActivity
         sequence.setConfig(config);
 
         sequence.addSequenceItem(target_menu,
-                "Here all types of Set, Cards Notifications shown","GOT IT");
+                "Here all types of Set, Cards Notifications shown", "GOT IT");
 
        /* sequence.addSequenceItem(image_createChannel,
                 "Click this to Create a Channel", "GOT IT");
@@ -397,12 +392,10 @@ public class BrightlyNavigationActivity extends BaseActivity
             *//*frag_container.setVisibility(View.GONE);
             channel_layout.setVisibility(View.VISIBLE);*//*
 
-        } */
-        else if(uTubePlayer!=null && isUTubePlayerFullScreen){
+        } */ else if (uTubePlayer != null && isUTubePlayerFullScreen) {
 
             uTubePlayer.setFullscreen(false);
-        }
-        else {
+        } else {
             //    finish();
             super.onBackPressed();
         }
@@ -644,15 +637,16 @@ public class BrightlyNavigationActivity extends BaseActivity
 
     }
 
-    /**Removing back stack multiple manner acheive by counts given on PopBackStackCount Parameter
+    /**
+     * Removing back stack multiple manner acheive by counts given on PopBackStackCount Parameter
      *
      * @param DisableHomeBtn
      * @param PopBackStackCount
      */
-    public void onFragmentBackKeyHandler(boolean DisableHomeBtn,int PopBackStackCount) {
-       for(int i=0;i<PopBackStackCount;i++){
-           getSupportFragmentManager().popBackStackImmediate();
-       }
+    public void onFragmentBackKeyHandler(boolean DisableHomeBtn, int PopBackStackCount) {
+        for (int i = 0; i < PopBackStackCount; i++) {
+            getSupportFragmentManager().popBackStackImmediate();
+        }
 
         if (DisableHomeBtn) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -663,6 +657,7 @@ public class BrightlyNavigationActivity extends BaseActivity
         }
 
     }
+
     public void onFragmentCall(String tag, Fragment call_fragment, boolean enableHomeBtn) {
         if (enableHomeBtn) {
             // Remove hamburger
@@ -671,7 +666,7 @@ public class BrightlyNavigationActivity extends BaseActivity
             toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(DisableBackBtn) {
+                    if (DisableBackBtn) {
                         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
                         toggle.setDrawerIndicatorEnabled(true);
@@ -689,32 +684,29 @@ public class BrightlyNavigationActivity extends BaseActivity
 //            toggle.setDrawerIndicatorEnabled(true);
 //             Show back button
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            if(toggle!=null)
-            toggle.setDrawerIndicatorEnabled(true);
-            if(drawer!=null)
-            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            if (toggle != null)
+                toggle.setDrawerIndicatorEnabled(true);
+            if (drawer != null)
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
         }
-        FragmentTransaction transaction=fragmentManager.beginTransaction();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
-        if(isHide_frag) {
-            isHide_frag=false;
+        if (isHide_frag) {
+            isHide_frag = false;
             if (call_fragment instanceof ChannelFragment || call_fragment instanceof EditSetInfo || call_fragment instanceof CardList) {
                 Fragment card_dtl_frag = fragmentManager.findFragmentByTag(Util.view_card);
                 transaction.hide(card_dtl_frag);
                 transaction.addToBackStack(tag);
                 transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
                 transaction.add(R.id.frag_container, call_fragment, tag).commit();
-            }
-            else if(call_fragment instanceof SharePage){
+            } else if (call_fragment instanceof SharePage) {
                 Fragment toHide_frag = fragmentManager.findFragmentByTag(Util.Edit_Set);
                 transaction.hide(toHide_frag);
                 transaction.addToBackStack(tag);
                 transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
                 transaction.add(R.id.frag_container, call_fragment, tag).commit();
-            }
-            else
-            {
+            } else {
                 Fragment toHide_frag = fragmentManager.findFragmentByTag(Util.share_page);
                 transaction.hide(toHide_frag);
                 transaction.addToBackStack(tag);
@@ -722,8 +714,7 @@ public class BrightlyNavigationActivity extends BaseActivity
                 transaction.add(R.id.frag_container, call_fragment, tag).commit();
             }
 
-        }
-          else {
+        } else {
             transaction
 
                     .addToBackStack(tag)
@@ -737,12 +728,12 @@ public class BrightlyNavigationActivity extends BaseActivity
     @SuppressLint("StaticFieldLeak")
     class LoadContact extends AsyncTask<Void, Void, Void> {
 
-        ArrayList<String> temp_phone_no;
+        ArrayList<String> list_temp_phone_no;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            temp_phone_no=new ArrayList<>();
+            list_temp_phone_no = new ArrayList<>();
 
         }
 
@@ -771,19 +762,31 @@ public class BrightlyNavigationActivity extends BaseActivity
                         if (phoneCursor.getCount() > 0) {
                             do {
                                 String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                                temp_phone_no.add(phoneNumber);
-                                if(temp_phone_no.size()>0 && hasDuplicate(temp_phone_no)){
-                                    temp_phone_no.remove(temp_phone_no.size()-1);
+
+                                String temp_ph_no = phoneNumber.replaceAll("[^0-9]", "").trim();
+
+                                if (temp_ph_no.length() >= 10) {
+                                    if (temp_ph_no.length() == 10) {
+
+                                    } else {
+                                        temp_ph_no=temp_ph_no.substring(temp_ph_no.length() - 10);
+                                    }
+                                    list_temp_phone_no.add(temp_ph_no);
+
+                                    if (list_temp_phone_no.size() > 0 && hasDuplicate(list_temp_phone_no)) {
+                                        list_temp_phone_no.remove(list_temp_phone_no.size() - 1);
+                                    } else {
+                                        contacts = new ContactShare();
+                                        contacts.setContactName(name);
+
+
+                                        contacts.setContactNumber(phoneNumber);
+
+                                        contactShares.add(contacts);
+                                    }
                                 }
-                                else {
-                                    contacts = new ContactShare();
-                                    contacts.setContactName(name);
 
 
-                                    contacts.setContactNumber(phoneNumber);
-
-                                    contactShares.add(contacts);
-                                }
                             } while (phoneCursor.moveToNext());
                         }
                         phoneCursor.close();
@@ -822,11 +825,12 @@ public class BrightlyNavigationActivity extends BaseActivity
 
         }
     }
+
     public static <T> boolean hasDuplicate(Iterable<T> all) {
         Set<T> set = new HashSet<T>();
         // Set#add returns false if the set does not change, which
         // indicates that a duplicate element has been added.
-        for (T each: all) if (!set.add(each)) return true;
+        for (T each : all) if (!set.add(each)) return true;
         return false;
     }
 }

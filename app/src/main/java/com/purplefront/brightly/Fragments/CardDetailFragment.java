@@ -74,7 +74,7 @@ public class CardDetailFragment extends BaseFragment {
     String pager_size;
     TextView view_nodata;
     String Created_By = "";
-    String userId;
+  //  String userId;
     String channel_id = "";
     String channel_name = "";
     public boolean isYouTubeInitializing = false;
@@ -122,6 +122,7 @@ public class CardDetailFragment extends BaseFragment {
     ChannelListModel chl_list_obj;
     NotificationsModel notificationsModel;
     View rootView;
+    RealmModel userObj;
     String card_order_position;
 
 
@@ -130,7 +131,7 @@ public class CardDetailFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_my_set_cards, container, false);
         //  setContentView(R.layout.activity_my_set_cards);
-        userId = ((BrightlyNavigationActivity) getActivity()).userId;
+        userObj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
     //    setHasOptionsMenu(true);
         //  userId = getIntent().getStringExtra("userId");
 /*
@@ -189,7 +190,7 @@ public class CardDetailFragment extends BaseFragment {
         image_createCard = (ImageView) rootView.findViewById(R.id.image_createCard);
         image_Comment = (ImageView) rootView.findViewById(R.id.image_Comment);
 
-        if (!userId.equalsIgnoreCase(Created_By)) {
+        if (!userObj.getUser_Id().equalsIgnoreCase(Created_By)) {
             image_createCard.setVisibility(View.GONE);
 //            image_Comment.setVisibility(View.VISIBLE);
         } else {
@@ -224,7 +225,7 @@ public class CardDetailFragment extends BaseFragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("set_id", set_id);
                 bundle.putString("set_name", set_name);
-                bundle.putString("userId", userId);
+                bundle.putString("userId", userObj.getUser_Id());
                 bundle.putString("channel_name", channel_name);
                 Fragment cmt_frag = new CommentsFragment();
                 cmt_frag.setArguments(bundle);
@@ -359,7 +360,7 @@ public class CardDetailFragment extends BaseFragment {
             showProgress();
             if (CheckNetworkConnection.isOnline(getContext())) {
 
-                Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(set_id);
+                Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(userObj.getUser_Id(),set_id);
                 callRegisterUser.enqueue(new ApiCallback<CardsListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<CardsListResponse> response, boolean isSuccess, String message) {
@@ -436,7 +437,7 @@ public class CardDetailFragment extends BaseFragment {
             card_frag.setArguments(bundle);
             cardFragList.add(card_frag);
         }
-        cardsPagerAdapter = new ViewCardFragmentPagerAdapter(getContext(), getChildFragmentManager(), cardFragList, set_id, userId, set_name);
+        cardsPagerAdapter = new ViewCardFragmentPagerAdapter(getContext(), getChildFragmentManager(), cardFragList, set_id, userObj.getUser_Id(), set_name);
         viewPager_Cards.setAdapter(cardsPagerAdapter);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

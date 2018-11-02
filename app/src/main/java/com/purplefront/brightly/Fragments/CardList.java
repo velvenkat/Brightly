@@ -1,6 +1,5 @@
 package com.purplefront.brightly.Fragments;
 
-import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -53,9 +52,11 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     String chl_name;
     String set_id = "";
     ArrayList<String> del_sel_id = new ArrayList<>();
+    ArrayList<String> list_Created_by = new ArrayList<>();
     RelativeLayout del_contr;
     Button btn_cancel, btn_delete;
     String strDelSelId = "";
+    String strDelCrtdBy = "";
     TextView txtItemSel;
     CheckBox chk_sel_all;
     ItemTouchHelper ith;
@@ -133,6 +134,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                     is_on_set_chg_chk_status = false;
                 } else {
                     del_sel_id = new ArrayList<>();
+                    list_Created_by = new ArrayList<>();
                     if (isChecked) {
                         chk_sel_all.setText("Unselect all");
                         btn_delete.setEnabled(true);
@@ -141,6 +143,8 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                             CardsListModel modelObj = cardsListModels.get(i);
                             modelObj.setDelSel(true);
                             del_sel_id.add(modelObj.getCard_id());
+                            list_Created_by.add(modelObj.getCreated_by());
+
                             cardsListModels.remove(i);
                             cardsListModels.add(i, modelObj);
 
@@ -168,6 +172,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             public void onClick(View v) {
 
                 strDelSelId = android.text.TextUtils.join(",", del_sel_id);
+                strDelCrtdBy = android.text.TextUtils.join(",", list_Created_by);
                 if (set_id_toCreateCard != null) {
                     //showAlertDialog("You are about to delete selected Cards. All the information contained in the Cards will be lost.", "Confirm Delete...", "Delete", "Cancel");
                     call_copy_card(strDelSelId);
@@ -364,6 +369,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         del_contr.setVisibility(View.GONE);
         del_sel_id = new ArrayList<>();
+        list_Created_by = new ArrayList<>();
 
         chk_sel_all.setVisibility(View.GONE);
 
@@ -429,7 +435,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(set_id);
+                Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(user_obj.getUser_Id(),set_id);
                 callRegisterUser.enqueue(new ApiCallback<CardsListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<CardsListResponse> response, boolean isSuccess, String message) {
@@ -523,6 +529,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             for (String sel_ID : del_sel_id) {
                 if (sel_ID.equals(modelObj.getCard_id())) {
                     del_sel_id.remove(i);
+                    list_Created_by.remove(i);
                     txtItemSel.setText(del_sel_id.size() + " items selected");
                     break;
                 }
@@ -540,6 +547,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
             chk_sel_all.setVisibility(View.VISIBLE);
             del_sel_id.add(modelObj.getCard_id());
+            list_Created_by.add(modelObj.getCreated_by());
             if (cardsListModels.size() == del_sel_id.size()) {
                 chk_sel_all.setText("Unselect all");
                 is_on_set_chg_chk_status = true;
@@ -577,7 +585,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteCard(strDelSelId);
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteCard(set_id, user_obj.getUser_Id(), strDelCrtdBy, strDelSelId);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {

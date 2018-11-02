@@ -108,7 +108,7 @@ public interface RestApiMethods {
 
     //CardList
     @POST("cards/card_list.php")
-    Call<CardsListResponse> getCardsList(@Query("set_id") String set_id);
+    Call<CardsListResponse> getCardsList(@Query("user_id") String User_id,@Query("set_id") String set_id);
 
     //SetList
     @POST("cards/add_card.php")
@@ -129,7 +129,7 @@ public interface RestApiMethods {
 
     //Delete Card
     @POST("cards/delete_card.php")
-    Call<AddMessageResponse> getDeleteCard(@Query("card_id") String card_id);
+    Call<AddMessageResponse> getDeleteCard(@Query("set_id") String SetId,@Query("user_id") String UserId,@Query("created_by") String CardCreatedBy,@Query("card_id") String card_id);
 
     //Card_Reorder
     @POST("cards/display_order.php")
