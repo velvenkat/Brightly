@@ -44,6 +44,8 @@ import com.purplefront.brightly.Utils.Util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -233,7 +235,13 @@ public class ShareWithContacts extends BaseFragment {
         }
 
     }
-
+    public static <T> boolean hasDuplicate(Iterable<T> all) {
+        Set<T> set = new HashSet<T>();
+        // Set#add returns false if the set does not change, which
+        // indicates that a duplicate element has been added.
+        for (T each: all) if (!set.add(each)) return true;
+        return false;
+    }
     private void getShareSet() {
 
         try {
@@ -343,6 +351,7 @@ public class ShareWithContacts extends BaseFragment {
     private void getAllContacts() {
 //        showProgress();
         contactShares.clear();
+        ArrayList<String> temp_phone_no=new ArrayList<>();
         ContentResolver contentResolver = getActivity().getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
         if (cursor.getCount() > 0) {
@@ -364,14 +373,19 @@ public class ShareWithContacts extends BaseFragment {
 
                     if (phoneCursor.getCount() > 0) {
                         do {
-
-                            contacts = new ContactShare();
-                            contacts.setContactName(name);
-
                             String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                            contacts.setContactNumber(phoneNumber);
-                            contactShares.add(contacts);
+                            temp_phone_no.add(phoneNumber);
+                            if(hasDuplicate(temp_phone_no)){
+                             temp_phone_no.remove(temp_phone_no.size()-1);
+                            }
+                            else {
+                                contacts = new ContactShare();
+                                contacts.setContactName(name);
 
+
+                                contacts.setContactNumber(phoneNumber);
+                                contactShares.add(contacts);
+                            }
                         } while (phoneCursor.moveToNext());
                     }
                    /* if (phoneCursor.moveToLast()) {
@@ -380,7 +394,7 @@ public class ShareWithContacts extends BaseFragment {
                     }*/
 
                     phoneCursor.close();
-
+/*
                     Cursor emailCursor = contentResolver.query(
                             ContactsContract.CommonDataKinds.Email.CONTENT_URI,
                             null,
@@ -388,7 +402,7 @@ public class ShareWithContacts extends BaseFragment {
                             new String[]{id}, null);
                     while (emailCursor.moveToNext()) {
                         String emailId = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-                    }
+                    }*/
 
                     /*if (!contactShares.contains(contacts)) {
                         contactShares.add(contacts);

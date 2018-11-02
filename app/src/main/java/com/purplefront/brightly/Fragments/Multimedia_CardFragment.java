@@ -322,7 +322,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         } else
             inflater.inflate(R.menu.my_sub_cards, menu);
 
-    
+
     }
 
 
@@ -332,16 +332,27 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         switch (item.getItemId()) {
 
             case R.id.set_CommentsList:
-
                 Bundle bundle_list = new Bundle();
-                bundle_list.putString("set_id", setsListModelObj.getSet_id());
-                bundle_list.putString("set_name", setsListModelObj.getSet_name());
-                bundle_list.putString("userId", userObj.getUser_Id());
-                bundle_list.putString("channel_name", chl_list_obj.getChannel_name());
-                Fragment cmt_list_frag = new CommentListFragment();
-                cmt_list_frag.setArguments(bundle_list);
-                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Comments_List, cmt_list_frag, true);
+                Fragment cmt_list_frag;
+                if(!isNotification) {
 
+                    bundle_list.putString("set_id", setsListModelObj.getSet_id());
+                    bundle_list.putString("set_name", setsListModelObj.getSet_name());
+                    bundle_list.putString("userId", userObj.getUser_Id());
+                    bundle_list.putString("channel_name", chl_list_obj.getChannel_name());
+                     cmt_list_frag = new CommentListFragment();
+                    cmt_list_frag.setArguments(bundle_list);
+
+                }
+                else{
+                    bundle_list.putString("set_id", notificationsModelObj.getNotificationsSetDetail().getSet_id());
+                    bundle_list.putString("set_name", notificationsModelObj.getNotificationsSetDetail().getName());
+                    bundle_list.putString("userId", userObj.getUser_Id());
+                    bundle_list.putString("channel_name", notificationsModelObj.getChannel_name());
+                    cmt_list_frag = new CommentListFragment();
+                    cmt_list_frag.setArguments(bundle_list);
+                }
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Comments_List, cmt_list_frag, true);
                 return true;
 
             case R.id.setInfo_Edit:
@@ -433,11 +444,13 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 bundle2.putParcelable("notfy_modl_obj", notificationsModelObj);
                 if (isNotification) {
                     bundle2.putBoolean("isNotification", true);
+                    bundle2.putString("chl_name", notificationsModelObj.getChannel_name());
                 } else {
                     bundle2.putBoolean("isNotification", false);
+                    bundle2.putString("chl_name", chl_list_obj.getChannel_name());
                 }
                 bundle2.putBoolean("re_order", false);
-                bundle2.putString("chl_name", chl_list_obj.getChannel_name());
+
                 bundle2.putInt("card_position", Integer.parseInt(card_pos));
                 frag1.setArguments(bundle2);
                 ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;

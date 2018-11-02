@@ -57,6 +57,8 @@ import com.purplefront.brightly.Utils.Util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -735,9 +737,12 @@ public class BrightlyNavigationActivity extends BaseActivity
     @SuppressLint("StaticFieldLeak")
     class LoadContact extends AsyncTask<Void, Void, Void> {
 
+        ArrayList<String> temp_phone_no;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            temp_phone_no=new ArrayList<>();
 
         }
 
@@ -765,19 +770,25 @@ public class BrightlyNavigationActivity extends BaseActivity
                         phoneCursor.moveToFirst();
                         if (phoneCursor.getCount() > 0) {
                             do {
-
-                                contacts = new ContactShare();
-                                contacts.setContactName(name);
-
                                 String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                                contacts.setContactNumber(phoneNumber);
-                                contactShares.add(contacts);
+                                temp_phone_no.add(phoneNumber);
+                                if(temp_phone_no.size()>0 && hasDuplicate(temp_phone_no)){
+                                    temp_phone_no.remove(temp_phone_no.size()-1);
+                                }
+                                else {
+                                    contacts = new ContactShare();
+                                    contacts.setContactName(name);
 
+
+                                    contacts.setContactNumber(phoneNumber);
+
+                                    contactShares.add(contacts);
+                                }
                             } while (phoneCursor.moveToNext());
                         }
                         phoneCursor.close();
 
-                        Cursor emailCursor = contentResolver.query(
+                      /*  Cursor emailCursor = contentResolver.query(
                                 ContactsContract.CommonDataKinds.Email.CONTENT_URI,
                                 null,
                                 ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
@@ -785,7 +796,7 @@ public class BrightlyNavigationActivity extends BaseActivity
                         while (emailCursor.moveToNext()) {
                             String emailId = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                         }
-
+*/
 
                         SharedPreferences mPrefs = getSharedPreferences("contactShares", MODE_PRIVATE);
 //                        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(MyChannel.this);
@@ -810,5 +821,12 @@ public class BrightlyNavigationActivity extends BaseActivity
             super.onPostExecute(aVoid);
 
         }
+    }
+    public static <T> boolean hasDuplicate(Iterable<T> all) {
+        Set<T> set = new HashSet<T>();
+        // Set#add returns false if the set does not change, which
+        // indicates that a duplicate element has been added.
+        for (T each: all) if (!set.add(each)) return true;
+        return false;
     }
 }
