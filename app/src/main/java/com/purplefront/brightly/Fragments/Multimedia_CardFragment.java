@@ -40,6 +40,8 @@ import com.purplefront.brightly.Utils.Util;
 
 import java.util.Locale;
 
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 
 public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener, Preview.PreviewListener {
     View rootView;
@@ -157,7 +159,10 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
                         imgEntryView.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View paramView) {
-                                dialog.cancel();
+//                                dialog.cancel();
+                                PhotoViewAttacher photoAttacher;
+                                photoAttacher= new PhotoViewAttacher(img);
+                                photoAttacher.update();
                             }
                         });
 
