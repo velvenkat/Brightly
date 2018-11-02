@@ -90,7 +90,7 @@ public class CreateChannelFragment extends BaseFragment {
         clear_edit_text_focus(create_channelName);
         clear_edit_text_focus(create_channelDescription);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Create Channel");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Create Category");
         Glide.with(CreateChannelFragment.this)
                 .load(R.drawable.no_image_available)
                 .centerCrop()

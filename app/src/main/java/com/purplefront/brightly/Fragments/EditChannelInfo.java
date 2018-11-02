@@ -231,7 +231,7 @@ public class EditChannelInfo extends BaseFragment {
         alertDialog.setTitle("Confirm Delete....");
 
         // Setting Dialog Message
-        alertDialog.setMessage("You are about to delete the Channel. All the information contained in the Sets & Cards will be lost. ");
+        alertDialog.setMessage("You are about to delete the Category. All the information contained in the Sets & Cards will be lost. ");
 
         // Setting Icon to Dialog
         alertDialog.setIcon(R.drawable.error);

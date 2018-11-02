@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -103,6 +104,11 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         view = inflater.inflate(R.layout.fragment_signup, container, false);
         realm = Realm.getDefaultInstance();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+
+        // Load ShakeAnimation
+        shakeAnimation = AnimationUtils.loadAnimation(getActivity(),
+                R.anim.shake);
 
         requestRuntimePermissions(android.Manifest.permission.READ_SMS, android.Manifest.permission.RECEIVE_SMS, android.Manifest.permission.SEND_SMS);
 
@@ -197,24 +203,43 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
             new CustomToast().Show_Toast(getActivity(), view,
                     "All fields are required.");
+
+            btn_signUp.setClickable(true);
+
         }
 
             // Check if email id valid or not
         else if (!m.find()) {
+            editText_email.startAnimation(shakeAnimation);
             new CustomToast().Show_Toast(getActivity(), view,
                     "Your Email Id is Invalid.");
+            btn_signUp.setEnabled(true);
         }
+
+        // Check for phonenumber field is empty or not
+        else if (getPhoneNumber.equals("") || getPhoneNumber.length() != 10 )
+        {
+            editText_phone.startAnimation(shakeAnimation);
+            new CustomToast().Show_Toast(getActivity(), view,
+                    "Enter Valid Phone Number.");
+
+            btn_signUp.setEnabled(true);
+        }
+
         else if (!getPassword.equals(getConfirmPassword))
         {
             new CustomToast().Show_Toast(getActivity(), view,
                     "Password didn't match");
+            btn_signUp.setEnabled(true);
         }
 
             // Else do signup or do your stuff
-        else
+        else {
+            btn_signUp.setEnabled(false);
             getSignUp();
-//            Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
 
+//            Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -222,6 +247,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
+                showProgress();
                 Call<SignUpResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignup(getName, getEmail, getPhoneNumber, getCompanyName, getPassword,deviceToken,"android");
                 callRegisterUser.enqueue(new ApiCallback<SignUpResponse>(getActivity()) {
                     @Override
@@ -266,6 +292,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
     private void otpDialog()
     {
+        btn_signUp.setEnabled(true);
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(view.getContext());
         View mView = getLayoutInflater().inflate(R.layout.dialog_otp, null);
 
@@ -277,6 +304,11 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         resend_in = (TextView) mView.findViewById(R.id.resend_in);
         close_dialog = (ImageView) mView.findViewById(R.id.close_dialog);
 
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.show();
+        dialog.setCanceledOnTouchOutside(false);
 
         new CountDownTimer(30000, 1000) {
 
@@ -298,15 +330,11 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
         }.start();
 
-
-        mBuilder.setView(mView);
-        final AlertDialog dialog = mBuilder.create();
-        dialog.show();
-        dialog.setCanceledOnTouchOutside(false);
         close_dialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+
             }
         });
 
@@ -381,6 +409,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
+                showProgress();
                 Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getResendOtp(User_ID, phoneNumber);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override

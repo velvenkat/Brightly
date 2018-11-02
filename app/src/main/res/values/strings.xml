@@ -13,10 +13,10 @@
     <string name="user_name">Name</string>
     <string name="user_companyname">Company Name</string>
     <string name="user_emial">Email ID</string>
-    <string name="channel_name">Channel Name</string>
-    <string name="create_channel">Create Channel</string>
-    <string name="channel_description">Channel Description</string>
-    <string name="title_activity_my_channel">MyChannel</string>
+    <string name="channel_name">Category Name</string>
+    <string name="create_channel">Create Category</string>
+    <string name="channel_description">Category Description</string>
+    <string name="title_activity_my_channel">MyCategory</string>
 
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -25,11 +25,11 @@
     <string name="nav_header_subtitle">Your Mail Id</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="edit_channel">Edit Channel</string>
-    <string name="no_channels_available">No Channels Available</string>
+    <string name="edit_channel">Edit Category</string>
+    <string name="no_channels_available">No Category Available</string>
     <string name="setmenu">SetMenu</string>
-    <string name="info_edit">Channel Info/Edit</string>
-    <string name="info">Channel Info</string>
+    <string name="info_edit">Category Info/Edit</string>
+    <string name="info">Category Info</string>
     <string name="delete">Delete</string>
     <string name="no_sets_available">No Sets Available</string>
     <string name="create_set">Create Set</string>
