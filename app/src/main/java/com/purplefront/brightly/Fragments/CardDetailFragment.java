@@ -74,7 +74,7 @@ public class CardDetailFragment extends BaseFragment {
     String pager_size;
     TextView view_nodata;
     String Created_By = "";
-  //  String userId;
+    //  String userId;
     String channel_id = "";
     String channel_name = "";
     public boolean isYouTubeInitializing = false;
@@ -83,10 +83,10 @@ public class CardDetailFragment extends BaseFragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-  //     Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
+        //     Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
         if (!hidden) {
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
-            ((BrightlyNavigationActivity) getActivity()).isHide_frag=false;
+            ((BrightlyNavigationActivity) getActivity()).isHide_frag = false;
             boolean isCardClicked = ((BrightlyNavigationActivity) getActivity()).isCardClicked;
             if (isCardClicked) {
                 int card_toPosition = ((BrightlyNavigationActivity) getActivity()).card_toPosition;
@@ -132,7 +132,7 @@ public class CardDetailFragment extends BaseFragment {
         rootView = inflater.inflate(R.layout.activity_my_set_cards, container, false);
         //  setContentView(R.layout.activity_my_set_cards);
         userObj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
-    //    setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
         //  userId = getIntent().getStringExtra("userId");
 /*
         realm = Realm.getDefaultInstance();
@@ -290,6 +290,60 @@ public class CardDetailFragment extends BaseFragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        if (cardsListModels.size() == 0) {
+            inflater.inflate(R.menu.my_set_cards_empty,menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Bundle bundle=new Bundle();
+        switch (item.getItemId()) {
+            case R.id.setInfo_Edit:
+
+                if (isNotification) {
+
+                   /* Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("notfy_modl_obj", notificationsModel);
+                    intent.putExtra("isNotification", true);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+
+                    Fragment edit_set_info = new EditSetInfo();
+                    bundle.putParcelable("notfy_modl_obj", notificationsModel);
+                    bundle.putBoolean("isNotification", true);
+                    edit_set_info.setArguments(bundle);
+                    ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
+
+                } else {
+                    /*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("model_obj", chl_list_obj);
+                    intent.putExtra("setsListModel", setsListModel);
+                    intent.putExtra("isNotification", false);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    Fragment edit_set_info = new EditSetInfo();
+                    bundle.putParcelable("model_obj", chl_list_obj);
+                    bundle.putParcelable("setsListModel", setsListModel);
+                    bundle.putBoolean("isNotification", false);
+                    edit_set_info.setArguments(bundle);
+                    ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
+                }
+
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
@@ -323,34 +377,34 @@ public class CardDetailFragment extends BaseFragment {
             }
         });
         list_SettingsMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mBottomSheetDialog.dismiss();
-                Bundle bundle = new Bundle();
-                switch (position) {
-                    case 0:
+                                                     @Override
+                                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                         mBottomSheetDialog.dismiss();
+                                                         Bundle bundle = new Bundle();
+                                                         switch (position) {
+                                                             case 0:
 
-                        bundle.putParcelable("setsListModel", setsListModel);
-                        bundle.putParcelable("model_obj", chl_list_obj);
-                        bundle.putBoolean("isCreate_Crd", true);
-                        Fragment crt_crd_frag = new CreateCardsFragment();
-                        crt_crd_frag.setArguments(bundle);
-                        ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Card, crt_crd_frag, true);
-                        break;
-                    case 1:
+                                                                 bundle.putParcelable("setsListModel", setsListModel);
+                                                                 bundle.putParcelable("model_obj", chl_list_obj);
+                                                                 bundle.putBoolean("isCreate_Crd", true);
+                                                                 Fragment crt_crd_frag = new CreateCardsFragment();
+                                                                 crt_crd_frag.setArguments(bundle);
+                                                                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Create_Card, crt_crd_frag, true);
+                                                                 break;
+                                                             case 1:
 
-                        bundle.putString("Set_ID_toCreateCard",setsListModel.getSet_id());
+                                                                 bundle.putString("Set_ID_toCreateCard", setsListModel.getSet_id());
 
-                        bundle.putString("type","all");
-                        Fragment channel_frag = new ChannelFragment();
-                        channel_frag.setArguments(bundle);
+                                                                 bundle.putString("type", "all");
+                                                                 Fragment channel_frag = new ChannelFragment();
+                                                                 channel_frag.setArguments(bundle);
 
-                        ((BrightlyNavigationActivity) getActivity()).isHide_frag=true;
-                        ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.CHANNELS, channel_frag, true);
-                        break;
-                }
-            }
-            }
+                                                                 ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
+                                                                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.CHANNELS, channel_frag, true);
+                                                                 break;
+                                                         }
+                                                     }
+                                                 }
         );
 
     }
@@ -360,12 +414,12 @@ public class CardDetailFragment extends BaseFragment {
             showProgress();
             if (CheckNetworkConnection.isOnline(getContext())) {
 
-                Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(userObj.getUser_Id(),set_id);
+                Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(userObj.getUser_Id(), set_id);
                 callRegisterUser.enqueue(new ApiCallback<CardsListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<CardsListResponse> response, boolean isSuccess, String message) {
                         dismissProgress();
-                        ((BrightlyNavigationActivity)getActivity()).DontRun=false;
+                        ((BrightlyNavigationActivity) getActivity()).DontRun = false;
                         CardsListResponse cardsListResponse = response.body();
                         if (isSuccess) {
 
@@ -421,7 +475,6 @@ public class CardDetailFragment extends BaseFragment {
             bundle.putParcelable("card_mdl_obj", cardObj);
 
 
-
             card_frag = new Multimedia_CardFragment();
 
             /*bundle.putString("set_createdby",Created_By);
@@ -429,11 +482,11 @@ public class CardDetailFragment extends BaseFragment {
             bundle.putString("userId", userId);
             bundle.putString("set_name", set_name);
             bundle.putString("chl_name",channel_name);*/
-            bundle.putParcelable("model_obj",chl_list_obj);
-            bundle.putParcelable("setListModel",setsListModel);
-            bundle.putBoolean("isNotification",isNotification);
-            bundle.putParcelable("notfy_modl_obj",notificationsModel);
-            bundle.putString("card_position",String.valueOf(i));
+            bundle.putParcelable("model_obj", chl_list_obj);
+            bundle.putParcelable("setListModel", setsListModel);
+            bundle.putBoolean("isNotification", isNotification);
+            bundle.putParcelable("notfy_modl_obj", notificationsModel);
+            bundle.putString("card_position", String.valueOf(i));
             card_frag.setArguments(bundle);
             cardFragList.add(card_frag);
         }
@@ -476,8 +529,6 @@ public class CardDetailFragment extends BaseFragment {
             }
         });
     }
-
-
 
 
     public void move_card() {
