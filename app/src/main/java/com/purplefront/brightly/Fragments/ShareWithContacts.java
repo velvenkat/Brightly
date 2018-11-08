@@ -297,10 +297,10 @@ public class ShareWithContacts extends BaseFragment {
     private void setAddSetCredentials(AddMessageResponse addMessageResponse) {
 
 
-        String message = addMessageResponse.getMsg();
-        showLongToast(getActivity(), addMessageResponse.getMessage());
+        String msg = addMessageResponse.getMsg();
+        String message = addMessageResponse.getMessage();
 
-        if (message.equals("success")) {
+        if (msg.equals("success")) {
          /*   Intent intent = new Intent(ShareWithContacts.this, EditSetInfo.class);
             intent.putExtra("userId", userId);
             intent.putExtra("model_obj", chl_list_obj);
@@ -310,6 +310,7 @@ public class ShareWithContacts extends BaseFragment {
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            showLongToast(getActivity(), addMessageResponse.getMessage());
             EditSetInfo parent_frag = (EditSetInfo) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Edit_Set);
             parent_frag.isShareSetChgd = true;
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false, 2);

@@ -100,6 +100,29 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
             input_company.setText(model.getUser_CompanyName());
             input_email.setText(model.getUser_Email());
 
+
+            ((BrightlyNavigationActivity) getActivity()).headerText_Name.setText(model.getUser_Name());
+            ((BrightlyNavigationActivity) getActivity()).headerText_Phone.setText(model.getUser_PhoneNumber());
+
+            if (!model.getImage().isEmpty()) {
+
+                Glide.with(getActivity())
+                        .load(model.getImage())
+                        .centerCrop()
+                        .transform(new CircleTransform(getActivity()))
+//                        .override(50, 50)
+                        .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
+
+            } else {
+                Glide.with(getActivity())
+                        .load(R.drawable.default_user_image)
+                        .centerCrop()
+                        .transform(new CircleTransform(getActivity()))
+                        /*.override(50, 50)*/
+                        .into(Image_profile);
+            }
+
+
             if (!model.getImage().isEmpty()) {
 
                 Glide.with(getActivity())
@@ -108,6 +131,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
                         .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)
                         .into(Image_profile);
+
             } else {
                 Glide.with(getActivity())
                         .load(R.drawable.default_user_image)
@@ -118,8 +142,6 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
             }
 
         }
-
-
 
     }
 

@@ -69,6 +69,7 @@
             android:cursorVisible="false"
             android:textColor="@color/black"
             android:focusable="false"
+            android:background="@null"
             android:focusableInTouchMode="false"
             android:hint="@string/user_emial"
             />
@@ -91,6 +92,7 @@
             android:textColor="@color/black"
             android:inputType="textCapSentences"
             android:clickable="false"
+            android:background="@null"
             android:cursorVisible="false"
             android:focusable="false"
             android:focusableInTouchMode="false"

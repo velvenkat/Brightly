@@ -40,6 +40,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
     String share_access = "";
     int position;
     EditSetInfo setInfo;
+    String share_id;
 
 
     public SharedListAdapter(Context editSetInfo, ArrayList<SharedDataModel> sharedDataModel, String set_id, String share_link, SharedListInterface listener, EditSetInfo setInfo) {
@@ -70,6 +71,9 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
         this.position = position;
 
         SharedDataModel sharedDataModels = sharedDataModel.get(position);
+        String share_Id = sharedDataModels.getId();
+
+        this.share_id = share_Id;
 
         if (sharedDataModels.getName() != null) {
             holder.text_sharedName.setText(sharedDataModels.getName());
@@ -78,7 +82,8 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
             holder.text_sharedNumber.setText(sharedDataModels.getPhone());
         }*/
 
-       share_access = sharedDataModels.getShare_access();
+        String share_access = sharedDataModels.getShare_access();
+        this.share_access = share_access;
 
         switch (share_access) {
             case "0":
@@ -186,14 +191,14 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
         holder.layout_share_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareSettingDialog();
+                shareSettingDialog(share_Id, sharedDataModel.get(position).getShare_access());
             }
         });
 
 
     }
 
-    private void shareSettingDialog()
+    private void shareSettingDialog(String share_Id, String share_accesss)
     {
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(scrn_context,  R.style.MaterialDialogSheet);
         View mView = inflater.inflate(R.layout.dialog_share_settings, null);
@@ -215,7 +220,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
         dialog.setCanceledOnTouchOutside(false);
 
 
-        switch (share_access) {
+        switch (share_accesss) {
             case "0":
                 text_canView.setCheckMarkDrawable(R.mipmap.ic_selection);
                 text_canshare.setCheckMarkDrawable(R.mipmap.ic_tick);
@@ -269,7 +274,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
             @Override
             public void onClick(View view) {
 
-                setInfo.api_call_share_access_update(share_access, sharedDataModel.get(position).getId());
+                setInfo.api_call_share_access_update(share_access, share_Id);
                 dialog.dismiss();
             }
         });

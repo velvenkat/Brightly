@@ -193,6 +193,7 @@ public class EditProfile extends BaseFragment{
     // Check Validation Method
     private void checkValidation() {
 
+        showLongToast(getActivity(), "Loading .... Please Wait");
         // Get all edittext texts
         userName = input_name.getText().toString();
         userCompanyName = input_company.getText().toString();
@@ -241,7 +242,6 @@ public class EditProfile extends BaseFragment{
             case R.id.save_edit:
 
 //                getActivity().onBackPressed();
-
                 checkValidation();
 
 //                ((MyChannel) getActivity()).toggle.setDrawerIndicatorEnabled(true);
