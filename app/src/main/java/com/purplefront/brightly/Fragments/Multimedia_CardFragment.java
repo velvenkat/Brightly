@@ -75,7 +75,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
         userObj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         Bundle bundle = getArguments();
-        setHasOptionsMenu(true);
+      //  setHasOptionsMenu(true);
         cardModelObj = bundle.getParcelable("card_mdl_obj");
         chl_list_obj = bundle.getParcelable("model_obj");
         setsListModelObj = bundle.getParcelable("setListModel");
@@ -307,7 +307,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         return rootView;
     }
 
-    @Override
+    /*@Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         menu.clear();
@@ -323,10 +323,10 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             inflater.inflate(R.menu.my_sub_cards, menu);
 
 
-    }
+    }*/
 
 
-    @Override
+   /* @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle bundle = new Bundle();
         switch (item.getItemId()) {
@@ -359,12 +359,12 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
                 if (isNotification) {
 
-                   /* Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                   *//* Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("notfy_modl_obj", notificationsModel);
                     intent.putExtra("isNotification", true);
                     startActivity(intent);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*//*
 
                     Fragment edit_set_info = new EditSetInfo();
                     bundle.putParcelable("notfy_modl_obj", notificationsModelObj);
@@ -374,13 +374,13 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                     ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
 
                 } else {
-                    /*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                    *//*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("model_obj", chl_list_obj);
                     intent.putExtra("setsListModel", setsListModel);
                     intent.putExtra("isNotification", false);
                     startActivity(intent);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*//*
                     Fragment edit_set_info = new EditSetInfo();
                     bundle.putParcelable("model_obj", chl_list_obj);
                     bundle.putParcelable("setsListModel", setsListModelObj);
@@ -396,7 +396,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
 
 
-                   /* Intent intent1 = new Intent(CardDetailFragment.this, CreateCardsFragment.class);
+                   *//* Intent intent1 = new Intent(CardDetailFragment.this, CreateCardsFragment.class);
 
                     intent1.putExtra("userId", userId);
                     intent1.putExtra("setsListModel", setsListModel);
@@ -406,7 +406,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
                     //intent1.putExtra("my_card_bundle",bundle);
                     startActivityForResult(intent1, UPDATECARD);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*//*
                 Fragment frag = new CreateCardsFragment();
                 bundle.putParcelable("setsListModel", setsListModelObj);
                 bundle.putParcelable("model_obj", chl_list_obj);
@@ -419,13 +419,13 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 return true;
             case R.id.card_reorder:
 
-               /* Intent intent2 = new Intent(CardDetailFragment.this, CardList.class);
+               *//* Intent intent2 = new Intent(CardDetailFragment.this, CardList.class);
                 intent2.putExtra("userId", userId);
                 intent2.putExtra("setsListModel", setsListModel);
                 intent2.putExtra("re_order", true);
                 startActivity(intent2);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
-               */
+               *//*
                 Fragment cl_frag = new CardList();
                 Bundle bundle1 = new Bundle();
                 bundle1.putParcelable("setsListModel", setsListModelObj);
@@ -461,7 +461,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
     @Override
     public void onDataReady(Preview preview) {
