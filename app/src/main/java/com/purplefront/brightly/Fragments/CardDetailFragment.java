@@ -200,12 +200,16 @@ public class CardDetailFragment extends BaseFragment {
         viewPager_Cards.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                pager_size = String.valueOf(cardsListModels.size());
+                count = String.valueOf(position + 1);
+                pager_count.setText(count + "/" + pager_size);
 
             }
 
             @Override
             public void onPageSelected(int position) {
                 Card_CurrentPos=position;
+
             }
 
             @Override
@@ -304,6 +308,9 @@ public class CardDetailFragment extends BaseFragment {
 
         return rootView;
     }
+
+
+
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
@@ -553,14 +560,18 @@ public class CardDetailFragment extends BaseFragment {
                             if (cardsListResponse != null && cardsListResponse.getData() != null && cardsListResponse.getData().size() != 0) {
 
                                 cardsListModels = new ArrayList<>(cardsListResponse.getData());
+
                                 view_nodata.setVisibility(View.GONE);
 
 
                             } else {
+                                viewPager_Cards.setVisibility(View.GONE);
+                                pager_count.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
                             }
                 /*            CardsListModel dummyCardObj=new CardsListModel();
                             cardsListModels.add(dummyCardObj);*/
+                            getActivity().invalidateOptionsMenu();
                             setAdapter(cardsListModels);
 
                         } else {
@@ -632,29 +643,6 @@ public class CardDetailFragment extends BaseFragment {
             }
         }, 100);
 
-//        viewPager_Cards.setCurrentItem(3);
-        // cardsPagerAdapter.notifyDataSetChanged();
-        viewPager_Cards.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                pager_size = String.valueOf(cardsListModels.size());
-                count = String.valueOf(position + 1);
-                pager_count.setText(count + "/" + pager_size);
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                Cur_PagrPosition = position;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-
-            }
-        });
     }
 
 

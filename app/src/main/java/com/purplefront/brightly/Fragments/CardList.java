@@ -1,5 +1,6 @@
 package com.purplefront.brightly.Fragments;
 
+import android.opengl.Visibility;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -71,6 +72,20 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     RealmModel user_obj;
     String set_id_toCreateCard;
 
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if(isReorder) {
+            MenuItem del_menu = menu.findItem(R.id.action_multi_sel);
+
+            if (cardsListModels.size() == 0) {
+                del_menu.setVisible(false);
+            } else {
+                del_menu.setVisible(true);
+            }
+        }
+    }
 
     @Nullable
     @Override
@@ -303,6 +318,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             del_contr.setVisibility(View.VISIBLE);
             txtItemSel.setText("");
             btn_delete.setEnabled(false);
+            chk_sel_all.setVisibility(View.VISIBLE);
             if (set_id_toCreateCard != null) {
                 btn_delete.setText("Done");
             }
@@ -379,7 +395,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         if (isReorder) {
-            inflater.inflate(R.menu.multi_sel_menu, menu);
+            inflater.inflate(R.menu.del_menu, menu);
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -435,7 +451,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(user_obj.getUser_Id(),set_id);
+                Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(user_obj.getUser_Id(), set_id);
                 callRegisterUser.enqueue(new ApiCallback<CardsListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<CardsListResponse> response, boolean isSuccess, String message) {
@@ -446,6 +462,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                             if (cardsListResponse != null && cardsListResponse.getData() != null && cardsListResponse.getData().size() != 0) {
 
                                 cardsListModels = cardsListResponse.getData();
+
                                 setAdapter(cardsListModels);
                                 if (set_id_toCreateCard != null) {
                                     multi_sel_actions();
@@ -457,7 +474,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                                 view_nodata.setVisibility(View.VISIBLE);
                             }
 
-
+                            getActivity().invalidateOptionsMenu();
                         } else {
                             showLongToast(getActivity(), message);
 

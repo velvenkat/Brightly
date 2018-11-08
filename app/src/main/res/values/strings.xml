@@ -32,6 +32,7 @@
     <string name="info">Category Info</string>
     <string name="delete">Delete</string>
     <string name="no_sets_available">No Sets Available</string>
+    <string name="no_cards_available">No Cards Available</string>
     <string name="create_set">Create Set</string>
     <string name="set_name">Set Name</string>
     <string name="set_description">Set Description</string>

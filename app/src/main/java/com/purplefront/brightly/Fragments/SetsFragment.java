@@ -539,6 +539,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                 if (setsListModelList.size() > 0) {
                     ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
                     del_contr.setVisibility(View.VISIBLE);
+                    chk_sel_all.setVisibility(View.VISIBLE);
                     txtItemSel.setText("");
                     btn_delete.setEnabled(false);
                     if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
