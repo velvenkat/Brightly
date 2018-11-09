@@ -500,6 +500,7 @@ public class ImageType extends BaseFragment {
 
                         if (message.equals("timeout")) {
                             showLongToast(getActivity(), "Internet is slow, please try again.");
+                            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
                         }
                         dismissProgress();
                     }

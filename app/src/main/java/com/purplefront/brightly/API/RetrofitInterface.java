@@ -48,8 +48,8 @@ public class RetrofitInterface {
 
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             httpClient.cache(cache);
-            httpClient.connectTimeout(30, TimeUnit.SECONDS);
-            httpClient.readTimeout(30, TimeUnit.SECONDS);
+            httpClient.connectTimeout(90, TimeUnit.SECONDS);
+            httpClient.readTimeout(90, TimeUnit.SECONDS);
 /*            Interceptor cacheInterceptor = chain -> {
                 try {
                     return chain.proceed(chain.request());

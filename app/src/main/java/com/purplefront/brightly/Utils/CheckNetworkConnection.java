@@ -42,12 +42,13 @@ public class CheckNetworkConnection {
             if (netInfo == null || !netInfo.isConnected()){
                 return false;
             }
-            if (netInfo.getType() == ConnectivityManager.TYPE_WIFI){
+            else if (netInfo.getType() == ConnectivityManager.TYPE_WIFI){
                 return true;
             }
-            if (netInfo.getType() == ConnectivityManager.TYPE_MOBILE){
+            else if (netInfo.getType() == ConnectivityManager.TYPE_MOBILE){
                 int networkType = netInfo.getSubtype();
                 switch (networkType){
+                    case TelephonyManager.NETWORK_TYPE_LTE:
                     case TelephonyManager.NETWORK_TYPE_GPRS:
                     case TelephonyManager.NETWORK_TYPE_EDGE:
                     case TelephonyManager.NETWORK_TYPE_CDMA:
@@ -62,7 +63,6 @@ public class CheckNetworkConnection {
                     case TelephonyManager.NETWORK_TYPE_EVDO_B:
                     case TelephonyManager.NETWORK_TYPE_EHRPD:
                     case TelephonyManager.NETWORK_TYPE_HSPAP:
-                    case TelephonyManager.NETWORK_TYPE_LTE:
 
                         return true;
                     default:
