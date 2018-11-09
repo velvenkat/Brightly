@@ -78,6 +78,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
     // ActionBarUtil actionBarUtilObj;
     String set_id_toCreateCard = null;
+    TextView txtHintReorder;
 
     RealmModel user_obj;
 
@@ -87,6 +88,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_my_channels_set, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
+        txtHintReorder=rootView.findViewById(R.id.txtHintReorder);
 
         boolean dontRun=((BrightlyNavigationActivity)getActivity()).DontRun;
         // realm = Realm.getDefaultInstance();
@@ -376,12 +378,14 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
 
                                 setsListModelList = setListResponse.getSets();
                                 setAdapter(setsListModelList);
+                                txtHintReorder.setVisibility(View.VISIBLE);
 
 
                             } else {
                                 channelSet_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
                                 setsListModelList=new ArrayList<>();
+                                txtHintReorder.setVisibility(View.GONE);
 
                             }
 
@@ -457,6 +461,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         del_contr.setVisibility(View.GONE);
         del_sel_id = new ArrayList<>();
+        txtHintReorder.setVisibility(View.VISIBLE);
 
         chk_sel_all.setVisibility(View.GONE);
 

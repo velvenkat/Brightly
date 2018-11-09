@@ -578,19 +578,26 @@ public class BrightlyNavigationActivity extends BaseActivity
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSION: {
-
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     // getAllContacts();
-                    LoadContact loadContact = new LoadContact();
-                    loadContact.execute();
+                    if (permissions[0].equalsIgnoreCase(Manifest.permission.RECORD_AUDIO)) {
+
+                    } else {
+                        LoadContact loadContact = new LoadContact();
+                        loadContact.execute();
+                    }
 
                 } else {
+                    if (permissions[0].equalsIgnoreCase(Manifest.permission.RECORD_AUDIO)) {
+                        showLongToast(BrightlyNavigationActivity.this, "Please provide permission for record audio");
+                    }
 
                     // permission denied,Disable the
                     // functionality that depends on this permission.
-                    showLongToast(BrightlyNavigationActivity.this, "Contacts not Updated. Please provide permission");
+                    else
+                        showLongToast(BrightlyNavigationActivity.this, "Contacts not Updated. Please provide permission");
                 }
                 return;
             }
@@ -769,7 +776,7 @@ public class BrightlyNavigationActivity extends BaseActivity
                                     if (temp_ph_no.length() == 10) {
 
                                     } else {
-                                        temp_ph_no=temp_ph_no.substring(temp_ph_no.length() - 10);
+                                        temp_ph_no = temp_ph_no.substring(temp_ph_no.length() - 10);
                                     }
                                     list_temp_phone_no.add(temp_ph_no);
 

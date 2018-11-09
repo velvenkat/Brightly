@@ -7,13 +7,21 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     >
-
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/txtHintReorder"
+        android:textColor="#ef0077"
+        android:textSize="@dimen/dimen_14"
+        android:visibility="gone"
+        android:text="Drag and Drop to Reorder"
+        android:layout_height="wrap_content" />
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:background="@color/action_bar"
 
+        android:layout_below="@+id/txtHintReorder"
         android:id="@+id/set_del_contr"
         android:visibility="gone"
 
