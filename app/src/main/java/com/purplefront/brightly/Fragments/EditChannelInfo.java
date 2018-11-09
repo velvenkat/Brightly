@@ -130,13 +130,13 @@ public class EditChannelInfo extends BaseFragment {
             shared_by.setVisibility(View.VISIBLE);
             shared_by.setText("Shared by : " + sharedName+ "\n" +"On : " +shareTime);
           //  setTitle("Channel Info");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Channel Info");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Category Info");
         }
         else {
             shared_by.setVisibility(View.GONE);
             btn_editChannel.setVisibility(View.VISIBLE);
          //   setTitle("Edit Channel Info");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Edit Channel Info");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Edit Category Info");
         }
         btn_editChannel.setOnClickListener(new View.OnClickListener() {
             @Override

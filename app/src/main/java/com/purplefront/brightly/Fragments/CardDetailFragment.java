@@ -316,6 +316,7 @@ public class CardDetailFragment extends BaseFragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.clear();
+     //   Toast.makeText(getContext(),"Menu Prepared",Toast.LENGTH_LONG).show();
         MenuInflater inflater=getActivity().getMenuInflater();
         if (cardsListModels.size() == 0) {
             inflater.inflate(R.menu.my_set_cards_empty,menu);
@@ -568,15 +569,18 @@ public class CardDetailFragment extends BaseFragment {
                                 viewPager_Cards.setVisibility(View.GONE);
                                 pager_count.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
+                                cardsListModels=new ArrayList<>();
+
                             }
                 /*            CardsListModel dummyCardObj=new CardsListModel();
                             cardsListModels.add(dummyCardObj);*/
-                            getActivity().invalidateOptionsMenu();
+
                             setAdapter(cardsListModels);
 
                         } else {
                             showLongToast(getActivity(), message);
                         }
+                        getActivity().invalidateOptionsMenu();
                     }
 
                     @Override

@@ -60,6 +60,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     String strDelCrtdBy = "";
     TextView txtItemSel;
     CheckBox chk_sel_all;
+    TextView txtHintReorder;
     ItemTouchHelper ith;
     //ImageView img_mutli_sel;
     boolean isReorder;
@@ -81,8 +82,10 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
             if (cardsListModels.size() == 0) {
                 del_menu.setVisible(false);
+                txtHintReorder.setVisibility(View.GONE);
             } else {
                 del_menu.setVisible(true);
+                txtHintReorder.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -92,6 +95,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_card_list, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
+        txtHintReorder=(TextView)rootView.findViewById(R.id.txtHintReorder);
         // setContentView(R.layout.activity_card_list);
         /*Toolbar toolbar = (Toolbar)rootView. findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -127,6 +131,9 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             set_id = setsListModel.getSet_id();
         }
         //setTitle(set_name);
+        if(isReorder){
+            txtHintReorder.setVisibility(View.VISIBLE);
+        }
         CurPagrPos = bundle.getInt("card_position");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(chl_name);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
@@ -316,6 +323,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         if (cardsListModels.size() > 0) {
             ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
             del_contr.setVisibility(View.VISIBLE);
+            txtHintReorder.setVisibility(View.GONE);
             txtItemSel.setText("");
             btn_delete.setEnabled(false);
             chk_sel_all.setVisibility(View.VISIBLE);
@@ -351,7 +359,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).card_reorder_set(userId, cardId);
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).card_reorder_set(userId, cardId,setsListModel.getSet_id());
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -386,7 +394,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         del_contr.setVisibility(View.GONE);
         del_sel_id = new ArrayList<>();
         list_Created_by = new ArrayList<>();
-
+        txtHintReorder.setVisibility(View.VISIBLE);
         chk_sel_all.setVisibility(View.GONE);
 
     }
@@ -472,6 +480,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                             } else {
                                 card_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
+                                cardsListModels=new ArrayList<>();
                             }
 
                             getActivity().invalidateOptionsMenu();

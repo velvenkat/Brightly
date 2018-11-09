@@ -369,24 +369,27 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                     @Override
                     public void onApiResponse(Response<SetListResponse> response, boolean isSuccess, String message) {
                         SetListResponse setListResponse = response.body();
+                        dismissProgress();
                         if (isSuccess) {
 
                             if (setListResponse != null && setListResponse.getSets() != null && setListResponse.getSets().size() != 0) {
 
                                 setsListModelList = setListResponse.getSets();
                                 setAdapter(setsListModelList);
-                                dismissProgress();
+
 
                             } else {
                                 channelSet_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
-                                dismissProgress();
+                                setsListModelList=new ArrayList<>();
+
                             }
 
                         } else {
                             showLongToast(getActivity(), message);
-                            dismissProgress();
+
                         }
+                        getActivity().invalidateOptionsMenu();
                     }
 
                     @Override
@@ -512,18 +515,28 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        // if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
-        if(set_id_toCreateCard==null) {
-            if (userId.equalsIgnoreCase(Created_By)) {
-                inflater.inflate(R.menu.my_channel_set, menu);
-            } else
-                inflater.inflate(R.menu.my_channel_sub_set, menu);
-            //   return true;
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuInflater inflater=getActivity().getMenuInflater();
+        menu.clear();
+        if(setsListModelList.size()>0) {
+            if (set_id_toCreateCard == null) {
+                if (userId.equalsIgnoreCase(Created_By)) {
+                    inflater.inflate(R.menu.my_channel_set, menu);
+                } else
+                    inflater.inflate(R.menu.my_channel_sub_set, menu);
+                //   return true;
+            }
         }
 
     }
+
+   /* @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        // if(userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
+
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

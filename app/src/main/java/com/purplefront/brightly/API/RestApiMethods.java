@@ -133,7 +133,7 @@ public interface RestApiMethods {
 
     //Card_Reorder
     @POST("cards/display_order.php")
-    Call<AddMessageResponse> card_reorder_set(@Query("user_id") String user_id, @Query("card_ids") String card_id);
+    Call<AddMessageResponse> card_reorder_set(@Query("user_id") String user_id, @Query("card_ids") String card_id,@Query("set_id") String SetId);
 
     //Notifications
     @POST("notification/in_app.php")
