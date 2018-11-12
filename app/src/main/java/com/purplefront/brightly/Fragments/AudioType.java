@@ -32,6 +32,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
@@ -108,10 +109,19 @@ public class AudioType extends BaseFragment {
     boolean isCreateScreen;
     RealmModel user_obj;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(audio_uri!=null || tempMp3File!=null){
+         rl_audio_player.setVisibility(View.VISIBLE);
+            text_audioFile.setVisibility(View.GONE);
+            setAudioProgText();
+        }
+    }
+
     public AudioType() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -119,14 +129,15 @@ public class AudioType extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_audio_type, container, false);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         Bundle bundle = getArguments();
+
         isCreateScreen = bundle.getBoolean("isCreate");
-        setEntryModel=bundle.getParcelable("set_entry_obj");
-        CreatedBy=bundle.getString("created_by");
+        setEntryModel = bundle.getParcelable("set_entry_obj");
+        CreatedBy = bundle.getString("created_by");
 
 
-                userId = user_obj.getUser_Id();
+        userId = user_obj.getUser_Id();
         set_id = setEntryModel.getSet_id();
         set_name = setEntryModel.getSet_name();
 
@@ -146,7 +157,7 @@ public class AudioType extends BaseFragment {
         txtRecSeconds = (TextView) rootView.findViewById(R.id.txtRecSeconds);
         cur_default = (ImageView) rootView.findViewById(R.id.cur_default);
         rl_audio_player = (RelativeLayout) rootView.findViewById(R.id.rl_audio_player);
-         waveView.stopAnimation();
+        waveView.stopAnimation();
 
         rec_contr.setVisibility(View.GONE);
         crt_contr.setVisibility(View.VISIBLE);
@@ -157,10 +168,10 @@ public class AudioType extends BaseFragment {
             rl_audio_player.setVisibility(View.GONE);
             text_audioFile.setVisibility(View.VISIBLE);
         } else {
-            if(!CreatedBy.equalsIgnoreCase(userId)){
+            if (!CreatedBy.equalsIgnoreCase(userId)) {
 
             }
-            if(setEntryModel.getType().equalsIgnoreCase("audio")) {
+            if (setEntryModel.getType().equalsIgnoreCase("audio")) {
                 rl_audio_player.setVisibility(View.VISIBLE);
                 text_audioFile.setVisibility(View.GONE);
                 setMediaPlayer(null, setEntryModel.getCard_multimedia_url());
@@ -174,55 +185,7 @@ public class AudioType extends BaseFragment {
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
 
-      /*  audio_seek_bar.setMax(99); // It means 100% .0-99
-        audio_seek_bar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (v.getId() == R.id.seek_audio_rec) {
-                        *//** Seekbar onTouch event handler. Method which seeks MediaPlayer to seekBar primary progress position*//*
-                        if (mediaPlayer.isPlaying()) {
-                            SeekBar sb = (SeekBar) v;
-                            int playPositionInMillisecconds = (mediaFileLengthInMilliseconds / 100) * sb.getProgress();
-                            mediaPlayer.seekTo(playPositionInMillisecconds);
-                        } else {
-                            img_play_stop.setImageResource(R.drawable.stop_rec);
 
-                            mediaPlayer.start();
-                            SeekBar sb = (SeekBar) v;
-                            int playPositionInMillisecconds = (mediaFileLengthInMilliseconds / 100) * sb.getProgress();
-                            mediaPlayer.seekTo(playPositionInMillisecconds);
-                            isAudioPlay = true;
-                            primarySeekBarProgressUpdater();
-
-                        }
-                    }
-                }
-                return false;
-            }
-        });
-*/
-
-  /*      img_play_stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isAudioPlay) {
-                    mediaPlayer.pause();
-                    img_play_stop.setImageResource(R.drawable.play_rec);
-                    isAudioPlay = false;
-                    //mediaPlayer.prepareAsync();
-                } else {
-
-                    img_play_stop.setImageResource(R.drawable.stop_rec);
-
-                    mediaPlayer.start();
-                    isAudioPlay = true;
-                    primarySeekBarProgressUpdater();
-
-                }
-            }
-        });
-  */
         rootView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -245,7 +208,7 @@ public class AudioType extends BaseFragment {
                         getActivity().setResult(Activity.RESULT_CANCELED);
                         getActivity().finish();
 */
-                        ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                        ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                     }
                 }
                 return true;
@@ -293,6 +256,9 @@ public class AudioType extends BaseFragment {
         btn_createCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(isAudioPlay)
+                    mediaPlayer.pause();
+                isAudioPlay=false;
                 checkValidation();
             }
         });
@@ -461,7 +427,7 @@ public class AudioType extends BaseFragment {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO},
                     REQUEST_PERMISSION_RECORD_AUDIO);
-          //  tempMp3File = null;
+            //  tempMp3File = null;
         } else {
 
             try {
@@ -558,10 +524,9 @@ public class AudioType extends BaseFragment {
                     "Both fields are required.");
         } else if (encoded_string.equals("") || encoded_string.length() == 0) {
 
-            if(setEntryModel.getType().equalsIgnoreCase("audio")){
-                encoded_string="old";
-            }
-            else {
+            if (setEntryModel.getType().equalsIgnoreCase("audio")) {
+                encoded_string = "old";
+            } else {
                 new CustomToast().Show_Toast(getActivity(), text_audioFile,
                         "Audio File is required.");
             }
@@ -628,8 +593,31 @@ public class AudioType extends BaseFragment {
         }
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
 
-    /*public void setMediaPlayer(String filePath) {
+        if (!isVisibleToUser)
+            if (mediaPlayer != null) {
+                if (isAudioPlay) {
+                    isAudioPlay = false;
+                    mediaPlayer.pause();
+                }
+            }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (mediaPlayer != null) {
+            if (isAudioPlay) {
+                isAudioPlay = false;
+                mediaPlayer.pause();
+            }
+        }
+    }
+/*public void setMediaPlayer(String filePath) {
 
         try {
             mediaPlayer = new MediaPlayer();
@@ -693,7 +681,7 @@ public class AudioType extends BaseFragment {
             getActivity().finish();
 
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
         } else {
             showLongToast(getActivity(), message);
         }

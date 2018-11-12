@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,8 +22,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +51,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.annotation.Nullable;
@@ -149,13 +156,14 @@ public class EditChannelInfo extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if(userId.equalsIgnoreCase(chl_modl_obj.getCreated_by())) {
-                    imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+                  /*  imgImageChooser_crop = new ImageChooser_Crop(getActivity());
                     Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
                     if (intent == null) {
                         //PermissionUtil.
                     } else {
                         startActivityForResult(intent, PICK_IMAGE_REQ);
-                    }
+                    }*/
+                    setBottomDialog();
                 }
             }
         });
@@ -202,7 +210,68 @@ public class EditChannelInfo extends BaseFragment {
 
         return rootView;
     }
+    public void setBottomDialog() {
 
+        final Dialog mBottomSheetDialog = new Dialog(getActivity(), R.style.MaterialDialogSheet);
+        mBottomSheetDialog.setContentView(R.layout.dialog_view_layout); // your custom view.
+        mBottomSheetDialog.setCancelable(true);
+        mBottomSheetDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        mBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+        mBottomSheetDialog.show();
+        ListView list_SettingsMenu = (ListView) mBottomSheetDialog.getWindow().findViewById(R.id.list_view_dialog);
+        ArrayList<String> menu_list = new ArrayList<>();
+        menu_list.add("Choose new image");
+        menu_list.add("Remove image");
+
+        ArrayAdapter<String> menu_itmes = new ArrayAdapter<String>(getContext(), R.layout.menu_row_diualog, R.id.dialog_menu_textView,
+                menu_list);
+        list_SettingsMenu.setAdapter(menu_itmes);
+        list_SettingsMenu.requestFocus();
+        Button btnCancel = (Button) mBottomSheetDialog.getWindow().findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        list_SettingsMenu.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        // Toast.makeText(getContext(),"Position :"+position,Toast.LENGTH_SHORT).show();
+                        mBottomSheetDialog.dismiss();
+                        //audio_uri = null;
+                        //tempMp3File = null;
+                        //release_media();
+                        //text_audioFile.setVisibility(View.VISIBLE);
+                        // rl_audio_player.setVisibility(View.GONE);
+                        switch (position) {
+                            case 1:
+
+                                    encoded_string = "remove_image";
+                                Glide.with(getActivity())
+                                        .load(R.drawable.no_image_available)
+                                        .centerCrop()
+                                        /*.transform(new CircleTransform(HomeActivity.this))
+                                        .override(50, 50)*/
+                                        .into(imageView_editChannelImage);
+                                break;
+                            case 0:
+                                imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+                                Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+                                if (intent == null) {
+                                    //PermissionUtil.
+                                } else {
+                                    startActivityForResult(intent, PICK_IMAGE_REQ);
+                                }
+                                break;
+
+                        }
+                    }
+                }
+        );
+
+    }
     // Check Validation Method
     private void checkValidation() {
 

@@ -43,7 +43,7 @@ import java.util.Locale;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 
-public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener, Preview.PreviewListener {
+public class Multimedia_CardFragment extends BaseFragment implements CardDetailFragment.Parent_interaction_listener, YouTubePlayer.OnInitializedListener, Preview.PreviewListener {
     View rootView;
     com.purplefront.brightly.Preview mPreview;
     CardsListModel cardModelObj;
@@ -85,7 +85,9 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
         //setCreatedBy=bundle.getString("set_createdby");
         //channel_name=bundle.getString("chl_name");
-
+        parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
+        parent_frag_Card_dtl.isYouTubeInitializing = true;
+        parent_frag_Card_dtl.mParListenerObj=this;
         TextView text_cardName;
         TextView text_cardDescription;
         ImageView image_cardImage;
@@ -471,6 +473,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+
         if (!isVisibleToUser && UTubePlayer != null) {
             // Log.v (TAG, "Releasing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
             UTubePlayer.release();
@@ -505,6 +508,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
             parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
             parent_frag_Card_dtl.isYouTubeInitializing = true;
+            parent_frag_Card_dtl.mParListenerObj=this;
             youTubePlayerFragment.initialize(DEVELOPER_KEY, this);
         }
     }
@@ -547,4 +551,15 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         parent_frag_Card_dtl.move_card();
     }
 
+    @Override
+    public void onParentInteract() {
+        if (mediaPlayer != null) {
+            //release_media();
+            if (isAudioPlay) {
+                mediaPlayer.pause();
+                isAudioPlay = false;
+                img_play_stop.setImageResource(R.drawable.play_rec);
+            }
+        }
+    }
 }

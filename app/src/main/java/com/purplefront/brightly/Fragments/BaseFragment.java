@@ -41,6 +41,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     private int mediaFileLengthInMilliseconds; // this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
     ImageView img_play_stop;
     TextView txt_PlayProgTime;
+    String cur_audio_Pos;
     boolean isPlayBtnClicked = false;
 
 
@@ -206,8 +207,8 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     private void primarySeekBarProgressUpdater() {
         if (isAudioPlay) {
             audio_seek_bar.setProgress((int) (((float) mediaPlayer.getCurrentPosition() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
-            String cur_Pos = TimeFormat.formateMilliSeccond(mediaPlayer.getCurrentPosition());
-            txt_PlayProgTime.setText(cur_Pos + "/" + TotalTime);
+            cur_audio_Pos = TimeFormat.formateMilliSeccond(mediaPlayer.getCurrentPosition());
+            txt_PlayProgTime.setText(cur_audio_Pos + "/" + TotalTime);
             if (mediaPlayer.isPlaying()) {
                 Runnable notification = new Runnable() {
                     public void run() {
@@ -255,8 +256,8 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
                     mediaPlayer = mp;
                     long currentDuration = mediaPlayer.getCurrentPosition();
                     TotalTime = TimeFormat.formateMilliSeccond(mediaFileLengthInMilliseconds);
-                    String cur_Pos = TimeFormat.formateMilliSeccond(currentDuration);
-                    txt_PlayProgTime.setText(cur_Pos + "/" + TotalTime);
+                    cur_audio_Pos = TimeFormat.formateMilliSeccond(currentDuration);
+                    txt_PlayProgTime.setText(cur_audio_Pos + "/" + TotalTime);
 
                 }
             });
@@ -267,6 +268,10 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
         }
 
 
+    }
+
+    public void setAudioProgText(){
+        txt_PlayProgTime.setText(cur_audio_Pos + "/" + TotalTime);
     }
 
     // Intent Methods

@@ -63,6 +63,7 @@ public class CardDetailFragment extends BaseFragment {
     ViewPager viewPager_Cards;
     ViewCardFragmentPagerAdapter cardsPagerAdapter;
     ArrayList<CardsListModel> cardsListModels = new ArrayList<>();
+    Parent_interaction_listener mParListenerObj;
 
     //ImageView card_list_icon;
 
@@ -78,12 +79,16 @@ public class CardDetailFragment extends BaseFragment {
     String channel_id = "";
     String channel_name = "";
     public boolean isYouTubeInitializing = false;
-    public int Card_CurrentPos=0;
+    public int Card_CurrentPos = 0;
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         //     Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
+        if(hidden){
+            if(mParListenerObj!=null)
+            mParListenerObj.onParentInteract();
+        }
         if (!hidden) {
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
             ((BrightlyNavigationActivity) getActivity()).isHide_frag = false;
@@ -208,7 +213,7 @@ public class CardDetailFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int position) {
-                Card_CurrentPos=position;
+                Card_CurrentPos = position;
 
             }
 
@@ -310,18 +315,15 @@ public class CardDetailFragment extends BaseFragment {
     }
 
 
-
-
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.clear();
-     //   Toast.makeText(getContext(),"Menu Prepared",Toast.LENGTH_LONG).show();
-        MenuInflater inflater=getActivity().getMenuInflater();
+        //   Toast.makeText(getContext(),"Menu Prepared",Toast.LENGTH_LONG).show();
+        MenuInflater inflater = getActivity().getMenuInflater();
         if (cardsListModels.size() == 0) {
-            inflater.inflate(R.menu.my_set_cards_empty,menu);
-        }
-        else if (!isNotification) {
+            inflater.inflate(R.menu.my_set_cards_empty, menu);
+        } else if (!isNotification) {
             if (cardsListModels.get(Card_CurrentPos).getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
                 inflater.inflate(R.menu.my_set_cards, menu);
             } else if (chl_list_obj.getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
@@ -336,16 +338,17 @@ public class CardDetailFragment extends BaseFragment {
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle bundle = new Bundle();
+        if(mParListenerObj!=null)
+            mParListenerObj.onParentInteract();
         switch (item.getItemId()) {
 
             case R.id.set_CommentsList:
                 Bundle bundle_list = new Bundle();
                 Fragment cmt_list_frag;
-                if(!isNotification) {
+                if (!isNotification) {
 
                     bundle_list.putString("set_id", setsListModel.getSet_id());
                     bundle_list.putString("set_name", setsListModel.getSet_name());
@@ -354,8 +357,7 @@ public class CardDetailFragment extends BaseFragment {
                     cmt_list_frag = new CommentListFragment();
                     cmt_list_frag.setArguments(bundle_list);
 
-                }
-                else{
+                } else {
                     bundle_list.putString("set_id", notificationsModel.getNotificationsSetDetail().getSet_id());
                     bundle_list.putString("set_name", notificationsModel.getNotificationsSetDetail().getName());
                     bundle_list.putString("userId", userObj.getUser_Id());
@@ -475,9 +477,6 @@ public class CardDetailFragment extends BaseFragment {
     }
 
 
-
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -569,7 +568,7 @@ public class CardDetailFragment extends BaseFragment {
                                 viewPager_Cards.setVisibility(View.GONE);
                                 pager_count.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
-                                cardsListModels=new ArrayList<>();
+                                cardsListModels = new ArrayList<>();
 
                             }
                 /*            CardsListModel dummyCardObj=new CardsListModel();
@@ -649,7 +648,6 @@ public class CardDetailFragment extends BaseFragment {
 
     }
 
-
     public void move_card() {
 
         if (isNotification && card_order_position != null) {
@@ -658,5 +656,8 @@ public class CardDetailFragment extends BaseFragment {
 
         }
         isYouTubeInitializing = false;
+    }
+    interface Parent_interaction_listener{
+        public void onParentInteract();
     }
 }

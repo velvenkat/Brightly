@@ -69,6 +69,7 @@ public class ImageType extends BaseFragment {
     ResizeOptions mResizeOptions;
     Context context;
     RealmModel user_obj;
+    Uri crop_result_uri=null;
 
     String userId;
     String set_id;
@@ -385,8 +386,8 @@ public class ImageType extends BaseFragment {
                 try {
 
 
-                    Uri resultUri = result.getUri();
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), resultUri);
+                     crop_result_uri = result.getUri();
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), crop_result_uri);
 
                     encoded_string = getStringImage(bitmap);
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
@@ -412,7 +413,7 @@ public class ImageType extends BaseFragment {
                                     .build();
                     image_cardImage.setImageRequest(imageRequest2);*/
                     Glide.with(getActivity())
-                            .load(resultUri)
+                            .load(crop_result_uri)
                             .fitCenter()
                             /*.transform(new CircleTransform(HomeActivity.this))
                             .override(50, 50)*/
@@ -516,6 +517,18 @@ public class ImageType extends BaseFragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(crop_result_uri!=null) {
+            Glide.with(getActivity())
+                    .load(crop_result_uri)
+                    .fitCenter()
+                    /*.transform(new CircleTransform(HomeActivity.this))
+                    .override(50, 50)*/
+                    .into(image_cardImage);
+        }
+    }
 
     private void setAddSetCredentials(AddMessageResponse addMessageResponse) {
 
