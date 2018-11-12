@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,9 @@ import com.purplefront.brightly.Modules.SetEntryModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.Util;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -131,15 +135,25 @@ public class YoutubeType extends BaseFragment {
         card_description = create_cardDescription.getText().toString();
         image_name = create_cardURL.getText().toString();
 
+        // Pattern match for email id
+        Pattern p = Pattern.compile(Util.regYoutube);
+        Matcher m = p.matcher(image_name);
+
         // Check if all strings are null or not
         if (card_name.equals("") || card_name.length() == 0
                 || card_description.equals("") || card_description.length() == 0) {
-
             new CustomToast().Show_Toast(getActivity(), create_cardName,
-                    "Both fields are required.");
+                    "All fields are required.");
+
         } else if (image_name.equals("") || image_name.length() == 0) {
             new CustomToast().Show_Toast(getActivity(), create_cardURL,
                     "Youtube Link is required.");
+        }
+
+        else if (!m.find()) {
+            new CustomToast().Show_Toast(getActivity(), create_cardURL,
+                    "Valid Youtube Link is required.");
+
         }
 
         // Else do signup or do your stuff

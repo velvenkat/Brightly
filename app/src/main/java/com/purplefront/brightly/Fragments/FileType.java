@@ -139,12 +139,12 @@ public class FileType extends BaseFragment {
                 || card_description.equals("") || card_description.length() == 0) {
 
             new CustomToast().Show_Toast(getActivity(), create_cardName,
-                    "Both fields are required.");
+                    "All fields are required.");
         }
         else if(image_name.equals("") || image_name.length() == 0)
         {
             new CustomToast().Show_Toast(getActivity(), create_cardURL,
-                    "PDF file link is required.");
+                    "File link is required.");
         }
 
         // Else do signup or do your stuff
