@@ -124,7 +124,6 @@ public class EditProfile extends BaseFragment{
     // Initiate Views
     private void initViews() {
 
-
         input_email = (EditText) rootView.findViewById(R.id.input_email);
         input_company = (EditText) rootView.findViewById(R.id.input_company);
         Image_profile = (SimpleDraweeView) rootView.findViewById(R.id.Image_profile);
@@ -185,15 +184,11 @@ public class EditProfile extends BaseFragment{
             }
         });
 
-
-
-
     }
 
     // Check Validation Method
     private void checkValidation() {
 
-        showLongToast(getActivity(), "Loading .... Please Wait");
         // Get all edittext texts
         userName = input_name.getText().toString();
         userCompanyName = input_company.getText().toString();
@@ -242,6 +237,7 @@ public class EditProfile extends BaseFragment{
             case R.id.save_edit:
 
 //                getActivity().onBackPressed();
+                item.setEnabled(false);
                 checkValidation();
 
 //                ((MyChannel) getActivity()).toggle.setDrawerIndicatorEnabled(true);

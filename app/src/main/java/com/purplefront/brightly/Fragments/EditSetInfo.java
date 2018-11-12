@@ -420,7 +420,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         try {
 
             if (CheckNetworkConnection.isOnline(getContext())) {
-//                showProgress();
+                showProgress();
                 Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getRevokeSet(set_id, assigned_to, user_obj.getUser_Id());
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
@@ -429,6 +429,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                         AddMessageResponse addMessageResponse = response.body();
                         if (isSuccess) {
 
+                            dismissProgress();
                             if (addMessageResponse != null) {
 
                                 setRevokeSetCredentials(addMessageResponse);
@@ -621,7 +622,11 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
         } else {
             dismissProgress();
-            showLongToast(getActivity(), message);
+//            showLongToast(getActivity(), message);
+            if(message.equals("Unable to Update Set."))
+            {
+                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+            }
 
         }
     }
