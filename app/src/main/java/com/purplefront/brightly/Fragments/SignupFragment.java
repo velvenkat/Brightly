@@ -304,18 +304,18 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         resend_in = (TextView) mView.findViewById(R.id.resend_in);
         close_dialog = (ImageView) mView.findViewById(R.id.close_dialog);
 
-
         mBuilder.setView(mView);
+        mBuilder.setCancelable(false);
         final AlertDialog dialog = mBuilder.create();
         dialog.show();
         dialog.setCanceledOnTouchOutside(false);
 
-        new CountDownTimer(30000, 1000) {
+        final CountDownTimer timer = new CountDownTimer(30000, 1000) {
 
             public void onTick(long millisUntilFinished) {
 
                 text_resend.setEnabled(false);
-                text_resend.setText(+ millisUntilFinished / 1000 + " sec");
+                text_resend.setText(+millisUntilFinished / 1000 + " sec");
                 text_resend.setTextSize(22);
                 resend_in.setText("resend OTP in");
                 //here you can have your logic to set text to edittext
@@ -328,12 +328,16 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
                 resend_in.setText("Or");
             }
 
-        }.start();
+
+        };
+        timer.start();
 
         close_dialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                dialog.cancel();
+                timer.cancel();
+                timer.onFinish();
 
             }
         });
@@ -355,6 +359,8 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
                     //method
 //                    Toast.makeText(MainActivity.this, R.string.success_login_msg, Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
+                    timer.cancel();
+                    timer.onFinish();
                 }else{
                     Toast.makeText(getActivity(), "Please enter the OTP", Toast.LENGTH_SHORT).show();
                 }
@@ -459,7 +465,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         String message = addMessageResponse.getMessage();
         String otp_resonse = addMessageResponse.getOtp();
 
-        if(message.equals("success") && otp_msg.equals(otp_resonse))
+        if(otp_msg !=null && otp_msg.equals(otp_resonse))
         {
             getValidateOtp();
         }
