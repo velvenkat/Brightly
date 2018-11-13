@@ -510,7 +510,11 @@ public class AudioType extends BaseFragment {
                 if (isCreateScreen)
                     encoded_string = "";
                 else
+                    if(setEntryModel.getType().equalsIgnoreCase("audio"))
                     encoded_string = "old";
+                    else
+                        encoded_string = "";
+
             }
         } catch (Exception e) {
 

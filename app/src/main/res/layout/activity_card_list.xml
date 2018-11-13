@@ -46,7 +46,6 @@
             android:layout_centerVertical="true"
             android:maxLines="2"
             android:textSize="16sp"
-            android:textColor="@color/white"
             android:layout_toRightOf="@+id/btn_cancel"
             android:layout_toLeftOf="@+id/btn_delete"
             android:layout_height="wrap_content" />
@@ -54,6 +53,7 @@
             android:layout_width="wrap_content"
             android:id="@+id/btn_delete"
             android:text="Delete"
+            android:textColor="#FF9900"
             android:layout_alignParentRight="true"
             android:textAllCaps="false"
             android:layout_height="wrap_content" />

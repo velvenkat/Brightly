@@ -34,12 +34,12 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     ProgressDialog mProgress;
     alert_dlg_interface mListener;
     SeekBar audio_seek_bar;
-    MediaPlayer mediaPlayer;
-    boolean  isAudioPlay = false;
+    static MediaPlayer mediaPlayer;
+    static boolean  isAudioPlay = false;
     String TotalTime;
     private final Handler handler = new Handler();
     private int mediaFileLengthInMilliseconds; // this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
-    ImageView img_play_stop;
+    static  ImageView img_play_stop;
     TextView txt_PlayProgTime;
     String cur_audio_Pos;
     boolean isPlayBtnClicked = false;
@@ -220,11 +220,15 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
         }
     }
 
+    public void setMediaPlayer(){
+
+
+    }
 
     public void setMediaPlayer(Uri audio_uri,String filePath) {
-
+        mediaPlayer=new MediaPlayer();
         try {
-            mediaPlayer = new MediaPlayer();
+
             AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
             am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 

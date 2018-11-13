@@ -222,21 +222,25 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                 channelsSetAdapter.set_SelToDel(false);
                 channelsSetAdapter.notifyDataSetChanged();
             */
-
-                reset_view();
-                for (int i = 0; i < cardsListModels.size(); i++) {
-                    CardsListModel modelObj = cardsListModels.get(i);
-                    if (modelObj.isDelSel()) {
-                        modelObj.setDelSel(false);
-                        cardsListModels.remove(i);
-                        cardsListModels.add(i, modelObj);
+                if (set_id_toCreateCard != null) {
+                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(false);
+                } else {
+                    reset_view();
+                    for (int i = 0; i < cardsListModels.size(); i++) {
+                        CardsListModel modelObj = cardsListModels.get(i);
+                        if (modelObj.isDelSel()) {
+                            modelObj.setDelSel(false);
+                            cardsListModels.remove(i);
+                            cardsListModels.add(i, modelObj);
+                        }
                     }
-                }
-                cardListAdapter.set_SelToDel(false);
-                cardListAdapter.notifyDataSetChanged();
-                if (isReorder)
-                    ith.attachToRecyclerView(card_listview);
+                    cardListAdapter.set_SelToDel(false);
+                    cardListAdapter.notifyDataSetChanged();
+                    if (isReorder)
+                        ith.attachToRecyclerView(card_listview);
 
+                }
             }
         });
 
@@ -329,6 +333,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             chk_sel_all.setVisibility(View.VISIBLE);
             if (set_id_toCreateCard != null) {
                 btn_delete.setText("Done");
+                btn_cancel.setText("Back");
             }
             if (isReorder)
                 ith.attachToRecyclerView(null);

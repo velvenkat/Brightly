@@ -473,7 +473,10 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-
+        if(getActivity()!=null ) {
+            parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
+            parent_frag_Card_dtl.mParListenerObj = this;
+        }
         if (!isVisibleToUser && UTubePlayer != null) {
             // Log.v (TAG, "Releasing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
             UTubePlayer.release();
@@ -485,6 +488,7 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
             ((BrightlyNavigationActivity) getActivity()).uTubePlayer = null;
         }
         if (!isVisibleToUser && mediaPlayer != null) {
+
             //release_media();
             if (isAudioPlay) {
                 mediaPlayer.pause();
@@ -507,10 +511,11 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
             parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
+            parent_frag_Card_dtl.mParListenerObj = this;
             parent_frag_Card_dtl.isYouTubeInitializing = true;
-            parent_frag_Card_dtl.mParListenerObj=this;
             youTubePlayerFragment.initialize(DEVELOPER_KEY, this);
         }
+
     }
 
     @Override
@@ -549,6 +554,12 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
 //                            Utils.logError(TAG, "Could not initialize YouTubePlayer");
 
         parent_frag_Card_dtl.move_card();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        onParentInteract();
     }
 
     @Override

@@ -92,13 +92,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
 
             setDlgListener(this);
             if (channel_type.equalsIgnoreCase("all")) {
-                if (Set_ID_toCreateCard != null) {
-                    image_createChannel.setVisibility(View.GONE);
 
-                    ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
-
-                } else
-                    image_createChannel.setVisibility(View.VISIBLE);
                 setActionBarTitle(getResources().getString(R.string.all_channels));
             } else if (channel_type.equalsIgnoreCase("subscribe")) {
                 image_createChannel.setVisibility(View.GONE);
@@ -107,6 +101,14 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                 image_createChannel.setVisibility(View.VISIBLE);
                 setActionBarTitle(getResources().getString(R.string.my_channels));
             }
+            if (Set_ID_toCreateCard != null) {
+                image_createChannel.setVisibility(View.GONE);
+                ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select category for copy card");
+                ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
+
+            } else
+                image_createChannel.setVisibility(View.VISIBLE);
+
             getChannelsLists(channel_type);
             image_createChannel.setOnClickListener(new View.OnClickListener() {
                 @Override

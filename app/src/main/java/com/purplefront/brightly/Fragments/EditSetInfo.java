@@ -649,6 +649,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                                 setSharedCredentials(infoSharedResponse);
                                 text_share_title.setVisibility(View.VISIBLE);
                                 layout_act_inact.setVisibility(View.VISIBLE);
+                                shared_listview.setVisibility(View.VISIBLE);
 
 
                             } else {
@@ -688,9 +689,6 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             shared_listview.setLayoutManager(new LinearLayoutManager(getContext()));
             sharedListAdapter = new SharedListAdapter(getContext(), infoSharedResponse.getShared_data(), set_id, share_link, this, EditSetInfo.this);
             shared_listview.setAdapter(sharedListAdapter);
-            dismissProgress();
-        } else {
-            dismissProgress();
         }
     }
 

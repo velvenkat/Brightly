@@ -63,7 +63,7 @@ public class CardDetailFragment extends BaseFragment {
     ViewPager viewPager_Cards;
     ViewCardFragmentPagerAdapter cardsPagerAdapter;
     ArrayList<CardsListModel> cardsListModels = new ArrayList<>();
-    Parent_interaction_listener mParListenerObj;
+    static Parent_interaction_listener mParListenerObj;
 
     //ImageView card_list_icon;
 
@@ -82,12 +82,27 @@ public class CardDetailFragment extends BaseFragment {
     public int Card_CurrentPos = 0;
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (mParListenerObj != null)
+            mParListenerObj.onParentInteract();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (!isVisibleToUser && mParListenerObj != null) {
+            mParListenerObj.onParentInteract();
+        }
+    }
+
+    @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         //     Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
-        if(hidden){
-            if(mParListenerObj!=null)
-            mParListenerObj.onParentInteract();
+        if (hidden) {
+            if (mParListenerObj != null)
+                mParListenerObj.onParentInteract();
         }
         if (!hidden) {
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
@@ -341,7 +356,7 @@ public class CardDetailFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle bundle = new Bundle();
-        if(mParListenerObj!=null)
+        if (mParListenerObj != null)
             mParListenerObj.onParentInteract();
         switch (item.getItemId()) {
 
@@ -657,7 +672,8 @@ public class CardDetailFragment extends BaseFragment {
         }
         isYouTubeInitializing = false;
     }
-    interface Parent_interaction_listener{
+
+    interface Parent_interaction_listener {
         public void onParentInteract();
     }
 }

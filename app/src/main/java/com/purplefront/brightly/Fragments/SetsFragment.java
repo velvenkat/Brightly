@@ -130,12 +130,15 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
        /* actionBarUtilObj.setViewInvisible();
         actionBarUtilObj.getTitle().setVisibility(View.VISIBLE);*/
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle(channel_name);
-            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+
             image_createChannelSet = (ImageView) rootView.findViewById(R.id.image_createChannelSet);
             if (set_id_toCreateCard != null) {
                 image_createChannelSet.setVisibility(View.INVISIBLE);
                 ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
+                ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select set for copy card");
             }
+            else
+                ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(null);
             setDlgListener(this);
             if (!userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
                 //img_mutli_sel.setVisibility(View.GONE);
@@ -182,7 +185,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
             btn_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    txtHintReorder.setVisibility(View.GONE);
                     strDelSelId = android.text.TextUtils.join(",", del_sel_id);
                     showAlertDialog("You are about to delete the Set. All the information contained in the Sets will be lost.", "Confirm Delete...", "Delete", "Cancel");
                     // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
@@ -558,6 +561,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                     ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
                     del_contr.setVisibility(View.VISIBLE);
                     chk_sel_all.setVisibility(View.VISIBLE);
+                    txtHintReorder.setVisibility(View.GONE);
                     txtItemSel.setText("");
                     btn_delete.setEnabled(false);
                     if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))

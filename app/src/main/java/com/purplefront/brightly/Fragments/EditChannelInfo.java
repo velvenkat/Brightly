@@ -91,7 +91,7 @@ public class EditChannelInfo extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_edit_channel_info, container, false);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         setHasOptionsMenu(true);
 //        setContentView(R.layout.activity_edit_channel_info);
        /* Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -100,7 +100,7 @@ public class EditChannelInfo extends BaseFragment {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 */
 
-       Bundle bundle=getArguments();
+        Bundle bundle = getArguments();
         userId = user_obj.getUser_Id();
         /*channel_id = getIntent().getStringExtra("channel_id");
         channel_name = getIntent().getStringExtra("channel_name");
@@ -118,7 +118,7 @@ public class EditChannelInfo extends BaseFragment {
         shareTime = chl_modl_obj.getShared_time();
 
 
-        imageView_editChannelImage = (SimpleDraweeView)rootView. findViewById(R.id.imageView_editChannelImage);
+        imageView_editChannelImage = (SimpleDraweeView) rootView.findViewById(R.id.imageView_editChannelImage);
         edit_channelName = (EditText) rootView.findViewById(R.id.edit_channelName);
         edit_channelDescription = (EditText) rootView.findViewById(R.id.edit_channelDescription);
         btn_editChannel = (Button) rootView.findViewById(R.id.btn_editChannel);
@@ -130,20 +130,19 @@ public class EditChannelInfo extends BaseFragment {
         clear_edit_text_focus(edit_channelName);
         clear_edit_text_focus(edit_channelDescription);
 
-        if(!userId.equalsIgnoreCase(chl_modl_obj.getCreated_by())) {
+        if (!userId.equalsIgnoreCase(chl_modl_obj.getCreated_by())) {
             edit_channelName.setEnabled(false);
             edit_channelDescription.setEnabled(false);
             btn_editChannel.setVisibility(View.GONE);
             shared_by.setVisibility(View.VISIBLE);
-            shared_by.setText("Shared by : " + sharedName+ "\n" +"On : " +shareTime);
-          //  setTitle("Channel Info");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Category Info");
-        }
-        else {
+            shared_by.setText("Shared by : " + sharedName + "\n" + "On : " + shareTime);
+            //  setTitle("Channel Info");
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Category Info");
+        } else {
             shared_by.setVisibility(View.GONE);
             btn_editChannel.setVisibility(View.VISIBLE);
-         //   setTitle("Edit Channel Info");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Edit Category Info");
+            //   setTitle("Edit Channel Info");
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Edit Category Info");
         }
         btn_editChannel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,7 +154,7 @@ public class EditChannelInfo extends BaseFragment {
         imageView_editChannelImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(userId.equalsIgnoreCase(chl_modl_obj.getCreated_by())) {
+                if (userId.equalsIgnoreCase(chl_modl_obj.getCreated_by())) {
                   /*  imgImageChooser_crop = new ImageChooser_Crop(getActivity());
                     Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
                     if (intent == null) {
@@ -210,6 +209,7 @@ public class EditChannelInfo extends BaseFragment {
 
         return rootView;
     }
+
     public void setBottomDialog() {
 
         final Dialog mBottomSheetDialog = new Dialog(getActivity(), R.style.MaterialDialogSheet);
@@ -248,7 +248,7 @@ public class EditChannelInfo extends BaseFragment {
                         switch (position) {
                             case 1:
 
-                                    encoded_string = "remove_image";
+                                encoded_string = "remove_image";
                                 Glide.with(getActivity())
                                         .load(R.drawable.no_image_available)
                                         .centerCrop()
@@ -272,12 +272,16 @@ public class EditChannelInfo extends BaseFragment {
         );
 
     }
+
     // Check Validation Method
     private void checkValidation() {
 
         // Get all edittext texts
         channel_name = edit_channelName.getText().toString();
         channel_description = edit_channelDescription.getText().toString();
+        if (encoded_string == "") {
+            encoded_string = "old";
+        }
 
         // Check if all strings are null or not
         if (channel_name.equals("") || channel_name.length() == 0
@@ -331,9 +335,9 @@ public class EditChannelInfo extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if(chl_modl_obj.getCreated_by().equalsIgnoreCase(userId))
-        inflater.inflate(R.menu.delete, menu);
-       // return true;
+        if (chl_modl_obj.getCreated_by().equalsIgnoreCase(userId))
+            inflater.inflate(R.menu.delete, menu);
+        // return true;
     }
 
 
@@ -411,7 +415,7 @@ public class EditChannelInfo extends BaseFragment {
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
           /*  Fragment fragment=new ChannelFragment();
             ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,fragment,false);*/
-            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true,2);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
 
 
         } else {
@@ -447,7 +451,7 @@ public class EditChannelInfo extends BaseFragment {
                                 .setMaxCropResultSize(bitmap.getWidth(), bitmap.getHeight())
 //                                .setAspectRatio(1, 1)
                                 .setCropShape(CropImageView.CropShape.RECTANGLE)
-                                .start(getContext(),this);
+                                .start(getContext(), this);
                     }
                 } catch (Exception e) {
                     Toast.makeText(getContext(), "Error" + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -536,22 +540,17 @@ public class EditChannelInfo extends BaseFragment {
                 callRegisterUser.enqueue(new ApiCallback<UpdateChannelResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<UpdateChannelResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
                         UpdateChannelResponse updateChannelResponse = response.body();
                         if (isSuccess) {
 
                             if (updateChannelResponse != null) {
 
                                 setAddChannelCredentials(updateChannelResponse);
-                                dismissProgress();
 
-                            } else {
-                                dismissProgress();
 
                             }
 
-                        } else {
-
-                            dismissProgress();
                         }
                     }
 
@@ -580,8 +579,8 @@ public class EditChannelInfo extends BaseFragment {
         if (message.equals("success")) {
           /*  stackClearIntent(EditChannelInfo.this, BrightlyNavigationActivity.class);
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true,2);
-     //       ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,new ChannelFragment(),false);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
+            //       ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,new ChannelFragment(),false);
 
 
         } else {
