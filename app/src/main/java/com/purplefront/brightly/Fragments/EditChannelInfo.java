@@ -415,6 +415,7 @@ public class EditChannelInfo extends BaseFragment {
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
           /*  Fragment fragment=new ChannelFragment();
             ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,fragment,false);*/
+            ((BrightlyNavigationActivity)getActivity()).DontRunOneTime=true;
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
 
 

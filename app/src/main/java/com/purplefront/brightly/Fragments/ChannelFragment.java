@@ -79,6 +79,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         rootView = inflater.inflate(R.layout.lo_scrn_channel, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         boolean dontrun=((BrightlyNavigationActivity)getActivity()).DontRun;
+        ((BrightlyNavigationActivity)getActivity()).DontRunOneTime=false;
         if(!dontrun) {
             image_createChannel = (ImageView) rootView.findViewById(R.id.image_createChannel);
             channels_listview = (RecyclerView) rootView.findViewById(R.id.channels_listview);
@@ -103,7 +104,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
             }
             if (Set_ID_toCreateCard != null) {
                 image_createChannel.setVisibility(View.GONE);
-                ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select category for copy card");
+                ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select category to copy card");
                 ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
 
             } else

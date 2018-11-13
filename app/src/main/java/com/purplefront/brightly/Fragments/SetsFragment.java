@@ -91,8 +91,9 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
         txtHintReorder=rootView.findViewById(R.id.txtHintReorder);
 
         boolean dontRun=((BrightlyNavigationActivity)getActivity()).DontRun;
+        boolean dontRunoneTime=((BrightlyNavigationActivity)getActivity()).DontRunOneTime;
         // realm = Realm.getDefaultInstance();
-        if(!dontRun) {
+        if(!dontRun && !dontRunoneTime) {
             Bundle bundle = getArguments();
             del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
             btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
@@ -136,7 +137,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                 image_createChannelSet.setVisibility(View.INVISIBLE);
                 txtHintReorder.setVisibility(View.GONE);
                 ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
-                ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select set for copy card");
+                ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select set to copy card");
             }
             else
                 ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(null);
@@ -528,7 +529,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
         super.onPrepareOptionsMenu(menu);
         MenuInflater inflater=getActivity().getMenuInflater();
         menu.clear();
-        if(setsListModelList.size()>0) {
+
             if (set_id_toCreateCard == null) {
                 if (userId.equalsIgnoreCase(Created_By)) {
                     inflater.inflate(R.menu.my_channel_set, menu);
@@ -538,7 +539,8 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
             }
         }
 
-    }
+
+
 
    /* @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

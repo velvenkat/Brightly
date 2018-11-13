@@ -93,7 +93,7 @@ public class BrightlyNavigationActivity extends BaseActivity
     String Title = "All Channels";
     String count = "0";
     String deviceToken;
-
+    public boolean DontRunOneTime=false;
     boolean isNotification = false;
     View target_menu;
     boolean isCardNotification = false;
