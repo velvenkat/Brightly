@@ -134,6 +134,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
             image_createChannelSet = (ImageView) rootView.findViewById(R.id.image_createChannelSet);
             if (set_id_toCreateCard != null) {
                 image_createChannelSet.setVisibility(View.INVISIBLE);
+                txtHintReorder.setVisibility(View.GONE);
                 ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
                 ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select set for copy card");
             }
