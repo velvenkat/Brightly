@@ -1,11 +1,13 @@
 package com.purplefront.brightly.Fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -22,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -61,6 +64,7 @@ public class ShareWithContacts extends BaseFragment {
     ListView contacts_listview;
     EditText conatcts_searchView;
     ImageView btn_share, btn_sync;
+    TextView view_nodata;
 
     ArrayList<ContactShare> contactShares = new ArrayList<>();
     ArrayList<ContactShare> getContactShares;
@@ -99,6 +103,7 @@ public class ShareWithContacts extends BaseFragment {
 
         btn_share = (ImageView) rootView.findViewById(R.id.btn_share);
         btn_sync = (ImageView) rootView.findViewById(R.id.btn_sync);
+        view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
 
         Bundle bundle = getArguments();
 
@@ -137,7 +142,7 @@ public class ShareWithContacts extends BaseFragment {
             if (contactShares.size() > 0)
                 setConatcts(contactShares);
         } else {
-
+            view_nodata.setVisibility(View.VISIBLE);
             requestLocationPermission();
         }
         btn_share.setOnClickListener(new View.OnClickListener() {
@@ -158,8 +163,10 @@ public class ShareWithContacts extends BaseFragment {
             public void onClick(View view) {
                 if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_CONTACTS)
                         == PackageManager.PERMISSION_GRANTED) {
-                    showLongToast(getActivity(), "Loading New Contacts");
-                    getAllContacts();
+//                    getAllContacts();
+                    view_nodata.setVisibility(View.GONE);
+                    LoadContact loadContact = new LoadContact();
+                    loadContact.execute();
                 } else {
                     requestLocationPermission();
                 }
@@ -335,7 +342,9 @@ public class ShareWithContacts extends BaseFragment {
 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    getAllContacts();
+//                    getAllContacts();
+                    LoadContact loadContact = new LoadContact();
+                    loadContact.execute();
 
                 } else {
 
@@ -347,14 +356,7 @@ public class ShareWithContacts extends BaseFragment {
         }
     }
 
-   /* @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-        overridePendingTransition(R.anim.left_enter, R.anim.right_out);
-    }*/
-
-    private void getAllContacts() {
+    /*private void getAllContacts() {
 //        showProgress();
         contactShares.clear();
         ArrayList<String> list_temp_phone_no = new ArrayList<>();
@@ -411,7 +413,7 @@ public class ShareWithContacts extends BaseFragment {
 
 
 
-/*
+*//*
                     Cursor emailCursor = contentResolver.query(
                             ContactsContract.CommonDataKinds.Email.CONTENT_URI,
                             null,
@@ -419,11 +421,11 @@ public class ShareWithContacts extends BaseFragment {
                             new String[]{id}, null);
                     while (emailCursor.moveToNext()) {
                         String emailId = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-                    }*/
+                    }*//*
 
-                    /*if (!contactShares.contains(contacts)) {
+                    *//*if (!contactShares.contains(contacts)) {
                         contactShares.add(contacts);
-                    }*/
+                    }*//*
 
 
             } while (cursor.moveToNext());
@@ -433,7 +435,7 @@ public class ShareWithContacts extends BaseFragment {
             showLongToast(getActivity(), "Contacts Updated");
             cursor.close();
         }
-    }
+    }*/
 
     private void setConatcts(ArrayList<ContactShare> contactShares) {
 
@@ -450,6 +452,106 @@ public class ShareWithContacts extends BaseFragment {
         prefsEditor.putString("contactShares", json);
         prefsEditor.commit();
 
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    class LoadContact extends AsyncTask<Void, Void, Void> {
+
+        ArrayList<String> list_temp_phone_no;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgress();
+            contactShares.clear();
+            showLongToast(getActivity(), "Loading New Contacts");
+            list_temp_phone_no = new ArrayList<>();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ContentResolver contentResolver = getActivity().getContentResolver();
+            contactShares = new ArrayList<>();
+            Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                do {
+
+                    int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
+                    if (hasPhoneNumber > 0) {
+                        String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                        String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+
+                        Cursor phoneCursor = contentResolver.query(
+                                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                null,
+                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                                new String[]{id},
+                                null);
+                        phoneCursor.moveToFirst();
+                        if (phoneCursor.getCount() > 0) {
+                            do {
+                                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                                String temp_ph_no = phoneNumber.replaceAll("[^0-9]", "").trim();
+
+                                if (temp_ph_no.length() >= 10) {
+                                    if (temp_ph_no.length() == 10) {
+
+                                    } else {
+                                        temp_ph_no = temp_ph_no.substring(temp_ph_no.length() - 10);
+                                    }
+                                    list_temp_phone_no.add(temp_ph_no);
+
+                                    if (list_temp_phone_no.size() > 0 && hasDuplicate(list_temp_phone_no)) {
+                                        list_temp_phone_no.remove(list_temp_phone_no.size() - 1);
+                                    } else {
+                                        contacts = new ContactShare();
+                                        contacts.setContactName(name);
+
+
+                                        contacts.setContactNumber(phoneNumber);
+
+                                        contactShares.add(contacts);
+                                    }
+                                }
+
+
+                            } while (phoneCursor.moveToNext());
+                        }
+                        phoneCursor.close();
+
+                      /*  Cursor emailCursor = contentResolver.query(
+                                ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                                null,
+                                ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                                new String[]{id}, null);
+                        while (emailCursor.moveToNext()) {
+                            String emailId = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                        }
+*/
+
+                    }
+                } while (cursor.moveToNext());
+                cursor.close();
+
+            }
+//                cursor.close();
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            dismissProgress();
+            if (contactShares.size() > 0)
+                setConatcts(contactShares);
+            showLongToast(getActivity(), "Contacts Updated");
+
+        }
     }
 }
 

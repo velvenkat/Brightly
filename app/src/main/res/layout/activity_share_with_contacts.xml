@@ -7,6 +7,18 @@
     android:orientation="vertical"
     tools:context=".Fragments.ShareWithContacts">
 
+    <TextView
+        android:id="@+id/view_nodata"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:text="Please Sync the Contacts"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="@dimen/dimen_20"
+        android:visibility="gone"
+        />
+
     <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
