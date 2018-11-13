@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -38,6 +39,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
     private static final String TAG = "MyFirebaseMsgService";
+    public static final String NOTIFICATION_CHANNEL_ID = "10001";
 
   //  String message_body = "", message_title = "", control_unit_sim_number = "" , base_unit_id = "";
 
@@ -121,12 +123,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
           intent.putExtra("notfy_modl_obj",gsonObj);
 
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
 
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NotificationChannel.DEFAULT_CHANNEL_ID)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(remoteMessage.getData().get("title"))
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setLargeIcon(bitmap)
@@ -138,7 +140,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+            {
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.RED);
+                notificationChannel.enableVibration(true);
+                notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                assert notificationManager != null;
+                notificationBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+
+            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 
 
 //            Intent lIntent=new Intent(MedConstants.CONFIG_PUSHNOTIFICATION);
@@ -185,12 +201,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             intent.putExtra("isNotification",true);
            intent.putExtra("notfy_modl_obj",gsonObj);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
 
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,NotificationChannel.DEFAULT_CHANNEL_ID)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(remoteMessage.getData().get("title"))
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setLargeIcon(bitmap)
@@ -202,7 +218,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+            {
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.RED);
+                notificationChannel.enableVibration(true);
+                notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                assert notificationManager != null;
+                notificationBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+
+            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 
 
             Log.d("ONBCKGRUND", "ONBCKGRUND");
