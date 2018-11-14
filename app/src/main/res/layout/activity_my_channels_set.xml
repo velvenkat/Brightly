@@ -7,12 +7,17 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     >
+
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:id="@+id/txtHintReorder"
-        android:textColor="#ef0077"
-        android:textSize="@dimen/dimen_14"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_12"
+        android:layout_centerHorizontal="true"
         android:visibility="gone"
+        android:layout_marginTop="@dimen/dimen_4"
+        android:drawablePadding="@dimen/dimen_6"
+        android:drawableRight="@mipmap/ic_drag_drop"
         android:text="Drag and Drop to Reorder"
         android:layout_height="wrap_content" />
 

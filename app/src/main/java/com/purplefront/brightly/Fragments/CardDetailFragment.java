@@ -374,9 +374,11 @@ public class CardDetailFragment extends BaseFragment {
                 first_mediaPlayerObj.pause();
             }
         }
-        if (cur_scrn_mediaPlayerObj.isPlaying()) {
+        if (cur_scrn_mediaPlayerObj != null) {
             if (cur_scrn_mediaPlayerObj.isPlaying()) {
-                cur_scrn_mediaPlayerObj.pause();
+                if (cur_scrn_mediaPlayerObj.isPlaying()) {
+                    cur_scrn_mediaPlayerObj.pause();
+                }
             }
         }
         switch (item.getItemId()) {
