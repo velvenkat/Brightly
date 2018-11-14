@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.purplefront.brightly.Activities.BaseActivity;
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.TimeFormat;
@@ -34,12 +35,12 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     ProgressDialog mProgress;
     alert_dlg_interface mListener;
     SeekBar audio_seek_bar;
-    static MediaPlayer mediaPlayer;
-    static boolean  isAudioPlay = false;
+     MediaPlayer mediaPlayer;
+     boolean  isAudioPlay = false;
     String TotalTime;
     private final Handler handler = new Handler();
     private int mediaFileLengthInMilliseconds; // this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
-    static  ImageView img_play_stop;
+      ImageView img_play_stop;
     TextView txt_PlayProgTime;
     String cur_audio_Pos;
     boolean isPlayBtnClicked = false;
@@ -225,8 +226,9 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
 
     }
 
-    public void setMediaPlayer(Uri audio_uri,String filePath) {
+    public MediaPlayer setMediaPlayer(Uri audio_uri,String filePath) {
         mediaPlayer=new MediaPlayer();
+
         try {
 
             AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
@@ -270,7 +272,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+       return mediaPlayer;
 
     }
 

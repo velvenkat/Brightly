@@ -3,6 +3,7 @@ package com.purplefront.brightly.Fragments;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -43,7 +44,7 @@ import java.util.Locale;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 
-public class Multimedia_CardFragment extends BaseFragment implements CardDetailFragment.Parent_interaction_listener, YouTubePlayer.OnInitializedListener, Preview.PreviewListener {
+public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener, Preview.PreviewListener {
     View rootView;
     com.purplefront.brightly.Preview mPreview;
     CardsListModel cardModelObj;
@@ -73,9 +74,10 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.items_multimedia_pager, container, false);
 
+
         userObj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         Bundle bundle = getArguments();
-      //  setHasOptionsMenu(true);
+        //  setHasOptionsMenu(true);
         cardModelObj = bundle.getParcelable("card_mdl_obj");
         chl_list_obj = bundle.getParcelable("model_obj");
         setsListModelObj = bundle.getParcelable("setListModel");
@@ -87,7 +89,7 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
         //channel_name=bundle.getString("chl_name");
         parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
         parent_frag_Card_dtl.isYouTubeInitializing = true;
-        parent_frag_Card_dtl.mParListenerObj=this;
+
         TextView text_cardName;
         TextView text_cardDescription;
         ImageView image_cardImage;
@@ -163,7 +165,7 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
                             public void onClick(View paramView) {
 //                                dialog.cancel();
                                 PhotoViewAttacher photoAttacher;
-                                photoAttacher= new PhotoViewAttacher(img);
+                                photoAttacher = new PhotoViewAttacher(img);
                                 photoAttacher.update();
                             }
                         });
@@ -234,7 +236,8 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
             image_cardImage.getLayoutParams().height = 360;
 
             audio_player_initialize(audio_seek_bar, txt_PlayProgTime, img_audio_play_stop);
-            setMediaPlayer(null, cardModelObj.getUrl());
+            MediaPlayer mp=setMediaPlayer(null, cardModelObj.getUrl());
+            parent_frag_Card_dtl.setGlob_mediaPlayerObj(mp);
         } else if (cardModelObj.getType().equalsIgnoreCase("file")) {
 
             image_cardImage.setVisibility(View.GONE);
@@ -473,9 +476,12 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(getActivity()!=null ) {
+        if (getActivity() != null) {
             parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
-            parent_frag_Card_dtl.mParListenerObj = this;
+
+        }
+        if(isVisibleToUser && mediaPlayer!=null){
+            parent_frag_Card_dtl.setGlob_mediaPlayerObj(mediaPlayer);
         }
         if (!isVisibleToUser && UTubePlayer != null) {
             // Log.v (TAG, "Releasing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
@@ -511,7 +517,7 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_youtube, youTubePlayerFragment).commit();
             parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
-            parent_frag_Card_dtl.mParListenerObj = this;
+
             parent_frag_Card_dtl.isYouTubeInitializing = true;
             youTubePlayerFragment.initialize(DEVELOPER_KEY, this);
         }
@@ -559,18 +565,12 @@ public class Multimedia_CardFragment extends BaseFragment implements CardDetailF
     @Override
     public void onPause() {
         super.onPause();
-        onParentInteract();
-    }
-
-    @Override
-    public void onParentInteract() {
-        if (mediaPlayer != null) {
-            //release_media();
-            if (isAudioPlay) {
-                mediaPlayer.pause();
-                isAudioPlay = false;
-                img_play_stop.setImageResource(R.drawable.play_rec);
-            }
+        if (isAudioPlay) {
+            mediaPlayer.pause();
+            isAudioPlay = false;
+            img_play_stop.setImageResource(R.drawable.play_rec);
         }
     }
+
+
 }

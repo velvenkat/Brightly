@@ -2,6 +2,7 @@ package com.purplefront.brightly.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -19,6 +21,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -81,8 +85,7 @@ public class BrightlyNavigationActivity extends BaseActivity
     public DrawerLayout drawer;
     public Toolbar toolbar;
     FrameLayout frag_container;
-
-    Realm realm;
+        Realm realm;
     RealmResults<RealmModel> realmModel;
 
     public String userId;
@@ -96,6 +99,7 @@ public class BrightlyNavigationActivity extends BaseActivity
     public boolean DontRunOneTime=false;
     boolean isNotification = false;
     View target_menu;
+
     boolean isCardNotification = false;
     public boolean isUTubePlayerFullScreen = false;
     public NavigationView navigationView;

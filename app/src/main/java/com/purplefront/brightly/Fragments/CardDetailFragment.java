@@ -3,10 +3,13 @@ package com.purplefront.brightly.Fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -16,6 +19,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -63,8 +67,23 @@ public class CardDetailFragment extends BaseFragment {
     ViewPager viewPager_Cards;
     ViewCardFragmentPagerAdapter cardsPagerAdapter;
     ArrayList<CardsListModel> cardsListModels = new ArrayList<>();
-    static Parent_interaction_listener mParListenerObj;
+    public static final String CMDPAUSE = "pause";
 
+    public void setGlob_mediaPlayerObj(MediaPlayer mp_obj) {
+        if (this.first_mediaPlayerObj != null) {
+            if (this.cur_scrn_mediaPlayerObj != null) {
+                first_mediaPlayerObj = cur_scrn_mediaPlayerObj;
+                cur_scrn_mediaPlayerObj = mp_obj;
+            } else {
+                cur_scrn_mediaPlayerObj = mp_obj;
+            }
+        } else {
+            first_mediaPlayerObj = mp_obj;
+        }
+
+    }
+
+    public MediaPlayer cur_scrn_mediaPlayerObj = null, first_mediaPlayerObj = null;
     //ImageView card_list_icon;
 
     Realm realm;
@@ -84,26 +103,20 @@ public class CardDetailFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (mParListenerObj != null)
-            mParListenerObj.onParentInteract();
+
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (!isVisibleToUser && mParListenerObj != null) {
-            mParListenerObj.onParentInteract();
-        }
+
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         //     Toast.makeText(getContext(), "isHidden" + hidden, Toast.LENGTH_LONG).show();
-        if (hidden) {
-            if (mParListenerObj != null)
-                mParListenerObj.onParentInteract();
-        }
+
         if (!hidden) {
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
             ((BrightlyNavigationActivity) getActivity()).isHide_frag = false;
@@ -356,8 +369,16 @@ public class CardDetailFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle bundle = new Bundle();
-        if (mParListenerObj != null)
-            mParListenerObj.onParentInteract();
+        if (first_mediaPlayerObj != null) {
+            if (first_mediaPlayerObj.isPlaying()) {
+                first_mediaPlayerObj.pause();
+            }
+        }
+        if (cur_scrn_mediaPlayerObj.isPlaying()) {
+            if (cur_scrn_mediaPlayerObj.isPlaying()) {
+                cur_scrn_mediaPlayerObj.pause();
+            }
+        }
         switch (item.getItemId()) {
 
             case R.id.set_CommentsList:
@@ -673,7 +694,5 @@ public class CardDetailFragment extends BaseFragment {
         isYouTubeInitializing = false;
     }
 
-    interface Parent_interaction_listener {
-        public void onParentInteract();
-    }
+
 }

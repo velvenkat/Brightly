@@ -580,7 +580,7 @@ public class EditChannelInfo extends BaseFragment {
         if (message.equals("success")) {
           /*  stackClearIntent(EditChannelInfo.this, BrightlyNavigationActivity.class);
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
             //       ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,new ChannelFragment(),false);
 
 
