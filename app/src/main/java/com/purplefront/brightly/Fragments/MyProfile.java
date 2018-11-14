@@ -75,6 +75,21 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
         realmModel = realm.where(RealmModel.class).findAllAsync();
 
         initViews();
+
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        view.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                    //         getActivity().finish();
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                    return true;
+                }
+                return false;
+            }
+        });
+
         return view;
     }
 
@@ -99,6 +114,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
             User_Phone.setText(model.getUser_PhoneNumber());
             input_company.setText(model.getUser_CompanyName());
             input_email.setText(model.getUser_Email());
+            imageProfile = model.getImage();
 
 
             ((BrightlyNavigationActivity) getActivity()).headerText_Name.setText(model.getUser_Name());
@@ -107,7 +123,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
             if (!model.getImage().isEmpty()) {
 
                 Glide.with(getActivity())
-                        .load(model.getImage())
+                        .load(imageProfile)
                         .centerCrop()
                         .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)
@@ -126,7 +142,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
             if (!model.getImage().isEmpty()) {
 
                 Glide.with(getActivity())
-                        .load(model.getImage())
+                        .load(imageProfile)
                         .centerCrop()
                         .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)

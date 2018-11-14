@@ -33,7 +33,7 @@ public interface RestApiMethods {
     //MyProfile
     @POST("users/profile_edit.php")
     @FormUrlEncoded
-    Call<EditProfileResponse> getEditProfile(@Query("user_id") String user_id, @Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Field("image") String image, @Query("image_name") String image_name);
+    Call<EditProfileResponse> getEditProfile(@Query("user_id") String user_id, @Query("name") String name, @Query("email") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Field("image") String image, @Query("image_name") String image_name);
 
 
     //Register or SignUp
