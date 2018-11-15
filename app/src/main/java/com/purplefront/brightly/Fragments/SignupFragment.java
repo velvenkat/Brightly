@@ -540,6 +540,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
             realmModel.setUser_PhoneNumber(phoneNumber);
             realmModel.setUser_CompanyName(User_CompanyName);
             realm.commitTransaction();
+            showLongToast(getActivity(), "Welcome " +UserName);
             getActivity().finish();
             frwdAnimIntent(getActivity(), BrightlyNavigationActivity.class,realmModel);
             dismissProgress();

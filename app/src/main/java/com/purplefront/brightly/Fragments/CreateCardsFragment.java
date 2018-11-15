@@ -336,6 +336,7 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);*/
+            showShortToast(getActivity(), "Card "+cardModelObj.getName()+" is Deleted");
             ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
             /*onBackPressed();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/

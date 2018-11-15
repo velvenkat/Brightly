@@ -266,7 +266,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
             realmModel.setImage(image);
             realm.commitTransaction();
 
-            showLongToast(getActivity(), signInResponse.getMessage());
+            showLongToast(getActivity(), "Welcome Again " +UserName);
             getActivity().finish();
             frwdAnimIntent(getActivity(), BrightlyNavigationActivity.class,realmModel);
 

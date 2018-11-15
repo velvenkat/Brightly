@@ -223,6 +223,14 @@ public class FileType extends BaseFragment {
           /*  getActivity().setResult(Activity.RESULT_OK);
             getActivity().finish();
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            if(isCreateCard)
+            {
+                showShortToast(getActivity(), "Card "+card_name+" has been Created.");
+            }
+            else
+            {
+                showShortToast(getActivity(), "Card "+card_name+" has been Updated.");
+            }
             ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
         }
 

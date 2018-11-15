@@ -329,6 +329,7 @@ public class CreateChannelFragment extends BaseFragment {
             ((BrightlyNavigationActivity)getActivity()).toggle.setDrawerIndicatorEnabled(true);
             ((BrightlyNavigationActivity)getActivity()).drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             ((AppCompatActivity)getActivity()).getSupportFragmentManager().popBackStackImmediate();*/
+            showShortToast(getActivity(), "Category "+channel_name+" has been Created");
             ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
             //fragmentCallInterfaceObj.onFragmentCall(Util.CHANNELS, new ChannelFragment(),false);
         } else {

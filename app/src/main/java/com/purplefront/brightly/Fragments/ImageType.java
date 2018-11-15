@@ -546,6 +546,14 @@ public class ImageType extends BaseFragment {
             startActivity(intent);*//*
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
             //Fragment fragment=new CardDetailFragment();
+            if(isCreateCard)
+            {
+                showShortToast(getActivity(), "Card "+card_name+" has been Created.");
+            }
+          else
+            {
+                showShortToast(getActivity(), "Card "+card_name+" has been Updated.");
+            }
             ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
         } else {
             showLongToast(getActivity(), message);

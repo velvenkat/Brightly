@@ -374,7 +374,7 @@ public class EditChannelInfo extends BaseFragment {
 
                             if (deleteChannelResponse != null) {
                                 dismissProgress();
-                                setAddChannelCredentials(deleteChannelResponse);
+                                setDeleteChannelCredentials(deleteChannelResponse);
 
 
                             } else {
@@ -406,7 +406,7 @@ public class EditChannelInfo extends BaseFragment {
 
     }
 
-    private void setAddChannelCredentials(DeleteChannelResponse deleteChannelResponse) {
+    private void setDeleteChannelCredentials(DeleteChannelResponse deleteChannelResponse) {
 
         String message = deleteChannelResponse.getMessage();
 
@@ -415,6 +415,7 @@ public class EditChannelInfo extends BaseFragment {
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
           /*  Fragment fragment=new ChannelFragment();
             ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,fragment,false);*/
+            showShortToast(getActivity(), "Category "+channel_name+" is Deleted");
             ((BrightlyNavigationActivity)getActivity()).DontRunOneTime=true;
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
 
@@ -580,6 +581,7 @@ public class EditChannelInfo extends BaseFragment {
         if (message.equals("success")) {
           /*  stackClearIntent(EditChannelInfo.this, BrightlyNavigationActivity.class);
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
+            showShortToast(getActivity(), "Category "+channel_name+" Updated");
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
             //       ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,new ChannelFragment(),false);
 

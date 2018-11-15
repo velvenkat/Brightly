@@ -370,7 +370,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         dismissProgress();
                         ((BrightlyNavigationActivity) getActivity()).isCardRefresh = true;
-                        Toast.makeText(getContext(), "Message:" + response.message(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Cards Successfully Reordered", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -627,6 +627,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                             if (deleteSetResponse != null) {
 
                                 if (deleteSetResponse.getMessage().equalsIgnoreCase("success")) {
+                                    Toast.makeText(getContext(), "Selected Card(s) Deleted Successfully", Toast.LENGTH_LONG).show();
                                     reset_view();
                                     getCardsLists();
                                     if (isReorder)

@@ -178,6 +178,7 @@ public class CreateSet extends BaseFragment {
             Bundle bundle=new Bundle();
             bundle.putParcelable("model_obj", chl_list_obj);
             ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List,fragment,false);*/
+            showShortToast(getActivity(), "Set "+set_name+" has been Created");
             ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
         } else {
             showLongToast(getActivity(), message);

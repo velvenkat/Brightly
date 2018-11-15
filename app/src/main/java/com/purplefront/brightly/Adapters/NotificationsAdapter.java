@@ -70,7 +70,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         if(notificationsModel.getAction().equals("deleted")  || notificationsModel.getAction().equals("revoked")) {
 
-            holder.notification_content.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+            holder.notification_content.setTextColor(context.getResources().getColor(R.color.orange_color));
         }
         else
         {
@@ -118,7 +118,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 }
                 else if(notificationsModel.getAction().equals("revoked"))
                 {
-                    Toast.makeText(context, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, notificationsModel.getNotificationsSetDetail().getName() + " set permission has been Revoked.", Toast.LENGTH_SHORT).show();
                 }
 
                 else

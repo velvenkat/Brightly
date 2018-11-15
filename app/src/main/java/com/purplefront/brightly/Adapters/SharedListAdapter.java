@@ -1,13 +1,11 @@
 package com.purplefront.brightly.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.InsetDrawable;
-import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -15,14 +13,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckedTextView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.purplefront.brightly.Fragments.EditSetInfo;
 import com.purplefront.brightly.Modules.SharedDataModel;
@@ -167,7 +162,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
 
 
 
-                        mListener.call_revoke(set_id,sharedDataModel.get(position).getId());
+                        mListener.call_revoke(set_id,sharedDataModel.get(position).getId(), sharedDataModel.get(position).getName());
                         // Write your code here to invoke YES event
 //                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
                     }
@@ -191,14 +186,14 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
         holder.layout_share_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareSettingDialog(share_Id, sharedDataModel.get(position).getShare_access());
+                shareSettingDialog(share_Id, sharedDataModel.get(position).getShare_access(), sharedDataModel.get(position).getName());
             }
         });
 
 
     }
 
-    private void shareSettingDialog(String share_Id, String share_accesss)
+    private void shareSettingDialog(String share_Id, String share_accesss, String name)
     {
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(scrn_context,  R.style.MaterialDialogSheet);
         View mView = inflater.inflate(R.layout.dialog_share_settings, null);
@@ -274,7 +269,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
             @Override
             public void onClick(View view) {
 
-                setInfo.api_call_share_access_update(share_access, share_Id);
+                setInfo.api_call_share_access_update(share_access, share_Id, name);
                 dialog.dismiss();
             }
         });
@@ -312,6 +307,6 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
         }
     }
     public interface SharedListInterface{
-        public void call_revoke(String set_id, String assigned_to);
+        public void call_revoke(String set_id, String assigned_to, String name);
     }
 }

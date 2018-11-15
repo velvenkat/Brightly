@@ -1,6 +1,5 @@
 package com.purplefront.brightly.Fragments;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,14 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
@@ -100,7 +95,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
 
     }
 
-    public void api_call_share_access_update(String value, String assigned_to) {
+    public void api_call_share_access_update(String value, String assigned_to, String name) {
 
         try {
 
@@ -116,7 +111,17 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                             dismissProgress();
 
                             if (infoSharedResponse != null) {
-                                showShortToast(getActivity(), infoSharedResponse.getMessage());
+
+                                if(value.equals("0"))
+                                {
+                                    showShortToast(getActivity(), name +" can only View the Set " );
+                                }
+
+                                if(value.equals("1"))
+                                {
+                                    showShortToast(getActivity(), name +" can Share the Set" );
+                                }
+
                             }
                             if (isNotification) {
                                 notificationsModel.getNotificationsSetDetail().setShare_access(value);
@@ -124,6 +129,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                             } else {
                                 setsListModel.setShare_access(value);
                             }
+
                             CardDetailFragment Card_dtl_frag = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
 
                             Card_dtl_frag.setsListModel = setsListModel;
@@ -415,7 +421,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
         }
     }
 
-    public void getRevokeSet(String set_id, String assigned_to) {
+    public void getRevokeSet(String set_id, String assigned_to, String name) {
 
         try {
 
@@ -432,7 +438,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
                             dismissProgress();
                             if (addMessageResponse != null) {
 
-                                setRevokeSetCredentials(addMessageResponse);
+                                setRevokeSetCredentials(addMessageResponse, name);
 
 
                             }
@@ -458,15 +464,14 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
     }
 
 
-    private void setRevokeSetCredentials(AddMessageResponse addMessageResponse) {
+    private void setRevokeSetCredentials(AddMessageResponse addMessageResponse, String name) {
 
 
         String message = addMessageResponse.getMessage();
 
-
         if (message.equals("success")) {
+            showLongToast(getActivity(), "Set Permission has been Revoked for "+name);
             getSetSharedInfo();
-            showLongToast(getActivity(), addMessageResponse.getMessage());
             dismissProgress();
         } else {
             showLongToast(getActivity(), message);
@@ -533,6 +538,7 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
             Bundle bundle=new Bundle();
             bundle.putParcelable("model_obj", chl_list_obj);
             ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List,fragment,false);*/
+             showShortToast(getActivity(), "Set "+set_name+" is Deleted");
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
 
 
@@ -693,8 +699,8 @@ public class EditSetInfo extends BaseFragment implements SharedListAdapter.Share
     }
 
     @Override
-    public void call_revoke(String set_id, String assigned_to) {
-        getRevokeSet(set_id, assigned_to);
+    public void call_revoke(String set_id, String assigned_to, String name) {
+        getRevokeSet(set_id, assigned_to, name);
     }
 
    /* @Override

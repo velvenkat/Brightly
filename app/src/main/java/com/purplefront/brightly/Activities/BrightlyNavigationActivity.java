@@ -515,7 +515,7 @@ public class BrightlyNavigationActivity extends BaseActivity
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         dismissProgress();
-                        Toast.makeText(BrightlyNavigationActivity.this, "Message:" + response.message(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(BrightlyNavigationActivity.this, "Logged Out", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
