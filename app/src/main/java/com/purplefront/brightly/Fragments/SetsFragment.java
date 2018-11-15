@@ -440,6 +440,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         dismissProgress();
                         Toast.makeText(getContext(), "Message:" + response.message(), Toast.LENGTH_LONG).show();
+                        getSetLists();
                     }
 
                     @Override
@@ -498,6 +499,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                                 if (deleteSetResponse.getMessage().equalsIgnoreCase("success")) {
                                     reset_view();
                                     getSetLists();
+                                   ith.attachToRecyclerView(channelSet_listview);
                                 }
 
 

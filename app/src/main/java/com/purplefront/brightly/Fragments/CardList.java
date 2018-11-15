@@ -629,6 +629,8 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                                 if (deleteSetResponse.getMessage().equalsIgnoreCase("success")) {
                                     reset_view();
                                     getCardsLists();
+                                    if (isReorder)
+                                        ith.attachToRecyclerView(card_listview);
                                 }
 
 
