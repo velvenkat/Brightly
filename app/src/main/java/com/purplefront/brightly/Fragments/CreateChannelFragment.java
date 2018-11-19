@@ -1,5 +1,6 @@
 package com.purplefront.brightly.Fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -30,14 +31,17 @@ import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddChannelResponse;
+import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
+import com.purplefront.brightly.Utils.PermissionUtil;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import retrofit2.Call;
@@ -45,7 +49,7 @@ import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
-public class CreateChannelFragment extends BaseFragment {
+public class CreateChannelFragment extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface {
     View rootView;
     RealmModel user_obj;
 
@@ -67,6 +71,8 @@ public class CreateChannelFragment extends BaseFragment {
     ImageChooser_Crop imgImageChooser_crop;
     String image_name = "";
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,6 +86,7 @@ public class CreateChannelFragment extends BaseFragment {
         create_channelName = (EditText) rootView.findViewById(R.id.create_channelName);
         create_channelDescription = (EditText) rootView.findViewById(R.id.create_channelDescription);
         btn_createChannel = (Button) rootView.findViewById(R.id.btn_createChannel);
+        ((BrightlyNavigationActivity)getActivity()).permissionResultInterfaceObj=this;
 
 //        actionBarUtilObj.setViewInvisible();
 //        actionBarUtilObj.getTitle().setVisibility(View.VISIBLE);
@@ -107,13 +114,14 @@ public class CreateChannelFragment extends BaseFragment {
         imageView_channelImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                imgImageChooser_crop = new ImageChooser_Crop(getActivity());
-                Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
-                if (intent == null) {
-                    //PermissionUtil.
-                } else {
-                    startActivityForResult(intent, PICK_IMAGE_REQ);
+                if (PermissionUtil.hasPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, getContext(), BrightlyNavigationActivity.PERMISSION_REQ_CODE_IMAGE)) {
+                    imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+                    Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+                    if (intent == null) {
+                        //PermissionUtil.
+                    } else {
+                        startActivityForResult(intent, PICK_IMAGE_REQ);
+                    }
                 }
 
             }
@@ -334,6 +342,17 @@ public class CreateChannelFragment extends BaseFragment {
             //fragmentCallInterfaceObj.onFragmentCall(Util.CHANNELS, new ChannelFragment(),false);
         } else {
             showLongToast(getActivity(), message);
+        }
+    }
+
+    @Override
+    public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list) {
+        imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+        Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+        if (intent == null) {
+            //PermissionUtil.
+        } else {
+            startActivityForResult(intent, PICK_IMAGE_REQ);
         }
     }
 

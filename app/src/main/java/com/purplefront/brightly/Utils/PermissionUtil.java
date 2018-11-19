@@ -11,6 +11,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Niranjan Reddy on 28-02-2018.
  */
@@ -18,42 +21,51 @@ import android.widget.Toast;
 public class PermissionUtil {
 
     static Context mContext;
-    public static int PERMISSION_REQ_CODE=100;
+    public static int PERMISSION_REQ_CODE;
 
-    public static boolean hasPermission(String [] Per_List,Context contextObj) {
+   /* public static  enum ReqPermission{
+        IMAGE,AUDIO,CONTACT
+    }*/
+
+
+    public static boolean hasPermission(String [] Per_List,Context contextObj,int PermissionReqCode) {
+        PERMISSION_REQ_CODE=PermissionReqCode;
         boolean per_flag = true;
         mContext = contextObj;
+        List<String> permission_list=new ArrayList<>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M  && Per_List != null) {
-            per_flag = true;
+            //  per_flag = true;
             for (String permission : Per_List) {
 
                 if (ContextCompat.checkSelfPermission(mContext, permission) != PackageManager.PERMISSION_GRANTED) {
 
                     per_flag = false;
                     //isPermissionSuccess=false;
-                    if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) mContext,
-                            permission)) {
+                    permission_list.add(permission);
+                }
+            }
+        }
+        /*if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) mContext,
+                permission)) {
 
-                        // Show an explanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
-                        ActivityCompat.requestPermissions((Activity) mContext,
-                                new String[]{permission},
-                                PERMISSION_REQ_CODE);
+            // Show an explanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
+            ActivityCompat.requestPermissions((Activity) mContext,
+                    new String[]{permission},
+                    PERMISSION_REQ_CODE);
 
-                    } else {
+        }*/
+                 if(!per_flag)
+                 {
                         ActivityCompat.requestPermissions((Activity) mContext,
-                                Per_List,
+                                permission_list.toArray(new String[permission_list.size()]),
                                 PERMISSION_REQ_CODE);
                     }
-                    break;
 
-                } else {
-                    // isPermissionSuccess=true;
-                }
 
                 //i++;
-            }
+
 
 
             /*if(isPermissionSuccess && (i==Per_List.length)){
@@ -61,7 +73,7 @@ public class PermissionUtil {
                 screen_Handler();
             }*/
 
-        }
+
 
         if (per_flag) {
 

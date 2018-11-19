@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -29,17 +30,20 @@ import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
+import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.EditProfileResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.CircleTransform;
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
+import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.Util;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,7 +58,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditProfile extends BaseFragment{
+public class EditProfile extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface{
 
     View rootView;
     Context context;
@@ -94,6 +98,7 @@ public class EditProfile extends BaseFragment{
         context = getContext();
         ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("Edit Profile");
 
+        ((BrightlyNavigationActivity)getActivity()).permissionResultInterfaceObj=this;
         //((BrightlyNavigationActivity) getActivity()).toggle.setDrawerIndicatorEnabled(true);
 
         realm = Realm.getDefaultInstance();
@@ -172,14 +177,15 @@ public class EditProfile extends BaseFragment{
         Image_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                imgImageChooser_crop = new ImageChooser_Crop(getActivity());
-                Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
-                if (intent == null) {
-                    //PermissionUtil.
-                } else {
-                    startActivityForResult(intent, PICK_IMAGE_REQ);
-                }
+              //  if (PermissionUtil.hasPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, getContext(), BrightlyNavigationActivity.PERMISSION_REQ_CODE_IMAGE)) {
+                    imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+                    Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+                    if (intent == null) {
+                        //PermissionUtil.
+                    } else {
+                        startActivityForResult(intent, PICK_IMAGE_REQ);
+                    }
+               // }
 
             }
         });
@@ -463,4 +469,14 @@ public class EditProfile extends BaseFragment{
 
     }
 
+    @Override
+    public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list) {
+        imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+        Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+        if (intent == null) {
+            //PermissionUtil.
+        } else {
+            startActivityForResult(intent, PICK_IMAGE_REQ);
+        }
+    }
 }

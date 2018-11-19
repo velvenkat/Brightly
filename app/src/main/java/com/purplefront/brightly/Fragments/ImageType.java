@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -35,10 +36,12 @@ import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.SetEntryModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
+import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.Util;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -56,7 +59,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ImageType extends BaseFragment {
+public class ImageType extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface {
 
     View frag_rootView;
     EditText create_cardName;
@@ -69,7 +72,7 @@ public class ImageType extends BaseFragment {
     ResizeOptions mResizeOptions;
     Context context;
     RealmModel user_obj;
-    Uri crop_result_uri=null;
+    Uri crop_result_uri = null;
 
     String userId;
     String set_id;
@@ -93,7 +96,7 @@ public class ImageType extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         frag_rootView = inflater.inflate(R.layout.fragment_image_type, container, false);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         context = frag_rootView.getContext();
 //        Bundle bundle=getArguments();
 
@@ -109,9 +112,9 @@ public class ImageType extends BaseFragment {
 
         Bundle bundle = getArguments();
         isCreateCard = bundle.getBoolean("isCreate");
-        Created_by=bundle.getString("created_by");
+        Created_by = bundle.getString("created_by");
         boolean load_def_img = true;
-        setEntryModelObj=bundle.getParcelable("set_entry_obj");
+        setEntryModelObj = bundle.getParcelable("set_entry_obj");
 
         userId = user_obj.getUser_Id();
         set_id = setEntryModelObj.getSet_id();
@@ -135,11 +138,12 @@ public class ImageType extends BaseFragment {
                     }
                 });
 
+        ((BrightlyNavigationActivity) getActivity()).permissionResultInterfaceObj = this;
         if (!isCreateCard) {
             btn_createCard.setText("UPDATE CARD");
             create_cardName.setText(setEntryModelObj.getCard_name());
             create_cardDescription.setText(setEntryModelObj.getCard_description());
-            if(!Created_by.equalsIgnoreCase(userId)){
+            if (!Created_by.equalsIgnoreCase(userId)) {
                 image_cardImage.setClickable(false);
                 create_cardName.setEnabled(false);
                 create_cardDescription.setEnabled(false);
@@ -158,7 +162,7 @@ public class ImageType extends BaseFragment {
                 //  layoutParams.setMargins(0,0,0,0);
                 image_cardImage.setLayoutParams(layoutParams);*/
 
-             //   image_cardImage.setScaleType(ImageView.ScaleType.FIT_XY);
+                //   image_cardImage.setScaleType(ImageView.ScaleType.FIT_XY);
 
 
                 /*final ImageRequest imageRequest =
@@ -171,8 +175,7 @@ public class ImageType extends BaseFragment {
                 load_def_img = true;
 
             }
-        }
-        else {
+        } else {
             btn_createCard.setText("CREATE CARD");
         }
         if (load_def_img) {
@@ -188,10 +191,10 @@ public class ImageType extends BaseFragment {
             /*RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             //  layoutParams.setMargins(0,0,0,0);
             layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);*/
-          //  image_cardImage.setLayoutParams(layoutParams);
+            //  image_cardImage.setLayoutParams(layoutParams);
 
 
-           // image_cardImage.setScaleType(ImageView.ScaleType.FIT_XY);
+            // image_cardImage.setScaleType(ImageView.ScaleType.FIT_XY);
         }
         btn_createCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,7 +232,7 @@ public class ImageType extends BaseFragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
-                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                 }
                 return true;
             }
@@ -239,13 +242,16 @@ public class ImageType extends BaseFragment {
 
 
     public void imageChooserIntent() {
-        imgImageChooser_crop = new ImageChooser_Crop(getActivity());
-        Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
-        if (intent == null) {
-            //PermissionUtil.
-        } else {
-            startActivityForResult(intent, PICK_IMAGE_REQ);
-        }
+
+        //if (PermissionUtil.hasPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, getContext(), BrightlyNavigationActivity.PERMISSION_REQ_CODE_IMAGE)) {
+            imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+            Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+            if (intent == null) {
+                //PermissionUtil.
+            } else {
+                startActivityForResult(intent, PICK_IMAGE_REQ);
+            }
+        //}
     }
 
     public void setBottomDialog() {
@@ -323,16 +329,15 @@ public class ImageType extends BaseFragment {
         } else if (encoded_string.equals("") || encoded_string.length() == 0 || encoded_string.equalsIgnoreCase("image_to_text")) {
            /* new CustomToast().Show_Toast(getActivity(), image_cardImage,
                     "Image is required.");*/
-            if(setEntryModelObj.getType().equals("image")){
-                if(encoded_string.equalsIgnoreCase("image_to_text"))
+            if (setEntryModelObj.getType().equals("image")) {
+                if (encoded_string.equalsIgnoreCase("image_to_text"))
                     type = "text";
                 else {
                     encoded_string = "old";
-                    type="image";
+                    type = "image";
                 }
-            }
-            else
-            type = "text";
+            } else
+                type = "text";
 
             getAddCards();
         }
@@ -386,7 +391,7 @@ public class ImageType extends BaseFragment {
                 try {
 
 
-                     crop_result_uri = result.getUri();
+                    crop_result_uri = result.getUri();
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), crop_result_uri);
 
                     encoded_string = getStringImage(bitmap);
@@ -406,7 +411,7 @@ public class ImageType extends BaseFragment {
                  /*   RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                     //     layoutParams.setMargins(0,0,0,0);
                     image_cardImage.setLayoutParams(layoutParams);*/
-                 //   image_cardImage.setScaleType(ImageView.ScaleType.FIT_XY);
+                    //   image_cardImage.setScaleType(ImageView.ScaleType.FIT_XY);
                    /* final ImageRequest imageRequest2 =
                             ImageRequestBuilder.newBuilderWithSource(resultUri)
                                     .setResizeOptions(mResizeOptions)
@@ -501,7 +506,7 @@ public class ImageType extends BaseFragment {
 
                         if (message.equals("timeout")) {
                             showLongToast(getActivity(), "Internet is slow, please try again.");
-                            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                         }
                         dismissProgress();
                     }
@@ -520,7 +525,7 @@ public class ImageType extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(crop_result_uri!=null) {
+        if (crop_result_uri != null) {
             Glide.with(getActivity())
                     .load(crop_result_uri)
                     .fitCenter()
@@ -546,19 +551,26 @@ public class ImageType extends BaseFragment {
             startActivity(intent);*//*
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
             //Fragment fragment=new CardDetailFragment();
-            if(isCreateCard)
-            {
-                showShortToast(getActivity(), "Card "+card_name+" has been Created.");
+            if (isCreateCard) {
+                showShortToast(getActivity(), "Card " + card_name + " has been Created.");
+            } else {
+                showShortToast(getActivity(), "Card " + card_name + " has been Updated.");
             }
-          else
-            {
-                showShortToast(getActivity(), "Card "+card_name+" has been Updated.");
-            }
-            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
         } else {
             showLongToast(getActivity(), message);
         }
     }
 
 
+    @Override
+    public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list) {
+        imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+        Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+        if (intent == null) {
+            //PermissionUtil.
+        } else {
+            startActivityForResult(intent, PICK_IMAGE_REQ);
+        }
+    }
 }

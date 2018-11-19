@@ -2,6 +2,7 @@ package com.purplefront.brightly.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -13,9 +14,11 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -57,11 +60,13 @@ import com.purplefront.brightly.Modules.NotificationsResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.CircleTransform;
+import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.Util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import io.realm.Realm;
@@ -72,11 +77,12 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
+
 public class BrightlyNavigationActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String SHOWCASE_ID = "1";
-
+    public PermissionResultInterface permissionResultInterfaceObj;
     ArrayList<ContactShare> contactShares = new ArrayList<>();
     private static final int REQUEST_PERMISSION = 1;
     ContactShare contacts;
@@ -85,7 +91,11 @@ public class BrightlyNavigationActivity extends BaseActivity
     public DrawerLayout drawer;
     public Toolbar toolbar;
     FrameLayout frag_container;
-        Realm realm;
+    Realm realm;
+    int PermissionRequestedCode = -1;
+    public static final int PERMISSION_REQ_CODE_AUDIO = 101;
+    public static final int PERMISSION_REQ_CODE_CONTACT = 102;
+    public static final int PERMISSION_REQ_CODE_IMAGE = 103;
     RealmResults<RealmModel> realmModel;
 
     public String userId;
@@ -95,8 +105,9 @@ public class BrightlyNavigationActivity extends BaseActivity
     String type = "all";
     String Title = "All Channels";
     String count = "0";
+    int PerCount = -1;
     String deviceToken;
-    public boolean DontRunOneTime=false;
+    public boolean DontRunOneTime = false;
     boolean isNotification = false;
     View target_menu;
 
@@ -110,6 +121,7 @@ public class BrightlyNavigationActivity extends BaseActivity
     public int card_toPosition = 0;
     public YouTubePlayer uTubePlayer;
     public boolean isHide_frag = false;
+    boolean isPerReqCalled = false;
 
     /**
      * isCardRefresh flag is needed to refresh card from CardList page to CardDetail called
@@ -162,8 +174,7 @@ public class BrightlyNavigationActivity extends BaseActivity
 
         }
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (PermissionUtil.hasPermission(new String[]{Manifest.permission.READ_CONTACTS}, BrightlyNavigationActivity.this, PERMISSION_REQ_CODE_CONTACT)) {
 //            getAllContacts();
             SharedPreferences mPrefs = getSharedPreferences("contactShares", MODE_PRIVATE);
             Gson gson = new Gson();
@@ -337,13 +348,32 @@ public class BrightlyNavigationActivity extends BaseActivity
         sequence.start();
     }*/
 
-   /* @Override
-    protected void onResume(){
+    @Override
+    protected void onResume() {
         super.onResume();
         // put your code here...
-        getNotificationCount();
+        //getNotificationCount();
+        if (isPerReqCalled) {
+            if (permissionResultInterfaceObj != null) {
+                if (PermissionRequestedCode == PERMISSION_REQ_CODE_AUDIO) {
+                    permissionResultInterfaceObj.onPermissionResult_rcd(null);
 
-    }*/
+                }
+                if (PermissionRequestedCode == PERMISSION_REQ_CODE_IMAGE) {
+                   /* permissionResultInterfaceObj.onPermissionResult_rcd(null);*/
+                    Toast.makeText(BrightlyNavigationActivity.this,"Tab again to upload the image",Toast.LENGTH_LONG).show();
+                }
+                if (PermissionRequestedCode == PERMISSION_REQ_CODE_CONTACT) {
+                    //  permissionResultInterfaceObj.onPermissionResult_rcd(null);
+                    LoadContact loadContact = new LoadContact();
+                    loadContact.execute();
+                }
+            }
+            isPerReqCalled = false;
+        }
+
+
+    }
 
 
     private void setNotificationCounts(NotificationsResponse notificationsResponse) {
@@ -562,7 +592,7 @@ public class BrightlyNavigationActivity extends BaseActivity
     }
 
     protected void requestLocationPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+      /*  if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 android.Manifest.permission.READ_CONTACTS)) {
             // show UI part if you want here to show some rationale !!!
 
@@ -571,15 +601,27 @@ public class BrightlyNavigationActivity extends BaseActivity
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS,
                     Manifest.permission.WRITE_CONTACTS}, REQUEST_PERMISSION);
 
-          /*  ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS},
-                    REQUEST_PERMISSION);*/
-        }
+          *//*  ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS},
+                    REQUEST_PERMISSION);*//*
+        }*/
+        PermissionUtil.hasPermission(new String[]{Manifest.permission.READ_CONTACTS,
+                Manifest.permission.WRITE_CONTACTS}, BrightlyNavigationActivity.this, PERMISSION_REQ_CODE_CONTACT);
 
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
+        if (PerCount == -1) {
+            PerCount = permissions.length - 1;
+        } else {
+            PerCount--;
+        }
+        if (PerCount == 0) {
+
+            PerCount = -1;
+
+  /*      Toast.makeText(BrightlyNavigationActivity.this,"OnPerResult",Toast.LENGTH_LONG).show();
         switch (requestCode) {
             case REQUEST_PERMISSION: {
                 if (grantResults.length > 0
@@ -606,7 +648,69 @@ public class BrightlyNavigationActivity extends BaseActivity
                 return;
             }
 
+        }*/
+
+            int i = 0;
+            Intent intent = null;
+            boolean per_flag = true;
+            final String Permission_Denied;
+            boolean showRationale = false;
+
+
+
+            for (final String permission : permissions) {
+
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    //  isPermissionSuccess=true;
+                    i++;
+                } else {
+                    Permission_Denied = permission;
+                    per_flag = false;
+
+                    //isPermissionSuccess=false;
+                /*runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(BrightlyNavigationActivity.this, "Need permission " + Permission_Denied, Toast.LENGTH_LONG).show();
+                    }
+                });*/
+                    showRationale = ActivityCompat.shouldShowRequestPermissionRationale(BrightlyNavigationActivity.this, Permission_Denied);
+                    if (!showRationale) {
+                        isPerReqCalled = true;
+                        PermissionRequestedCode = requestCode;
+                        intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", BrightlyNavigationActivity.this.getPackageName(), null);
+                        intent.setData(uri);
+                        startActivityForResult(intent, requestCode);
+
+                    }
+
+                    break;
+                    //       return;
+                }
+                if (per_flag) {
+                    switch (requestCode) {
+                        case PERMISSION_REQ_CODE_CONTACT:
+
+                            LoadContact loadContact = new LoadContact();
+                            loadContact.execute();
+
+                            break;
+                        case PERMISSION_REQ_CODE_AUDIO:
+                            //   Toast.makeText(BrightlyNavigationActivity.this, "Permission Granted. Tab again to record audio", Toast.LENGTH_LONG).show();
+                            break;
+                        case PERMISSION_REQ_CODE_IMAGE:
+                            // Toast.makeText(BrightlyNavigationActivity.this, "Permission Granted. Tab again to upload image", Toast.LENGTH_LONG).show();
+                            permissionResultInterfaceObj.onPermissionResult_rcd(null);
+                            break;
+                    }
+                } else {
+                    PermissionUtil.hasPermission(permissions, BrightlyNavigationActivity.this, requestCode);
+                }
+            }
+
         }
+//        PermissionUtil.checkPermissionResult(requestCode,permissions,grantResults);
     }
 
 
@@ -619,6 +723,22 @@ public class BrightlyNavigationActivity extends BaseActivity
         return user_obj;
     }
 
+   /* @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==Activity.RESULT_OK) {
+            Toast.makeText(BrightlyNavigationActivity.this,"Result ok",Toast.LENGTH_LONG).show();
+            if (requestCode == PERMISSION_REQ_CODE_AUDIO) {
+
+            }
+            if (requestCode == PERMISSION_REQ_CODE_IMAGE) {
+
+            }
+            if (requestCode == PERMISSION_REQ_CODE_CONTACT) {
+
+            }
+        }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -823,6 +943,8 @@ public class BrightlyNavigationActivity extends BaseActivity
                     }
                 } while (cursor.moveToNext());
                 cursor.close();
+                if (permissionResultInterfaceObj != null)
+                    permissionResultInterfaceObj.onPermissionResult_rcd(contactShares);
 
             }
 //                cursor.close();
@@ -843,5 +965,9 @@ public class BrightlyNavigationActivity extends BaseActivity
         // indicates that a duplicate element has been added.
         for (T each : all) if (!set.add(each)) return true;
         return false;
+    }
+
+    public interface PermissionResultInterface {
+        public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list);
     }
 }

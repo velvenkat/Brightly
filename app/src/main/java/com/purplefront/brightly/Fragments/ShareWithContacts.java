@@ -43,6 +43,7 @@ import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.Util;
 
 import java.lang.reflect.Type;
@@ -57,7 +58,7 @@ import retrofit2.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class ShareWithContacts extends BaseFragment {
+public class ShareWithContacts extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface {
 
     private static final int REQUEST_PERMISSION = 1;
 
@@ -94,6 +95,7 @@ public class ShareWithContacts extends BaseFragment {
         rootView = inflater.inflate(R.layout.activity_share_with_contacts, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
+        ((BrightlyNavigationActivity) getActivity()).permissionResultInterfaceObj = this;
 //        setContentView(R.layout.activity_share_with_contacts);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
@@ -232,14 +234,13 @@ public class ShareWithContacts extends BaseFragment {
         ArrayList<String> sel_name = new ArrayList<>(contactAdapter.getContactName_Share());
         split_num = android.text.TextUtils.join(",", sel_num);
         split_name = android.text.TextUtils.join(",", sel_name);
-        String num_digit10=split_num.substring(split_num.length()-10,split_num.length());
-       // Toast.makeText(getContext(),"num"+num_digit10,Toast.LENGTH_LONG).show();
+        String num_digit10 = split_num.substring(split_num.length() - 10, split_num.length());
+        // Toast.makeText(getContext(),"num"+num_digit10,Toast.LENGTH_LONG).show();
         if (split_num.equals("") || split_num.length() <= 9) {
             new CustomToast().Show_Toast(getActivity(), btn_share,
                     "Please select the Phone Number.");
 
-        }
-        else if(num_digit10.equalsIgnoreCase(user_obj.getUser_PhoneNumber())){
+        } else if (num_digit10.equalsIgnoreCase(user_obj.getUser_PhoneNumber())) {
             new CustomToast().Show_Toast(getActivity(), btn_share,
                     "You can't give your own number");
         }
@@ -334,32 +335,22 @@ public class ShareWithContacts extends BaseFragment {
 
     protected void requestLocationPermission() {
 
-        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS,
+      /*  ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS,
                 Manifest.permission.WRITE_CONTACTS}, REQUEST_PERMISSION);
-        // show UI part if you want here to show some rationale !!!
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSION: {
-
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-//                    getAllContacts();
-                    LoadContact loadContact = new LoadContact();
-                    loadContact.execute();
-
-                } else {
-
-                    showLongToast(getActivity(), "Contacts not Updated. Please provide permission");
-                }
-                return;
-            }
-
+        // show UI part if you want here to show some rationale !!!*/
+        if (PermissionUtil.hasPermission(new String[]{Manifest.permission.READ_CONTACTS,
+                Manifest.permission.WRITE_CONTACTS}, getContext(), BrightlyNavigationActivity.PERMISSION_REQ_CODE_CONTACT)) {
+            LoadContact loadContact = new LoadContact();
+            loadContact.execute();
         }
     }
+
+    /*@Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+
+    }*/
 
     /*private void getAllContacts() {
 //        showProgress();
@@ -428,7 +419,7 @@ public class ShareWithContacts extends BaseFragment {
                         String emailId = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                     }*//*
 
-                    *//*if (!contactShares.contains(contacts)) {
+     *//*if (!contactShares.contains(contacts)) {
                         contactShares.add(contacts);
                     }*//*
 
@@ -456,6 +447,23 @@ public class ShareWithContacts extends BaseFragment {
         String json = gson.toJson(contactShares);
         prefsEditor.putString("contactShares", json);
         prefsEditor.commit();
+
+    }
+
+    @Override
+    public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list) {
+        //Toast.makeText(getContext(), "I am here", Toast.LENGTH_LONG).show();
+        contact_list=contactShares;
+        if(contactShares!=null) {
+            if (contactShares.size() > 0)
+                setConatcts(contactShares);
+            showLongToast(getActivity(), "Contacts Updated");
+        }
+
+//                    getAllContacts();
+       /* LoadContact loadContact = new LoadContact();
+        loadContact.execute();*/
+
 
     }
 

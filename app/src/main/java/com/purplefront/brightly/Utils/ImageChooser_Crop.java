@@ -14,6 +14,8 @@ import android.os.Parcelable;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 
+import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public class ImageChooser_Crop {
 
     public Intent getPickImageChooserIntent() {
 
-        if (PermissionUtil.hasPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, call_activity)) {
+        if (PermissionUtil.hasPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, call_activity, BrightlyNavigationActivity.PERMISSION_REQ_CODE_IMAGE)) {
             Uri outputFileUri = getCaptureImageOutputUri();
 
             List<Intent> allIntents = new ArrayList<>();
@@ -86,86 +88,7 @@ public class ImageChooser_Crop {
         } else
             return null;
     }
-    public Intent photowithCrop(){
-        /*
 
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        photoPickerIntent.setType("image*//*");
-        photoPickerIntent.putExtra("crop", true);
-        photoPickerIntent.putExtra("return-data", true);
-
-       // photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());
-        photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG);*/
-
-        if (PermissionUtil.hasPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, call_activity)) {
-            Uri outputFileUri = getCaptureImageOutputUri();
-
-            List<Intent> allIntents = new ArrayList<>();
-            PackageManager packageManager = call_activity.getPackageManager();
-
-            // collect all camera intents
-            Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-            for (ResolveInfo res : listCam) {
-                Intent intent = new Intent(captureIntent);
-                intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                intent.setPackage(res.activityInfo.packageName);
-                intent.putExtra("crop", true);
-                intent.putExtra("return-data", true);
-
-                // photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());
-                intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG);
-                if (outputFileUri != null) {
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                }
-                allIntents.add(intent);
-            }
-
-            // collect all gallery intents
-            Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            galleryIntent.setType("image/*");
-            List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
-            for (ResolveInfo res : listGallery) {
-                Intent intent = new Intent(galleryIntent);
-                intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                intent.setPackage(res.activityInfo.packageName);
-                intent.putExtra("crop", true);
-                intent.putExtra("return-data", true);
-
-                // photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());
-                intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG);
-                allIntents.add(intent);
-            }
-
-            // the main intent is the last in the list  so pickup the useless one
-            Intent mainIntent = allIntents.get(allIntents.size() - 1);
-            for (Intent intent : allIntents) {
-                if (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
-                    mainIntent = intent;
-                    break;
-                }
-            }
-            allIntents.remove(mainIntent);
-
-            // Create a chooser from the main intent
-            Intent chooserIntent = Intent.createChooser(mainIntent, "Select source");
-
-            chooserIntent.putExtra("crop", true);
-            chooserIntent.putExtra("return-data", true);
-
-            // photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());
-            chooserIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG);
-            // Add all other intents
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
-
-            return chooserIntent;
-        } else
-            return null;
-
-
-
-
-    }
 
 
 

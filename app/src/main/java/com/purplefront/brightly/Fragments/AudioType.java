@@ -41,9 +41,11 @@ import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Custom.SiriWaveView;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.SetEntryModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.TimeFormat;
 import com.purplefront.brightly.Utils.Util;
 
@@ -63,7 +65,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AudioType extends BaseFragment {
+public class AudioType extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface {
 
     View view;
     TextView text_audioFile;
@@ -112,8 +114,8 @@ public class AudioType extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(audio_uri!=null || tempMp3File!=null){
-         rl_audio_player.setVisibility(View.VISIBLE);
+        if (audio_uri != null || tempMp3File != null) {
+            rl_audio_player.setVisibility(View.VISIBLE);
             text_audioFile.setVisibility(View.GONE);
             setAudioProgText();
         }
@@ -164,6 +166,7 @@ public class AudioType extends BaseFragment {
         clear_edit_text_focus(create_cardDescription);
         clear_edit_text_focus(create_cardName);
         audio_player_initialize(audio_seek_bar, txt_PlayProgTime, img_play_stop);
+        ((BrightlyNavigationActivity) getActivity()).permissionResultInterfaceObj = this;
         if (isCreateScreen) {
             rl_audio_player.setVisibility(View.GONE);
             text_audioFile.setVisibility(View.VISIBLE);
@@ -220,8 +223,9 @@ public class AudioType extends BaseFragment {
             public void onClick(View v) {
                 if (!isPlayBtnClicked) {
 
-
-                    checkPermissionsAndStart();
+                    if (PermissionUtil.hasPermission(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, getContext(), BrightlyNavigationActivity.PERMISSION_REQ_CODE_AUDIO)) {
+                        checkPermissionsAndStart();
+                    }
 
                 } else {
 
@@ -256,9 +260,9 @@ public class AudioType extends BaseFragment {
         btn_createCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isAudioPlay)
+                if (isAudioPlay)
                     mediaPlayer.pause();
-                isAudioPlay=false;
+                isAudioPlay = false;
                 checkValidation();
             }
         });
@@ -418,54 +422,52 @@ public class AudioType extends BaseFragment {
                 } else {
                     //  finish();
                 }
-                checkPermissionsAndStart();
+                if (PermissionUtil.hasPermission(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE}, getContext(), BrightlyNavigationActivity.PERMISSION_REQ_CODE_AUDIO)) {
+                    checkPermissionsAndStart();
+                }
         }
 
     }
 
     private void checkPermissionsAndStart() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO},
-                    REQUEST_PERMISSION_RECORD_AUDIO);
-            //  tempMp3File = null;
-        } else {
-
-            try {
-
-                tempMp3File = File.createTempFile("audio_bark", ".3gp", getActivity().getCacheDir());
-
-                // prints absolute path
-                //  System.out.println("File path: " + f.getAbsolutePath());
-
-                // deletes file when the virtual machine terminate
-                tempMp3File.deleteOnExit();
 
 
-            } catch (Exception e) {
+        try {
 
-                e.printStackTrace();
+            tempMp3File = File.createTempFile("audio_bark", ".3gp", getActivity().getCacheDir());
+
+            // prints absolute path
+            //  System.out.println("File path: " + f.getAbsolutePath());
+
+            // deletes file when the virtual machine terminate
+            tempMp3File.deleteOnExit();
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+
+        audio_rec();
+        isPlayBtnClicked = true;
+        img_play_stop_rec.setImageResource(R.drawable.stop_rec);
+        final int totalSeconds = 31;
+        countDownTimer = new CountDownTimer(totalSeconds * 1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+                txtRecSeconds.setText(TimeFormat.formateMilliSeccond((totalSeconds * 1000 - millisUntilFinished)));
+                //here you can have your logic to set text to edittext
             }
 
+            public void onFinish() {
+                //  mTextField.setText("done!");
+                Rec_finish();
+            }
 
-            audio_rec();
-            isPlayBtnClicked = true;
-            img_play_stop_rec.setImageResource(R.drawable.stop_rec);
-            final int totalSeconds = 31;
-            countDownTimer = new CountDownTimer(totalSeconds * 1000, 1000) {
+        }.start();
 
-                public void onTick(long millisUntilFinished) {
-
-                    txtRecSeconds.setText(TimeFormat.formateMilliSeccond((totalSeconds * 1000 - millisUntilFinished)));
-                    //here you can have your logic to set text to edittext
-                }
-
-                public void onFinish() {
-                    //  mTextField.setText("done!");
-                    Rec_finish();
-                }
-
-            }.start();
-        }
     }
 
     public byte[] toByteArray(InputStream in) throws IOException {
@@ -509,11 +511,10 @@ public class AudioType extends BaseFragment {
             } else {
                 if (isCreateScreen)
                     encoded_string = "";
-                else
-                    if(setEntryModel.getType().equalsIgnoreCase("audio"))
+                else if (setEntryModel.getType().equalsIgnoreCase("audio"))
                     encoded_string = "old";
-                    else
-                        encoded_string = "";
+                else
+                    encoded_string = "";
 
             }
         } catch (Exception e) {
@@ -685,18 +686,20 @@ public class AudioType extends BaseFragment {
             getActivity().finish();
 
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            if(isCreateScreen)
-            {
-                showShortToast(getActivity(), "Card "+card_name+" has been Created.");
-            }
-            else
-            {
-                showShortToast(getActivity(), "Card "+card_name+" has been Updated.");
+            if (isCreateScreen) {
+                showShortToast(getActivity(), "Card " + card_name + " has been Created.");
+            } else {
+                showShortToast(getActivity(), "Card " + card_name + " has been Updated.");
             }
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
         } else {
             showLongToast(getActivity(), message);
         }
+    }
+
+    @Override
+    public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list) {
+
     }
 
   /*  @Override

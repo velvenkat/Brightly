@@ -1,5 +1,6 @@
 package com.purplefront.brightly.Fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -40,11 +41,13 @@ import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.ChannelListModel;
+import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.DeleteChannelResponse;
 import com.purplefront.brightly.Modules.UpdateChannelResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
+import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.Util;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -61,7 +64,7 @@ import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
-public class EditChannelInfo extends BaseFragment {
+public class EditChannelInfo extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface {
 
     SimpleDraweeView imageView_editChannelImage;
     EditText edit_channelName;
@@ -100,6 +103,7 @@ public class EditChannelInfo extends BaseFragment {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 */
 
+        ((BrightlyNavigationActivity)getActivity()).permissionResultInterfaceObj=this;
         Bundle bundle = getArguments();
         userId = user_obj.getUser_Id();
         /*channel_id = getIntent().getStringExtra("channel_id");
@@ -257,13 +261,15 @@ public class EditChannelInfo extends BaseFragment {
                                         .into(imageView_editChannelImage);
                                 break;
                             case 0:
-                                imgImageChooser_crop = new ImageChooser_Crop(getActivity());
-                                Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
-                                if (intent == null) {
-                                    //PermissionUtil.
-                                } else {
-                                    startActivityForResult(intent, PICK_IMAGE_REQ);
-                                }
+
+                                    imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+                                    Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+                                    if (intent == null) {
+                                        //PermissionUtil.
+                                    } else {
+                                        startActivityForResult(intent, PICK_IMAGE_REQ);
+                                    }
+
                                 break;
 
                         }
@@ -588,6 +594,17 @@ public class EditChannelInfo extends BaseFragment {
 
         } else {
             showLongToast(getActivity(), message);
+        }
+    }
+
+    @Override
+    public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list) {
+        imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+        Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+        if (intent == null) {
+            //PermissionUtil.
+        } else {
+            startActivityForResult(intent, PICK_IMAGE_REQ);
         }
     }
 
