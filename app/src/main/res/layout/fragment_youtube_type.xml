@@ -106,7 +106,7 @@
                     android:background="@drawable/edit_text_background"
                     android:gravity="start"
                     android:hint="@string/card_description"
-                    android:inputType="textCapSentences"
+                    android:inputType="textCapSentences|textMultiLine"
                     android:padding="@dimen/dimen_4"
                     android:textColor="@color/black"
                     android:textSize="@dimen/mediumtextsize" />
