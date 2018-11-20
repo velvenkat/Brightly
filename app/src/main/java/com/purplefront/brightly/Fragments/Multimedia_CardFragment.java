@@ -35,18 +35,19 @@ import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.SetsListModel;
-import com.purplefront.brightly.Preview;
 import com.purplefront.brightly.R;
+import com.purplefront.brightly.Utils.RichLinkViewTelegram;
 import com.purplefront.brightly.Utils.Util;
+import com.purplefront.brightly.Utils.ViewListener;
 
 import java.util.Locale;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 
-public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener, Preview.PreviewListener {
+public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener {
     View rootView;
-    com.purplefront.brightly.Preview mPreview;
+    RichLinkViewTelegram richLinkView1;
     CardsListModel cardModelObj;
     ProgressDialog dialog;
     String user_id, set_id, set_name;
@@ -105,10 +106,9 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         audio_seek_bar = (SeekBar) rootView.findViewById(R.id.seek_audio_rec);
         txt_PlayProgTime = (TextView) rootView.findViewById(R.id.txt_PlayProgTime);
         file_cardLink = (TextView) rootView.findViewById(R.id.file_cardLink);
-        mPreview = (Preview) rootView.findViewById(R.id.preview);
+        richLinkView1 = (RichLinkViewTelegram) rootView.findViewById(R.id.preview);
 
         //mPreview=new Preview(getContext());
-        mPreview.setListener(this);
 
         if (cardModelObj.getTitle() != null) {
             text_cardName.setText(cardModelObj.getTitle());
@@ -122,7 +122,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
-            mPreview.setVisibility(View.GONE);
+            richLinkView1.setVisibility(View.GONE);
 
             if (!cardModelObj.getUrl().isEmpty() && cardModelObj.getUrl() != null) {
 
@@ -186,13 +186,13 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
-            mPreview.setVisibility(View.GONE);
+            richLinkView1.setVisibility(View.GONE);
         } else if (cardModelObj.getType().equalsIgnoreCase("video")) {
             image_cardImage.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.VISIBLE);
             rl_audio_player.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
-            mPreview.setVisibility(View.GONE);
+            richLinkView1.setVisibility(View.GONE);
             youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
 
             if (getUserVisibleHint()) {
@@ -231,7 +231,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.VISIBLE);
             file_cardLink.setVisibility(View.GONE);
-            mPreview.setVisibility(View.GONE);
+            richLinkView1.setVisibility(View.GONE);
             image_cardImage.setImageResource(R.drawable.audio_hdr_img);
             image_cardImage.getLayoutParams().height = 360;
 
@@ -244,29 +244,41 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
-            mPreview.setVisibility(View.VISIBLE);
+            richLinkView1.setVisibility(View.VISIBLE);
             file_cardLink.setText(cardModelObj.getUrl());
             if (file_cardLink != null && file_cardLink.getText() != null && !file_cardLink.getText().toString().equals("")) {
 
                 file_cardLink.setVisibility(View.GONE);
-                mPreview.setVisibility(View.VISIBLE);
-                mPreview.setData(file_cardLink.getText().toString());
+                richLinkView1.setVisibility(View.VISIBLE);
 
-                mPreview.setOnClickListener(new View.OnClickListener() {
+                richLinkView1.setLink(file_cardLink.getText().toString() ,new ViewListener() {
+                    @Override
+                    public void onSuccess(boolean status) {
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
+
+
+               /* mPreview.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View arg0) {
-                       /* String url = file_cardLink.toString();
+                       *//* String url = file_cardLink.toString();
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                        intent.setPackage("com.google.android.youtube");
-                        startActivity(intent);*/
+                        startActivity(intent);*//*
 
                         String fullPath = cardModelObj.getUrl();
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fullPath));
                         startActivity(browserIntent);
                     }
-                });
+                });*/
 
             }
             file_cardLink.setMovementMethod(LinkMovementMethod.getInstance());
@@ -467,11 +479,6 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 return super.onOptionsItemSelected(item);
         }
     }*/
-
-    @Override
-    public void onDataReady(Preview preview) {
-        mPreview.setMessage(preview.getLink());
-    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {

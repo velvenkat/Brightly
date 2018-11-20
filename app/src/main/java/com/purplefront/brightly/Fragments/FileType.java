@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -145,6 +146,12 @@ public class FileType extends BaseFragment {
         {
             new CustomToast().Show_Toast(getActivity(), create_cardURL,
                     "File link is required.");
+        }
+
+        else if(!Patterns.WEB_URL.matcher(image_name).matches())
+        {
+            new CustomToast().Show_Toast(getActivity(), create_cardURL,
+                    "File link is Invalid.");
         }
 
         // Else do signup or do your stuff

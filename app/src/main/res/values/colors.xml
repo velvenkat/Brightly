@@ -28,8 +28,16 @@
 
     <color name="yellow_color">#FFFF00</color>
 
+   <color name="md_light_blue_400">#29B6FC</color>
+ <color name="md_light_blue_500">#03A9F4</color>
 
+   <color name="md_black_1000">#000000</color>
+   <color name="md_white_1000">#ffffff</color>
 
+   <color name="grey_900">#212121</color>
+   <color name="blue_grey_300">#616f76</color>
+   <color name="blue_grey_700">#434f54</color>
+   <color name="bg_card">#e0f9cc</color>
 
 
 </resources>

@@ -120,7 +120,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
             ((BrightlyNavigationActivity) getActivity()).headerText_Name.setText(model.getUser_Name());
             ((BrightlyNavigationActivity) getActivity()).headerText_Phone.setText(model.getUser_PhoneNumber());
 
-            if (!model.getImage().isEmpty()) {
+            if (model.getImage() != null || !model.getImage().isEmpty()) {
 
                 Glide.with(getActivity())
                         .load(imageProfile)
@@ -139,7 +139,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
             }
 
 
-            if (!model.getImage().isEmpty()) {
+            if (model.getImage() != null || !model.getImage().isEmpty()) {
 
                 Glide.with(getActivity())
                         .load(imageProfile)

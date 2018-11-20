@@ -104,7 +104,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
             }
             if (Set_ID_toCreateCard != null) {
                 image_createChannel.setVisibility(View.GONE);
-                ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select category to copy card");
+                ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select category(s) to copy card");
                 ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
 
             } else
