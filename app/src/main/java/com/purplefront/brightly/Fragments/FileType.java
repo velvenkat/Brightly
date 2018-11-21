@@ -24,8 +24,6 @@ import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.Util;
 
-import java.net.URL;
-
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -129,21 +127,6 @@ public class FileType extends BaseFragment {
         return frag_rootView;
     }
 
-    public static boolean isValid(String url)
-    {
-        /* Try creating a valid URL */
-        try {
-            new URL(url).toURI();
-            return true;
-        }
-
-        // If there was an Exception
-        // while creating URL object
-        catch (Exception e) {
-            return false;
-        }
-    }
-
     // Check Validation Method
     private void checkValidation() {
 
@@ -175,7 +158,7 @@ public class FileType extends BaseFragment {
                     "File link is required.");
         }
 
-        else if(!isValid(image_name))
+        else if(!Patterns.WEB_URL.matcher(image_name).matches())
         {
             new CustomToast().Show_Toast(getActivity(), create_cardURL,
                     "File link is Invalid.");
