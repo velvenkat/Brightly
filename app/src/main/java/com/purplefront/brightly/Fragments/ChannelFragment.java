@@ -54,7 +54,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     MyChannelsAdapter myChannelsAdapter;
     ImageView image_createChannel;
     TextView view_nodata;
-    String channel_type;
+    String channel_type = null;
     RecyclerView channels_listview;
     View rootView;
     RealmModel user_obj;
@@ -70,7 +70,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     String userPicture;
 
 
-    String Set_ID_toCreateCard;
+    String Set_ID_toCreateCard = null;
 
 
     @Nullable
@@ -78,21 +78,24 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.lo_scrn_channel, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
-        boolean dontrun=((BrightlyNavigationActivity)getActivity()).DontRun;
-        ((BrightlyNavigationActivity)getActivity()).DontRunOneTime=false;
-        if(!dontrun) {
+        boolean dontrun = ((BrightlyNavigationActivity) getActivity()).DontRun;
+        ((BrightlyNavigationActivity) getActivity()).DontRunOneTime = false;
+        if (!dontrun) {
             image_createChannel = (ImageView) rootView.findViewById(R.id.image_createChannel);
             channels_listview = (RecyclerView) rootView.findViewById(R.id.channels_listview);
             setHasOptionsMenu(true);
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
-            Bundle bundle = getArguments();
-            channel_type = bundle.getString("type",null);
-            if(channel_type==null){
-                channel_type="all";
+            if (getArguments() != null) {
+                Bundle bundle = getArguments();
+                channel_type = bundle.getString("type", null);
+                Set_ID_toCreateCard = bundle.getString("Set_ID_toCreateCard", null);
+            }
+            if (channel_type == null) {
+                channel_type = "all";
             }
 
             // Set_ID_toCreateCard=bundle.getString("set_id");
-            Set_ID_toCreateCard = bundle.getString("Set_ID_toCreateCard", null);
+
 
             setDlgListener(this);
             if (channel_type.equalsIgnoreCase("all")) {
@@ -195,7 +198,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         menu.clear();
-        if(Set_ID_toCreateCard==null) {
+        if (Set_ID_toCreateCard == null) {
             getActivity().invalidateOptionsMenu();
 //        getNotificationCount();
 
@@ -318,15 +321,14 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     }
 
     @Override
-    public void OnChannelItemClick(Fragment frag_args,Bundle bundle) {
-        if(Set_ID_toCreateCard!=null) {
+    public void OnChannelItemClick(Fragment frag_args, Bundle bundle) {
+        if (Set_ID_toCreateCard != null) {
             bundle.putString("Set_ID_toCreateCard", Set_ID_toCreateCard);
 
 
             frag_args.setArguments(bundle);
             ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Set_List, frag_args, true);
-        }
-        else {
+        } else {
             frag_args.setArguments(bundle);
             ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Set_List, frag_args, false);
         }

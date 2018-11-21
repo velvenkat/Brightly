@@ -503,12 +503,12 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
 
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
-
+                        dismissProgress();
                         if (message.equals("timeout")) {
-                            showLongToast(getActivity(), "Internet is slow, please try again.");
+                            showLongToast(getActivity(), "Internet is too slow.");
                             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                         }
-                        dismissProgress();
+
                     }
                 });
             } else {

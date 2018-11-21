@@ -625,6 +625,10 @@ public class CardDetailFragment extends BaseFragment {
                     public void onApiFailure(boolean isSuccess, String message) {
 
                         dismissProgress();
+                        if (message.equals("timeout")) {
+                            showLongToast(getActivity(), "Internet is too slow.");
+                     //       ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                        }
                     }
                 });
             } else {
