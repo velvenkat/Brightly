@@ -42,6 +42,38 @@ public class BaseActivity extends AppCompatActivity {
         return empty;
     }
 
+    public void showAlertDialog_ok(String message, String Title, String Pos_Title) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(BaseActivity.this);
+
+        // Setting Dialog Title
+        alertDialog.setTitle(Title);
+
+        // Setting Dialog Message
+        //alertDialog.setMessage("You are about to delete the Set. All the information contained in the Sets will be lost. ");
+        alertDialog.setMessage(message);
+        // Setting Icon to Dialog
+        alertDialog.setIcon(R.drawable.error);
+
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton(Pos_Title, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+                mListener.postive_btn_clicked();
+                //getDeleteSet();
+                // Write your code here to invoke YES event
+//                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Setting Negative "NO" Button
+
+
+        // Showing Alert Message
+        alertDialog.show();
+    }
+
+
     public void showAlertDialog(String message, String Title, String Pos_Title, String Neg_Title) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(BaseActivity.this);
 

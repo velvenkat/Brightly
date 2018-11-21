@@ -493,9 +493,11 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         if (!isVisibleToUser && UTubePlayer != null) {
             // Log.v (TAG, "Releasing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
             UTubePlayer.release();
-            if (getChildFragmentManager() != null) {
-                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                transaction.remove(youTubePlayerFragment).commit();
+            if(isAdded()) {
+                if (getChildFragmentManager() != null) {
+                    FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                    transaction.remove(youTubePlayerFragment).commit();
+                }
             }
             UTubePlayer = null;
             ((BrightlyNavigationActivity) getActivity()).uTubePlayer = null;

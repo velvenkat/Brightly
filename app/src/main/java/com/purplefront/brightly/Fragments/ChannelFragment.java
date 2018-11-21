@@ -86,7 +86,10 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
             setHasOptionsMenu(true);
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
             Bundle bundle = getArguments();
-            channel_type = bundle.getString("type");
+            channel_type = bundle.getString("type",null);
+            if(channel_type==null){
+                channel_type="all";
+            }
 
             // Set_ID_toCreateCard=bundle.getString("set_id");
             Set_ID_toCreateCard = bundle.getString("Set_ID_toCreateCard", null);

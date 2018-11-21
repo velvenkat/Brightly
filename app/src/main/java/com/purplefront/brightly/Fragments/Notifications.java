@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class Notifications extends BaseFragment implements NotificationsAdapter.
     NotificationsAdapter notificationsAdapter;
     TextView view_nodata;
     RecyclerView notifications_listview;
+    boolean isFirebaseNfy;
 
     /*Realm realm;
     RealmResults<RealmModel> realmModel;
@@ -65,6 +67,10 @@ public class Notifications extends BaseFragment implements NotificationsAdapter.
         view =  inflater.inflate(R.layout.fragment_notifications, container, false);
         user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
         fragmentManager = getActivity().getSupportFragmentManager();
+        if(getArguments()!=null) {
+            Bundle bundle = getArguments();
+            isFirebaseNfy = bundle.getBoolean("isFireBaseNfy", false);
+        }
         // Set title bar
         ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("Notifications");
 
@@ -77,6 +83,23 @@ public class Notifications extends BaseFragment implements NotificationsAdapter.
 
         initViews();
         getNotification();
+        //view.setFocusable(true);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        view.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                     if(!isFirebaseNfy)
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                     else {
+
+                         ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.CHANNELS, new ChannelFragment(), false);
+                     }
+                }
+                return true;
+            }
+        });
 
         return view;
     }

@@ -77,7 +77,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if(isReorder) {
+        if (isReorder) {
             MenuItem del_menu = menu.findItem(R.id.action_multi_sel);
 
             if (cardsListModels.size() == 0) {
@@ -95,7 +95,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_card_list, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
-        txtHintReorder=(TextView)rootView.findViewById(R.id.txtHintReorder);
+        txtHintReorder = (TextView) rootView.findViewById(R.id.txtHintReorder);
         // setContentView(R.layout.activity_card_list);
         /*Toolbar toolbar = (Toolbar)rootView. findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -131,7 +131,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             set_id = setsListModel.getSet_id();
         }
         //setTitle(set_name);
-        if(isReorder){
+        if (isReorder) {
             txtHintReorder.setVisibility(View.VISIBLE);
         }
         CurPagrPos = bundle.getInt("card_position");
@@ -224,7 +224,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             */
                 if (set_id_toCreateCard != null) {
                     ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
-                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(false);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
                 } else {
                     reset_view();
                     for (int i = 0; i < cardsListModels.size(); i++) {
@@ -364,7 +364,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).card_reorder_set(userId, cardId,setsListModel.getSet_id());
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).card_reorder_set(userId, cardId, setsListModel.getSet_id());
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -428,7 +428,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
                 if (CheckNetworkConnection.isOnline(getContext())) {
                     showProgress();
-                    Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_copy_card(user_obj.getUser_Id(), set_id_toCreateCard, CardIds);
+                    Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_copy_card(user_obj.getUser_Id(), set_id_toCreateCard, setsListModel.getSet_id(), CardIds);
                     callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                         @Override
                         public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -485,7 +485,8 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                             } else {
                                 card_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
-                                cardsListModels=new ArrayList<>();
+                                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                                cardsListModels = new ArrayList<>();
                             }
 
                             getActivity().invalidateOptionsMenu();

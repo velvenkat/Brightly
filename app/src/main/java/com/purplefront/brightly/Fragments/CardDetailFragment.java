@@ -123,6 +123,7 @@ public class CardDetailFragment extends BaseFragment {
             boolean isCardClicked = ((BrightlyNavigationActivity) getActivity()).isCardClicked;
             if (isCardClicked) {
                 int card_toPosition = ((BrightlyNavigationActivity) getActivity()).card_toPosition;
+                ((BrightlyNavigationActivity) getActivity()).isCardClicked=false;
                 viewPager_Cards.setCurrentItem(card_toPosition);
             }
             boolean isCardRefresh = ((BrightlyNavigationActivity) getActivity()).isCardRefresh;
@@ -156,7 +157,7 @@ public class CardDetailFragment extends BaseFragment {
     NotificationsModel notificationsModel;
     View rootView;
     RealmModel userObj;
-    String card_order_position;
+    String card_order_position=null;
 
 
     @Nullable
@@ -676,7 +677,7 @@ public class CardDetailFragment extends BaseFragment {
             @Override
             public void run() {
                 if (!isYouTubeInitializing) {
-                    if (isNotification && card_order_position != null) {
+                    if (isNotification && card_order_position != null ) {
                         viewPager_Cards.setCurrentItem(Integer.parseInt(card_order_position));
                         card_order_position = null;
                     }

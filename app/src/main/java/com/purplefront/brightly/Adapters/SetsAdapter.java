@@ -168,7 +168,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     bundle.putBoolean("isNotification", false);
                     bundle.putString("chl_name",chl_list_obj.getChannel_name());
                    // card_dtl_frag.setArguments(bundle);
-                    mListener.onCardShow(bundle);
+                    mListener.onCardShow(bundle,setsListModel.getTotal_card_count());
                     scrn_contxt.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
                 }
             }
@@ -201,6 +201,6 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
     public interface Set_sel_interface {
         public void onSelect(int position, SetsListModel modelObj);
-        public void onCardShow(Bundle bundle_args);
+        public void onCardShow(Bundle bundle_args,String card_count);
     }
 }

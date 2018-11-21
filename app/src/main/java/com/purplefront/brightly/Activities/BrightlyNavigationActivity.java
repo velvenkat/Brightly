@@ -79,7 +79,7 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 
 public class BrightlyNavigationActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,BaseActivity.alert_dlg_interface {
 
     private static final String SHOWCASE_ID = "1";
     public PermissionResultInterface permissionResultInterfaceObj;
@@ -134,6 +134,7 @@ public class BrightlyNavigationActivity extends BaseActivity
      */
     public boolean DisableBackBtn = true;  //Default should be true
     public boolean DontRun = false;
+    public boolean isRevoked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,8 +143,10 @@ public class BrightlyNavigationActivity extends BaseActivity
 
         isNotification = getIntent().getBooleanExtra("isNotification", false);
         isCardNotification = getIntent().getBooleanExtra("isCardNotification", false);
+        isRevoked=getIntent().getBooleanExtra("isRevoked",false);
 
         fragmentManager = getSupportFragmentManager();
+        setDlgListener(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.my_channel);
         setSupportActionBar(toolbar);
@@ -197,15 +200,21 @@ public class BrightlyNavigationActivity extends BaseActivity
 
 
         if (isNotification) {
+            NotificationsModel nfy_model = getIntent().getParcelableExtra("notfy_modl_obj");
             if (isCardNotification) {
-                NotificationsModel nfy_model = getIntent().getParcelableExtra("notfy_modl_obj");
+
                 Fragment card_frag = new CardDetailFragment();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("isNotification", true);
                 bundle.putParcelable("notfy_modl_obj", nfy_model);
                 card_frag.setArguments(bundle);
                 onFragmentCall(Util.view_card, card_frag, false);
-            } else {
+            }
+            else if(isRevoked){
+                //Only for back end Notifications
+                showAlertDialog_ok(nfy_model.getNotificationsSetDetail().getName()+" set permission has been revoked","Alert","Ok");
+            }
+            else {
                 Fragment nfy_frag = new Notifications();
             /*fragmentManager
                     .beginTransaction()
@@ -213,6 +222,9 @@ public class BrightlyNavigationActivity extends BaseActivity
                     .replace(R.id.frag_container, new Notifications(),
                             Util.NOTIFICATIONS).commit();
 */
+                 Bundle bundle=new Bundle();
+                 bundle.putBoolean("isFireBaseNfy",true);
+                 nfy_frag.setArguments(bundle);
                 onFragmentCall(Util.NOTIFICATIONS, nfy_frag, false);
             }
             // setActionBarTitle("Notification");
@@ -853,6 +865,16 @@ public class BrightlyNavigationActivity extends BaseActivity
                     .replace(R.id.frag_container, call_fragment,
                             tag).commit();
         }
+    }
+
+    @Override
+    public void postive_btn_clicked() {
+
+    }
+
+    @Override
+    public void negative_btn_clicked() {
+
     }
 
 

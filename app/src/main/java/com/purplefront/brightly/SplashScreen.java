@@ -34,6 +34,7 @@ public class SplashScreen extends AppCompatActivity {
     boolean isNotification=false;
     boolean isCardNotification=false;
     NotificationsModel nfy_obj;
+    boolean isRevoked;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +46,7 @@ public class SplashScreen extends AppCompatActivity {
 
         if(getIntent()!=null){
             isNotification=getIntent().getBooleanExtra("isNotification",false);
+            isRevoked=getIntent().getBooleanExtra("isRevoked",false);
 
         }
         if(isNotification){
@@ -76,6 +78,7 @@ public class SplashScreen extends AppCompatActivity {
                     intent.putExtra("user_obj",model);
                     if(isNotification){
                         intent.putExtra("isNotification",true);
+                        intent.putExtra("isRevoked",isRevoked);
                         intent.putExtra("notfy_modl_obj",nfy_obj);
                         if(isCardNotification){
                          intent.putExtra("isCardNotification",true);

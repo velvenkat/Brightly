@@ -659,13 +659,19 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     }
 
     @Override
-    public void onCardShow(Bundle bundle_args) {
+    public void onCardShow(Bundle bundle_args,String cardCount) {
         Fragment fragment;
         if (set_id_toCreateCard != null) {
-            fragment = new CardList();
-            bundle_args.putString("set_id_toCreateCard", set_id_toCreateCard);
-            fragment.setArguments(bundle_args);
-            ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, fragment, true);
+            int card_count=Integer.parseInt(cardCount);
+            if(card_count>0) {
+                fragment = new CardList();
+                bundle_args.putString("set_id_toCreateCard", set_id_toCreateCard);
+                fragment.setArguments(bundle_args);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, fragment, true);
+            }
+            else{
+                showLongToast(getActivity(),"Card is not available");
+            }
         } else {
             fragment = new CardDetailFragment();
             fragment.setArguments(bundle_args);

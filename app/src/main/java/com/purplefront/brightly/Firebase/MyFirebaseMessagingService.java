@@ -37,17 +37,13 @@ import java.util.List;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
-
     private static final String TAG = "MyFirebaseMsgService";
     public static final String NOTIFICATION_CHANNEL_ID = "10001";
 
-  //  String message_body = "", message_title = "", control_unit_sim_number = "" , base_unit_id = "";
+    //  String message_body = "", message_title = "", control_unit_sim_number = "" , base_unit_id = "";
 
     public static MediaPlayer media_player_object;
     Intent intent;
-
-
-
 
 
     @Override
@@ -71,13 +67,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationsModel gsonObj = gson.fromJson(extraStr, NotificationsModel.class);*/
 
-        String content=remoteMessage.getData().get("data");
+        String content = remoteMessage.getData().get("data");
         Gson gson = new Gson();
 
         NotificationsModel gsonObj = gson.fromJson(content, NotificationsModel.class);
 
         String count = gsonObj.getBadge();
-        if(count != null) {
+        if (count != null) {
             SharedPreferences.Editor editor = getSharedPreferences("Noti_Cnt", MODE_PRIVATE).edit();
             editor.putString("count", count);
             editor.apply();
@@ -89,29 +85,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             Log.d("RIDACKDFD", "RIDACKDFD");
 
-            if((gsonObj.getType().equals("set")) && gsonObj.getAction().equals("deleted")) {
+            if ((gsonObj.getType().equals("set")) && gsonObj.getAction().equals("deleted")) {
 
                 intent = new Intent(this, BrightlyNavigationActivity.class);
 
 //                Toast.makeText(this, "This Set is Deleted...", Toast.LENGTH_SHORT).show();
 
-            }
-            else if((gsonObj.getType().equals("card")) && gsonObj.getAction().equals("deleted")) {
+            } else if ((gsonObj.getType().equals("card")) && gsonObj.getAction().equals("deleted")) {
 
                 intent = new Intent(this, BrightlyNavigationActivity.class);
 //                Toast.makeText(this, "This Card is Deleted...", Toast.LENGTH_SHORT).show();
 
-            }
-            else if(gsonObj.getAction().equals("revoked"))
-            {
+            } else if (gsonObj.getAction().equals("revoked")) {
                 intent = new Intent(this, BrightlyNavigationActivity.class);
 //                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
-            }
-
-            else
-            {
-                 intent = new Intent(this, BrightlyNavigationActivity.class);
-                intent.putExtra("isCardNotification",true);
+            } else {
+                intent = new Intent(this, BrightlyNavigationActivity.class);
+                intent.putExtra("isCardNotification", true);
 
             }
 
@@ -119,8 +109,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             intent.putExtra("control_unit_sim_number", remoteMessage.getData().get("tag"));
             intent.putExtra("base_unit_id", remoteMessage.getData().get("unit_id"));
             intent.putExtra("title_name", remoteMessage.getData().get("title"));*/
-           intent.putExtra("isNotification",true);
-          intent.putExtra("notfy_modl_obj",gsonObj);
+            intent.putExtra("isNotification", true);
+            intent.putExtra("notfy_modl_obj", gsonObj);
 
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -141,8 +131,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
-            {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 int importance = NotificationManager.IMPORTANCE_HIGH;
                 NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
                 notificationChannel.enableLights(true);
@@ -169,28 +158,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         } else {
 
             Log.d("DAFARE", "DAFARE");
-            if((gsonObj.getType().equals("set")) && gsonObj.getAction().equals("deleted")) {
+            if ((gsonObj.getType().equals("set")) && gsonObj.getAction().equals("deleted")) {
 
                 intent = new Intent(this, SplashScreen.class);
 //                Toast.makeText(this, "This Set is Deleted...", Toast.LENGTH_SHORT).show();
 
-            }
-            else if((gsonObj.getType().equals("card")) && gsonObj.getAction().equals("deleted")) {
+            } else if ((gsonObj.getType().equals("card")) && gsonObj.getAction().equals("deleted")) {
 
                 intent = new Intent(this, SplashScreen.class);
 //                Toast.makeText(this, "This Card is Deleted...", Toast.LENGTH_SHORT).show();
 
-            }
-            else if(gsonObj.getAction().equals("revoked"))
-            {
+            } else if (gsonObj.getAction().equals("revoked")) {
                 intent = new Intent(this, SplashScreen.class);
+                intent.putExtra("isRevoked", true);
 //                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
-            }
-
-            else
-            {
+            } else {
                 intent = new Intent(this, SplashScreen.class);
-                intent.putExtra("isCardNotification",true);
+                intent.putExtra("isCardNotification", true);
 
             }
 
@@ -198,8 +182,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             intent.putExtra("control_unit_sim_number", remoteMessage.getData().get("tag"));
             intent.putExtra("base_unit_id", remoteMessage.getData().get("unit_id"));
             intent.putExtra("title_name", remoteMessage.getData().get("title"));*/
-            intent.putExtra("isNotification",true);
-           intent.putExtra("notfy_modl_obj",gsonObj);
+            intent.putExtra("isNotification", true);
+            intent.putExtra("notfy_modl_obj", gsonObj);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
@@ -218,8 +202,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
-            {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 int importance = NotificationManager.IMPORTANCE_HIGH;
                 NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
                 notificationChannel.enableLights(true);
@@ -323,38 +306,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }*/
 
 
-
     // Check the application running in Background
 
 
-    public static boolean onAppRunningonBackground(Context pContext)
-    {
-        boolean lIsAppIsBackground=true;
-        ActivityManager lActivityManager=(ActivityManager)pContext.getSystemService(Context.ACTIVITY_SERVICE);
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH)
-        {
-            List<ActivityManager.RunningAppProcessInfo> lRunningAppProcess=lActivityManager.getRunningAppProcesses();
-            for(ActivityManager.RunningAppProcessInfo runnAppProcess : lRunningAppProcess)
-            {
-                if(runnAppProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND)
-                {
-                    for(String lPackgeFromAppsList : runnAppProcess.pkgList)
-                    {
-                        if(lPackgeFromAppsList.equals(pContext.getPackageName()))
-                        {
-                            lIsAppIsBackground=false;
+    public static boolean onAppRunningonBackground(Context pContext) {
+        boolean lIsAppIsBackground = true;
+        ActivityManager lActivityManager = (ActivityManager) pContext.getSystemService(Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            List<ActivityManager.RunningAppProcessInfo> lRunningAppProcess = lActivityManager.getRunningAppProcesses();
+            for (ActivityManager.RunningAppProcessInfo runnAppProcess : lRunningAppProcess) {
+                if (runnAppProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    for (String lPackgeFromAppsList : runnAppProcess.pkgList) {
+                        if (lPackgeFromAppsList.equals(pContext.getPackageName())) {
+                            lIsAppIsBackground = false;
                         }
                     }
                 }
             }
-        }
-        else
-        {
-            List<ActivityManager.RunningTaskInfo> lRunningTaskInfo=lActivityManager.getRunningTasks(1);
-            ComponentName lComponentName=lRunningTaskInfo.get(0).topActivity;
-            if(lComponentName.getPackageName().equals(pContext.getPackageName()))
-            {
-                lIsAppIsBackground=false;
+        } else {
+            List<ActivityManager.RunningTaskInfo> lRunningTaskInfo = lActivityManager.getRunningTasks(1);
+            ComponentName lComponentName = lRunningTaskInfo.get(0).topActivity;
+            if (lComponentName.getPackageName().equals(pContext.getPackageName())) {
+                lIsAppIsBackground = false;
             }
         }
         return lIsAppIsBackground;

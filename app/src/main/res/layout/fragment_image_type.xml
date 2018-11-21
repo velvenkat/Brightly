@@ -42,7 +42,7 @@
             android:background="@drawable/edit_text_background"
             android:gravity="center_vertical"
             android:hint="@string/card_name"
-            android:maxLength="25"
+            android:maxLength="40"
             android:padding="@dimen/dimen_4"
             android:layout_below="@+id/image_cardImage"
             android:textColor="@color/black"
