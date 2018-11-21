@@ -24,6 +24,8 @@ import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.Util;
 
+import java.net.URL;
+
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -127,14 +129,39 @@ public class FileType extends BaseFragment {
         return frag_rootView;
     }
 
+    public static boolean isValid(String url)
+    {
+        /* Try creating a valid URL */
+        try {
+            new URL(url).toURI();
+            return true;
+        }
+
+        // If there was an Exception
+        // while creating URL object
+        catch (Exception e) {
+            return false;
+        }
+    }
+
     // Check Validation Method
     private void checkValidation() {
 
         // Get all edittext texts
         card_name = create_cardName.getText().toString();
         card_description = create_cardDescription.getText().toString();
-        image_name= create_cardURL.getText().toString();
 
+        String str = create_cardURL.getText().toString();
+        String[] arrOfStr = str.split("http");
+        if(arrOfStr.length == 1)
+        {
+            image_name = arrOfStr[0];
+            image_name = "http://" + image_name;
+        }
+        else if(arrOfStr.length == 2) {
+            image_name = arrOfStr[1];
+            image_name = "http" + image_name;
+        }
         // Check if all strings are null or not
         if (card_name.equals("") || card_name.length() == 0
                 || card_description.equals("") || card_description.length() == 0) {
@@ -148,7 +175,7 @@ public class FileType extends BaseFragment {
                     "File link is required.");
         }
 
-        else if(!Patterns.WEB_URL.matcher(image_name).matches())
+        else if(!isValid(image_name))
         {
             new CustomToast().Show_Toast(getActivity(), create_cardURL,
                     "File link is Invalid.");
