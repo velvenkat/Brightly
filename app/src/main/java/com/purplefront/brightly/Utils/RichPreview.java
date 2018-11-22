@@ -1,5 +1,7 @@
 package com.purplefront.brightly.Utils;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.webkit.URLUtil;
 
@@ -34,6 +36,10 @@ public class RichPreview {
 
     private class getData extends AsyncTask<Void , Void , Void> {
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
         @Override
         protected Void doInBackground(Void... params) {

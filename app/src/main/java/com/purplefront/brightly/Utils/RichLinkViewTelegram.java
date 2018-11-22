@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Utils;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.purplefront.brightly.R;
+
+import dmax.dialog.SpotsDialog;
 
 /**
  * Created by ponna on 16-01-2018.

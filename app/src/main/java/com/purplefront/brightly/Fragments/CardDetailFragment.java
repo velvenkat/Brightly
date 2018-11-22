@@ -143,11 +143,11 @@ public class CardDetailFragment extends BaseFragment {
                 //getCardsLists();
             }
             if (isNotification) {
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(notificationsModel.getChannel_name());
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(notificationsModel.getNotificationsSetDetail().getName());
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(notificationsModel.getNotificationsSetDetail().getName());
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(notificationsModel.getChannel_name());
             } else {
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(channel_name);
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(setsListModel.getSet_name());
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(setsListModel.getSet_name());
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(channel_name);
 
             }
         }
@@ -224,8 +224,8 @@ public class CardDetailFragment extends BaseFragment {
         }
 
         //setTitle(set_name);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(channel_name);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(set_name);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(channel_name);
         pager_count = (TextView) rootView.findViewById(R.id.pager_count);
         view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
 

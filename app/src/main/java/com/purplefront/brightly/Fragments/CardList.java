@@ -136,8 +136,8 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             txtHintReorder.setVisibility(View.VISIBLE);
         }
         CurPagrPos = bundle.getInt("card_position");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(chl_name);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(set_name);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(chl_name);
         view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
         card_listview = (RecyclerView) rootView.findViewById(R.id.card_listview);
         del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
