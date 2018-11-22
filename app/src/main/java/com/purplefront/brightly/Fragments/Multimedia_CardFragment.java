@@ -259,19 +259,24 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 if (!this.isVisible()) {
                     file_progress.hide();
                 }
+                isFileLoaded=false;
                 richLinkView1.setLink(file_cardLink.getText().toString(), new ViewListener() {
                     @Override
                     public void onSuccess(boolean status) {
                         // Toast.makeText(getContext(),"file loaded success",Toast.LENGTH_LONG).show();
                         Log.e("file_log", "FileLoaded");
                         isFileLoaded = true;
+
                         file_progress.dismiss();
+                        file_progress=null;
                     }
 
                     @Override
                     public void onError(Exception e) {
                         isFileLoaded = true;
+
                         file_progress.dismiss();
+                        file_progress=null;
                     }
                 });
 
