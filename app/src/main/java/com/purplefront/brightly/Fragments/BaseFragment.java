@@ -329,7 +329,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     /**
      * show progress dialog while api calls
      */
-    public void showProgress() {
+    public ProgressDialog showProgress() {
         try {
             mProgress = new ProgressDialog(getActivity());
             mProgress.setMessage("Please wait...");
@@ -339,6 +339,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return mProgress;
     }
 
     /**

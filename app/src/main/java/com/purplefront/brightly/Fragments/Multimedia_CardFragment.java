@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -61,6 +62,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     TextView txt_PlayProgTime;
     TextView file_cardLink;
     RealmModel userObj;
+    boolean isFileLoaded = false;
     // String setCreatedBy,channel_name;
     CardDetailFragment parent_frag_Card_dtl;
     boolean isUTubePlayFullScreen = false;
@@ -69,6 +71,8 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     ChannelListModel chl_list_obj;
     boolean isNotification;
     String card_pos;
+    ProgressDialog file_progress = null;
+
 
     @Nullable
     @Override
@@ -236,7 +240,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             image_cardImage.getLayoutParams().height = 360;
 
             audio_player_initialize(audio_seek_bar, txt_PlayProgTime, img_audio_play_stop);
-            MediaPlayer mp=setMediaPlayer(null, cardModelObj.getUrl());
+            MediaPlayer mp = setMediaPlayer(null, cardModelObj.getUrl());
             parent_frag_Card_dtl.setGlob_mediaPlayerObj(mp);
         } else if (cardModelObj.getType().equalsIgnoreCase("file")) {
 
@@ -251,15 +255,23 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 file_cardLink.setVisibility(View.GONE);
                 richLinkView1.setVisibility(View.VISIBLE);
 
-                richLinkView1.setLink(file_cardLink.getText().toString() ,new ViewListener() {
+                file_progress = showProgress();
+                if (!this.isVisible()) {
+                    file_progress.hide();
+                }
+                richLinkView1.setLink(file_cardLink.getText().toString(), new ViewListener() {
                     @Override
                     public void onSuccess(boolean status) {
-
+                        // Toast.makeText(getContext(),"file loaded success",Toast.LENGTH_LONG).show();
+                        Log.e("file_log", "FileLoaded");
+                        isFileLoaded = true;
+                        file_progress.dismiss();
                     }
 
                     @Override
                     public void onError(Exception e) {
-
+                        isFileLoaded = true;
+                        file_progress.dismiss();
                     }
                 });
 
@@ -487,19 +499,28 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
 
         }
-        if(isVisibleToUser && mediaPlayer!=null){
+        if (isVisibleToUser && file_progress != null) {
+            if (isFileLoaded) {
+                file_progress.dismiss();
+                isFileLoaded = false;
+                file_progress = null;
+            } else
+                file_progress.show();
+        }
+        if (isVisibleToUser && mediaPlayer != null) {
             parent_frag_Card_dtl.setGlob_mediaPlayerObj(mediaPlayer);
         }
         if (!isVisibleToUser && UTubePlayer != null) {
             // Log.v (TAG, "Releasing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
             UTubePlayer.release();
-            if(isAdded()) {
+            if (isAdded()) {
                 if (getChildFragmentManager() != null) {
                     FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                     transaction.remove(youTubePlayerFragment).commit();
                 }
             }
             UTubePlayer = null;
+            if(getActivity()!=null)
             ((BrightlyNavigationActivity) getActivity()).uTubePlayer = null;
         }
         if (!isVisibleToUser && mediaPlayer != null) {
