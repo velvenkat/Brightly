@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.purplefront.brightly.API.ApiCallback;
+import com.purplefront.brightly.API.RestApiMethods;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
@@ -57,6 +58,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -546,11 +551,10 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
 
     private void getAddCards() {
 
-        try {
 
-            if (CheckNetworkConnection.isOnline(getActivity())) {
-                showProgress();
-                Call<AddMessageResponse> callRegisterUser;
+        if (CheckNetworkConnection.isOnline(getActivity())) {
+            showProgress();
+                /*Call<AddMessageResponse> callRegisterUser;
                 if (isCreateScreen)
                     callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList("audio", userId, set_id, card_name, card_description, encoded_string, image_name);
                 else
@@ -558,43 +562,70 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
                     callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("audio", userId, set_id, setEntryModel.getCard_id(), card_name, card_description, encoded_string, image_name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
-                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
-                        AddMessageResponse addMessageResponse = response.body();
-                        if (isSuccess) {
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {*/
+            if (isCreateScreen) {
+                RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
+                CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+                mCompositeDisposable.add(requestInterface.getAddCardsList("audio", userId, set_id, card_name, card_description, encoded_string, image_name)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribeWith(new DisposableObserver<AddMessageResponse>() {
+                            @Override
+                            public void onNext(AddMessageResponse genResModel) {
 
-                            if (addMessageResponse != null) {
                                 dismissProgress();
-                                setAddSetCredentials(addMessageResponse);
+
+                                if (genResModel != null) {
+
+                                    setAddSetCredentials(genResModel);
 
 
-                            } else {
-                                dismissProgress();
-
+                                }
                             }
 
-                        } else {
+                            @Override
+                            public void onError(Throwable e) {
+                                dismissProgress();
+                                Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
 
-                            dismissProgress();
-                        }
-                    }
-
-                    @Override
-                    public void onApiFailure(boolean isSuccess, String message) {
-
-                        if (message.equals("timeout")) {
-                            showLongToast(getActivity(), "Internet is slow, please try again.");
-                        }
-                        dismissProgress();
-                    }
-                });
+                            @Override
+                            public void onComplete() {
+                                dismissProgress();
+                            }
+                        }));
             } else {
+                RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
+                CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+                mCompositeDisposable.add(requestInterface.getUpdateCardsList("audio", userId, set_id, setEntryModel.getCard_id(), card_name, card_description, encoded_string, image_name)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribeWith(new DisposableObserver<AddMessageResponse>() {
+                            @Override
+                            public void onNext(AddMessageResponse genResModel) {
 
-                dismissProgress();
+                                dismissProgress();
+
+                                if (genResModel != null) {
+
+                                    setAddSetCredentials(genResModel);
+
+
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                dismissProgress();
+                                Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                dismissProgress();
+                            }
+                        }));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            dismissProgress();
         }
     }
 

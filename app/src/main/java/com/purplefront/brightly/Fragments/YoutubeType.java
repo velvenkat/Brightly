@@ -170,9 +170,9 @@ public class YoutubeType extends BaseFragment {
                 showProgress();
                 Call<AddMessageResponse> callRegisterUser;
                 if (isCreateCard)
-                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList("video", userId, set_id, card_name, card_description, "", image_name);
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList_call("video", userId, set_id, card_name, card_description, "", image_name);
                 else
-                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("video", userId, set_id, setEntryModel.getCard_id(), card_name, card_description, "", image_name);
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList_call("video", userId, set_id, setEntryModel.getCard_id(), card_name, card_description, "", image_name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {

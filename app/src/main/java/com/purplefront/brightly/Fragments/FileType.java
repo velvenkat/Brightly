@@ -178,9 +178,9 @@ public class FileType extends BaseFragment {
                 showProgress();
                 Call<AddMessageResponse> callRegisterUser;
                 if(isCreateCard)
-                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList("file", userId, set_id, card_name, card_description, "", image_name );
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList_call("file", userId, set_id, card_name, card_description, "", image_name );
                 else
-                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList("file", userId, set_id, setEntryModelObj.getCard_id(),card_name, card_description, "", image_name );
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList_call("file", userId, set_id, setEntryModelObj.getCard_id(),card_name, card_description, "", image_name );
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {

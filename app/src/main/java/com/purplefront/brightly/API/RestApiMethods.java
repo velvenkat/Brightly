@@ -15,6 +15,7 @@ import com.purplefront.brightly.Modules.SignUpResponse;
 import com.purplefront.brightly.Modules.UpdateChannelResponse;
 
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -33,7 +34,7 @@ public interface RestApiMethods {
     //MyProfile
     @POST("users/profile_edit.php")
     @FormUrlEncoded
-    Call<EditProfileResponse> getEditProfile(@Query("user_id") String user_id, @Query("name") String name, @Query("email") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Field("image") String image, @Query("image_name") String image_name);
+    Observable<EditProfileResponse> getEditProfile(@Query("user_id") String user_id, @Query("name") String name, @Query("email") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Field("image") String image, @Query("image_name") String image_name);
 
 
     //Register or SignUp
@@ -64,12 +65,12 @@ public interface RestApiMethods {
     //Add Channels
     @POST("channels/add_channel.php")
     @FormUrlEncoded
-    Call<AddChannelResponse> getAddChannels(@Query("user_id") String user_id, @Query("channel_name") String channel_name, @Query("channel_description") String channel_description, @Field("encoded_string") String encoded_string, @Query("image_name") String image_name);
+    Observable<AddChannelResponse> getAddChannels(@Query("user_id") String user_id, @Query("channel_name") String channel_name, @Query("channel_description") String channel_description, @Field("encoded_string") String encoded_string, @Query("image_name") String image_name);
 
     //Add Channels
     @POST("channels/update_channel.php")
     @FormUrlEncoded
-    Call<UpdateChannelResponse> getUpdateChannels(@Query("user_id") String user_id, @Query("channel_name") String channel_name, @Query("channel_description") String channel_description, @Field("encoded_string") String encoded_string, @Query("image_name") String image_name, @Query("channel_id") String channel_id);
+    Observable<UpdateChannelResponse> getUpdateChannels(@Query("user_id") String user_id, @Query("channel_name") String channel_name, @Query("channel_description") String channel_description, @Field("encoded_string") String encoded_string, @Query("image_name") String image_name, @Query("channel_id") String channel_id);
 
 
     //Add Channels
@@ -113,7 +114,11 @@ public interface RestApiMethods {
     //SetList
     @POST("cards/add_card.php")
     @FormUrlEncoded
-    Call<AddMessageResponse> getAddCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
+    Observable<AddMessageResponse> getAddCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
+
+    @POST("cards/add_card.php")
+    @FormUrlEncoded
+    Call<AddMessageResponse> getAddCardsList_call(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
 
 
     //Set_Reorder
@@ -124,8 +129,12 @@ public interface RestApiMethods {
     //Update Card
     @POST("cards/update_card.php")
     @FormUrlEncoded
-    Call<AddMessageResponse> getUpdateCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("card_id") String card_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
+    Observable<AddMessageResponse> getUpdateCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("card_id") String card_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
 
+    //Update Card
+    @POST("cards/update_card.php")
+    @FormUrlEncoded
+    Call<AddMessageResponse> getUpdateCardsList_call(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("card_id") String card_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
 
     //Delete Card
     @POST("cards/delete_card.php")

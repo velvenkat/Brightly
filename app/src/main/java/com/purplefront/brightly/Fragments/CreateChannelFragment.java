@@ -2,6 +2,7 @@ package com.purplefront.brightly.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.purplefront.brightly.API.ApiCallback;
+import com.purplefront.brightly.API.RestApiMethods;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
@@ -44,6 +46,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import dmax.dialog.SpotsDialog;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -52,8 +59,6 @@ import static android.app.Activity.RESULT_OK;
 public class CreateChannelFragment extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface {
     View rootView;
     RealmModel user_obj;
-
-
 
 
     // ImageView imageView_channelImage;
@@ -72,12 +77,11 @@ public class CreateChannelFragment extends BaseFragment implements BrightlyNavig
     String image_name = "";
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.lo_frag_crt_chnl, container, false);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
 
         //  setContentView(R.layout.lo_frag_crt_chnl);
 
@@ -86,18 +90,18 @@ public class CreateChannelFragment extends BaseFragment implements BrightlyNavig
         create_channelName = (EditText) rootView.findViewById(R.id.create_channelName);
         create_channelDescription = (EditText) rootView.findViewById(R.id.create_channelDescription);
         btn_createChannel = (Button) rootView.findViewById(R.id.btn_createChannel);
-        ((BrightlyNavigationActivity)getActivity()).permissionResultInterfaceObj=this;
+        ((BrightlyNavigationActivity) getActivity()).permissionResultInterfaceObj = this;
 
 //        actionBarUtilObj.setViewInvisible();
 //        actionBarUtilObj.getTitle().setVisibility(View.VISIBLE);
 //        actionBarUtilObj.setTitle("Create Channel");
-       // ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         clear_edit_text_focus(create_channelName);
         clear_edit_text_focus(create_channelDescription);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Create Category");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Create Category");
         Glide.with(CreateChannelFragment.this)
                 .load(R.drawable.no_image_available)
                 .centerCrop()
@@ -134,12 +138,12 @@ public class CreateChannelFragment extends BaseFragment implements BrightlyNavig
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
-           //         getActivity().finish();
+                    //         getActivity().finish();
            /*         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     ((BrightlyNavigationActivity)getActivity()).toggle.setDrawerIndicatorEnabled(true);
                     ((BrightlyNavigationActivity)getActivity()).drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                     ((AppCompatActivity)getActivity()).getSupportFragmentManager().popBackStackImmediate();*/
-                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                     return true;
                 }
                 return false;
@@ -280,48 +284,51 @@ public class CreateChannelFragment extends BaseFragment implements BrightlyNavig
 
 
     public void getAddChannels() {
-        try {
+        // final AlertDialog dialog = new SpotsDialog(getContext());
 
-            if (CheckNetworkConnection.isOnline(getContext())) {
-                showProgress();
-                Call<AddChannelResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getAddChannels(user_obj.getUser_Id(), channel_name, channel_description, encoded_string, image_name);
+        if (CheckNetworkConnection.isOnline(getContext())) {
+            showProgress();
+
+               /* dialog.setCancelable(false);
+                dialog.show();*/
+              /*  Call<AddChannelResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getAddChannels(user_obj.getUser_Id(), channel_name, channel_description, encoded_string, image_name);
                 callRegisterUser.enqueue(new ApiCallback<AddChannelResponse>(getActivity()) {
                     @Override
-                    public void onApiResponse(Response<AddChannelResponse> response, boolean isSuccess, String message) {
-                        AddChannelResponse addChannelResponse = response.body();
-                        if (isSuccess) {
+                    public void onApiResponse(Response<AddChannelResponse> response, boolean isSuccess, String message) {*/
+            RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
+            CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+            mCompositeDisposable.add(requestInterface.getAddChannels(user_obj.getUser_Id(), channel_name, channel_description, encoded_string, image_name)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribeWith(new DisposableObserver<AddChannelResponse>() {
+                        @Override
+                        public void onNext(AddChannelResponse genResModel) {
+                            // dialog.dismiss();
+                            dismissProgress();
+                            //AddChannelResponse addChannelResponse = genResModel.body();
 
-                            if (addChannelResponse != null) {
 
-                                setAddChannelCredentials(addChannelResponse);
-                                dismissProgress();
+                            setAddChannelCredentials(genResModel);
+                            // dismissProgress();
 
-                            } else {
-                                dismissProgress();
+                        }
 
-                            }
+                        @Override
+                        public void onError(Throwable e) {
+                            //dialog.dismiss();
+                            dismissProgress();
+                            Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
 
-                        } else {
-
+                        @Override
+                        public void onComplete() {
+                            //dialog.dismiss();
                             dismissProgress();
                         }
-                    }
-
-                    @Override
-                    public void onApiFailure(boolean isSuccess, String message) {
-
-                        dismissProgress();
-                    }
-                });
-            } else {
-
-                dismissProgress();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            dismissProgress();
+                    }));
         }
+
+
     }
 
 
@@ -337,8 +344,8 @@ public class CreateChannelFragment extends BaseFragment implements BrightlyNavig
             ((BrightlyNavigationActivity)getActivity()).toggle.setDrawerIndicatorEnabled(true);
             ((BrightlyNavigationActivity)getActivity()).drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             ((AppCompatActivity)getActivity()).getSupportFragmentManager().popBackStackImmediate();*/
-            showShortToast(getActivity(), "Category "+channel_name+" has been Created");
-            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+            showShortToast(getActivity(), "Category " + channel_name + " has been Created");
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
             //fragmentCallInterfaceObj.onFragmentCall(Util.CHANNELS, new ChannelFragment(),false);
         } else {
             showLongToast(getActivity(), message);

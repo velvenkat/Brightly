@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.purplefront.brightly.API.ApiCallback;
+import com.purplefront.brightly.API.RestApiMethods;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 
@@ -38,6 +39,7 @@ import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.SetEntryModel;
+import com.purplefront.brightly.Modules.UpdateChannelResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
@@ -51,6 +53,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -470,56 +476,83 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
 
     private void getAddCards() {
 
-        try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser;
+                /*Call<AddMessageResponse> callRegisterUser;
                 if (isCreateCard) {
                     callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList(type, userId, set_id, card_name, card_description, encoded_string, image_name);
                 } else
                     callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList(type, userId, set_id, setEntryModelObj.getCard_id(), card_name, card_description, encoded_string, image_name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
-                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
-                        AddMessageResponse addMessageResponse = response.body();
-                        if (isSuccess) {
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {*/
+                if (isCreateCard) {
+                    RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
+                    CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+                    mCompositeDisposable.add(requestInterface.getAddCardsList(type, userId, set_id, card_name, card_description, encoded_string, image_name)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.io())
+                            .subscribeWith(new DisposableObserver<AddMessageResponse>() {
+                                @Override
+                                public void onNext(AddMessageResponse genResModel) {
 
-                            if (addMessageResponse != null) {
-                                dismissProgress();
-                                setAddSetCredentials(addMessageResponse);
+                                    dismissProgress();
+
+                                    if (genResModel != null) {
+
+                                        setAddSetCredentials(genResModel);
 
 
-                            } else {
-                                dismissProgress();
+                                    }
+                                }
 
-                            }
+                                @Override
+                                public void onError(Throwable e) {
+                                    dismissProgress();
+                                    Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
 
-                        } else {
+                                @Override
+                                public void onComplete() {
+                                    dismissProgress();
+                                }
+                            }));
+                }
+                else{
+                    RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
+                    CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+                    mCompositeDisposable.add(requestInterface.getUpdateCardsList(type, userId, set_id, setEntryModelObj.getCard_id(), card_name, card_description, encoded_string, image_name)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.io())
+                            .subscribeWith(new DisposableObserver<AddMessageResponse>() {
+                                @Override
+                                public void onNext(AddMessageResponse genResModel) {
 
-                            dismissProgress();
-                        }
-                    }
+                                    dismissProgress();
 
-                    @Override
-                    public void onApiFailure(boolean isSuccess, String message) {
-                        dismissProgress();
-                        if (message.equals("timeout")) {
-                            showLongToast(getActivity(), "Internet is too slow.");
-                            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
-                        }
+                                    if (genResModel != null) {
 
-                    }
-                });
-            } else {
+                                        setAddSetCredentials(genResModel);
 
-                dismissProgress();
+
+                                    }
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    dismissProgress();
+                                    Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onComplete() {
+                                    dismissProgress();
+                                }
+                            }));
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
 
-            dismissProgress();
-        }
     }
 
     @Override

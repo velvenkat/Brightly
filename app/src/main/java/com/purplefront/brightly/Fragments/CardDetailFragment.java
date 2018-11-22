@@ -66,7 +66,7 @@ public class CardDetailFragment extends BaseFragment {
 
     ViewPager viewPager_Cards;
     ViewCardFragmentPagerAdapter cardsPagerAdapter;
-    public  ArrayList<CardsListModel> cardsListModels = new ArrayList<>();
+    public ArrayList<CardsListModel> cardsListModels = new ArrayList<>();
     public static final String CMDPAUSE = "pause";
 
     public void setGlob_mediaPlayerObj(MediaPlayer mp_obj) {
@@ -123,15 +123,24 @@ public class CardDetailFragment extends BaseFragment {
             boolean isCardClicked = ((BrightlyNavigationActivity) getActivity()).isCardClicked;
             if (isCardClicked) {
                 int card_toPosition = ((BrightlyNavigationActivity) getActivity()).card_toPosition;
-                ((BrightlyNavigationActivity) getActivity()).isCardClicked=false;
+                ((BrightlyNavigationActivity) getActivity()).isCardClicked = false;
                 viewPager_Cards.setCurrentItem(card_toPosition);
             }
             boolean isCardRefresh = ((BrightlyNavigationActivity) getActivity()).isCardRefresh;
             if (isCardRefresh) {
-                cardsListModels=new ArrayList<>();
-                 ((BrightlyNavigationActivity) getActivity()).isCardRefresh = false;
-
-                getCardsLists();
+                //  cardsListModels=new ArrayList<>();
+                ((BrightlyNavigationActivity) getActivity()).isCardRefresh = false;
+                if (cardsListModels.size() == 0) {
+                    viewPager_Cards.setVisibility(View.GONE);
+                    pager_count.setVisibility(View.GONE);
+                    view_nodata.setVisibility(View.VISIBLE);
+                } else {
+                    setAdapter(cardsListModels);
+                    pager_size = String.valueOf(cardsListModels.size());
+                    count = String.valueOf(Card_CurrentPos + 1);
+                    pager_count.setText(count + "/" + pager_size);
+                }
+                //getCardsLists();
             }
             if (isNotification) {
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(notificationsModel.getChannel_name());
@@ -158,7 +167,7 @@ public class CardDetailFragment extends BaseFragment {
     NotificationsModel notificationsModel;
     View rootView;
     RealmModel userObj;
-    String card_order_position=null;
+    String card_order_position = null;
 
 
     @Nullable
@@ -235,15 +244,19 @@ public class CardDetailFragment extends BaseFragment {
         viewPager_Cards.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                pager_size = String.valueOf(cardsListModels.size());
+              /*  pager_size = String.valueOf(cardsListModels.size());
                 count = String.valueOf(position + 1);
-                pager_count.setText(count + "/" + pager_size);
+                pager_count.setText(count + "/" + pager_size);*/
 
             }
 
             @Override
             public void onPageSelected(int position) {
+
                 Card_CurrentPos = position;
+                pager_size = String.valueOf(cardsListModels.size());
+                count = String.valueOf(position + 1);
+                pager_count.setText(count + "/" + pager_size);
 
             }
 
@@ -351,19 +364,19 @@ public class CardDetailFragment extends BaseFragment {
         menu.clear();
         //   Toast.makeText(getContext(),"Menu Prepared",Toast.LENGTH_LONG).show();
         MenuInflater inflater = getActivity().getMenuInflater();
-        if(cardsListModels!=null)
-        if (cardsListModels.size() == 0) {
-            inflater.inflate(R.menu.my_set_cards_empty, menu);
-        } else if (!isNotification) {
-            if (cardsListModels.get(Card_CurrentPos).getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
-                inflater.inflate(R.menu.my_set_cards, menu);
-            } else if (chl_list_obj.getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
-                inflater.inflate(R.menu.my_set_cards_other, menu);
+        if (cardsListModels != null)
+            if (cardsListModels.size() == 0) {
+                inflater.inflate(R.menu.my_set_cards_empty, menu);
+            } else if (!isNotification) {
+                if (cardsListModels.get(Card_CurrentPos).getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
+                    inflater.inflate(R.menu.my_set_cards, menu);
+                } else if (chl_list_obj.getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
+                    inflater.inflate(R.menu.my_set_cards_other, menu);
+                } else
+                    inflater.inflate(R.menu.my_sub_cards, menu);
+
             } else
                 inflater.inflate(R.menu.my_sub_cards, menu);
-
-        } else
-            inflater.inflate(R.menu.my_sub_cards, menu);
 
 
     }
@@ -604,6 +617,10 @@ public class CardDetailFragment extends BaseFragment {
                                 cardsListModels = new ArrayList<>(cardsListResponse.getData());
 
                                 view_nodata.setVisibility(View.GONE);
+                                Card_CurrentPos=0;
+                                pager_size = String.valueOf(cardsListModels.size());
+                                count = String.valueOf(Card_CurrentPos + 1);
+                                pager_count.setText(count + "/" + pager_size);
 
 
                             } else {
@@ -630,7 +647,7 @@ public class CardDetailFragment extends BaseFragment {
                         dismissProgress();
                         if (message.equals("timeout")) {
                             showLongToast(getActivity(), "Internet is too slow.");
-                     //       ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                            //       ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                         }
                     }
                 });
@@ -684,7 +701,7 @@ public class CardDetailFragment extends BaseFragment {
             @Override
             public void run() {
                 if (!isYouTubeInitializing) {
-                    if (isNotification && card_order_position != null ) {
+                    if (isNotification && card_order_position != null) {
                         viewPager_Cards.setCurrentItem(Integer.parseInt(card_order_position));
                         card_order_position = null;
                     }

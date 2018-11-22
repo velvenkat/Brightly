@@ -26,10 +26,12 @@ import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.purplefront.brightly.API.ApiCallback;
+import com.purplefront.brightly.API.RestApiMethods;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
+import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.EditProfileResponse;
 import com.purplefront.brightly.R;
@@ -48,6 +50,10 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import retrofit2.Call;
@@ -58,7 +64,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditProfile extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface{
+public class EditProfile extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface {
 
     View rootView;
     Context context;
@@ -82,6 +88,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
     String image_old = "";
     String image_name = "";
     RealmModel user_obj;
+
     public EditProfile() {
         // Required empty public constructor
     }
@@ -92,13 +99,13 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_edit_profile, container, false);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         // Set title bar
         setHasOptionsMenu(true);
         context = getContext();
         ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("Edit Profile");
 
-        ((BrightlyNavigationActivity)getActivity()).permissionResultInterfaceObj=this;
+        ((BrightlyNavigationActivity) getActivity()).permissionResultInterfaceObj = this;
         //((BrightlyNavigationActivity) getActivity()).toggle.setDrawerIndicatorEnabled(true);
 
         realm = Realm.getDefaultInstance();
@@ -122,7 +129,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
                 return false;
             }
         });
-        return  rootView;
+        return rootView;
     }
 
 
@@ -137,9 +144,9 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
 
 
         realmModel.load();
-        for(RealmModel model:realmModel){
+        for (RealmModel model : realmModel) {
             user_ID = model.getUser_Id();
-            input_name.setText( model.getUser_Name());
+            input_name.setText(model.getUser_Name());
             input_phone.setText(model.getUser_PhoneNumber());
             input_email.setText(model.getUser_Email());
             input_company.setText(model.getUser_CompanyName());
@@ -154,9 +161,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
                         .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)
                         .into(Image_profile);
-            }
-            else
-            {
+            } else {
                 Glide.with(getActivity())
                         .load(R.drawable.default_user_image)
                         .centerCrop()
@@ -168,8 +173,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
         }
 
 
-        if(!imageProfile.isEmpty())
-        {
+        if (!imageProfile.isEmpty()) {
             imageProfile = "old";
         }
 
@@ -177,15 +181,15 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
         Image_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              //  if (PermissionUtil.hasPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, getContext(), BrightlyNavigationActivity.PERMISSION_REQ_CODE_IMAGE)) {
-                    imgImageChooser_crop = new ImageChooser_Crop(getActivity());
-                    Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
-                    if (intent == null) {
-                        //PermissionUtil.
-                    } else {
-                        startActivityForResult(intent, PICK_IMAGE_REQ);
-                    }
-               // }
+                //  if (PermissionUtil.hasPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, getContext(), BrightlyNavigationActivity.PERMISSION_REQ_CODE_IMAGE)) {
+                imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+                Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+                if (intent == null) {
+                    //PermissionUtil.
+                } else {
+                    startActivityForResult(intent, PICK_IMAGE_REQ);
+                }
+                // }
 
             }
         });
@@ -254,52 +258,51 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
     }
 
 
-
     public void getEditProfile() {
-        try {
 
-            if (CheckNetworkConnection.isOnline(getActivity())) {
-                showProgress();
-                Call<EditProfileResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getEditProfile(user_ID, userName, userEmail, phoneNumber, userCompanyName, imageProfile, image_name );
+
+        if (CheckNetworkConnection.isOnline(getActivity())) {
+            showProgress();
+              /*  Call<EditProfileResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getEditProfile(user_ID, userName, userEmail, phoneNumber, userCompanyName, imageProfile, image_name );
                 callRegisterUser.enqueue(new ApiCallback<EditProfileResponse>(getActivity()) {
                     @Override
-                    public void onApiResponse(Response<EditProfileResponse> response, boolean isSuccess, String message) {
-                        EditProfileResponse editProfileResponse = response.body();
+                    public void onApiResponse(Response<EditProfileResponse> response, boolean isSuccess, String message) {*/
+            RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
+            CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+            mCompositeDisposable.add(requestInterface.getEditProfile(user_ID, userName, userEmail, phoneNumber, userCompanyName, imageProfile, image_name)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribeWith(new DisposableObserver<EditProfileResponse>() {
+                        @Override
+                        public void onNext(EditProfileResponse genResModel) {
 
-                        if (isSuccess) {
 
-                            if (editProfileResponse != null) {
+                            dismissProgress();
 
-                                setEditProfileCredentials(editProfileResponse);
-                                dismissProgress();
+                            if (genResModel != null) {
 
-                            } else {
-                                dismissProgress();
+                                setEditProfileCredentials(genResModel);
+
 
                             }
 
-                        } else {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                            dismissProgress();
+                            Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onComplete() {
 
                             dismissProgress();
                         }
-
-                    }
-
-                    @Override
-                    public void onApiFailure(boolean isSuccess, String message) {
-                        showLongToast(getActivity(), message);
-                    }
-                });
-            } else {
-
-                showLongToast(getActivity(), "Network Error");
-                dismissProgress();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            showLongToast(getActivity(), "Something went Wrong, Please try Later");
-
+                    }));
         }
+
     }
 
     private void setEditProfileCredentials(EditProfileResponse editProfileResponse) {
@@ -359,7 +362,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
             String message = editProfileResponse.getMessage();
 
             if (message.equals("success")) {
-                ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
             } else {
                 showLongToast(getActivity(), message);
             }

@@ -36,10 +36,12 @@ import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.purplefront.brightly.API.ApiCallback;
+import com.purplefront.brightly.API.RestApiMethods;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
+import com.purplefront.brightly.Modules.AddChannelResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.DeleteChannelResponse;
@@ -59,6 +61,10 @@ import java.util.Date;
 
 import javax.annotation.Nullable;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -103,7 +109,7 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 */
 
-        ((BrightlyNavigationActivity)getActivity()).permissionResultInterfaceObj=this;
+        ((BrightlyNavigationActivity) getActivity()).permissionResultInterfaceObj = this;
         Bundle bundle = getArguments();
         userId = user_obj.getUser_Id();
         /*channel_id = getIntent().getStringExtra("channel_id");
@@ -262,13 +268,13 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
                                 break;
                             case 0:
 
-                                    imgImageChooser_crop = new ImageChooser_Crop(getActivity());
-                                    Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
-                                    if (intent == null) {
-                                        //PermissionUtil.
-                                    } else {
-                                        startActivityForResult(intent, PICK_IMAGE_REQ);
-                                    }
+                                imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+                                Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+                                if (intent == null) {
+                                    //PermissionUtil.
+                                } else {
+                                    startActivityForResult(intent, PICK_IMAGE_REQ);
+                                }
 
                                 break;
 
@@ -421,8 +427,8 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
           /*  Fragment fragment=new ChannelFragment();
             ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,fragment,false);*/
-            showShortToast(getActivity(), "Category "+channel_name+" is Deleted");
-            ((BrightlyNavigationActivity)getActivity()).DontRunOneTime=true;
+            showShortToast(getActivity(), "Category " + channel_name + " is Deleted");
+            ((BrightlyNavigationActivity) getActivity()).DontRunOneTime = true;
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
 
 
@@ -540,43 +546,52 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
     }
 
     public void getUpdateChannels() {
-        try {
 
-            if (CheckNetworkConnection.isOnline(getContext())) {
-                showProgress();
-                Call<UpdateChannelResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getUpdateChannels(userId, channel_name, channel_description, encoded_string, image_name, channel_id);
+        if (CheckNetworkConnection.isOnline(getContext())) {
+            showProgress();
+                /*Call<UpdateChannelResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getUpdateChannels(userId, channel_name, channel_description, encoded_string, image_name, channel_id);
                 callRegisterUser.enqueue(new ApiCallback<UpdateChannelResponse>(getActivity()) {
                     @Override
-                    public void onApiResponse(Response<UpdateChannelResponse> response, boolean isSuccess, String message) {
-                        dismissProgress();
-                        UpdateChannelResponse updateChannelResponse = response.body();
-                        if (isSuccess) {
+                    public void onApiResponse(Response<UpdateChannelResponse> response, boolean isSuccess, String message) {*/
+            RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
+            CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+            mCompositeDisposable.add(requestInterface.getUpdateChannels(user_obj.getUser_Id(), channel_name, channel_description, encoded_string, image_name, channel_id)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribeWith(new DisposableObserver<UpdateChannelResponse>() {
+                        @Override
+                        public void onNext(UpdateChannelResponse genResModel) {
+                            // dialog.dismiss();
 
-                            if (updateChannelResponse != null) {
+                            dismissProgress();
+                            // UpdateChannelResponse updateChannelResponse = response.body();
 
-                                setAddChannelCredentials(updateChannelResponse);
+
+                            if (genResModel != null) {
+
+                                setAddChannelCredentials(genResModel);
 
 
                             }
 
+
                         }
-                    }
 
-                    @Override
-                    public void onApiFailure(boolean isSuccess, String message) {
+                        @Override
+                        public void onError(Throwable e) {
+                            dismissProgress();
+                            Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
 
-                        dismissProgress();
-                    }
-                });
-            } else {
+                        @Override
+                        public void onComplete() {
+                            dismissProgress();
 
-                dismissProgress();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+                        }
 
-            dismissProgress();
+                    }));
         }
+
 
     }
 
@@ -587,8 +602,9 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
         if (message.equals("success")) {
           /*  stackClearIntent(EditChannelInfo.this, BrightlyNavigationActivity.class);
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            showShortToast(getActivity(), "Category "+channel_name+" Updated");
-            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+            showShortToast(getActivity(), "Category " + channel_name + " Updated");
+            ((BrightlyNavigationActivity) getActivity()).DontRunOneTime = true;
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
             //       ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.CHANNELS,new ChannelFragment(),false);
 
 

@@ -73,7 +73,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     boolean isNotification;
     RealmModel user_obj;
     String set_id_toCreateCard;
-
+    CardDetailFragment parent_frag_Card_dtl;
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
@@ -109,7 +109,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         isNotification = bundle.getBoolean("isNotification", false);
         set_id_toCreateCard = bundle.getString("set_id_toCreateCard", null); //Create card from existing set
 
-
+        parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
         if (isNotification) {
             notificationsModel = bundle.getParcelable("notfy_modl_obj");
             if (notificationsModel != null) {
@@ -371,6 +371,8 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                         dismissProgress();
                         ((BrightlyNavigationActivity) getActivity()).isCardRefresh = true;
+                        parent_frag_Card_dtl.cardsListModels = new ArrayList<>(cardsListModels);
+                        parent_frag_Card_dtl.Card_CurrentPos=0;
                         Toast.makeText(getContext(), "Cards Successfully Reordered", Toast.LENGTH_LONG).show();
                     }
 
@@ -465,11 +467,13 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
+
                 Call<CardsListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getCardsList(user_obj.getUser_Id(), set_id);
                 callRegisterUser.enqueue(new ApiCallback<CardsListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<CardsListResponse> response, boolean isSuccess, String message) {
                         dismissProgress();
+
                         CardsListResponse cardsListResponse = response.body();
                         if (isSuccess) {
 
@@ -477,6 +481,8 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
                                 cardsListModels = cardsListResponse.getData();
 
+                                parent_frag_Card_dtl.cardsListModels = new ArrayList<>(cardsListModels);
+                                parent_frag_Card_dtl.Card_CurrentPos=0;
                                 setAdapter(cardsListModels);
                                 if (set_id_toCreateCard != null) {
                                     multi_sel_actions();
@@ -484,12 +490,15 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
 
                             } else {
+                                parent_frag_Card_dtl.cardsListModels = new ArrayList<>();
+                                parent_frag_Card_dtl.Card_CurrentPos=0;
                                 card_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
+                                Toast.makeText(getContext(),"Card is not available",Toast.LENGTH_LONG).show();
                                 ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                                 cardsListModels = new ArrayList<>();
                             }
-
+                            if(getActivity()!=null)
                             getActivity().invalidateOptionsMenu();
                         } else {
                             showLongToast(getActivity(), message);
@@ -501,6 +510,8 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                     public void onApiFailure(boolean isSuccess, String message) {
 
                         dismissProgress();
+                        parent_frag_Card_dtl.cardsListModels = new ArrayList<>(cardsListModels);
+                        parent_frag_Card_dtl.Card_CurrentPos=0;
                     }
                 });
             } else {
@@ -626,9 +637,8 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                         dismissProgress();
                         if (isSuccess) {
                             ((BrightlyNavigationActivity) getActivity()).isCardRefresh = true;
-                            CardDetailFragment parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
-                           parent_frag_Card_dtl.cardsListModels=new ArrayList<>();
-                             if (deleteSetResponse != null) {
+
+                            if (deleteSetResponse != null) {
 
                                 if (deleteSetResponse.getMessage().equalsIgnoreCase("success")) {
                                     Toast.makeText(getContext(), "Selected Card(s) Deleted Successfully", Toast.LENGTH_LONG).show();
