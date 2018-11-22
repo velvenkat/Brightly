@@ -151,7 +151,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
                 alertDialog.setTitle("Confirm Revoke....");
 
                 // Setting Dialog Message
-                alertDialog.setMessage("You are about to Revoke the Set Shared. Are you want to Revoke? ");
+                alertDialog.setMessage("You are about to Revoke the Set Shared. Do you want to Revoke? ");
 
                 // Setting Icon to Dialog
                 alertDialog.setIcon(R.drawable.error);

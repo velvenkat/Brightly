@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -23,6 +24,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -542,47 +544,7 @@ public class BrightlyNavigationActivity extends BaseActivity
             shareTextUrl();
 
         } else if (id == R.id.nav_logout) {
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-
-            // delete all realm objects
-            realm.deleteAll();
-
-            //commit realm changes
-            realm.commitTransaction();
-            if (CheckNetworkConnection.isOnline(BrightlyNavigationActivity.this)) {
-                showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(BrightlyNavigationActivity.this).call_logout_user(userId, deviceToken);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(BrightlyNavigationActivity.this) {
-                    @Override
-                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
-                        dismissProgress();
-                        Toast.makeText(BrightlyNavigationActivity.this, "Logged Out", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onApiFailure(boolean isSuccess, String message) {
-
-                        dismissProgress();
-                    }
-                });
-            } /*else {
-
-                dismissProgress();
-            }*/ else {
-                Toast.makeText(BrightlyNavigationActivity.this, "Check network connection", Toast.LENGTH_LONG).show();
-            }
-            /*realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    realmModel.deleteAllFromRealm();// use to delete all
-
-                    //**OR** use in for loop to delete perticulr record as a location
-                    realmModel.deleteFromRealm();
-
-                }
-            });*/
-            finishIntent(BrightlyNavigationActivity.this, Login.class);
+           showLogOutDialog();
 
         }
         if (isChannelScrn) {
@@ -619,6 +581,84 @@ public class BrightlyNavigationActivity extends BaseActivity
         PermissionUtil.hasPermission(new String[]{Manifest.permission.READ_CONTACTS,
                 Manifest.permission.WRITE_CONTACTS}, BrightlyNavigationActivity.this, PERMISSION_REQ_CODE_CONTACT);
 
+    }
+
+    public void showLogOutDialog()
+    {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(BrightlyNavigationActivity.this);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Logging Out....");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Do you want to Logout? ");
+
+        // Setting Icon to Dialog
+        alertDialog.setIcon(R.drawable.error);
+
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+
+
+                Realm realm = Realm.getDefaultInstance();
+                realm.beginTransaction();
+
+                // delete all realm objects
+                realm.deleteAll();
+
+                //commit realm changes
+                realm.commitTransaction();
+                if (CheckNetworkConnection.isOnline(BrightlyNavigationActivity.this)) {
+                    showProgress();
+                    Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(BrightlyNavigationActivity.this).call_logout_user(userId, deviceToken);
+                    callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(BrightlyNavigationActivity.this) {
+                        @Override
+                        public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                            dismissProgress();
+                            Toast.makeText(BrightlyNavigationActivity.this, "Logged Out", Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onApiFailure(boolean isSuccess, String message) {
+
+                            dismissProgress();
+                        }
+                    });
+                } /*else {
+
+                dismissProgress();
+            }*/ else {
+                    Toast.makeText(BrightlyNavigationActivity.this, "Check network connection", Toast.LENGTH_LONG).show();
+                }
+            /*realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realmModel.deleteAllFromRealm();// use to delete all
+
+                    //**OR** use in for loop to delete perticulr record as a location
+                    realmModel.deleteFromRealm();
+
+                }
+            });*/
+                finishIntent(BrightlyNavigationActivity.this, Login.class);
+
+                // Write your code here to invoke YES event
+//                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Write your code here to invoke NO event
+//                Toast.makeText(getApplicationContext(), "You clicked on NO", Toast.LENGTH_SHORT).show();
+                dialog.cancel();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 
     @Override
