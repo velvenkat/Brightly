@@ -72,8 +72,7 @@
             android:layout_gravity="center"
             android:background="@color/white"
             android:gravity="center"
-            android:lines="1"
-            android:maxLines="1"
+            android:maxLines="2"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="@dimen/dimen10"
             android:visibility="visible" />

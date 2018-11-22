@@ -58,6 +58,7 @@
             android:layout_marginTop="@dimen/dimen_1"
             android:fontFamily="sans-serif"
             android:gravity="center"
+            android:maxLines="2"
             android:text="Channel Name"
             android:textColor="@color/black"
             android:textSize="@dimen/microtextSize"
