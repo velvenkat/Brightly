@@ -34,6 +34,7 @@ import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -625,7 +626,9 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                         dismissProgress();
                         if (isSuccess) {
                             ((BrightlyNavigationActivity) getActivity()).isCardRefresh = true;
-                            if (deleteSetResponse != null) {
+                            CardDetailFragment parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
+                           parent_frag_Card_dtl.cardsListModels=new ArrayList<>();
+                             if (deleteSetResponse != null) {
 
                                 if (deleteSetResponse.getMessage().equalsIgnoreCase("success")) {
                                     Toast.makeText(getContext(), "Selected Card(s) Deleted Successfully", Toast.LENGTH_LONG).show();

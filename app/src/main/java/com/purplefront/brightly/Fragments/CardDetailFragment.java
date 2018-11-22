@@ -66,7 +66,7 @@ public class CardDetailFragment extends BaseFragment {
 
     ViewPager viewPager_Cards;
     ViewCardFragmentPagerAdapter cardsPagerAdapter;
-    ArrayList<CardsListModel> cardsListModels = new ArrayList<>();
+    public  ArrayList<CardsListModel> cardsListModels = new ArrayList<>();
     public static final String CMDPAUSE = "pause";
 
     public void setGlob_mediaPlayerObj(MediaPlayer mp_obj) {
@@ -128,7 +128,8 @@ public class CardDetailFragment extends BaseFragment {
             }
             boolean isCardRefresh = ((BrightlyNavigationActivity) getActivity()).isCardRefresh;
             if (isCardRefresh) {
-                ((BrightlyNavigationActivity) getActivity()).isCardRefresh = false;
+                cardsListModels=new ArrayList<>();
+                 ((BrightlyNavigationActivity) getActivity()).isCardRefresh = false;
 
                 getCardsLists();
             }
@@ -350,6 +351,7 @@ public class CardDetailFragment extends BaseFragment {
         menu.clear();
         //   Toast.makeText(getContext(),"Menu Prepared",Toast.LENGTH_LONG).show();
         MenuInflater inflater = getActivity().getMenuInflater();
+        if(cardsListModels!=null)
         if (cardsListModels.size() == 0) {
             inflater.inflate(R.menu.my_set_cards_empty, menu);
         } else if (!isNotification) {
@@ -583,6 +585,7 @@ public class CardDetailFragment extends BaseFragment {
     }
 
     public void getCardsLists() {
+
         try {
             showProgress();
             if (CheckNetworkConnection.isOnline(getContext())) {
