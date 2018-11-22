@@ -172,7 +172,7 @@ public class RichLinkViewTelegram extends RelativeLayout {
             public void onData(MetaData metaData) {
                 meta = metaData;
 
-                if(meta.getTitle().isEmpty() || meta.getTitle().equals("")) {
+                if(!meta.getTitle().isEmpty() || !meta.getTitle().equals("")) {
                     viewListener.onSuccess(true);
                 }
 
