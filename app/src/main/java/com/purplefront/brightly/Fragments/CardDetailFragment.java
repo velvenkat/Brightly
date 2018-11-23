@@ -366,8 +366,13 @@ public class CardDetailFragment extends BaseFragment {
         MenuInflater inflater = getActivity().getMenuInflater();
         if (cardsListModels != null)
             if (cardsListModels.size() == 0) {
+                if(Created_By.equalsIgnoreCase(userObj.getUser_Id()))
                 inflater.inflate(R.menu.my_set_cards_empty, menu);
-            } else if (!isNotification) {
+                else{
+                    inflater.inflate(R.menu.my_sub_cards_empty, menu);
+                }
+            }
+            else if (!isNotification) {
                 if (cardsListModels.get(Card_CurrentPos).getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
                     inflater.inflate(R.menu.my_set_cards, menu);
                 } else if (chl_list_obj.getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
@@ -626,8 +631,15 @@ public class CardDetailFragment extends BaseFragment {
                             } else {
                                 viewPager_Cards.setVisibility(View.GONE);
                                 pager_count.setVisibility(View.GONE);
-                                view_nodata.setVisibility(View.VISIBLE);
                                 cardsListModels = new ArrayList<>();
+                                if(Created_By.equalsIgnoreCase(userObj.getUser_Id())) {
+                                    view_nodata.setVisibility(View.VISIBLE);
+                                    view_nodata.setText(R.string.add_cards_suggestion);
+                                }
+                                else{
+                                    view_nodata.setVisibility(View.VISIBLE);
+                                    view_nodata.setText("No Cards Available");
+                                }
 
                             }
                 /*            CardsListModel dummyCardObj=new CardsListModel();

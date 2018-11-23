@@ -130,20 +130,14 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
             if (!cardModelObj.getUrl().isEmpty() && cardModelObj.getUrl() != null) {
 
-                dialog = new ProgressDialog(getContext());
-                dialog.setMessage("Please wait...");
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
 
                 Glide.with(getContext())
                         .load(cardModelObj.getUrl())
+                        .placeholder(R.drawable.card_progress_loading)
                         .centerCrop()
                         /*.transform(new CircleTransform(HomeActivity.this))
                         .override(50, 50)*/
                         .into(image_cardImage);
-                dialog.cancel();
-                dialog.dismiss();
 
                 image_cardImage.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -157,6 +151,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
                         Glide.with(getContext())
                                 .load(cardModelObj.getUrl())
+                                .placeholder(R.drawable.card_progress_loading)
                                 .fitCenter()
                                 /*.transform(new CircleTransform(HomeActivity.this))
                                 .override(50, 50)*/

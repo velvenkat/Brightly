@@ -113,6 +113,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
             Glide.with(scrn_contxt)
                     .load(setsListModel.getThumbnail())
+                    .placeholder(R.drawable.progress_icon)
                     .fitCenter()
                     /*.transform(new CircleTransform(HomeActivity.this))
                     .override(50, 50)*/

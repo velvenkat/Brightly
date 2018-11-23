@@ -232,23 +232,33 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
         // Get phonenumber
         ArrayList<String> sel_num = new ArrayList<>(contactAdapter.getContact_Share());
         ArrayList<String> sel_name = new ArrayList<>(contactAdapter.getContactName_Share());
+        String num_digit10 = "";
         split_num = android.text.TextUtils.join(",", sel_num);
         split_name = android.text.TextUtils.join(",", sel_name);
-        String num_digit10 = split_num.substring(split_num.length() - 10, split_num.length());
-        // Toast.makeText(getContext(),"num"+num_digit10,Toast.LENGTH_LONG).show();
-        if (split_num.equals("") || split_num.length() <= 9) {
+        if (split_num.equals("") && split_name.equals("")) {
             new CustomToast().Show_Toast(getActivity(), btn_share,
-                    "Please select the Phone Number.");
+                    "Please select a contact to share.");
+        }
+        else
+        {
+            num_digit10 = split_num.substring(split_num.length() - 10, split_num.length());
 
-        } else if (num_digit10.equalsIgnoreCase(user_obj.getUser_PhoneNumber())) {
-            new CustomToast().Show_Toast(getActivity(), btn_share,
-                    "You can't give your own number");
+            // Toast.makeText(getContext(),"num"+num_digit10,Toast.LENGTH_LONG).show();
+            if (split_num.equals("") || split_num.length() <= 9) {
+                new CustomToast().Show_Toast(getActivity(), btn_share,
+                        "Please select the Phone Number.");
+
+            } else if (num_digit10.equalsIgnoreCase(user_obj.getUser_PhoneNumber())) {
+                new CustomToast().Show_Toast(getActivity(), btn_share,
+                        "You can't give your own number");
+            }
+            // Else do login and do your stuff
+            else {
+                getShareSet();
+                //            Toast.makeText(getActivity(), "Do Login.", Toast.LENGTH_SHORT).show();
+            }
         }
-        // Else do login and do your stuff
-        else {
-            getShareSet();
-            //            Toast.makeText(getActivity(), "Do Login.", Toast.LENGTH_SHORT).show();
-        }
+
 
     }
 

@@ -86,6 +86,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
             Glide.with(context)
                     .load(notificationsModel.getShared_user_profile_pic())
+                    .placeholder(R.drawable.progress_icon)
                     .fitCenter()
                    .transform(new CircleTransform(context))
                     /*.override(50, 50)*/

@@ -117,20 +117,13 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         switch (cardsListModel.getType()) {
             case "image":
 
-                dialog = new ProgressDialog(scrn_context);
-                dialog.setMessage("Please wait...");
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
-
                 Glide.with(scrn_context)
                         .load(cardsListModel.getUrl())
+                        .placeholder(R.drawable.progress_icon)
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
                         .override(50, 50)*/
                         .into(holder.image_cardImage);
-                dialog.cancel();
-                dialog.dismiss();
 
                 break;
             case "audio":
@@ -139,6 +132,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
                 Glide.with(scrn_context)
                         .load(R.drawable.audio_list_icon)
+                        .placeholder(R.drawable.progress_icon)
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
                         .override(50, 50)*/
@@ -151,6 +145,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
                 Glide.with(scrn_context)
                         .load(R.drawable.youtube_list_icon)
+                        .placeholder(R.drawable.progress_icon)
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
                         .override(50, 50)*/
@@ -163,6 +158,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
                 Glide.with(scrn_context)
                         .load(R.drawable.file_list_icon)
+                        .placeholder(R.drawable.progress_icon)
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
                         .override(50, 50)*/
@@ -172,6 +168,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
             default:
                 Glide.with(scrn_context)
                         .load(R.drawable.no_image_available)
+                        .placeholder(R.drawable.progress_icon)
                         .centerCrop()
                         /*.transform(new CircleTransform(HomeActivity.this))
                         .override(50, 50)*/

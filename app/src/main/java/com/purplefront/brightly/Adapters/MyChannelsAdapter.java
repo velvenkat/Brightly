@@ -90,9 +90,8 @@ public class MyChannelsAdapter extends RecyclerView.Adapter<MyChannelsAdapter.Vi
             Glide.with(scrn_context)
                     .load(channelListModel.getCover_image())
                     .asBitmap()
-                    //.thumbnail(Glide.with(scrn_context).load(R.drawable.progress_icon))
+                    .placeholder(R.drawable.progress_icon)
                     .fitCenter()
-                   /* .placeholder(R.drawable.progress_icon)*/
 //                    .transform(new CircleTransform(scrn_context))
                     /*.override(50, 50)*/
                     .into(holder.imageView_channelImage);
