@@ -255,28 +255,31 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 file_cardLink.setVisibility(View.GONE);
                 richLinkView1.setVisibility(View.VISIBLE);
 
-                file_progress = showProgress();
+
                 if (!this.isVisible()) {
-                    file_progress.hide();
+
+                } else {
+                    file_progress = showProgress();
                 }
-                isFileLoaded=false;
+
+                //     isFileLoaded = false;
                 richLinkView1.setLink(file_cardLink.getText().toString(), new ViewListener() {
                     @Override
                     public void onSuccess(boolean status) {
                         // Toast.makeText(getContext(),"file loaded success",Toast.LENGTH_LONG).show();
                         Log.e("file_log", "FileLoaded");
-                        isFileLoaded = true;
-
-                        file_progress.dismiss();
-                        file_progress=null;
+                        // isFileLoaded = true;
+                        /*if (file_progress != null)
+                            file_progress.dismiss();
+                        file_progress = null;*/
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        isFileLoaded = true;
+                       /* isFileLoaded = true;
 
                         file_progress.dismiss();
-                        file_progress=null;
+                        file_progress = null;*/
                     }
                 });
 
@@ -504,14 +507,21 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
 
         }
-        if (isVisibleToUser && file_progress != null) {
-            if (isFileLoaded) {
-                file_progress.dismiss();
-                isFileLoaded = false;
-                file_progress = null;
-            } else
-                file_progress.show();
-        }
+       /* if(cardModelObj!=null) {
+            if (isVisibleToUser && cardModelObj.getType().equalsIgnoreCase("file")) {
+                if (isFileLoaded) {
+                    if (file_progress != null)
+                        file_progress.dismiss();
+                    isFileLoaded = false;
+                    file_progress = null;
+                } else {
+                    if (file_progress == null) {
+                        file_progress = showProgress();
+                    } else
+                        file_progress.show();
+                }
+            }
+        }*/
         if (isVisibleToUser && mediaPlayer != null) {
             parent_frag_Card_dtl.setGlob_mediaPlayerObj(mediaPlayer);
         }
@@ -525,8 +535,8 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 }
             }
             UTubePlayer = null;
-            if(getActivity()!=null)
-            ((BrightlyNavigationActivity) getActivity()).uTubePlayer = null;
+            if (getActivity() != null)
+                ((BrightlyNavigationActivity) getActivity()).uTubePlayer = null;
         }
         if (!isVisibleToUser && mediaPlayer != null) {
 

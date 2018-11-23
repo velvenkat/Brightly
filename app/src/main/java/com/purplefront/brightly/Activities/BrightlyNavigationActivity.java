@@ -81,7 +81,7 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 
 public class BrightlyNavigationActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener,BaseActivity.alert_dlg_interface {
+        implements NavigationView.OnNavigationItemSelectedListener, BaseActivity.alert_dlg_interface {
 
     private static final String SHOWCASE_ID = "1";
     public PermissionResultInterface permissionResultInterfaceObj;
@@ -105,7 +105,7 @@ public class BrightlyNavigationActivity extends BaseActivity
     String userPhone;
     String userPicture;
     String type = "all";
-    String Title = "All Channels";
+    String Title = "All Categories";
     String count = "0";
     int PerCount = -1;
     String deviceToken;
@@ -145,7 +145,7 @@ public class BrightlyNavigationActivity extends BaseActivity
 
         isNotification = getIntent().getBooleanExtra("isNotification", false);
         isCardNotification = getIntent().getBooleanExtra("isCardNotification", false);
-        isRevoked=getIntent().getBooleanExtra("isRevoked",false);
+        isRevoked = getIntent().getBooleanExtra("isRevoked", false);
 
         fragmentManager = getSupportFragmentManager();
         setDlgListener(this);
@@ -212,10 +212,6 @@ public class BrightlyNavigationActivity extends BaseActivity
                 card_frag.setArguments(bundle);
                 onFragmentCall(Util.view_card, card_frag, false);
             }
-            else if(isRevoked){
-                //Only for back end Notifications
-                showAlertDialog_ok(nfy_model.getNotificationsSetDetail().getName()+" set permission has been revoked","Alert","Ok");
-            }
             else {
                 Fragment nfy_frag = new Notifications();
             /*fragmentManager
@@ -224,9 +220,9 @@ public class BrightlyNavigationActivity extends BaseActivity
                     .replace(R.id.frag_container, new Notifications(),
                             Util.NOTIFICATIONS).commit();
 */
-                 Bundle bundle=new Bundle();
-                 bundle.putBoolean("isFireBaseNfy",true);
-                 nfy_frag.setArguments(bundle);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isFireBaseNfy", true);
+                nfy_frag.setArguments(bundle);
                 onFragmentCall(Util.NOTIFICATIONS, nfy_frag, false);
             }
             // setActionBarTitle("Notification");
@@ -374,8 +370,8 @@ public class BrightlyNavigationActivity extends BaseActivity
 
                 }
                 if (PermissionRequestedCode == PERMISSION_REQ_CODE_IMAGE) {
-                   /* permissionResultInterfaceObj.onPermissionResult_rcd(null);*/
-                    Toast.makeText(BrightlyNavigationActivity.this,"Tab again to upload the image",Toast.LENGTH_LONG).show();
+                    /* permissionResultInterfaceObj.onPermissionResult_rcd(null);*/
+                    Toast.makeText(BrightlyNavigationActivity.this, "Tab again to upload the image", Toast.LENGTH_LONG).show();
                 }
                 if (PermissionRequestedCode == PERMISSION_REQ_CODE_CONTACT) {
                     //  permissionResultInterfaceObj.onPermissionResult_rcd(null);
@@ -544,7 +540,7 @@ public class BrightlyNavigationActivity extends BaseActivity
             shareTextUrl();
 
         } else if (id == R.id.nav_logout) {
-           showLogOutDialog();
+            showLogOutDialog();
 
         }
         if (isChannelScrn) {
@@ -583,8 +579,7 @@ public class BrightlyNavigationActivity extends BaseActivity
 
     }
 
-    public void showLogOutDialog()
-    {
+    public void showLogOutDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(BrightlyNavigationActivity.this);
 
         // Setting Dialog Title
@@ -598,7 +593,7 @@ public class BrightlyNavigationActivity extends BaseActivity
 
         // Setting Positive "Yes" Button
         alertDialog.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
+            public void onClick(DialogInterface dialog, int which) {
 
 
                 Realm realm = Realm.getDefaultInstance();
@@ -707,7 +702,6 @@ public class BrightlyNavigationActivity extends BaseActivity
             boolean per_flag = true;
             final String Permission_Denied;
             boolean showRationale = false;
-
 
 
             for (final String permission : permissions) {
