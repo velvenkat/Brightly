@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitInterface {
 
     private static final String CACHE_DIR = "brightly";
-    private static final String BASE_URL = "http://104.211.211.148/Brightly/";
+    private static final String BASE_URL = "http://ec2-13-229-148-146.ap-southeast-1.compute.amazonaws.com/Brightly/";
     static Retrofit retrofit = null;
 
 
