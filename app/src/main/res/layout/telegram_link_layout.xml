@@ -3,13 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="200dp"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center"
     android:padding="10dp"
     android:background="@drawable/bg_radius"
     android:id="@+id/rich_link_card"
     android:layout_margin="5dp">
-
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/frameLoading"
+        android:visibility="gone"
+        >
+        <com.victor.loading.rotate.RotateLoading
+            android:id="@+id/rotateloading"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:loading_width="5dp"
+            android:layout_gravity="center"/>
+    </FrameLayout>
     <LinearLayout
         android:background="@drawable/bg_telegram"
         android:orientation="horizontal"

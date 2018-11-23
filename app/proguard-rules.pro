@@ -22,3 +22,6 @@
 -dontwarn okio.**
 -dontwarn retrofit2.Platform$Java8
 -ignorewarnings
+-keep public class org.jsoup.** {
+    public *;
+}

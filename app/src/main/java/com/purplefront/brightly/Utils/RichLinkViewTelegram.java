@@ -10,6 +10,7 @@ import android.text.Spannable;
 import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.purplefront.brightly.R;
+import com.victor.loading.rotate.RotateLoading;
 
 import dmax.dialog.SpotsDialog;
 
@@ -36,7 +38,8 @@ public class RichLinkViewTelegram extends RelativeLayout {
     TextView textViewDesp;
     TextView textViewUrl;
     TextView textViewOriginalUrl;
-
+    private RotateLoading mLoadingDialog;
+    private FrameLayout mFrameLayout;
     private String main_url;
 
     private boolean isDefaultClick = true;
@@ -67,11 +70,11 @@ public class RichLinkViewTelegram extends RelativeLayout {
 
     public void initView() {
 
-        if(findLinearLayoutChild() != null) {
+        if (findLinearLayoutChild() != null) {
             this.view = findLinearLayoutChild();
-        } else  {
+        } else {
             this.view = this;
-            inflate(context, R.layout.telegram_link_layout,this);
+            inflate(context, R.layout.telegram_link_layout, this);
         }
 
         linearLayout = (LinearLayout) findViewById(R.id.rich_link_card);
@@ -79,13 +82,21 @@ public class RichLinkViewTelegram extends RelativeLayout {
         textViewTitle = (TextView) findViewById(R.id.rich_link_title);
         textViewDesp = (TextView) findViewById(R.id.rich_link_desp);
         textViewUrl = (TextView) findViewById(R.id.rich_link_url);
+        mLoadingDialog = (RotateLoading) findViewById(R.id.rotateloading);
+        mFrameLayout = (FrameLayout) findViewById(R.id.frameLoading);
+        mFrameLayout.setVisibility(GONE);
 
         textViewOriginalUrl = (TextView) findViewById(R.id.rich_link_original_url);
 
-        textViewOriginalUrl.setText(main_url);
-        removeUnderlines((Spannable)textViewOriginalUrl.getText());
 
-        if(meta.getImageurl().equals("") || meta.getImageurl().isEmpty()) {
+    }
+
+    public void setLinkData() {
+
+        textViewOriginalUrl.setText(main_url);
+        removeUnderlines((Spannable) textViewOriginalUrl.getText());
+
+        if (meta.getImageurl().equals("") || meta.getImageurl().isEmpty()) {
             imageView.setVisibility(GONE);
         } else {
             imageView.setVisibility(VISIBLE);
@@ -98,19 +109,19 @@ public class RichLinkViewTelegram extends RelativeLayout {
                     .into(imageView);
         }
 
-        if(meta.getTitle().isEmpty() || meta.getTitle().equals("")) {
+        if (meta.getTitle().isEmpty() || meta.getTitle().equals("")) {
             textViewTitle.setVisibility(GONE);
         } else {
             textViewTitle.setVisibility(VISIBLE);
             textViewTitle.setText(meta.getTitle());
         }
-        if(meta.getUrl().isEmpty() || meta.getUrl().equals("")) {
+        if (meta.getUrl().isEmpty() || meta.getUrl().equals("")) {
             textViewUrl.setVisibility(GONE);
         } else {
             textViewUrl.setVisibility(VISIBLE);
             textViewUrl.setText(meta.getUrl());
         }
-        if(meta.getDescription().isEmpty() || meta.getDescription().equals("")) {
+        if (meta.getDescription().isEmpty() || meta.getDescription().equals("")) {
             textViewDesp.setVisibility(GONE);
         } else {
             textViewDesp.setVisibility(VISIBLE);
@@ -121,10 +132,10 @@ public class RichLinkViewTelegram extends RelativeLayout {
         linearLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isDefaultClick) {
+                if (isDefaultClick) {
                     richLinkClicked();
                 } else {
-                    if(richLinkListener != null) {
+                    if (richLinkListener != null) {
                         richLinkListener.onClicked(view, meta);
                     } else {
                         richLinkClicked();
@@ -167,20 +178,33 @@ public class RichLinkViewTelegram extends RelativeLayout {
 
     public void setLink(String url, final ViewListener viewListener) {
         main_url = url;
+        initView();
+        mLoadingDialog.start();
+        mFrameLayout.setVisibility(VISIBLE);
         RichPreview richPreview = new RichPreview(new ResponseListener() {
             @Override
             public void onData(MetaData metaData) {
+                if (mLoadingDialog.isStart()) {
+                    mLoadingDialog.stop();
+                    mFrameLayout.setVisibility(GONE);
+                }
+
                 meta = metaData;
 
-                if(!meta.getTitle().isEmpty() || !meta.getTitle().equals("")) {
+                if (!meta.getTitle().isEmpty() || !meta.getTitle().equals("")) {
                     viewListener.onSuccess(true);
                 }
 
-                initView();
+                setLinkData();
             }
 
             @Override
             public void onError(Exception e) {
+                if (mLoadingDialog.isStart()) {
+                    mLoadingDialog.stop();
+                    mFrameLayout.setVisibility(GONE);
+                }
+
                 viewListener.onError(e);
             }
         });
@@ -190,7 +214,7 @@ public class RichLinkViewTelegram extends RelativeLayout {
     private static void removeUnderlines(Spannable p_Text) {
         URLSpan[] spans = p_Text.getSpans(0, p_Text.length(), URLSpan.class);
 
-        for(URLSpan span:spans) {
+        for (URLSpan span : spans) {
             int start = p_Text.getSpanStart(span);
             int end = p_Text.getSpanEnd(span);
             p_Text.removeSpan(span);
