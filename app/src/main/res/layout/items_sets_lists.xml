@@ -17,19 +17,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardElevation="@dimen/dimen_8"
-            app:cardCornerRadius="@dimen/dimen_8"
+
 
             >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="110dp">
+            android:background="@drawable/set_folder_icon"
+            android:layout_height="100dp">
 
             <ImageView
                 android:id="@+id/imageView_setImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerInParent="true"
+                android:layout_marginTop="@dimen/dimen_34"
+                android:layout_marginRight="@dimen/dimen_4"
+                android:layout_marginLeft="@dimen/dimen_4"
+                android:layout_marginBottom="@dimen/dimen_4"
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
                 android:src="@drawable/no_image_available" />

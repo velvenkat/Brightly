@@ -253,7 +253,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
                     @Override
                     public void onApiResponse(Response<SignUpResponse> response, boolean isSuccess, String message) {
                         SignUpResponse signUpResponse = response.body();
-
+                        btn_signUp.setEnabled(true);
                         if (isSuccess) {
 
                             if (signUpResponse != null) {
@@ -352,15 +352,22 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         btn_Verify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!edit_otp.getText().toString().isEmpty() && otp_msg.equals(otp_resonse)){
 
-                    getValidateOtp();
+
+                if(!edit_otp.getText().toString().isEmpty()){
+
+                    if(otp_msg != null) {
+                        getValidateOtp();
+                        dialog.dismiss();
+                        timer.cancel();
+                        timer.onFinish();
+                    }
+                    else {
+                        Toast.makeText(getActivity(), "Please enter valid OTP", Toast.LENGTH_SHORT).show();
+                    }
 
                     //method
 //                    Toast.makeText(MainActivity.this, R.string.success_login_msg, Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                    timer.cancel();
-                    timer.onFinish();
                 }else{
                     Toast.makeText(getActivity(), "Please enter the OTP", Toast.LENGTH_SHORT).show();
                 }
