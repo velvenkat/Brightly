@@ -128,10 +128,9 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
                 break;
             case "audio":
 
-                holder.image_cardImage.setPadding(0, 20, 0, 20);
 
                 Glide.with(scrn_context)
-                        .load(R.drawable.audio_list_icon)
+                        .load(R.drawable.audio_icon)
                         .placeholder(R.drawable.progress_icon)
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
@@ -144,7 +143,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 //                holder.image_cardImage.setPadding(0,20,0,20);
 
                 Glide.with(scrn_context)
-                        .load(R.drawable.youtube_list_icon)
+                        .load(R.drawable.youtube_icon)
                         .placeholder(R.drawable.progress_icon)
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
@@ -154,10 +153,9 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
                 break;
             case "file":
 
-                holder.image_cardImage.setPadding(0, 20, 0, 20);
 
                 Glide.with(scrn_context)
-                        .load(R.drawable.file_list_icon)
+                        .load(R.drawable.file_icon)
                         .placeholder(R.drawable.progress_icon)
                         .fitCenter()
                         /*.transform(new CircleTransform(HomeActivity.this))
@@ -167,7 +165,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
                 break;
             default:
                 Glide.with(scrn_context)
-                        .load(R.drawable.no_image_available)
+                        .load(R.drawable.image_icon)
                         .placeholder(R.drawable.progress_icon)
                         .centerCrop()
                         /*.transform(new CircleTransform(HomeActivity.this))

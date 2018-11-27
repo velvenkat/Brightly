@@ -356,7 +356,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
                 if(!edit_otp.getText().toString().isEmpty()){
 
-                    if(otp_msg != null) {
+                    if(otp_resonse.length() == 6) {
                         getValidateOtp();
                         dialog.dismiss();
                         timer.cancel();
@@ -472,7 +472,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         String message = addMessageResponse.getMessage();
         String otp_resonse = addMessageResponse.getOtp();
 
-        if(otp_msg !=null && otp_msg.equals(otp_resonse))
+        if(otp_resonse !=null && !otp_resonse.equals(""))
         {
             getValidateOtp();
         }
