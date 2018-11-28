@@ -99,10 +99,18 @@ public class CardDetailFragment extends BaseFragment {
     String channel_name = "";
     public boolean isYouTubeInitializing = false;
     public int Card_CurrentPos = 0;
+    ImageView img_play_stop;
+
 
     @Override
     public void onPause() {
         super.onPause();
+        if(cur_scrn_mediaPlayerObj!=null){
+            if(cur_scrn_mediaPlayerObj.isPlaying()){
+                cur_scrn_mediaPlayerObj.pause();
+            }
+        }
+
 
     }
 

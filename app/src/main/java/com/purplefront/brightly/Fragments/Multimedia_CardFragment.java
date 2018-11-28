@@ -235,7 +235,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             image_cardImage.getLayoutParams().height = 360;
 
             audio_player_initialize(audio_seek_bar, txt_PlayProgTime, img_audio_play_stop);
-            MediaPlayer mp = setMediaPlayer(null, cardModelObj.getUrl());
+            MediaPlayer mp = setMediaPlayer(null, cardModelObj.getUrl(), false);
             parent_frag_Card_dtl.setGlob_mediaPlayerObj(mp);
         } else if (cardModelObj.getType().equalsIgnoreCase("file")) {
 
@@ -502,21 +502,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
 
         }
-       /* if(cardModelObj!=null) {
-            if (isVisibleToUser && cardModelObj.getType().equalsIgnoreCase("file")) {
-                if (isFileLoaded) {
-                    if (file_progress != null)
-                        file_progress.dismiss();
-                    isFileLoaded = false;
-                    file_progress = null;
-                } else {
-                    if (file_progress == null) {
-                        file_progress = showProgress();
-                    } else
-                        file_progress.show();
-                }
-            }
-        }*/
+
         if (isVisibleToUser && mediaPlayer != null) {
             parent_frag_Card_dtl.setGlob_mediaPlayerObj(mediaPlayer);
         }
@@ -540,6 +526,8 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 mediaPlayer.pause();
                 isAudioPlay = false;
                 img_play_stop.setImageResource(R.drawable.play_rec);
+
+
             }
         }
       /*  if (cardModelObj!=null && cardModelObj.getType().equalsIgnoreCase("audio")) {

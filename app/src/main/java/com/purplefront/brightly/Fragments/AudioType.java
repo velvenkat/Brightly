@@ -182,7 +182,7 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
             if (setEntryModel.getType().equalsIgnoreCase("audio")) {
                 rl_audio_player.setVisibility(View.VISIBLE);
                 text_audioFile.setVisibility(View.GONE);
-                setMediaPlayer(null, setEntryModel.getCard_multimedia_url());
+                setMediaPlayer(null, setEntryModel.getCard_multimedia_url(),false);
             }
             create_cardName.setText(setEntryModel.getCard_name());
             create_cardDescription.setText(setEntryModel.getCard_description());
@@ -316,7 +316,7 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
         */    // fragmentCall_mainObj.Fragment_call(this,new Create_PetActivity(), "act_crt", bundle);
             rec_contr.setVisibility(View.GONE);
             crt_contr.setVisibility(View.VISIBLE);
-            setMediaPlayer(null, tempMp3File.getAbsolutePath());
+            setMediaPlayer(null, tempMp3File.getAbsolutePath(),true);
         }
     }
 
@@ -393,7 +393,7 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }*/
-                setMediaPlayer(audio_uri, null);
+                setMediaPlayer(audio_uri, null,true);
                 //Toast.makeText(getContext(), "Audio URI" + audio_uri, Toast.LENGTH_SHORT).show();
             }
         }

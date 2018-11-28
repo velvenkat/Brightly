@@ -35,12 +35,12 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     ProgressDialog mProgress;
     alert_dlg_interface mListener;
     SeekBar audio_seek_bar;
-     MediaPlayer mediaPlayer;
-     boolean  isAudioPlay = false;
+    MediaPlayer mediaPlayer;
+    boolean isAudioPlay = false;
     String TotalTime;
     private final Handler handler = new Handler();
     private int mediaFileLengthInMilliseconds; // this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
-      ImageView img_play_stop;
+    ImageView img_play_stop;
     TextView txt_PlayProgTime;
     String cur_audio_Pos;
     boolean isPlayBtnClicked = false;
@@ -53,11 +53,11 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
-    public void setDlgListener(alert_dlg_interface listener){
-        mListener=listener;
+    public void setDlgListener(alert_dlg_interface listener) {
+        mListener = listener;
     }
 
-    public void clear_edit_text_focus(EditText editText){
+    public void clear_edit_text_focus(EditText editText) {
         editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -70,8 +70,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
 
     }
 
-    public void showAlertDialog(String message,String Title,String Pos_Title,String Neg_Title)
-    {
+    public void showAlertDialog(String message, String Title, String Pos_Title, String Neg_Title) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
 
         // Setting Dialog Title
@@ -85,7 +84,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
 
         // Setting Positive "Yes" Button
         alertDialog.setPositiveButton(Pos_Title, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
+            public void onClick(DialogInterface dialog, int which) {
 
                 dialog.dismiss();
                 mListener.postive_btn_clicked();
@@ -110,7 +109,6 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     }
 
 
-
     /**
      * @param fragment fragment transaction for all fragments
      */
@@ -133,15 +131,16 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
             fragmentTransaction.commit();
     }
 
-    public void audio_player_initialize(SeekBar seekBar,TextView txtProgTime,ImageView imgPlyStop){
-        audio_seek_bar=seekBar;
-        txt_PlayProgTime=txtProgTime;
-        img_play_stop=imgPlyStop;
+    public void audio_player_initialize(SeekBar seekBar, TextView txtProgTime, ImageView imgPlyStop) {
+        audio_seek_bar = seekBar;
+        txt_PlayProgTime = txtProgTime;
+        img_play_stop = imgPlyStop;
         setSeek_Bar();
         setImg_play_stop_Listener();
 
     }
-    public void setImg_play_stop_Listener(){
+
+    public void setImg_play_stop_Listener() {
         img_play_stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,7 +162,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
         });
     }
 
-    public void setSeek_Bar(){
+    public void setSeek_Bar() {
         audio_seek_bar.setMax(100);
         audio_seek_bar.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -205,6 +204,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
             mediaPlayer = null;
         }
     }
+
     private void primarySeekBarProgressUpdater() {
         if (isAudioPlay) {
             audio_seek_bar.setProgress((int) (((float) mediaPlayer.getCurrentPosition() / mediaFileLengthInMilliseconds) * 100)); // This math construction give a percentage of "was playing"/"song length"
@@ -218,16 +218,18 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
                 };
                 handler.postDelayed(notification, 1000);
             }
+        } else {
+            //   cur_audio_Pos = TotalTime;
         }
     }
 
-    public void setMediaPlayer(){
+    public void setMediaPlayer() {
 
 
     }
 
-    public MediaPlayer setMediaPlayer(Uri audio_uri,String filePath) {
-        mediaPlayer=new MediaPlayer();
+    public MediaPlayer setMediaPlayer(Uri audio_uri, String filePath, boolean isCreateCard) {
+        mediaPlayer = new MediaPlayer();
 
         try {
 
@@ -240,7 +242,12 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
             } else {
                 mediaPlayer.setDataSource(filePath);
             }
-            mediaPlayer.setOnBufferingUpdateListener(this);
+            if (!isCreateCard) {
+                txt_PlayProgTime.setVisibility(View.INVISIBLE);
+                mediaPlayer.setOnBufferingUpdateListener(this);
+            }
+            else
+                audio_seek_bar.setSecondaryProgress(audio_seek_bar.getMax());
             mediaPlayer.prepareAsync();
             mediaFileLengthInMilliseconds = mediaPlayer.getDuration(); // gets the song length in milliseconds from URL
 
@@ -248,9 +255,11 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     // mp.stop();
-
+                    cur_audio_Pos = TotalTime;
+                    setAudioProgText();
                     img_play_stop.setImageResource(R.drawable.play_rec);
                     isAudioPlay = false;
+                    audio_seek_bar.setProgress(100);
                     mediaPlayer = mp;
                     //   mp.prepareAsync();
                 }
@@ -272,28 +281,27 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
         } catch (Exception e) {
             e.printStackTrace();
         }
-       return mediaPlayer;
+        return mediaPlayer;
 
     }
 
-    public void setAudioProgText(){
+    public void setAudioProgText() {
         txt_PlayProgTime.setText(cur_audio_Pos + "/" + TotalTime);
     }
 
     // Intent Methods
-    public void simpleIntent(Activity activity, Class activityClass)
-    {
+    public void simpleIntent(Activity activity, Class activityClass) {
         Intent intent = new Intent(activity, activityClass);
         startActivity(intent);
     }
-    public void stackClearIntent(Activity activity, Class activityClass)
-    {
+
+    public void stackClearIntent(Activity activity, Class activityClass) {
         Intent intent = new Intent(activity, activityClass);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
-    public void finishIntent(Activity activity, Class activityClass)
-    {
+
+    public void finishIntent(Activity activity, Class activityClass) {
         Intent intent = new Intent(activity, activityClass);
         startActivity(intent);
         activity.finish();
@@ -302,8 +310,8 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
 
     public void frwdAnimIntent(Activity activity, Class activityClass, RealmModel realmModel) {
         Intent intent = new Intent(activity, activityClass);
-        if(realmModel!=null)
-        intent.putExtra("user_obj",realmModel);
+        if (realmModel != null)
+            intent.putExtra("user_obj", realmModel);
         startActivity(intent);
         activity.overridePendingTransition(R.anim.right_enter, R.anim.left_out);
     }
@@ -315,14 +323,12 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     }
 
     //Show Toast Methods
-    public void showLongToast(Activity activity, String massage )
-    {
-        Toast.makeText( activity, massage, Toast.LENGTH_LONG).show();
+    public void showLongToast(Activity activity, String massage) {
+        Toast.makeText(activity, massage, Toast.LENGTH_LONG).show();
     }
 
-    public void showShortToast(Activity activity, String massage )
-    {
-        Toast.makeText( activity, massage, Toast.LENGTH_LONG).show();
+    public void showShortToast(Activity activity, String massage) {
+        Toast.makeText(activity, massage, Toast.LENGTH_LONG).show();
     }
 
 
@@ -353,13 +359,18 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
         }
     }
 
-    public interface alert_dlg_interface{
+    public interface alert_dlg_interface {
         public void postive_btn_clicked();
+
         public void negative_btn_clicked();
     }
+
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         audio_seek_bar.setSecondaryProgress(percent);
+        if(percent==100){
+            txt_PlayProgTime.setVisibility(View.VISIBLE);
+        }
     }
 }
 
