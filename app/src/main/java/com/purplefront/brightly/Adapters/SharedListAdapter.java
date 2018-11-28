@@ -115,7 +115,7 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
                 // Add data to the intent, the receiving app will decide
                 // what to do with it.
                 share.putExtra(Intent.EXTRA_SUBJECT, scrn_context.getResources().getString(R.string.share_msg_subject));
-                String url = "https://play.google.com/store/apps/details?id=purplefront.com.kriddrpetparent";
+                String url = "https://play.google.com/store/apps/details?id=com.purplefront.brightly";
                 share.putExtra(Intent.EXTRA_TEXT, scrn_context.getResources().getString(R.string.share_msg_text) + "\n " + url);
                 scrn_context.startActivity(Intent.createChooser(share, "Share link!"));
 

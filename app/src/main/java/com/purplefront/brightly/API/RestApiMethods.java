@@ -14,7 +14,6 @@ import com.purplefront.brightly.Modules.SignInResponse;
 import com.purplefront.brightly.Modules.SignUpResponse;
 import com.purplefront.brightly.Modules.UpdateChannelResponse;
 
-
 import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -51,7 +50,7 @@ public interface RestApiMethods {
 
     //Validate OTP
     @POST("users/validateotp.php")
-    Call<AddMessageResponse> getValidateOtp(@Query("user_id") String user_id);
+    Call<AddMessageResponse> getValidateOtp(@Query("user_id") String user_id, @Query("otp") String otp);
 
     //Resend OTP
     @POST("users/resendotp.php")
@@ -109,7 +108,7 @@ public interface RestApiMethods {
 
     //CardList
     @POST("cards/card_list.php")
-    Call<CardsListResponse> getCardsList(@Query("user_id") String User_id,@Query("set_id") String set_id);
+    Call<CardsListResponse> getCardsList(@Query("user_id") String User_id, @Query("set_id") String set_id);
 
     //SetList
     @POST("cards/add_card.php")
@@ -138,11 +137,11 @@ public interface RestApiMethods {
 
     //Delete Card
     @POST("cards/delete_card.php")
-    Call<AddMessageResponse> getDeleteCard(@Query("set_id") String SetId,@Query("user_id") String UserId,@Query("created_by") String CardCreatedBy,@Query("card_id") String card_id);
+    Call<AddMessageResponse> getDeleteCard(@Query("set_id") String SetId, @Query("user_id") String UserId, @Query("created_by") String CardCreatedBy, @Query("card_id") String card_id);
 
     //Card_Reorder
     @POST("cards/display_order.php")
-    Call<AddMessageResponse> card_reorder_set(@Query("user_id") String user_id, @Query("card_ids") String card_id,@Query("set_id") String SetId);
+    Call<AddMessageResponse> card_reorder_set(@Query("user_id") String user_id, @Query("card_ids") String card_id, @Query("set_id") String SetId);
 
     //Notifications
     @POST("notification/in_app.php")
@@ -159,7 +158,7 @@ public interface RestApiMethods {
     Call<AddMessageResponse> call_share_access_update(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("value") String acc_value, @Query("assigned_to") String assigned_to);
 
     @POST("cardsetassoc/link_card.php")
-    Call<AddMessageResponse> call_copy_card(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("org_set_id") String card_org_set_id,@Query("card_id") String card_ids);
+    Call<AddMessageResponse> call_copy_card(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("org_set_id") String card_org_set_id, @Query("card_id") String card_ids);
 
 
     //Comments Set

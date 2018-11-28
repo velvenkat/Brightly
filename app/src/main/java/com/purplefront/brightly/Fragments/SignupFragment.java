@@ -31,8 +31,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
-import com.purplefront.brightly.Activities.Login;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
+import com.purplefront.brightly.Activities.Login;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
@@ -41,8 +41,6 @@ import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.Util;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,6 +88,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     Button btn_Verify;
     TextView text_resend, resend_in;
     ImageView close_dialog;
+    String otp;
 
 
     public SignupFragment() {
@@ -110,7 +109,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         shakeAnimation = AnimationUtils.loadAnimation(getActivity(),
                 R.anim.shake);
 
-        requestRuntimePermissions(android.Manifest.permission.READ_SMS, android.Manifest.permission.RECEIVE_SMS, android.Manifest.permission.SEND_SMS);
+        requestRuntimePermissions(Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS);
 
         initViews();
         setListeners();
@@ -276,6 +275,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
                         showLongToast(getActivity(), message);
+                        dismissProgress();
                     }
                 });
             } else {
@@ -303,12 +303,13 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         text_resend = (TextView) mView.findViewById(R.id.text_resend);
         resend_in = (TextView) mView.findViewById(R.id.resend_in);
         close_dialog = (ImageView) mView.findViewById(R.id.close_dialog);
-
         mBuilder.setView(mView);
         mBuilder.setCancelable(false);
         final AlertDialog dialog = mBuilder.create();
         dialog.show();
         dialog.setCanceledOnTouchOutside(false);
+
+
 
         final CountDownTimer timer = new CountDownTimer(30000, 1000) {
 
@@ -356,11 +357,13 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
                 if(!edit_otp.getText().toString().isEmpty()){
 
+                    otp = edit_otp.getText().toString();
+
                     if(otp_resonse.length() == 6) {
                         getValidateOtp();
-                        dialog.dismiss();
+                       /* dialog.dismiss();
                         timer.cancel();
-                        timer.onFinish();
+                        timer.onFinish();*/
                     }
                     else {
                         Toast.makeText(getActivity(), "Please enter valid OTP", Toast.LENGTH_SHORT).show();
@@ -488,7 +491,8 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getValidateOtp(User_ID);
+                showProgress();
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getValidateOtp(User_ID, otp);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -515,7 +519,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
-//                        showLongToast(getActivity(), message);
+                        showLongToast(getActivity(), message);
                         dismissProgress();
                     }
                 });
@@ -564,6 +568,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         Toast.makeText(getActivity(),"OTP : "+messageText,Toast.LENGTH_LONG).show();
         otp_msg=messageText;
         if(otp_msg!=null) {
+            edit_otp.setText("");
             edit_otp.setText(otp_msg);
         }
 

@@ -453,7 +453,7 @@ public class BrightlyNavigationActivity extends BaseActivity
         // Add data to the intent, the receiving app will decide
         // what to do with it.
         share.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.share_msg_subject));
-        String url = "https://play.google.com/store/apps/details?id=purplefront.com.kriddrpetparent";
+        String url = "https://play.google.com/store/apps/details?id=com.purplefront.brightly";
         share.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_msg_text) + "\n " + url);
         startActivity(Intent.createChooser(share, "Share link!"));
     }
