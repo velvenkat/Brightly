@@ -347,6 +347,28 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onClick(View v) {
                 getResendOtp();
+
+                final CountDownTimer timer = new CountDownTimer(30000, 1000) {
+
+                    public void onTick(long millisUntilFinished) {
+
+                        text_resend.setEnabled(false);
+                        text_resend.setText(+millisUntilFinished / 1000 + " sec");
+                        text_resend.setTextSize(22);
+                        resend_in.setText("resend OTP in");
+                        //here you can have your logic to set text to edittext
+                    }
+
+                    public void onFinish() {
+                        text_resend.setTextSize(18);
+                        text_resend.setText("Resend OTP");
+                        text_resend.setEnabled(true);
+                        resend_in.setText("Or");
+                    }
+
+
+                };
+                timer.start();
             }
         });
 
@@ -474,10 +496,9 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
         String message = addMessageResponse.getMessage();
         String otp_resonse = addMessageResponse.getOtp();
+        if(message.equals("success")) {
 
-        if(otp_resonse !=null && !otp_resonse.equals(""))
-        {
-            getValidateOtp();
+            showLongToast(getActivity(), "OTP has been Sent");
         }
         else {
             showLongToast(getActivity(), message);

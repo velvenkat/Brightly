@@ -154,7 +154,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                                 .placeholder(R.drawable.card_progress_loading)
                                 .fitCenter()
                                 /*.transform(new CircleTransform(HomeActivity.this))
-                                .override(50, 50)*/
+                                 */.override(450, 900)
                                 .into(img);
 
                         dialog.setContentView(imgEntryView);
