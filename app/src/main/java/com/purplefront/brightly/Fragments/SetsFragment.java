@@ -402,7 +402,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                                 if (set_id_toCreateCard != null) {
                                     int i = 0;
                                     for (SetsListModel model : setsListModelList) {
-                                        if (model.getSet_id() .equals(set_id_toCreateCard) ) {
+                                        if (model.getSet_id().equals(set_id_toCreateCard)) {
                                             setsListModelList.remove(i);
                                             break;
                                         }
@@ -577,7 +577,10 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
 
         if (set_id_toCreateCard == null) {
             if (userId.equalsIgnoreCase(Created_By)) {
-                inflater.inflate(R.menu.my_channel_set, menu);
+                if (setsListModelList != null && setsListModelList.size() == 0) {
+                    inflater.inflate(R.menu.my_channel_empty_set, menu);
+                } else
+                    inflater.inflate(R.menu.my_channel_set, menu);
             } else
                 inflater.inflate(R.menu.my_channel_sub_set, menu);
             //   return true;
@@ -611,6 +614,8 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                     chk_sel_all.setVisibility(View.VISIBLE);
                     txtHintReorder.setVisibility(View.GONE);
                     txtItemSel.setText("");
+                    chk_sel_all.setText("Select All");
+                    del_sel_id = new ArrayList<>();
                     btn_delete.setEnabled(false);
                     if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
                         ith.attachToRecyclerView(null);
