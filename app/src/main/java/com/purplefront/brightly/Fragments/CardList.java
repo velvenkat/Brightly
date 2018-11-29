@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -320,6 +321,24 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         }
 
         getCardsLists();
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                    if (set_id_toCreateCard == null) {
+                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                        ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                    } else {
+                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                        ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
+
+                    }
+                }
+                return true;
+            }
+        });
 
         return rootView;
     }
@@ -372,7 +391,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                         dismissProgress();
                         ((BrightlyNavigationActivity) getActivity()).isCardRefresh = true;
                         parent_frag_Card_dtl.cardsListModels = new ArrayList<>(cardsListModels);
-                        parent_frag_Card_dtl.Card_CurrentPos=0;
+                        parent_frag_Card_dtl.Card_CurrentPos = 0;
                         Toast.makeText(getContext(), "Cards Successfully Reordered", Toast.LENGTH_LONG).show();
                     }
 
@@ -482,7 +501,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                                 cardsListModels = cardsListResponse.getData();
 
                                 parent_frag_Card_dtl.cardsListModels = new ArrayList<>(cardsListModels);
-                                parent_frag_Card_dtl.Card_CurrentPos=0;
+                                parent_frag_Card_dtl.Card_CurrentPos = 0;
                                 setAdapter(cardsListModels);
                                 if (set_id_toCreateCard != null) {
                                     multi_sel_actions();
@@ -491,15 +510,15 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
                             } else {
                                 parent_frag_Card_dtl.cardsListModels = new ArrayList<>();
-                                parent_frag_Card_dtl.Card_CurrentPos=0;
+                                parent_frag_Card_dtl.Card_CurrentPos = 0;
                                 card_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
-                                Toast.makeText(getContext(),"Card is not available",Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), "Card is not available", Toast.LENGTH_LONG).show();
                                 ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                                 cardsListModels = new ArrayList<>();
                             }
-                            if(getActivity()!=null)
-                            getActivity().invalidateOptionsMenu();
+                            if (getActivity() != null)
+                                getActivity().invalidateOptionsMenu();
                         } else {
                             showLongToast(getActivity(), message);
 
@@ -511,7 +530,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
                         dismissProgress();
                         parent_frag_Card_dtl.cardsListModels = new ArrayList<>(cardsListModels);
-                        parent_frag_Card_dtl.Card_CurrentPos=0;
+                        parent_frag_Card_dtl.Card_CurrentPos = 0;
                     }
                 });
             } else {

@@ -399,7 +399,23 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                             if (setListResponse != null && setListResponse.getSets() != null && setListResponse.getSets().size() != 0) {
 
                                 setsListModelList = setListResponse.getSets();
-                                setAdapter(setsListModelList);
+                                if (set_id_toCreateCard != null) {
+                                    int i = 0;
+                                    for (SetsListModel model : setsListModelList) {
+                                        if (model.getSet_id() .equals(set_id_toCreateCard) ) {
+                                            setsListModelList.remove(i);
+                                            break;
+                                        }
+                                        i++;
+                                    }
+                                }
+                                if (setsListModelList.size() == 0) {
+                                    channelSet_listview.setVisibility(View.GONE);
+                                    view_nodata.setVisibility(View.VISIBLE);
+                                    setsListModelList = new ArrayList<>();
+                                    txtHintReorder.setVisibility(View.GONE);
+                                } else
+                                    setAdapter(setsListModelList);
                                 txtHintReorder.setVisibility(View.VISIBLE);
 
 
