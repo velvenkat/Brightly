@@ -84,26 +84,29 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     RealmModel user_obj;
 
     SwipeRefreshLayout swipeRefresh;
+    boolean isSwipeRefresh = false;
+
     // boolean isMultiSelChoosed;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_my_channels_set, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
-        txtHintReorder=rootView.findViewById(R.id.txtHintReorder);
+        txtHintReorder = rootView.findViewById(R.id.txtHintReorder);
 
-        boolean dontRun=((BrightlyNavigationActivity)getActivity()).DontRun;
-        boolean dontRunoneTime=((BrightlyNavigationActivity)getActivity()).DontRunOneTime;
-        swipeRefresh=(SwipeRefreshLayout)rootView.findViewById(R.id.swiperefresh);
+        boolean dontRun = ((BrightlyNavigationActivity) getActivity()).DontRun;
+        boolean dontRunoneTime = ((BrightlyNavigationActivity) getActivity()).DontRunOneTime;
+        swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                swipeRefresh.setRefreshing(false);
+                //swipeRefresh.setRefreshing(false);
+                isSwipeRefresh = true;
                 getSetLists();
             }
         });
         // realm = Realm.getDefaultInstance();
-        if(!dontRun && !dontRunoneTime) {
+        if (!dontRun && !dontRunoneTime) {
             Bundle bundle = getArguments();
             del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
             btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
@@ -148,8 +151,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                 txtHintReorder.setVisibility(View.GONE);
                 ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
                 ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select set to copy card");
-            }
-            else
+            } else
                 ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(null);
             setDlgListener(this);
             if (!userId.equalsIgnoreCase(chl_list_obj.getCreated_by())) {
@@ -380,13 +382,18 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
         try {
 
             if (CheckNetworkConnection.isOnline(getContext())) {
-                showProgress();
+                if (!isSwipeRefresh)
+                    showProgress();
                 Call<SetListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getMySetsList(userId, channel_id);
                 callRegisterUser.enqueue(new ApiCallback<SetListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SetListResponse> response, boolean isSuccess, String message) {
                         SetListResponse setListResponse = response.body();
-                        dismissProgress();
+                        if (isSwipeRefresh) {
+                            swipeRefresh.setRefreshing(false);
+                            isSwipeRefresh = false;
+                        } else
+                            dismissProgress();
                         if (isSuccess) {
 
                             if (setListResponse != null && setListResponse.getSets() != null && setListResponse.getSets().size() != 0) {
@@ -399,7 +406,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                             } else {
                                 channelSet_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
-                                setsListModelList=new ArrayList<>();
+                                setsListModelList = new ArrayList<>();
                                 txtHintReorder.setVisibility(View.GONE);
 
                             }
@@ -413,18 +420,27 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
 
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
-
-                        dismissProgress();
+                        if (isSwipeRefresh) {
+                            swipeRefresh.setRefreshing(false);
+                            isSwipeRefresh = false;
+                        } else
+                            dismissProgress();
                     }
                 });
             } else {
-
-                dismissProgress();
+                if (isSwipeRefresh) {
+                    swipeRefresh.setRefreshing(false);
+                    isSwipeRefresh = false;
+                } else
+                    dismissProgress();
             }
         } catch (Exception e) {
             e.printStackTrace();
-
-            dismissProgress();
+            if (isSwipeRefresh) {
+                swipeRefresh.setRefreshing(false);
+                isSwipeRefresh = false;
+            } else
+                dismissProgress();
         }
 
     }
@@ -510,7 +526,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                                     Toast.makeText(getContext(), "Selected Set(s) Deleted Successfully", Toast.LENGTH_LONG).show();
                                     reset_view();
                                     getSetLists();
-                                   ith.attachToRecyclerView(channelSet_listview);
+                                    ith.attachToRecyclerView(channelSet_listview);
                                 }
 
 
@@ -540,17 +556,17 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        MenuInflater inflater=getActivity().getMenuInflater();
+        MenuInflater inflater = getActivity().getMenuInflater();
         menu.clear();
 
-            if (set_id_toCreateCard == null) {
-                if (userId.equalsIgnoreCase(Created_By)) {
-                    inflater.inflate(R.menu.my_channel_set, menu);
-                } else
-                    inflater.inflate(R.menu.my_channel_sub_set, menu);
-                //   return true;
-            }
+        if (set_id_toCreateCard == null) {
+            if (userId.equalsIgnoreCase(Created_By)) {
+                inflater.inflate(R.menu.my_channel_set, menu);
+            } else
+                inflater.inflate(R.menu.my_channel_sub_set, menu);
+            //   return true;
         }
+    }
 
 
 
@@ -669,18 +685,17 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     }
 
     @Override
-    public void onCardShow(Bundle bundle_args,String cardCount) {
+    public void onCardShow(Bundle bundle_args, String cardCount) {
         Fragment fragment;
         if (set_id_toCreateCard != null) {
-            int card_count=Integer.parseInt(cardCount);
-            if(card_count>0) {
+            int card_count = Integer.parseInt(cardCount);
+            if (card_count > 0) {
                 fragment = new CardList();
                 bundle_args.putString("set_id_toCreateCard", set_id_toCreateCard);
                 fragment.setArguments(bundle_args);
                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Card_List, fragment, true);
-            }
-            else{
-                showLongToast(getActivity(),"Card is not available");
+            } else {
+                showLongToast(getActivity(), "Card is not available");
             }
         } else {
             fragment = new CardDetailFragment();

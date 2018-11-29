@@ -69,6 +69,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
     String userName;
     String userPhone;
     String userPicture;
+    boolean isSwipeRefresh = false;
 
 
     String Set_ID_toCreateCard = null;
@@ -123,7 +124,8 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
             swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    swipeRefresh.setRefreshing(false);
+                    //   swipeRefresh.setRefreshing(false);
+                    isSwipeRefresh = true;
                     getChannelsLists(channel_type);
                 }
             });
@@ -273,12 +275,18 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         try {
 
             if (CheckNetworkConnection.isOnline(getContext())) {
-                showProgress();
+                if (!isSwipeRefresh)
+                    showProgress();
                 Call<ChannelListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getMyChannelsList(user_obj.getUser_Id(), type);
                 callRegisterUser.enqueue(new ApiCallback<ChannelListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<ChannelListResponse> response, boolean isSuccess, String message) {
                         ChannelListResponse channelListResponse = response.body();
+                        if (isSwipeRefresh) {
+                            isSwipeRefresh = false;
+                            swipeRefresh.setRefreshing(false);
+                        } else
+                            dismissProgress();
                         if (isSuccess) {
 
                             if (channelListResponse != null && channelListResponse.getChannels() != null && channelListResponse.getChannels().size() != 0) {
@@ -288,19 +296,17 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                                 setAdapter(channelListModels);
                                 channels_listview.setVisibility(View.VISIBLE);
                                 view_nodata.setVisibility(View.GONE);
-                                dismissProgress();
+
 
                             } else {
                                 // swipeRefresh.setRefreshing(false);
                                 channels_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
-                                dismissProgress();
                             }
 
                         } else {
                             showLongToast(getActivity(), message);
 
-                            dismissProgress();
                             //     swipeRefresh.setRefreshing(true);
                         }
                     }
@@ -308,18 +314,29 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
 
-                        dismissProgress();
+                        if (isSwipeRefresh) {
+                            isSwipeRefresh = false;
+                            swipeRefresh.setRefreshing(false);
+                        } else
+                            dismissProgress();
                         // swipeRefresh.setRefreshing(true);
                     }
                 });
             } else {
-
-                dismissProgress();
+                if (isSwipeRefresh) {
+                    swipeRefresh.setRefreshing(false);
+                    isSwipeRefresh = false;
+                }
+              /*  else
+                    dismissProgress();*/
             }
         } catch (Exception e) {
             e.printStackTrace();
-
-            dismissProgress();
+            if (isSwipeRefresh) {
+                isSwipeRefresh = false;
+                swipeRefresh.setRefreshing(false);
+            } else
+                dismissProgress();
             //swipeRefresh.setRefreshing(true);
         }
 
