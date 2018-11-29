@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -82,6 +83,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
 
     RealmModel user_obj;
 
+    SwipeRefreshLayout swipeRefresh;
     // boolean isMultiSelChoosed;
     @Nullable
     @Override
@@ -92,6 +94,14 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
 
         boolean dontRun=((BrightlyNavigationActivity)getActivity()).DontRun;
         boolean dontRunoneTime=((BrightlyNavigationActivity)getActivity()).DontRunOneTime;
+        swipeRefresh=(SwipeRefreshLayout)rootView.findViewById(R.id.swiperefresh);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefresh.setRefreshing(false);
+                getSetLists();
+            }
+        });
         // realm = Realm.getDefaultInstance();
         if(!dontRun && !dontRunoneTime) {
             Bundle bundle = getArguments();

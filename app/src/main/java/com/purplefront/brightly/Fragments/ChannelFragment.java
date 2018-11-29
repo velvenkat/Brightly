@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -71,7 +72,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
 
 
     String Set_ID_toCreateCard = null;
-
+    SwipeRefreshLayout swipeRefresh;
 
     @Nullable
     @Override
@@ -79,6 +80,8 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         rootView = inflater.inflate(R.layout.lo_scrn_channel, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         boolean dontrun = ((BrightlyNavigationActivity) getActivity()).DontRun;
+        swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
+
         ((BrightlyNavigationActivity) getActivity()).DontRunOneTime = false;
         if (!dontrun) {
             image_createChannel = (ImageView) rootView.findViewById(R.id.image_createChannel);
@@ -117,6 +120,13 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                 image_createChannel.setVisibility(View.VISIBLE);
 
             getChannelsLists(channel_type);
+            swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    swipeRefresh.setRefreshing(false);
+                    getChannelsLists(channel_type);
+                }
+            });
             image_createChannel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -263,7 +273,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
         try {
 
             if (CheckNetworkConnection.isOnline(getContext())) {
-//                showProgress();
+                showProgress();
                 Call<ChannelListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getMyChannelsList(user_obj.getUser_Id(), type);
                 callRegisterUser.enqueue(new ApiCallback<ChannelListResponse>(getActivity()) {
                     @Override
@@ -272,7 +282,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                         if (isSuccess) {
 
                             if (channelListResponse != null && channelListResponse.getChannels() != null && channelListResponse.getChannels().size() != 0) {
-
+                                //  swipeRefresh.setRefreshing(true);
                                 channelListModels.clear();
                                 channelListModels = channelListResponse.getChannels();
                                 setAdapter(channelListModels);
@@ -281,6 +291,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                                 dismissProgress();
 
                             } else {
+                                // swipeRefresh.setRefreshing(false);
                                 channels_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
                                 dismissProgress();
@@ -288,7 +299,9 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
 
                         } else {
                             showLongToast(getActivity(), message);
+
                             dismissProgress();
+                            //     swipeRefresh.setRefreshing(true);
                         }
                     }
 
@@ -296,6 +309,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                     public void onApiFailure(boolean isSuccess, String message) {
 
                         dismissProgress();
+                        // swipeRefresh.setRefreshing(true);
                     }
                 });
             } else {
@@ -306,6 +320,7 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
             e.printStackTrace();
 
             dismissProgress();
+            //swipeRefresh.setRefreshing(true);
         }
 
     }

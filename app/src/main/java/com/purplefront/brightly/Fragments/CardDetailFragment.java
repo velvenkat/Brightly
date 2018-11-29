@@ -105,8 +105,8 @@ public class CardDetailFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        if(cur_scrn_mediaPlayerObj!=null){
-            if(cur_scrn_mediaPlayerObj.isPlaying()){
+        if (cur_scrn_mediaPlayerObj != null) {
+            if (cur_scrn_mediaPlayerObj.isPlaying()) {
                 cur_scrn_mediaPlayerObj.pause();
             }
         }
@@ -169,6 +169,7 @@ public class CardDetailFragment extends BaseFragment {
     boolean isNotification;
     int Cur_PagrPosition;
     int UPDATECARD = 102;
+    boolean isAddCardPressed = false;
     ImageView image_createCard, image_Comment;
     SetsListModel setsListModel;
     ChannelListModel chl_list_obj;
@@ -374,13 +375,12 @@ public class CardDetailFragment extends BaseFragment {
         MenuInflater inflater = getActivity().getMenuInflater();
         if (cardsListModels != null)
             if (cardsListModels.size() == 0) {
-                if(Created_By.equalsIgnoreCase(userObj.getUser_Id()))
-                inflater.inflate(R.menu.my_set_cards_empty, menu);
-                else{
+                if (Created_By.equalsIgnoreCase(userObj.getUser_Id()))
+                    inflater.inflate(R.menu.my_set_cards_empty, menu);
+                else {
                     inflater.inflate(R.menu.my_sub_cards_empty, menu);
                 }
-            }
-            else if (!isNotification) {
+            } else if (!isNotification) {
                 if (cardsListModels.get(Card_CurrentPos).getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
                     inflater.inflate(R.menu.my_set_cards, menu);
                 } else if (chl_list_obj.getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
@@ -580,7 +580,9 @@ public class CardDetailFragment extends BaseFragment {
         list_SettingsMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                      @Override
                                                      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                                                          mBottomSheetDialog.dismiss();
+                                                         isAddCardPressed = true;
                                                          Bundle bundle = new Bundle();
                                                          switch (position) {
                                                              case 0:
@@ -630,21 +632,28 @@ public class CardDetailFragment extends BaseFragment {
                                 cardsListModels = new ArrayList<>(cardsListResponse.getData());
 
                                 view_nodata.setVisibility(View.GONE);
-                                Card_CurrentPos=0;
-                                pager_size = String.valueOf(cardsListModels.size());
-                                count = String.valueOf(Card_CurrentPos + 1);
-                                pager_count.setText(count + "/" + pager_size);
-
+                                if (isAddCardPressed) {
+                                    //viewPager_Cards.setCurrentItem(cardsListModels.size());
+                                } else {
+                                    Card_CurrentPos = 0;
+                                    pager_size = String.valueOf(cardsListModels.size());
+                                    count = String.valueOf(Card_CurrentPos + 1);
+                                    pager_count.setText(count + "/" + pager_size);
+                                }
+                                setAdapter(cardsListModels);
+                                if (isAddCardPressed) {
+                                    viewPager_Cards.setCurrentItem(cardsListModels.size());
+                                    isAddCardPressed = false;
+                                }
 
                             } else {
                                 viewPager_Cards.setVisibility(View.GONE);
                                 pager_count.setVisibility(View.GONE);
                                 cardsListModels = new ArrayList<>();
-                                if(Created_By.equalsIgnoreCase(userObj.getUser_Id())) {
+                                if (Created_By.equalsIgnoreCase(userObj.getUser_Id())) {
                                     view_nodata.setVisibility(View.VISIBLE);
                                     view_nodata.setText(R.string.add_cards_suggestion);
-                                }
-                                else{
+                                } else {
                                     view_nodata.setVisibility(View.VISIBLE);
                                     view_nodata.setText("No Cards Available");
                                 }
@@ -653,7 +662,6 @@ public class CardDetailFragment extends BaseFragment {
                 /*            CardsListModel dummyCardObj=new CardsListModel();
                             cardsListModels.add(dummyCardObj);*/
 
-                            setAdapter(cardsListModels);
 
                         } else {
                             showLongToast(getActivity(), message);
