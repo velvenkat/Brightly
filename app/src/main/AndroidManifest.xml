@@ -65,15 +65,15 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".Activities.BrightlyNavigationActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_my_channel"
             android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/AppTheme" />
 
         <!-- [START firebase_service] -->
-        <service android:name=".Firebase.MyFirebaseMessagingService"
-            android:exported="true"
-            >
+        <service
+            android:name=".Firebase.MyFirebaseMessagingService"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -89,8 +89,7 @@
         </service>
         <!-- [END firebase_iid_service] -->
 
-        <activity android:name=".Fragments.ShareWithContacts" />
-        <activity android:name=".Fragments.SharePage"></activity>
+
     </application>
 
 </manifest>
