@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.text.Spannable;
@@ -83,6 +84,7 @@ public class RichLinkViewTelegram extends RelativeLayout {
         textViewDesp = (TextView) findViewById(R.id.rich_link_desp);
         textViewUrl = (TextView) findViewById(R.id.rich_link_url);
         mLoadingDialog = (RotateLoading) findViewById(R.id.rotateloading);
+        mLoadingDialog.setBackgroundColor(Color.BLACK);
         mFrameLayout = (FrameLayout) findViewById(R.id.frameLoading);
         mFrameLayout.setVisibility(GONE);
 

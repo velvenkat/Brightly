@@ -140,7 +140,7 @@ public class FileType extends BaseFragment {
         String[] arrOfStr = str.split("http");
         if (arrOfStr.length == 1) {
             image_name = arrOfStr[0];
-            image_name = "https://" + image_name;
+            image_name = "http://" + image_name;
         } else if (arrOfStr.length == 2) {
             image_name = arrOfStr[1];
             image_name = "http" + image_name;

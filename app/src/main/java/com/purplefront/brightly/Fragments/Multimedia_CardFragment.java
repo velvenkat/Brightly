@@ -120,6 +120,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
         if (cardModelObj.getDescription() != null) {
             text_cardDescription.setText(cardModelObj.getDescription());
+            text_cardDescription.setMovementMethod(LinkMovementMethod.getInstance());
         }
         if (cardModelObj.getType().equalsIgnoreCase("image")) {
             image_cardImage.setVisibility(View.VISIBLE);
