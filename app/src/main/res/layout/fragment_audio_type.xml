@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/audio_rec_contr"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:visibility="gone">
 
         <include layout="@layout/lo_rec_voice"></include>
@@ -18,7 +18,8 @@
     <LinearLayout
         android:id="@+id/ll_cr_contr"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <ImageView
@@ -33,6 +34,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
+
             android:layout_marginLeft="@dimen/dimen_20"
             android:layout_marginRight="@dimen/dimen_20"
             android:layout_marginTop="@dimen/dimen_10"
@@ -135,18 +137,35 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/mediumtextsize" />
 
+            <!--  <EditText
+                  android:id="@+id/create_cardDescription"
+                  android:layout_width="fill_parent"
+                  android:layout_height="100dp"
+                  android:layout_marginBottom="@dimen/dimen_10"
+                  android:layout_marginLeft="@dimen/dimen_20"
+                  android:layout_marginRight="@dimen/dimen_20"
+                  android:layout_marginTop="@dimen/dimen_20"
+                  android:background="@drawable/edit_text_background"
+                  android:gravity="start"
+                  android:hint="@string/card_description"
+                  android:inputType="textCapSentences|textMultiLine"
+                  android:padding="@dimen/dimen_4"
+                  android:textColor="@color/black"
+                  android:textSize="@dimen/mediumtextsize" />-->
             <EditText
                 android:id="@+id/create_cardDescription"
-                android:layout_width="fill_parent"
-                android:layout_height="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/create_cardName"
                 android:layout_marginBottom="@dimen/dimen_10"
                 android:layout_marginLeft="@dimen/dimen_20"
                 android:layout_marginRight="@dimen/dimen_20"
-                android:layout_marginTop="@dimen/dimen_20"
+                android:layout_marginTop="@dimen/dimen_5"
                 android:background="@drawable/edit_text_background"
                 android:gravity="start"
                 android:hint="@string/card_description"
                 android:inputType="textCapSentences|textMultiLine"
+                android:minHeight="120dp"
                 android:padding="@dimen/dimen_4"
                 android:textColor="@color/black"
                 android:textSize="@dimen/mediumtextsize" />

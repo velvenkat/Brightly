@@ -558,6 +558,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
         parent_frag_Card_dtl.move_card();
         UTubePlayer = youTubePlayer;
+        if(getActivity()!=null)
         ((BrightlyNavigationActivity) getActivity()).uTubePlayer = UTubePlayer;
         UTubePlayer.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
             @Override
@@ -565,9 +566,11 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
                 if (b) {
                     isUTubePlayFullScreen = true;
+                    if(getActivity()!=null)
                     ((BrightlyNavigationActivity) getActivity()).isUTubePlayerFullScreen = true;
                 } else {
                     isUTubePlayFullScreen = false;
+                    if(getActivity()!=null)
                     ((BrightlyNavigationActivity) getActivity()).isUTubePlayerFullScreen = false;
                 }
             }

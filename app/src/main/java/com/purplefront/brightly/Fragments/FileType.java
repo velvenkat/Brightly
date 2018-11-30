@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
@@ -33,7 +34,7 @@ import retrofit2.Response;
 public class FileType extends BaseFragment {
 
     View frag_rootView;
-   // ImageView image_file_link;
+    // ImageView image_file_link;
     EditText create_cardName;
     EditText create_cardDescription;
     EditText create_cardURL;
@@ -53,6 +54,7 @@ public class FileType extends BaseFragment {
     RealmModel realmModelObj;
 
     boolean isCreateCard;
+    TextView txt_file_steps;
 
 
     public FileType() {
@@ -60,15 +62,15 @@ public class FileType extends BaseFragment {
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         frag_rootView = inflater.inflate(R.layout.fragment_file_type, container, false);
-        realmModelObj=((BrightlyNavigationActivity)getActivity()).getUserModel();
-        Bundle bundle=getArguments();
-        setEntryModelObj=bundle.getParcelable("set_entry_obj");
+        txt_file_steps = frag_rootView.findViewById(R.id.file_steps);
+        realmModelObj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
+        Bundle bundle = getArguments();
+        setEntryModelObj = bundle.getParcelable("set_entry_obj");
 
         userId = realmModelObj.getUser_Id();
         set_id = setEntryModelObj.getSet_id();
@@ -77,22 +79,22 @@ public class FileType extends BaseFragment {
         create_cardURL = (EditText) frag_rootView.findViewById(R.id.create_cardURL);
         create_cardName = (EditText) frag_rootView.findViewById(R.id.create_cardName);
         create_cardDescription = (EditText) frag_rootView.findViewById(R.id.create_cardDescription);
-        btn_createCard = (Button)frag_rootView.findViewById(R.id.btn_createCard);
+        btn_createCard = (Button) frag_rootView.findViewById(R.id.btn_createCard);
 
 
-        isCreateCard=bundle.getBoolean("isCreate");
+        isCreateCard = bundle.getBoolean("isCreate");
         clear_edit_text_focus(create_cardDescription);
         clear_edit_text_focus(create_cardName);
         clear_edit_text_focus(create_cardURL);
-        if(isCreateCard){
-
-        }
-        else{
+        if (isCreateCard) {
+            txt_file_steps.setVisibility(View.VISIBLE);
+        } else {
+          //  txt_file_steps.setVisibility(View.GONE);
             btn_createCard.setText("UPDATE CARD");
             create_cardName.setText(setEntryModelObj.getCard_name());
             create_cardDescription.setText(setEntryModelObj.getCard_description());
-            if(setEntryModelObj.getType().equalsIgnoreCase("file"))
-            create_cardURL.setText(setEntryModelObj.getCard_multimedia_url());
+            if (setEntryModelObj.getType().equalsIgnoreCase("file"))
+                create_cardURL.setText(setEntryModelObj.getCard_multimedia_url());
         }
         btn_createCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +119,7 @@ public class FileType extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
 
-                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                 }
                 return true;
             }
@@ -136,12 +138,10 @@ public class FileType extends BaseFragment {
 
         String str = create_cardURL.getText().toString();
         String[] arrOfStr = str.split("http");
-        if(arrOfStr.length == 1)
-        {
+        if (arrOfStr.length == 1) {
             image_name = arrOfStr[0];
             image_name = "https://" + image_name;
-        }
-        else if(arrOfStr.length == 2) {
+        } else if (arrOfStr.length == 2) {
             image_name = arrOfStr[1];
             image_name = "http" + image_name;
         }
@@ -151,15 +151,10 @@ public class FileType extends BaseFragment {
 
             new CustomToast().Show_Toast(getActivity(), create_cardName,
                     "All fields are required.");
-        }
-        else if(image_name.equals("") || image_name.length() == 0)
-        {
+        } else if (image_name.equals("") || image_name.length() == 0) {
             new CustomToast().Show_Toast(getActivity(), create_cardURL,
                     "File link is required.");
-        }
-
-        else if(!Patterns.WEB_URL.matcher(image_name).matches())
-        {
+        } else if (!Patterns.WEB_URL.matcher(image_name).matches()) {
             new CustomToast().Show_Toast(getActivity(), create_cardURL,
                     "File link is Invalid.");
         }
@@ -177,10 +172,10 @@ public class FileType extends BaseFragment {
             if (CheckNetworkConnection.isOnline(getActivity())) {
                 showProgress();
                 Call<AddMessageResponse> callRegisterUser;
-                if(isCreateCard)
-                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList_call("file", userId, set_id, card_name, card_description, "", image_name );
+                if (isCreateCard)
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList_call("file", userId, set_id, card_name, card_description, "", image_name);
                 else
-                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList_call("file", userId, set_id, setEntryModelObj.getCard_id(),card_name, card_description, "", image_name );
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getUpdateCardsList_call("file", userId, set_id, setEntryModelObj.getCard_id(), card_name, card_description, "", image_name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -206,8 +201,7 @@ public class FileType extends BaseFragment {
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
 
-                        if(message.equals("timeout"))
-                        {
+                        if (message.equals("timeout")) {
                             showLongToast(getActivity(), "Internet is slow, please try again.");
                         }
                         dismissProgress();
@@ -230,8 +224,7 @@ public class FileType extends BaseFragment {
 
         String message = addMessageResponse.getMessage();
 
-        if(message.equals("success"))
-        {
+        if (message.equals("success")) {
            /* Intent intent = new Intent(getActivity(), MySetCards.class);
             intent.putExtra("set_id", set_id);
             intent.putExtra("set_name", set_name);
@@ -240,18 +233,13 @@ public class FileType extends BaseFragment {
           /*  getActivity().setResult(Activity.RESULT_OK);
             getActivity().finish();
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            if(isCreateCard)
-            {
-                showShortToast(getActivity(), "Card "+card_name+" has been Created.");
+            if (isCreateCard) {
+                showShortToast(getActivity(), "Card " + card_name + " has been Created.");
+            } else {
+                showShortToast(getActivity(), "Card " + card_name + " has been Updated.");
             }
-            else
-            {
-                showShortToast(getActivity(), "Card "+card_name+" has been Updated.");
-            }
-            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
-        }
-
-        else {
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+        } else {
             showLongToast(getActivity(), message);
         }
     }

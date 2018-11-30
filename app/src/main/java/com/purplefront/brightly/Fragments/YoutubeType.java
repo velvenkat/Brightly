@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
@@ -44,6 +45,7 @@ public class YoutubeType extends BaseFragment {
     EditText create_cardDescription;
     EditText create_cardURL;
     Button btn_createCard;
+    TextView txt_youtube_steps;
 
     Context context;
     SetEntryModel setEntryModel;
@@ -70,6 +72,7 @@ public class YoutubeType extends BaseFragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_youtube_type, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
+        txt_youtube_steps=(TextView)rootView.findViewById(R.id.youtube_steps);
         Bundle bundle = getArguments();
         setEntryModel = bundle.getParcelable("set_entry_obj");
         isCreateCard = bundle.getBoolean("isCreate");
@@ -87,8 +90,9 @@ public class YoutubeType extends BaseFragment {
         clear_edit_text_focus(create_cardURL);
 
         if (isCreateCard) {
-
+            txt_youtube_steps.setVisibility(View.VISIBLE);
         } else {
+            txt_youtube_steps.setVisibility(View.GONE);
             btn_createCard.setText("UPDATE CARD");
             create_cardName.setText(setEntryModel.getCard_name());
             create_cardDescription.setText(setEntryModel.getCard_description());
