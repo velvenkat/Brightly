@@ -8,15 +8,11 @@
     tools:context=".Fragments.CardDetailFragment">
 
 
-
-
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager_Cards"
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:paddingBottom="@dimen/dimen_100"
         >
     </android.support.v4.view.ViewPager>
 
