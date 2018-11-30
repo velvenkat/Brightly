@@ -83,8 +83,8 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
 
     RealmModel user_obj;
 
-    SwipeRefreshLayout swipeRefresh;
-    boolean isSwipeRefresh = false;
+    // SwipeRefreshLayout swipeRefresh;
+    // boolean isSwipeRefresh = false;
 
     // boolean isMultiSelChoosed;
     @Nullable
@@ -96,7 +96,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
 
         boolean dontRun = ((BrightlyNavigationActivity) getActivity()).DontRun;
         boolean dontRunoneTime = ((BrightlyNavigationActivity) getActivity()).DontRunOneTime;
-        swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
+     /*   swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -104,7 +104,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                 isSwipeRefresh = true;
                 getSetLists();
             }
-        });
+        });*/
         // realm = Realm.getDefaultInstance();
         if (!dontRun && !dontRunoneTime) {
             Bundle bundle = getArguments();
@@ -382,18 +382,15 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
         try {
 
             if (CheckNetworkConnection.isOnline(getContext())) {
-                if (!isSwipeRefresh)
-                    showProgress();
+
+                showProgress();
                 Call<SetListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getMySetsList(userId, channel_id);
                 callRegisterUser.enqueue(new ApiCallback<SetListResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SetListResponse> response, boolean isSuccess, String message) {
                         SetListResponse setListResponse = response.body();
-                        if (isSwipeRefresh) {
-                            swipeRefresh.setRefreshing(false);
-                            isSwipeRefresh = false;
-                        } else
-                            dismissProgress();
+
+                        dismissProgress();
                         if (isSuccess) {
 
                             if (setListResponse != null && setListResponse.getSets() != null && setListResponse.getSets().size() != 0) {
@@ -436,27 +433,17 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
 
                     @Override
                     public void onApiFailure(boolean isSuccess, String message) {
-                        if (isSwipeRefresh) {
-                            swipeRefresh.setRefreshing(false);
-                            isSwipeRefresh = false;
-                        } else
-                            dismissProgress();
+
+                        dismissProgress();
                     }
                 });
             } else {
-                if (isSwipeRefresh) {
-                    swipeRefresh.setRefreshing(false);
-                    isSwipeRefresh = false;
-                } else
-                    dismissProgress();
+
+                dismissProgress();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            if (isSwipeRefresh) {
-                swipeRefresh.setRefreshing(false);
-                isSwipeRefresh = false;
-            } else
-                dismissProgress();
+            dismissProgress();
         }
 
     }

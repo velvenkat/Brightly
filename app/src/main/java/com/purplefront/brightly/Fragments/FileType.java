@@ -89,7 +89,7 @@ public class FileType extends BaseFragment {
         if (isCreateCard) {
             txt_file_steps.setVisibility(View.VISIBLE);
         } else {
-          //  txt_file_steps.setVisibility(View.GONE);
+            txt_file_steps.setVisibility(View.GONE);
             btn_createCard.setText("UPDATE CARD");
             create_cardName.setText(setEntryModelObj.getCard_name());
             create_cardDescription.setText(setEntryModelObj.getCard_description());
