@@ -159,24 +159,26 @@ public class BrightlyNavigationActivity extends BaseActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        realm = Realm.getDefaultInstance();
-        realmModel = realm.where(RealmModel.class).findAllAsync();
+
         contactShares = new ArrayList<>();
 
         user_obj = getIntent().getParcelableExtra("user_obj");
+        if (user_obj == null) {
+            realm = Realm.getDefaultInstance();
+            realmModel = realm.where(RealmModel.class).findAllAsync();
+            realmModel.load();
+            for (RealmModel model : realmModel) {
+                userId = model.getUser_Id();
+                userName = model.getUser_Name();
+                userPhone = model.getUser_PhoneNumber();
+                userPicture = model.getImage();
+                deviceToken = model.getDeviceToken();
 
-        realmModel.load();
-        for (RealmModel model : realmModel) {
-            userId = model.getUser_Id();
-            userName = model.getUser_Name();
-            userPhone = model.getUser_PhoneNumber();
-            userPicture = model.getImage();
-            deviceToken = model.getDeviceToken();
+                if (user_obj == null) {
+                    user_obj = model;
+                }
 
-            if (user_obj == null) {
-                user_obj = model;
             }
-
         }
 
         if (PermissionUtil.hasPermission(new String[]{Manifest.permission.READ_CONTACTS}, BrightlyNavigationActivity.this, PERMISSION_REQ_CODE_CONTACT)) {
@@ -211,8 +213,7 @@ public class BrightlyNavigationActivity extends BaseActivity
                 bundle.putParcelable("notfy_modl_obj", nfy_model);
                 card_frag.setArguments(bundle);
                 onFragmentCall(Util.view_card, card_frag, false);
-            }
-            else {
+            } else {
                 Fragment nfy_frag = new Notifications();
             /*fragmentManager
                     .beginTransaction()

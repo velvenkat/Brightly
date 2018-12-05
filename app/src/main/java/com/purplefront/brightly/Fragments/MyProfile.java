@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.purplefront.brightly.API.ApiCallback;
@@ -33,7 +34,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyProfile extends BaseFragment implements View.OnClickListener{
+public class MyProfile extends BaseFragment implements View.OnClickListener {
 
     View view;
     private static FragmentManager fragmentManager;
@@ -66,7 +67,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_my_profile, container, false);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         fragmentManager = getActivity().getSupportFragmentManager();
         // Set title bar
         ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("My Profile");
@@ -107,7 +108,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
 
 
         realmModel.load();
-        for(RealmModel model:realmModel){
+        for (RealmModel model : realmModel) {
 
             user_ID = model.getUser_Id();
             User_Name.setText(model.getUser_Name());
@@ -119,8 +120,8 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
 
             ((BrightlyNavigationActivity) getActivity()).headerText_Name.setText(model.getUser_Name());
             ((BrightlyNavigationActivity) getActivity()).headerText_Phone.setText(model.getUser_PhoneNumber());
-
-            if (model.getImage() != null || !model.getImage().isEmpty()) {
+         
+            if (model.getImage() != null && !model.getImage().trim().equals("")) {
 
                 Glide.with(getActivity())
                         .load(imageProfile)
@@ -139,7 +140,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
             }
 
 
-            if (model.getImage() != null || !model.getImage().isEmpty()) {
+            if (model.getImage() != null && !model.getImage().trim().equals("")) {
 
                 Glide.with(getActivity())
                         .load(imageProfile)
@@ -210,7 +211,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
     /**
      * @param profileResponse
      */
-    private void setProfileCredentials(MyProfileResponse profileResponse ) {
+    private void setProfileCredentials(MyProfileResponse profileResponse) {
 
         phoneNumber = profileResponse.getMobile();
         userName = profileResponse.getName();
@@ -267,24 +268,24 @@ public class MyProfile extends BaseFragment implements View.OnClickListener{
         }
     }
 
-        @Override
-        public void onClick(View v) {
+    @Override
+    public void onClick(View v) {
 
-            switch (v.getId()) {
+        switch (v.getId()) {
 
-                case R.id.edit_profile:
+            case R.id.edit_profile:
 
-                    // Replace edit frgament with animation
+                // Replace edit frgament with animation
                     /*fragmentManager
                             .beginTransaction()
                             .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
                             .replace(R.id.frag_container, new EditProfile(),
                                     Util.Edit_Profile).commit();*/
-                    Fragment fragment=new EditProfile();
-                    ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Edit_Profile,fragment,true);
-                    break;
-            }
-
+                Fragment fragment = new EditProfile();
+                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Profile, fragment, true);
+                break;
         }
+
+    }
 
 }

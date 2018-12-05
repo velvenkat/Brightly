@@ -29,8 +29,9 @@ public class ContactsAdapter extends BaseAdapter {
     Context scrn_context;
     LayoutInflater inflater;
     String string;
+    ContactAdapterInterface mListener;
 
-    public ContactsAdapter(Context shareWithContacts, ArrayList<ContactShare> getContactShares) {
+    public ContactsAdapter(Context shareWithContacts, ArrayList<ContactShare> getContactShares,ContactAdapterInterface listener) {
 
         this.scrn_context = shareWithContacts;
         this.contactShares = getContactShares;
@@ -38,6 +39,7 @@ public class ContactsAdapter extends BaseAdapter {
         this.arraylist = new ArrayList<ContactShare>();
         this.arraylist.addAll(getContactShares);
         inflater = (LayoutInflater.from(scrn_context));
+        mListener=listener;
 
     }
 
@@ -164,7 +166,9 @@ public class ContactsAdapter extends BaseAdapter {
                         Toast.makeText(scrn_context, string, Toast.LENGTH_LONG).show();*/
 
 
+            mListener.contactsClicked();
             }
+
         });
 
 
@@ -199,5 +203,9 @@ public class ContactsAdapter extends BaseAdapter {
             }
         }
         notifyDataSetChanged();
+    }
+    public interface ContactAdapterInterface
+    {
+       public void contactsClicked();
     }
 }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:padding="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:background="@drawable/rounded_menu_list"
+        android:padding="10dp">
+<TextView
+    android:layout_width="wrap_content"
+    android:text="Share set"
+    android:textSize="18sp"
+    android:textColor="#0053AA"
+    android:layout_centerHorizontal="true"
+    android:id="@+id/shr_set_cap"
+    android:layout_height="wrap_content" />
+        <TextView
+    android:layout_width="wrap_content"
+    android:id="@+id/txtInfo"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/shr_set_cap"
+            android:textStyle="bold"
+            android:textColor="#000000"
+    android:text="Please fill the details to complete the share process"
+    android:layout_height="wrap_content" />
+        <EditText
+            android:layout_below="@+id/txtInfo"
+            android:id="@+id/edt_mob_no"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_margin="10dp"
+            android:layout_marginTop="5dp"
+            android:inputType="number"
+            android:maxLength="10"
+            android:background="@drawable/edit_text_background"
+            android:hint="Enter mobile no"
+            android:padding="5dp" />
+
+        <EditText
+            android:id="@+id/edt_name"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_below="@+id/edt_mob_no"
+            android:layout_margin="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/edit_text_background"
+            android:hint="Enter contact name"
+            android:padding="5dp" />
+
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/edt_name"
+
+            android:layout_marginRight="5dp"
+            android:padding="10dp"
+
+            android:layout_marginTop="5dp"
+            android:layout_toLeftOf="@+id/btn_cancel"
+            android:background="@drawable/rounded_edittext"
+            android:text="Submit"
+            android:textColor="#FF0087" />
+
+        <Button
+            android:padding="10dp"
+            android:id="@+id/btn_cancel"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/edt_name"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/rounded_edittext"
+            android:text="Cancel"
+            android:textColor="#FF0087" />
+    </RelativeLayout>
+</RelativeLayout>

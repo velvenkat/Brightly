@@ -18,6 +18,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -58,13 +61,13 @@ import retrofit2.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class ShareWithContacts extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface {
+public class ShareWithContacts extends BaseFragment implements BrightlyNavigationActivity.PermissionResultInterface, ContactsAdapter.ContactAdapterInterface {
 
     private static final int REQUEST_PERMISSION = 1;
 
     ListView contacts_listview;
     EditText conatcts_searchView;
-    ImageView btn_share, btn_sync;
+    ImageView btn_sync;
     TextView view_nodata;
 
     ArrayList<ContactShare> contactShares = new ArrayList<>();
@@ -87,7 +90,28 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
     boolean isNotification;
     RealmModel user_obj;
     View rootView;
+    boolean isScrnSetList;
 
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        menu.clear();
+        if (chk_sel_items()) {
+            inflater.inflate(R.menu.share_icon_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_mnu_share:
+                checkValidation();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Nullable
     @Override
@@ -99,11 +123,12 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
 //        setContentView(R.layout.activity_share_with_contacts);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
+        setHasOptionsMenu(true);
         contacts_listview = (ListView) rootView.findViewById(R.id.contacts_listview);
         contacts_listview.setTextFilterEnabled(true);
         conatcts_searchView = (EditText) rootView.findViewById(R.id.conatcts_searchView);
 
-        btn_share = (ImageView) rootView.findViewById(R.id.btn_share);
+
         btn_sync = (ImageView) rootView.findViewById(R.id.btn_sync);
         view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
 
@@ -111,6 +136,7 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
 
         if (bundle != null) {
             isNotification = bundle.getBoolean("isNotification", false);
+            isScrnSetList = bundle.getBoolean("isScrnSetList", false);
         }
 
         if (isNotification) {
@@ -147,16 +173,16 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
             view_nodata.setVisibility(View.VISIBLE);
             requestLocationPermission();
         }
-        btn_share.setOnClickListener(new View.OnClickListener() {
+     /*   btn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
-                checkValidation();
+
 //               Toast.makeText(ShareWithContacts.this,"Sel_num"+split_num,Toast.LENGTH_LONG).show();
 
             }
-        });
+        });*/
 
 
         btn_sync.setOnClickListener(new View.OnClickListener() {
@@ -226,6 +252,15 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
 
     }
 
+    private boolean chk_sel_items() {
+        if (contactAdapter != null) {
+            int sizeVal = contactAdapter.getContact_Share().size();
+            if (sizeVal > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // Check Validation before login
     private void checkValidation() {
@@ -236,20 +271,18 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
         split_num = android.text.TextUtils.join(",", sel_num);
         split_name = android.text.TextUtils.join(",", sel_name);
         if (split_num.equals("") && split_name.equals("")) {
-            new CustomToast().Show_Toast(getActivity(), btn_share,
+            new CustomToast().Show_Toast(getActivity(), btn_sync,
                     "Please select a contact to share.");
-        }
-        else
-        {
+        } else {
             num_digit10 = split_num.substring(split_num.length() - 10, split_num.length());
 
             // Toast.makeText(getContext(),"num"+num_digit10,Toast.LENGTH_LONG).show();
             if (split_num.equals("") || split_num.length() <= 9) {
-                new CustomToast().Show_Toast(getActivity(), btn_share,
+                new CustomToast().Show_Toast(getActivity(), btn_sync,
                         "Please select the Phone Number.");
 
             } else if (num_digit10.equalsIgnoreCase(user_obj.getUser_PhoneNumber())) {
-                new CustomToast().Show_Toast(getActivity(), btn_share,
+                new CustomToast().Show_Toast(getActivity(), btn_sync,
                         "You can't give your own number");
             }
             // Else do login and do your stuff
@@ -337,9 +370,13 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
             showLongToast(getActivity(), addMessageResponse.getMessage());
-            EditSetInfo parent_frag = (EditSetInfo) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Edit_Set);
-            parent_frag.isShareSetChgd = true;
-            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false, 2);
+            if (!isScrnSetList) {
+                EditSetInfo parent_frag = (EditSetInfo) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Edit_Set);
+                parent_frag.isShareSetChgd = true;
+                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false, 2);
+            } else {
+                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
+            }
         } else {
             showLongToast(getActivity(), message);
         }
@@ -451,7 +488,7 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
 
         this.getContactShares = contactShares;
 
-        contactAdapter = new ContactsAdapter(getContext(), getContactShares);
+        contactAdapter = new ContactsAdapter(getContext(), getContactShares, this);
         contacts_listview.setAdapter(contactAdapter);
         SharedPreferences mPrefs = getActivity().getSharedPreferences("contactShares", MODE_PRIVATE);
 //      SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(MyChannel.this);
@@ -466,8 +503,8 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
     @Override
     public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list) {
         //Toast.makeText(getContext(), "I am here", Toast.LENGTH_LONG).show();
-        contact_list=contactShares;
-        if(contactShares!=null) {
+        contact_list = contactShares;
+        if (contactShares != null) {
             if (contactShares.size() > 0)
                 setConatcts(contactShares);
             showLongToast(getActivity(), "Contacts Updated");
@@ -478,6 +515,13 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
         loadContact.execute();*/
 
 
+    }
+
+    @Override
+    public void contactsClicked() {
+        if (getActivity() != null) {
+            getActivity().invalidateOptionsMenu();
+        }
     }
 
     @SuppressLint("StaticFieldLeak")

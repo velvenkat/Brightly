@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swiperefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
 
         <TextView
@@ -21,34 +22,31 @@
             android:textSize="@dimen/dimen_20"
             android:visibility="gone" />
 
-        <ScrollView
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/channels_listview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/channels_listview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/dimen_12"
-                android:background="#00ffffff"
-                android:nestedScrollingEnabled="false"
-                android:paddingBottom="@dimen/dimen_100"
-                android:visibility="visible" />
-
-
-        </ScrollView>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_12"
+            android:background="#00ffffff"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:paddingBottom="70dp"
+            android:visibility="visible" />
 
 
         <ImageView
             android:id="@+id/image_createChannel"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
+            android:layout_gravity="bottom|right"
+
             android:layout_margin="@dimen/dimen_20"
-            android:layout_weight="2"
-            android:background="@drawable/circular_image_drawable"
-            android:src="@drawable/add_image_white" />
-    </RelativeLayout>
+            android:src="@drawable/add_image_white"
+
+
+
+            />
+    </FrameLayout>
 </android.support.v4.widget.SwipeRefreshLayout>
 

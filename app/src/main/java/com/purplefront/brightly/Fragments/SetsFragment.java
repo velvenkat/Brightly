@@ -505,7 +505,11 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     private void setAdapter(ArrayList<SetsListModel> setsListModels) {
 
         channelSet_listview.setLayoutManager(new GridLayoutManager(getContext(), 3));
-        channelsSetAdapter = new SetsAdapter(getActivity(), setsListModels, chl_list_obj, this);
+        if (set_id_toCreateCard != null) {
+            channelsSetAdapter = new SetsAdapter(getActivity(), setsListModels, chl_list_obj, this, true);
+        } else {
+            channelsSetAdapter = new SetsAdapter(getActivity(), setsListModels, chl_list_obj, this, false);
+        }
         channelSet_listview.setAdapter(channelsSetAdapter);
         //  channelsSetAdapter.notifyDataSetChanged();
     }
@@ -690,6 +694,26 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
         setsListModelList.add(position, modelObj);
         channelsSetAdapter.notifyDataSetChanged();
         // Toast.makeText(MyChannelsSet.this,"Selected set id:"+Sel_id,Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onInfoShareClicked(boolean isShare, SetsListModel modelObj) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("model_obj", chl_list_obj);
+        bundle.putParcelable("setsListModel", modelObj);
+        Fragment fragment = null;
+        String Tag = "";
+        if (isShare) {
+            fragment = new SharePage();
+            bundle.putBoolean("isScrnSetList", true);
+            Tag = Util.share_page;
+        } else {
+            fragment = new EditSetInfo();
+            Tag = Util.Edit_Set;
+        }
+        fragment.setArguments(bundle);
+        ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Tag, fragment, true);
+
     }
 
     @Override

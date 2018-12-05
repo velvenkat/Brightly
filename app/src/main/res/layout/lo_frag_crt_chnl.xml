@@ -1,82 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
 
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/imageView_channelImage"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:padding="2dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:layout_marginTop="@dimen/dimen_10"
-        android:layout_marginBottom="@dimen/dimen_10"
-        android:layout_marginLeft="@dimen/dimen_20"
-        android:layout_marginRight="@dimen/dimen_20"
-        android:background="@drawable/edit_text_background"
-      />
 
-    <EditText
-        android:id="@+id/create_channelName"
-        android:singleLine="true"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.3"
-        android:layout_marginTop="@dimen/dimen_10"
-        android:layout_marginBottom="@dimen/dimen_5"
-        android:layout_marginLeft="@dimen/dimen_20"
-        android:layout_marginRight="@dimen/dimen_20"
-        android:inputType="textCapSentences"
-        android:background="@drawable/edit_text_background"
-        android:gravity="center_vertical"
-        android:hint="@string/channel_name"
-        android:maxLength="40"
-        android:padding="@dimen/dimen_4"
-        android:textColor="@color/black"
-        android:textSize="@dimen/mediumtextsize" />
+        >
 
-    <EditText
-        android:id="@+id/create_channelDescription"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.8"
-        android:layout_marginTop="@dimen/dimen_5"
-        android:layout_marginBottom="@dimen/dimen_10"
-        android:layout_marginLeft="@dimen/dimen_20"
-        android:layout_marginRight="@dimen/dimen_20"
-        android:inputType="textCapSentences|textMultiLine"
-        android:background="@drawable/edit_text_background"
-        android:gravity="start"
-        android:hint="@string/channel_description"
-        android:padding="@dimen/dimen_4"
-        android:textColor="@color/black"
-        android:textSize="@dimen/mediumtextsize" />
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/imageView_channelImage"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="@dimen/dimen_10"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:adjustViewBounds="true"
 
-    </LinearLayout>
+            android:background="@drawable/edit_text_background"
+            android:padding="2dp"
+            android:scaleType="fitCenter" />
 
-    <Button
-        android:id="@+id/btn_createChannel"
-        android:layout_width="fill_parent"
-        android:layout_height="45dp"
-        android:layout_margin="@dimen/dimen_8"
-        android:background="@drawable/login_btn_background"
-        android:padding="3dp"
-        android:text="@string/create_channel"
-        android:textColor="@color/white"
-        android:textSize="@dimen/mediumtextsize"
-        />
+        <EditText
+            android:id="@+id/create_channelName"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_50"
+            android:layout_below="@+id/imageView_channelImage"
+            android:layout_marginBottom="@dimen/dimen_5"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center_vertical"
+            android:hint="@string/channel_name"
+            android:inputType="textCapSentences"
+            android:maxLength="40"
+            android:padding="@dimen/dimen_4"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize" />
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/create_channelDescription"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_100"
+            android:layout_below="@+id/create_channelName"
+            android:layout_marginBottom="@dimen/dimen_10"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:background="@drawable/edit_text_background"
+            android:gravity="start"
+            android:hint="@string/channel_description"
+            android:inputType="textCapSentences|textMultiLine"
+            android:padding="@dimen/dimen_4"
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize" />
+
+        <Button
+            android:id="@+id/btn_createChannel"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/create_channelDescription"
+            android:layout_margin="@dimen/dimen_8"
+            android:background="@drawable/login_btn_background"
+            android:padding="3dp"
+            android:text="@string/create_channel"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mediumtextsize" />
+    </RelativeLayout>
+</ScrollView>
+
+
