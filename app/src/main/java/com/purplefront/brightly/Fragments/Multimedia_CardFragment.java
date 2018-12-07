@@ -2,21 +2,14 @@ package com.purplefront.brightly.Fragments;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -40,8 +33,6 @@ import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.RichLinkViewTelegram;
 import com.purplefront.brightly.Utils.Util;
 import com.purplefront.brightly.Utils.ViewListener;
-
-import java.util.Locale;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -276,6 +267,11 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
                         file_progress.dismiss();
                         file_progress = null;*/
+                        //new CustomToast().Show_Toast(getContext(), richLinkView1, e.getMessage());
+                        richLinkView1.setVisibility(View.GONE);
+                        file_cardLink.setVisibility(View.VISIBLE);
+                      //  file_cardLink.setTextColor(Color.argb(0, 100, 20, 20));
+                        file_cardLink.setText(e.getMessage());
                     }
                 });
 
@@ -559,20 +555,20 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
         parent_frag_Card_dtl.move_card();
         UTubePlayer = youTubePlayer;
-        if(getActivity()!=null)
-        ((BrightlyNavigationActivity) getActivity()).uTubePlayer = UTubePlayer;
+        if (getActivity() != null)
+            ((BrightlyNavigationActivity) getActivity()).uTubePlayer = UTubePlayer;
         UTubePlayer.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
             @Override
             public void onFullscreen(boolean b) {
 
                 if (b) {
                     isUTubePlayFullScreen = true;
-                    if(getActivity()!=null)
-                    ((BrightlyNavigationActivity) getActivity()).isUTubePlayerFullScreen = true;
+                    if (getActivity() != null)
+                        ((BrightlyNavigationActivity) getActivity()).isUTubePlayerFullScreen = true;
                 } else {
                     isUTubePlayFullScreen = false;
-                    if(getActivity()!=null)
-                    ((BrightlyNavigationActivity) getActivity()).isUTubePlayerFullScreen = false;
+                    if (getActivity() != null)
+                        ((BrightlyNavigationActivity) getActivity()).isUTubePlayerFullScreen = false;
                 }
             }
         });

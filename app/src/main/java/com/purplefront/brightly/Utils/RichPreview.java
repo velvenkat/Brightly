@@ -1,7 +1,5 @@
 package com.purplefront.brightly.Utils;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.webkit.URLUtil;
 
@@ -29,12 +27,12 @@ public class RichPreview {
         metaData = new MetaData();
     }
 
-    public void getPreview(String url){
+    public void getPreview(String url) {
         this.url = url;
         new getData().execute();
     }
 
-    private class getData extends AsyncTask<Void , Void , Void> {
+    private class getData extends AsyncTask<Void, String, String> {
 
         @Override
         protected void onPreExecute() {
@@ -42,19 +40,26 @@ public class RichPreview {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected String doInBackground(Void... params) {
             Document doc = null;
             try {
                 doc = Jsoup.connect(url)
-                        .timeout(30*1000)
+                        .userAgent("Mozilla")
+                        .header("Accept", "text/html")
+                        .header("Accept-Encoding", "gzip,deflate")
+                        .header("Accept-Language", "it-IT,en;q=0.8,en-US;q=0.6,de;q=0.4,it;q=0.2,es;q=0.2")
+                        .header("Connection", "keep-alive")
+                        .ignoreContentType(true)
+                        .timeout(30 * 1000)
                         .get();
+
 
                 Elements elements = doc.getElementsByTag("meta");
 
                 // getTitle doc.select("meta[property=og:title]")
                 String title = doc.select("meta[property=og:title]").attr("content");
 
-                if(title == null || title.isEmpty()) {
+                if (title == null || title.isEmpty()) {
                     title = doc.title();
                 }
                 metaData.setTitle(title);
@@ -88,24 +93,24 @@ public class RichPreview {
 
                 //getImages
                 Elements imageElements = doc.select("meta[property=og:image]");
-                if(imageElements.size() > 0) {
+                if (imageElements.size() > 0) {
                     String image = imageElements.attr("content");
-                    if(!image.isEmpty()) {
+                    if (!image.isEmpty()) {
                         metaData.setImageurl(resolveURL(url, image));
                     }
                 }
-                if(metaData.getImageurl().isEmpty()) {
+                if (metaData.getImageurl().isEmpty()) {
                     String src = doc.select("link[rel=image_src]").attr("href");
                     if (!src.isEmpty()) {
                         metaData.setImageurl(resolveURL(url, src));
                     } else {
                         src = doc.select("link[rel=apple-touch-icon]").attr("href");
-                        if(!src.isEmpty()) {
+                        if (!src.isEmpty()) {
                             metaData.setImageurl(resolveURL(url, src));
                             metaData.setFavicon(resolveURL(url, src));
                         } else {
                             src = doc.select("link[rel=icon]").attr("href");
-                            if(!src.isEmpty()) {
+                            if (!src.isEmpty()) {
                                 metaData.setImageurl(resolveURL(url, src));
                                 metaData.setFavicon(resolveURL(url, src));
                             }
@@ -115,35 +120,35 @@ public class RichPreview {
 
                 //Favicon
                 String src = doc.select("link[rel=apple-touch-icon]").attr("href");
-                if(!src.isEmpty()) {
+                if (!src.isEmpty()) {
                     metaData.setFavicon(resolveURL(url, src));
                 } else {
                     src = doc.select("link[rel=icon]").attr("href");
-                    if(!src.isEmpty()) {
+                    if (!src.isEmpty()) {
                         metaData.setFavicon(resolveURL(url, src));
                     }
                 }
 
-                for(Element element : elements) {
-                    if(element.hasAttr("property")) {
+                for (Element element : elements) {
+                    if (element.hasAttr("property")) {
                         String str_property = element.attr("property").toString().trim();
-                        if(str_property.equals("og:url")) {
+                        if (str_property.equals("og:url")) {
                             metaData.setUrl(element.attr("content").toString());
                         }
-                        if(str_property.equals("og:site_name")) {
+                        if (str_property.equals("og:site_name")) {
                             metaData.setSitename(element.attr("content").toString());
                         }
                     }
                 }
 
-                if(metaData.getUrl().equals("") || metaData.getUrl().isEmpty()) {
+                if (metaData.getUrl().equals("") || metaData.getUrl().isEmpty()) {
                     URI uri = null;
                     try {
                         uri = new URI(url);
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
                     }
-                    if(url == null) {
+                    if (url == null) {
                         metaData.setUrl(url);
                     } else {
                         metaData.setUrl(uri.getHost());
@@ -152,20 +157,24 @@ public class RichPreview {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                responseListener.onError(new Exception("No Html Received from " + url + " Check your Internet " + e.getLocalizedMessage()));
+                return "No response received from " + url + " please check your internet or address entered ";
+                // responseListener.onError(new Exception("No Html Received from " + url + " Check your Internet " + e.getLocalizedMessage()));
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(String aVoid) {
             super.onPostExecute(aVoid);
-            responseListener.onData(metaData);
+            if (aVoid != null) {
+                responseListener.onError(new Exception(aVoid));
+            } else
+                responseListener.onData(metaData);
         }
     }
 
     private String resolveURL(String url, String part) {
-        if(URLUtil.isValidUrl(part)) {
+        if (URLUtil.isValidUrl(part)) {
             return part;
         } else {
             URI base_uri = null;

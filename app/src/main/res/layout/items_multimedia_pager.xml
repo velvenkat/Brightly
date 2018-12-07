@@ -29,6 +29,7 @@
             android:layout_height="250dp"
             android:visibility="gone"
             android:gravity="center"
+            android:textColor="#ff6060"
             android:textSize="@dimen/font_20"
             android:linksClickable="true"
             android:autoLink="all"
