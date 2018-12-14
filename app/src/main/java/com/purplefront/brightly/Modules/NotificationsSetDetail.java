@@ -37,6 +37,19 @@ public class NotificationsSetDetail implements Parcelable {
     private String share_link;
 
 
+    public String getWeb_sharing() {
+        return web_sharing;
+    }
+
+    public void setWeb_sharing(String web_sharing) {
+        this.web_sharing = web_sharing;
+    }
+
+    @SerializedName("web_sharing")
+    @Expose
+    private String web_sharing;
+
+
     protected NotificationsSetDetail(Parcel in) {
         set_id = in.readString();
         name = in.readString();

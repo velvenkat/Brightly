@@ -371,7 +371,7 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
             showLongToast(getActivity(), addMessageResponse.getMessage());
             if (!isScrnSetList) {
-                EditSetInfo parent_frag = (EditSetInfo) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Edit_Set);
+                ShareSettings parent_frag = (ShareSettings) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Set_Share_settings);
                 parent_frag.isShareSetChgd = true;
                 ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false, 2);
             } else {

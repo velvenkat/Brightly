@@ -707,11 +707,13 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
             fragment = new SharePage();
             bundle.putBoolean("isScrnSetList", true);
             Tag = Util.share_page;
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(modelObj.getSet_name());
         } else {
             fragment = new EditSetInfo();
             Tag = Util.Edit_Set;
         }
         fragment.setArguments(bundle);
+
         ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Tag, fragment, true);
 
     }

@@ -385,8 +385,11 @@ public class CardDetailFragment extends BaseFragment {
                     inflater.inflate(R.menu.my_set_cards, menu);
                 } else if (chl_list_obj.getCreated_by().equalsIgnoreCase(userObj.getUser_Id())) {
                     inflater.inflate(R.menu.my_set_cards_other, menu);
-                } else
+                } else if (!setsListModel.getShare_access().equalsIgnoreCase("1"))
                     inflater.inflate(R.menu.my_sub_cards, menu);
+                else {
+                    inflater.inflate(R.menu.my_sub_card_share, menu);
+                }
 
             } else
                 inflater.inflate(R.menu.my_sub_cards, menu);
@@ -433,6 +436,41 @@ public class CardDetailFragment extends BaseFragment {
                     cmt_list_frag.setArguments(bundle_list);
                 }
                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Comments_List, cmt_list_frag, true);
+                return true;
+
+            case R.id.action_shre_settings:
+                if (isNotification) {
+
+                   /* Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("notfy_modl_obj", notificationsModel);
+                    intent.putExtra("isNotification", true);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+
+                    Fragment edit_set_info = new ShareSettings();
+                    bundle.putParcelable("notfy_modl_obj", notificationsModel);
+                    bundle.putBoolean("isNotification", true);
+                    edit_set_info.setArguments(bundle);
+                    ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Set_Share_settings, edit_set_info, true);
+
+                } else {
+                    /*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("model_obj", chl_list_obj);
+                    intent.putExtra("setsListModel", setsListModel);
+                    intent.putExtra("isNotification", false);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    Fragment edit_set_info = new ShareSettings();
+                    bundle.putParcelable("model_obj", chl_list_obj);
+                    bundle.putParcelable("setsListModel", setsListModel);
+                    bundle.putBoolean("isNotification", false);
+                    edit_set_info.setArguments(bundle);
+                    ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Set_Share_settings, edit_set_info, true);
+                }
                 return true;
 
             case R.id.setInfo_Edit:

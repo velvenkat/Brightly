@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.purplefront.brightly.Fragments.EditSetInfo;
+import com.purplefront.brightly.Fragments.ShareSettings;
 import com.purplefront.brightly.Modules.SharedDataModel;
 import com.purplefront.brightly.R;
 
@@ -34,11 +35,11 @@ public class SharedListAdapter extends RecyclerView.Adapter<SharedListAdapter.Vi
     SharedListInterface mListener;
     String share_access = "";
     int position;
-    EditSetInfo setInfo;
+    ShareSettings setInfo;
     String share_id;
 
 
-    public SharedListAdapter(Context editSetInfo, ArrayList<SharedDataModel> sharedDataModel, String set_id, String share_link, SharedListInterface listener, EditSetInfo setInfo) {
+    public SharedListAdapter(Context editSetInfo, ArrayList<SharedDataModel> sharedDataModel, String set_id, String share_link, SharedListInterface listener, ShareSettings setInfo) {
 
         this.scrn_context = editSetInfo;
         this.sharedDataModel = sharedDataModel;

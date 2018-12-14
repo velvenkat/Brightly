@@ -92,6 +92,17 @@ public interface RestApiMethods {
     @POST("sets/set_info.php")
     Call<SetInfoSharedResponse> getSetSharedInfo(@Query("user_id") String user_id, @Query("channel_id") String channel_id, @Query("set_id") String set_id);
 
+    //Toggle Share Link
+
+    /**
+     *
+     * @param set_id
+     * @param toggle_value 0 means not allow 1 means  allow to share link
+     * @return
+     */
+    @POST("sets/toggle_share_link.php")
+    Call<AddMessageResponse> setToggleShareLink(@Query("set_id") String set_id, @Query("value") String toggle_value);
+
 
     //delete Sets
     @POST("sets/delete_set.php")

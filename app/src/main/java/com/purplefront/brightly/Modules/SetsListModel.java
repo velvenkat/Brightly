@@ -15,6 +15,18 @@ public class SetsListModel implements Parcelable{
     @Expose
     private String set_id;
 
+    public String getWeb_sharing() {
+        return web_sharing;
+    }
+
+    public void setWeb_sharing(String web_sharing) {
+        this.web_sharing = web_sharing;
+    }
+
+    @SerializedName("web_sharing")
+    @Expose
+    private String web_sharing;
+
     protected SetsListModel(Parcel in) {
         set_id = in.readString();
         share_access = in.readString();
@@ -40,6 +52,11 @@ public class SetsListModel implements Parcelable{
         }
     };
 
+    /**
+     * 0 Share Access false
+     * 1 Share Access true
+     * @return
+     */
     public String getShare_access() {
         return share_access;
     }

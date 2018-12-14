@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -135,6 +136,12 @@ public class SharePage extends BaseFragment {
                 setBottomDialog();
             }
         });
+        if (setsListModel.getWeb_sharing().equalsIgnoreCase("0")) {
+            share_aLink.setEnabled(false);
+            share_aLink.setBackgroundColor(Color.LTGRAY);
+        } else {
+            share_aLink.setEnabled(true);
+        }
 
         share_aLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -238,7 +245,7 @@ public class SharePage extends BaseFragment {
                                 if (isScrnSetList)
                                     ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                                 else {
-                                    EditSetInfo parent_frag = (EditSetInfo) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Edit_Set);
+                                    ShareSettings parent_frag = (ShareSettings) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Set_Share_settings);
                                     parent_frag.isShareSetChgd = true;
                                     ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
                                 }

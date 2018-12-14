@@ -11,17 +11,19 @@
         android:orderInCategory="100"
         app:showAsAction="never"
         android:visible="true"
-        android:title="@string/set_info_edit" />
-    <item
-        android:id="@+id/card_reorder"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:visible="true"
-        android:title="@string/reorder" />
+        android:title="@string/set_info" />
     <item
         android:id="@+id/action_shre_settings"
         android:orderInCategory="100"
         app:showAsAction="never"
         android:visible="true"
         android:title="Share Settings" />
+
+    <!--<item
+        android:id="@+id/cardInfo_Edit"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:visible="true"
+        android:title="@string/card_info" />-->
+
 </menu>

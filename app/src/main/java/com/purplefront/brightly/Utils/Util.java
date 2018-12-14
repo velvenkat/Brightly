@@ -20,6 +20,7 @@ public class Util {
 	public static final String Create_Set = "Create_Set";
 	public static final String Edit_Channel = "Edit_Channel";
 	public static final String Edit_Set= "Edit_Set";
+	public static final String Set_Share_settings= "Share Settings";
 	public static final String Set_List= "Set_List";
 	public static final String Edit_Card= "Edit_Card";
 	public static final String view_card= "View_Card";
