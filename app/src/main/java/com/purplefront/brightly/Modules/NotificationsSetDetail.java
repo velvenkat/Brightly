@@ -58,6 +58,7 @@ public class NotificationsSetDetail implements Parcelable {
         shared_by = in.readString();
         share_access = in.readString();
         share_link = in.readString();
+        web_sharing = in.readString();
     }
 
     public static final Creator<NotificationsSetDetail> CREATOR = new Creator<NotificationsSetDetail>() {
@@ -149,5 +150,6 @@ public class NotificationsSetDetail implements Parcelable {
         dest.writeString(shared_by);
         dest.writeString(share_access);
         dest.writeString(share_link);
+        dest.writeString(web_sharing);
     }
 }

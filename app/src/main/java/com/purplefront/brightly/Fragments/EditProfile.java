@@ -150,9 +150,14 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
             input_phone.setText(model.getUser_PhoneNumber());
             input_email.setText(model.getUser_Email());
             input_company.setText(model.getUser_CompanyName());
-            imageProfile = model.getImage();
-            image_name = model.getImage_name();
-
+            if (model.getImage() != null)
+                imageProfile = model.getImage();
+            else
+                imageProfile = "";
+            if (model.getImage_name() != null)
+                image_name = model.getImage_name();
+            else
+                image_name = "";
             if (!model.getImage().isEmpty()) {
 
                 Glide.with(getActivity())
@@ -173,7 +178,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
         }
 
 
-        if (!imageProfile.isEmpty()) {
+        if (!imageProfile.trim().equals("")) {
             imageProfile = "old";
         }
 

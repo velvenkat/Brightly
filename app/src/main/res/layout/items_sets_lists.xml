@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="190dp"
     android:layout_margin="@dimen/dimen_4"
+    android:id="@+id/rl_setItemContr"
     android:background="@drawable/black_border"
     android:padding="3dp">
 

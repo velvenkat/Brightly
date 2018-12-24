@@ -12,19 +12,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/switch_share_link"
+        <!-- <android.support.v7.widget.SwitchCompat
+             android:id="@+id/switch_share_link"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentRight="true"
+             android:layout_alignParentTop="true"
+             android:text="Share link" />-->
+        <TextView
+            android:id="@+id/txtShareLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/share_link_options"
+            android:text="Share Access" />
+
+        <RadioGroup
+            android:id="@+id/share_link_options"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:text="Share link" />
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radio_private"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Private" />
+
+            <RadioButton
+                android:id="@+id/radio_public"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Public" />
+        </RadioGroup>
 
         <TextView
             android:id="@+id/txtCapShrdConts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/switch_share_link"
+            android:layout_below="@+id/txtShareLink"
 
             android:layout_marginLeft="@dimen/dimen_16"
             android:layout_marginRight="@dimen/dimen_16"

@@ -11,6 +11,8 @@ public class Util {
 	public static final String SignUp_Fragment = "SignUp_Fragment";
 	public static final String ForgotPassword_Fragment = "ForgotPassword_Fragment";
 
+	public static final String List_All_Catg = "list_all_catg";
+
 	public static final String My_Profile = "My_Profile";
 	public static final String Edit_Profile = "Edit_Profile";
 	public static final String NOTIFICATIONS = "NOTIFICATIONS";

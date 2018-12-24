@@ -52,6 +52,7 @@ import com.purplefront.brightly.Fragments.CardDetailFragment;
 import com.purplefront.brightly.Fragments.CardList;
 import com.purplefront.brightly.Fragments.ChannelFragment;
 import com.purplefront.brightly.Fragments.EditSetInfo;
+import com.purplefront.brightly.Fragments.ListAllCategory;
 import com.purplefront.brightly.Fragments.MyProfile;
 import com.purplefront.brightly.Fragments.Notifications;
 import com.purplefront.brightly.Fragments.SharePage;
@@ -494,7 +495,11 @@ public class BrightlyNavigationActivity extends BaseActivity
 
             onFragmentCall(Util.My_Profile, new MyProfile(), false);
             // Handle the camera action
-        } else if (id == R.id.nav_mysubscription) {
+        } /*else if (id == R.id.nav_list_all_catg) {
+
+            onFragmentCall(Util.List_All_Catg, new ListAllCategory(), false);
+
+        }*/ else if (id == R.id.nav_mysubscription) {
 
             type = "subscribe";
             isChannelScrn = true;

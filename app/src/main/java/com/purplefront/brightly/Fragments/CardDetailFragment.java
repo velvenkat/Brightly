@@ -391,8 +391,13 @@ public class CardDetailFragment extends BaseFragment {
                     inflater.inflate(R.menu.my_sub_card_share, menu);
                 }
 
-            } else
-                inflater.inflate(R.menu.my_sub_cards, menu);
+            } else {
+                if (!notificationsModel.getNotificationsSetDetail().getShare_access().equalsIgnoreCase("1"))
+                    inflater.inflate(R.menu.my_sub_cards, menu);
+                else
+                    inflater.inflate(R.menu.my_sub_card_share, menu);
+
+            }
 
 
     }

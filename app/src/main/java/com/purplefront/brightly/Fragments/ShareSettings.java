@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,9 +53,12 @@ public class ShareSettings extends BaseFragment implements SharedListAdapter.Sha
     SetsListModel set_list_obj;
     NotificationsModel notificationsModel;
     boolean isNotification;
-    SwitchCompat toggle_shareLink;
+    // SwitchCompat toggle_shareLink;
     boolean isShareSetChgd;
     String access_val = "";
+    RadioGroup share_link_options;
+    TextView txtShareLinkAccess;
+    RadioButton radio_private, radio_public;
     String shared_by, share_access, Created_By, set_name;
 
     @Override
@@ -78,7 +83,7 @@ public class ShareSettings extends BaseFragment implements SharedListAdapter.Sha
                 bundle1.putParcelable("setsListModel", set_list_obj);
             }
             fragment.setArguments(bundle1);
-            ((BrightlyNavigationActivity)getActivity()).isHide_frag=true;
+            ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
             ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.share_page, fragment, true);
             return true;
         }
@@ -91,11 +96,16 @@ public class ShareSettings extends BaseFragment implements SharedListAdapter.Sha
 
         rootView = inflater.inflate(R.layout.lo_shr_settings, container, false);
         txtCapShrdConts = (TextView) rootView.findViewById(R.id.txtCapShrdConts);
+        share_link_options = (RadioGroup) rootView.findViewById(R.id.share_link_options);
         recycle_shrd_conts_list = (RecyclerView) rootView.findViewById(R.id.recycle_shrd_conts_list);
         layout_act_inact = (LinearLayout) rootView.findViewById(R.id.layout_act_inact);
-        toggle_shareLink = (SwitchCompat) rootView.findViewById(R.id.switch_share_link);
+        radio_private = (RadioButton) rootView.findViewById(R.id.radio_private);
+        radio_public = (RadioButton) rootView.findViewById(R.id.radio_public);
+        txtShareLinkAccess = (TextView) rootView.findViewById(R.id.txtShareLink);
+        //toggle_shareLink = (SwitchCompat) rootView.findViewById(R.id.switch_share_link);
         Bundle bundle = getArguments();
         isNotification = bundle.getBoolean("isNotification", false);
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         setHasOptionsMenu(true);
         ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
         if (isNotification) {
@@ -109,10 +119,23 @@ public class ShareSettings extends BaseFragment implements SharedListAdapter.Sha
             shared_by = notificationsModel.getNotificationsSetDetail().getShared_by();
             share_access = notificationsModel.getNotificationsSetDetail().getShare_access();
             share_link = notificationsModel.getNotificationsSetDetail().getShare_link();
+
+            share_link_options.setVisibility(View.GONE);
+            //txtShareLinkAccess.setVisibility(View.GONE);
+            if (notificationsModel.getNotificationsSetDetail().getWeb_sharing() == null) {
+                //txtShareLinkAccess.setText("Your share settings are set to private ");
+              //  Toast.makeText(getContext(), "getting null", Toast.LENGTH_LONG).show();
+                notificationsModel.getNotificationsSetDetail().setWeb_sharing("0");
+                CardDetailFragment parent_frag = (CardDetailFragment) getActivity().getSupportFragmentManager().findFragmentByTag(Util.view_card);
+                parent_frag.notificationsModel = notificationsModel;
+            }
             if (notificationsModel.getNotificationsSetDetail().getWeb_sharing().equalsIgnoreCase("0")) {
-                toggle_shareLink.setChecked(false);
+                //radio_private.setChecked(true);
+                txtShareLinkAccess.setText("Your share settings are set to private ");
             } else
-                toggle_shareLink.setChecked(true);
+                //radio_public.setChecked(true);
+                txtShareLinkAccess.setText("Your share settings are set to public ");
+            // txtShareLinkAccess.setText("");
             ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
 
         } else {
@@ -129,28 +152,49 @@ public class ShareSettings extends BaseFragment implements SharedListAdapter.Sha
             shared_by = set_list_obj.getShared_by();
             share_access = set_list_obj.getShare_access();
             if (set_list_obj.getWeb_sharing().equalsIgnoreCase("0")) {
-                toggle_shareLink.setChecked(false);
-            } else
-                toggle_shareLink.setChecked(true);
+
+                if (!Created_By.equals(user_obj.getUser_Id())) {
+                    share_link_options.setVisibility(View.GONE);
+                    //txtShareLinkAccess.setVisibility(View.GONE);
+                    txtShareLinkAccess.setText("Your share settings are set to private ");
+                }
+                radio_private.setChecked(true);
+
+            } else {
+
+                if (!Created_By.equals(user_obj.getUser_Id())) {
+                    share_link_options.setVisibility(View.GONE);
+                    //txtShareLinkAccess.setVisibility(View.GONE);
+                    txtShareLinkAccess.setText("Your share settings are set to public ");
+                }
+                radio_public.setChecked(true);
+            }
             ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
 
         }
 
 
-        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share Settings");
 
         getSetSharedInfo();
 
-        toggle_shareLink.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        share_link_options.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-                if (isChecked) {
-                    access_val = "1";
-                } else
-                    access_val = "0";
 
+                   /* if (isChecked) {
+                        access_val = "1";
+                    } else
+                        access_val = "0";*/
+                switch (checkedId) {
+                    case R.id.radio_private:
+                        access_val = "0";
+                        break;
+                    case R.id.radio_public:
+                        access_val = "1";
+                        break;
+                }
                 try {
 
                     if (CheckNetworkConnection.isOnline(getContext())) {
@@ -165,10 +209,15 @@ public class ShareSettings extends BaseFragment implements SharedListAdapter.Sha
 
                                     dismissProgress();
                                     Toast.makeText(getContext(), addMessageResponse.getMessage(), Toast.LENGTH_LONG).show();
-
-                                    set_list_obj.setWeb_sharing(access_val);
-                                    CardDetailFragment parent_frag=(CardDetailFragment)getActivity().getSupportFragmentManager().findFragmentByTag(Util.view_card);
-                                    parent_frag.setsListModel=set_list_obj;
+                                    if (!isNotification) {
+                                        set_list_obj.setWeb_sharing(access_val);
+                                        CardDetailFragment parent_frag = (CardDetailFragment) getActivity().getSupportFragmentManager().findFragmentByTag(Util.view_card);
+                                        parent_frag.setsListModel = set_list_obj;
+                                    } else {
+                                        notificationsModel.getNotificationsSetDetail().setWeb_sharing(access_val);
+                                        CardDetailFragment parent_frag = (CardDetailFragment) getActivity().getSupportFragmentManager().findFragmentByTag(Util.view_card);
+                                        parent_frag.notificationsModel = notificationsModel;
+                                    }
 
 
                                 }
@@ -190,7 +239,9 @@ public class ShareSettings extends BaseFragment implements SharedListAdapter.Sha
                     dismissProgress();
                 }
             }
+
         });
+
 
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
@@ -278,7 +329,7 @@ public class ShareSettings extends BaseFragment implements SharedListAdapter.Sha
         if (!hidden) {
             ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
             if (isShareSetChgd) {
-                isShareSetChgd=false;
+                isShareSetChgd = false;
                 getSetSharedInfo();
             }
             if (!Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {

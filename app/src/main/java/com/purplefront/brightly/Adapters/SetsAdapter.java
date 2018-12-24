@@ -163,18 +163,43 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
         });
 */
 
+        holder.rl_setItemContr.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // return false;
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("setsListModel", setsListModel);
+                mListener.showPopUp(holder.itemView, bundle);
+                return true;
+
+            }
+        });
+
         holder.img_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Toast.makeText(scrn_contxt, "Share Clicked", Toast.LENGTH_LONG).show();
-                mListener.onInfoShareClicked(true, setsListModel);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("setsListModel", setsListModel);
+                mListener.onInfoShareClicked(true, bundle);
             }
         });
         holder.img_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(scrn_contxt, "Info Clicked", Toast.LENGTH_LONG).show();
-                mListener.onInfoShareClicked(false, setsListModel);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("setsListModel", setsListModel);
+                mListener.onInfoShareClicked(false, bundle);
+            }
+        });
+        holder.imageView_setImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("setsListModel", setsListModel);
+                mListener.showPopUp(holder.itemView, bundle);
+                return true;
             }
         });
         holder.imageView_setImage.setOnClickListener(new View.OnClickListener() {
@@ -221,7 +246,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
         //  RelativeLayout channel_layout;
         CheckBox chkbx_del_set;
         ImageView img_info, img_share;
-        RelativeLayout icon_contr;
+        RelativeLayout icon_contr, rl_setItemContr;
         View divider;
         //LinearLayout set_contr;
 
@@ -230,6 +255,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
             //  channel_layout = itemView.findViewById(R.id.set_layout);
             imageView_setImage = itemView.findViewById(R.id.imageView_setImage);
             textView_setName = itemView.findViewById(R.id.textView_setName);
+            rl_setItemContr = itemView.findViewById(R.id.rl_setItemContr);
 
             //  textView_setCount = itemView.findViewById(R.id.textView_setCount);
             chkbx_del_set = itemView.findViewById(R.id.chk_set_sel);
@@ -244,8 +270,10 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
     public interface Set_sel_interface {
         public void onSelect(int position, SetsListModel modelObj);
 
-        public void onInfoShareClicked(boolean isShare, SetsListModel modelObj);
+        public void onInfoShareClicked(boolean isShare, Bundle bundle);
 
         public void onCardShow(Bundle bundle_args, String card_count);
+
+        public void showPopUp(View c, Bundle bundle_args);
     }
 }

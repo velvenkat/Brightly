@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +62,8 @@ public class SharePage extends BaseFragment {
     boolean isNotification;
     RealmModel user_obj;
     boolean isScrnSetList;
+    LinearLayout ll_PublicLinkContr;
+
     View rootView;
 
 
@@ -82,7 +85,9 @@ public class SharePage extends BaseFragment {
         rootView = inflater.inflate(R.layout.activity_share_page, container, false);
         ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
-
+        share_inApp = (Button) rootView.findViewById(R.id.share_inApp);
+        share_aLink = (Button) rootView.findViewById(R.id.share_aLink);
+        userId = user_obj.getUser_Id();
         // setContentView(R.layout.activity_share_page);
 
       /*  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -91,6 +96,9 @@ public class SharePage extends BaseFragment {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 */
         // setTitle("Share Set");
+        TextView txtCapShrAccess = (TextView) rootView.findViewById(R.id.txtCapShrAccess);
+        ll_PublicLinkContr = (LinearLayout) rootView.findViewById(R.id.ll_public_link_contr);
+
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share Set");
         Bundle bundle = getArguments();
 
@@ -102,12 +110,25 @@ public class SharePage extends BaseFragment {
             }
         }
 
+
         if (isNotification) {
             notificationsModel = bundle.getParcelable("notfy_modl_obj");
             set_description = notificationsModel.getNotificationsSetDetail().getDescription();
             set_name = notificationsModel.getNotificationsSetDetail().getName();
             set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
             share_link = notificationsModel.getNotificationsSetDetail().getShare_link();
+            if (notificationsModel.getNotificationsSetDetail().getWeb_sharing().equalsIgnoreCase("0")) {
+                //share_aLink.setEnabled(false);
+                ll_PublicLinkContr.setVisibility(View.GONE);
+          /*  ((AppCompatActivity) getActivity()).getSupportActionBar().setIcon(R.drawable.file_list_icon);
+            txtCapShrAccess.setText("Set Share access permission as in private");*/
+                //share_aLink.setBackgroundColor(Color.LTGRAY);
+            } else {
+                //txtCapShrAccess.setText("Set Share access permission as in public");
+                share_aLink.setEnabled(true);
+            }
+
+
         } else {
 
             chl_list_obj = bundle.getParcelable("model_obj");
@@ -116,12 +137,20 @@ public class SharePage extends BaseFragment {
             set_name = setsListModel.getSet_name();
             set_id = setsListModel.getSet_id();
             share_link = setsListModel.getShare_link();
+            if (setsListModel.getWeb_sharing().equalsIgnoreCase("0")) {
+                // share_aLink.setEnabled(false);
+                ll_PublicLinkContr.setVisibility(View.GONE);
+          /*  ((AppCompatActivity) getActivity()).getSupportActionBar().setIcon(R.drawable.file_list_icon);
+            txtCapShrAccess.setText("Set Share access permission as in private");*/
+                // share_aLink.setBackgroundColor(Color.LTGRAY);
+            } else {
+                //txtCapShrAccess.setText("Set Share access permission as in public");
+                share_aLink.setEnabled(true);
+            }
+
+
         }
 
-        userId = user_obj.getUser_Id();
-
-        share_inApp = (Button) rootView.findViewById(R.id.share_inApp);
-        share_aLink = (Button) rootView.findViewById(R.id.share_aLink);
 
         share_inApp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,13 +165,6 @@ public class SharePage extends BaseFragment {
                 setBottomDialog();
             }
         });
-        if (setsListModel.getWeb_sharing().equalsIgnoreCase("0")) {
-            share_aLink.setEnabled(false);
-            share_aLink.setBackgroundColor(Color.LTGRAY);
-        } else {
-            share_aLink.setEnabled(true);
-        }
-
         share_aLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

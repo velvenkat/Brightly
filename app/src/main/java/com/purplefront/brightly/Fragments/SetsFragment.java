@@ -1,5 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -9,16 +11,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +48,7 @@ import com.purplefront.brightly.Utils.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -46,16 +57,17 @@ import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_interface, BaseFragment.alert_dlg_interface {
+public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_interface, BaseFragment.alert_dlg_interface, TextWatcher {
 
     ArrayList<SetsListModel> setsListModelList = new ArrayList<>();
     SetsAdapter channelsSetAdapter;
-
+    ArrayList<SetsListModel> search_set_list = new ArrayList<>();
     TextView view_nodata;
     ImageView image_createChannelSet;
     RecyclerView channelSet_listview;
     Realm realm;
     RealmResults<RealmModel> realmModel;
+    EditText edt_srch_str;
 
     String userId;
     String channel_name = "";
@@ -79,7 +91,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
     // ActionBarUtil actionBarUtilObj;
     String set_id_toCreateCard = null;
-    TextView txtHintReorder;
+    // TextView txtHintReorder;
 
     RealmModel user_obj;
 
@@ -92,7 +104,8 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_my_channels_set, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
-        txtHintReorder = rootView.findViewById(R.id.txtHintReorder);
+        edt_srch_str = (EditText) rootView.findViewById(R.id.edt_srch_set);
+        //   txtHintReorder = rootView.findViewById(R.id.txtHintReorder);
 
         boolean dontRun = ((BrightlyNavigationActivity) getActivity()).DontRun;
         boolean dontRunoneTime = ((BrightlyNavigationActivity) getActivity()).DontRunOneTime;
@@ -106,6 +119,8 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
             }
         });*/
         // realm = Realm.getDefaultInstance();
+
+        edt_srch_str.addTextChangedListener(this);
         if (!dontRun && !dontRunoneTime) {
             Bundle bundle = getArguments();
             del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
@@ -148,7 +163,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
             image_createChannelSet = (ImageView) rootView.findViewById(R.id.image_createChannelSet);
             if (set_id_toCreateCard != null) {
                 image_createChannelSet.setVisibility(View.INVISIBLE);
-                txtHintReorder.setVisibility(View.GONE);
+                //  txtHintReorder.setVisibility(View.GONE);
                 ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
                 ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Select set to copy card");
             } else
@@ -199,7 +214,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
             btn_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    txtHintReorder.setVisibility(View.GONE);
+                    //txtHintReorder.setVisibility(View.GONE);
                     strDelSelId = android.text.TextUtils.join(",", del_sel_id);
                     showAlertDialog("You are about to delete the Set. All the information contained in the Sets will be lost.", "Confirm Delete...", "Delete", "Cancel");
                     // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
@@ -237,8 +252,11 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                     }
                     channelsSetAdapter.set_SelToDel(false);
                     channelsSetAdapter.notifyDataSetChanged();
-                    if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
-                        ith.attachToRecyclerView(channelSet_listview);
+                    /**
+                     * while reorder needed then uncomment this
+                     */
+                    // if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
+                    //  ith.attachToRecyclerView(channelSet_listview);
                 }
             });
 // Extend the Callback class
@@ -349,8 +367,11 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
 
                 };
                 // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
-                ith = new ItemTouchHelper(dragCallback);
-                ith.attachToRecyclerView(channelSet_listview);
+                /**
+                 * while reorder uncomment this
+                 */
+                /*ith = new ItemTouchHelper(dragCallback);
+                ith.attachToRecyclerView(channelSet_listview);*/
             }
 
             image_createChannelSet.setOnClickListener(new View.OnClickListener() {
@@ -410,17 +431,17 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                                     channelSet_listview.setVisibility(View.GONE);
                                     view_nodata.setVisibility(View.VISIBLE);
                                     setsListModelList = new ArrayList<>();
-                                    txtHintReorder.setVisibility(View.GONE);
+                                    //txtHintReorder.setVisibility(View.GONE);
                                 } else
                                     setAdapter(setsListModelList);
-                                txtHintReorder.setVisibility(View.VISIBLE);
+                                // txtHintReorder.setVisibility(View.VISIBLE);
 
 
                             } else {
                                 channelSet_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
                                 setsListModelList = new ArrayList<>();
-                                txtHintReorder.setVisibility(View.GONE);
+                                //  txtHintReorder.setVisibility(View.GONE);
 
                             }
 
@@ -496,7 +517,7 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         del_contr.setVisibility(View.GONE);
         del_sel_id = new ArrayList<>();
-        txtHintReorder.setVisibility(View.VISIBLE);
+        //txtHintReorder.setVisibility(View.VISIBLE);
 
         chk_sel_all.setVisibility(View.GONE);
 
@@ -533,7 +554,10 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                                     Toast.makeText(getContext(), "Selected Set(s) Deleted Successfully", Toast.LENGTH_LONG).show();
                                     reset_view();
                                     getSetLists();
-                                    ith.attachToRecyclerView(channelSet_listview);
+                                    /**
+                                     * while reorder uncomment this
+                                     */
+                                    // ith.attachToRecyclerView(channelSet_listview);
                                 }
 
 
@@ -603,13 +627,16 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
                     ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
                     del_contr.setVisibility(View.VISIBLE);
                     chk_sel_all.setVisibility(View.VISIBLE);
-                    txtHintReorder.setVisibility(View.GONE);
+                    //  txtHintReorder.setVisibility(View.GONE);
                     txtItemSel.setText("");
                     chk_sel_all.setText("Select All");
                     del_sel_id = new ArrayList<>();
                     btn_delete.setEnabled(false);
-                    if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
-                        ith.attachToRecyclerView(null);
+                    /**
+                     * while reorder uncomment this
+                     */
+                   /* if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
+                        ith.attachToRecyclerView(null);*/
                     channelsSetAdapter.set_SelToDel(true);
                     channelsSetAdapter.notifyDataSetChanged();
                     // isMultiSelChoosed=true;
@@ -697,17 +724,17 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     }
 
     @Override
-    public void onInfoShareClicked(boolean isShare, SetsListModel modelObj) {
-        Bundle bundle = new Bundle();
+    public void onInfoShareClicked(boolean isShare, Bundle bundle) {
+        //Bundle bundle = new Bundle();
         bundle.putParcelable("model_obj", chl_list_obj);
-        bundle.putParcelable("setsListModel", modelObj);
+        //  bundle.putParcelable("setsListModel", modelObj);
         Fragment fragment = null;
         String Tag = "";
         if (isShare) {
             fragment = new SharePage();
             bundle.putBoolean("isScrnSetList", true);
             Tag = Util.share_page;
-            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(modelObj.getSet_name());
+            //  ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(modelObj.getSet_name());
         } else {
             fragment = new EditSetInfo();
             Tag = Util.Edit_Set;
@@ -739,6 +766,64 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     }
 
     @Override
+    public void showPopUp(View c, Bundle bundle_args) {
+
+        View v = LayoutInflater.from(getContext()).inflate(R.layout.popupwindow, null, false);
+        final PopupWindow pw = new PopupWindow(v, 300, 300, true);
+        pw.setBackgroundDrawable(new BitmapDrawable(getContext().getResources()));
+        pw.setOutsideTouchable(true);
+        pw.setAnimationStyle(R.anim.popup_show);
+        final ListView list_popup = v.findViewById(R.id.list_popup);
+        ArrayList<String> popup_dataset = new ArrayList<>();
+        popup_dataset.add("Info");
+        popup_dataset.add("Share");
+        popup_dataset.add("Pin");
+        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, popup_dataset);
+        list_popup.setAdapter(adapter);
+        list_popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pw.dismiss();
+                switch (position) {
+
+                    case 0:
+
+                        onInfoShareClicked(false, bundle_args);
+                        break;
+                    case 1:
+                        onInfoShareClicked(true, bundle_args);
+                        break;
+                    case 2:
+                        //PIN
+                        break;
+
+                }
+            }
+        });
+        Rect locate = locateView(c);
+
+
+        pw.showAtLocation(c, Gravity.TOP | Gravity.LEFT, locate.left, locate.centerY());
+    }
+
+    public static Rect locateView(View v) {
+        int[] loc_int = new int[2];
+        if (v == null) return null;
+        try {
+            v.getLocationOnScreen(loc_int);
+        } catch (NullPointerException npe) {
+            //Happens when the view doesn't exist on screen anymore.
+            return null;
+        }
+        Rect location = new Rect();
+        location.left = loc_int[0];
+        location.top = loc_int[1];
+        location.right = location.left + v.getWidth();
+        location.bottom = location.top + v.getHeight();
+        return location;
+    }
+
+    @Override
     public void postive_btn_clicked() {
 //      Toast.makeText(MyChannelsSet.this,"Working",Toast.LENGTH_LONG).show();
         call_api_del_multi_set();
@@ -747,6 +832,29 @@ public class SetsFragment extends BaseFragment implements SetsAdapter.Set_sel_in
     @Override
     public void negative_btn_clicked() {
 
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        String srchStr = edt_srch_str.getText().toString().trim().toLowerCase();
+        search_set_list = new ArrayList<>();
+        if (setsListModelList != null && setsListModelList.size() > 0)
+            for (SetsListModel model : setsListModelList) {
+                if (model.getSet_name().toLowerCase().contains(srchStr)) {
+                    search_set_list.add(model);
+                }
+            }
+        setAdapter(search_set_list);
     }
 
    /* @Override
