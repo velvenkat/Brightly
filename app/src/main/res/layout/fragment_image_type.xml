@@ -1,84 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00ffffff"
     tools:context=".Fragments.ImageType">
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_above="@+id/btn_createCard"
-        android:layout_height="wrap_content">
-     <RelativeLayout
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_createCard">
 
-        <ImageView
-            android:id="@+id/image_cardImage"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:layout_marginBottom="@dimen/dimen_5"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_height="wrap_content">
 
-            android:layout_marginRight="@dimen/dimen_20"
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/image_cardImage"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginLeft="@dimen/dimen_20"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="@dimen/dimen_20"
+                android:layout_marginBottom="@dimen/dimen_5"
+                android:adjustViewBounds="true"
 
-            />
+                android:scaleType="fitCenter"
 
-        <EditText
-            android:id="@+id/create_cardName"
-            android:singleLine="true"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="@dimen/dimen_10"
-            android:layout_marginBottom="@dimen/dimen_5"
-            android:layout_marginLeft="@dimen/dimen_20"
-            android:layout_marginRight="@dimen/dimen_20"
-            android:inputType="textCapSentences"
-            android:background="@drawable/edit_text_background"
-            android:gravity="center_vertical"
-            android:hint="@string/card_name"
-            android:maxLength="40"
-            android:padding="@dimen/dimen_4"
-            android:layout_below="@+id/image_cardImage"
-            android:textColor="@color/black"
-            android:textSize="@dimen/mediumtextsize" />
+                />
 
-        <EditText
-            android:id="@+id/create_cardDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="120dp"
-            android:layout_marginTop="@dimen/dimen_5"
-            android:layout_marginBottom="@dimen/dimen_10"
-            android:layout_marginLeft="@dimen/dimen_20"
-            android:layout_marginRight="@dimen/dimen_20"
-            android:inputType="textCapSentences|textMultiLine"
-            android:background="@drawable/edit_text_background"
-            android:gravity="start"
-            android:hint="@string/card_description"
-            android:layout_below="@+id/create_cardName"
-            android:padding="@dimen/dimen_4"
-            android:textColor="@color/black"
-            android:textSize="@dimen/mediumtextsize" />
+            <EditText
+                android:id="@+id/create_cardName"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@+id/image_cardImage"
+                android:layout_marginLeft="@dimen/dimen_20"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_20"
+                android:layout_marginBottom="@dimen/dimen_5"
+                android:background="@drawable/edit_text_background"
+                android:gravity="center_vertical"
+                android:hint="@string/card_name"
+                android:inputType="textCapSentences"
+                android:maxLength="40"
+                android:padding="@dimen/dimen_4"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/mediumtextsize" />
 
-     </RelativeLayout>
+            <EditText
+                android:id="@+id/create_cardDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/create_cardName"
+                android:layout_marginLeft="@dimen/dimen_20"
+                android:layout_marginTop="@dimen/dimen_5"
+                android:layout_marginRight="@dimen/dimen_20"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:background="@drawable/edit_text_background"
+                android:gravity="start"
+                android:hint="@string/card_description"
+                android:inputType="textCapSentences|textMultiLine"
+                android:minHeight="120dp"
+                android:padding="@dimen/dimen_4"
+                android:textColor="@color/black"
+                android:textSize="@dimen/mediumtextsize" />
+
+        </RelativeLayout>
     </ScrollView>
+
     <Button
         android:id="@+id/btn_createCard"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/dimen_8"
         android:background="@drawable/login_btn_background"
         android:padding="3dp"
-        android:layout_margin="@dimen/dimen_8"
         android:text="@string/create_card"
-        android:layout_alignParentBottom="true"
         android:textColor="@color/white"
-        android:textSize="@dimen/mediumtextsize"
-        />
+        android:textSize="@dimen/mediumtextsize" />
 
 </RelativeLayout>

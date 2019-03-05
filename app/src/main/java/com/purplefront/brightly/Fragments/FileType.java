@@ -1,7 +1,6 @@
 package com.purplefront.brightly.Fragments;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,7 +22,6 @@ import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.SetEntryModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
-import com.purplefront.brightly.Utils.Util;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -81,6 +79,8 @@ public class FileType extends BaseFragment {
         create_cardDescription = (EditText) frag_rootView.findViewById(R.id.create_cardDescription);
         btn_createCard = (Button) frag_rootView.findViewById(R.id.btn_createCard);
 
+        create_cardName.setHint(((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " name");
+        create_cardDescription.setHint(((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " description");
 
         isCreateCard = bundle.getBoolean("isCreate");
         clear_edit_text_focus(create_cardDescription);
@@ -88,9 +88,10 @@ public class FileType extends BaseFragment {
         clear_edit_text_focus(create_cardURL);
         if (isCreateCard) {
             txt_file_steps.setVisibility(View.VISIBLE);
+            btn_createCard.setText("CREATE " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR);
         } else {
             txt_file_steps.setVisibility(View.GONE);
-            btn_createCard.setText("UPDATE CARD");
+            btn_createCard.setText("UPDATE " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR);
             create_cardName.setText(setEntryModelObj.getCard_name());
             create_cardDescription.setText(setEntryModelObj.getCard_description());
             if (setEntryModelObj.getType().equalsIgnoreCase("file"))
@@ -146,11 +147,11 @@ public class FileType extends BaseFragment {
             image_name = "http" + image_name;
         }
         // Check if all strings are null or not
-        if (card_name.equals("") || card_name.length() == 0
-                || card_description.equals("") || card_description.length() == 0) {
-
+        if (card_name.trim().equals(""))
+        // || card_description.equals("") || card_description.length() == 0) {
+        {
             new CustomToast().Show_Toast(getActivity(), create_cardName,
-                    "All fields are required.");
+                    "Card name is required.");
         } else if (image_name.equals("") || image_name.length() == 0) {
             new CustomToast().Show_Toast(getActivity(), create_cardURL,
                     "File link is required.");
@@ -234,9 +235,9 @@ public class FileType extends BaseFragment {
             getActivity().finish();
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
             if (isCreateCard) {
-                showShortToast(getActivity(), "Card " + card_name + " has been Created.");
+                showShortToast(getActivity(), ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " " + card_name + " has been Created.");
             } else {
-                showShortToast(getActivity(), "Card " + card_name + " has been Updated.");
+                showShortToast(getActivity(), ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " " + card_name + " has been Updated.");
             }
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
         } else {

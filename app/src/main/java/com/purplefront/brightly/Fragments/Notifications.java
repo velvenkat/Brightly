@@ -1,7 +1,6 @@
 package com.purplefront.brightly.Fragments;
 
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -58,7 +58,11 @@ public class Notifications extends BaseFragment implements NotificationsAdapter.
     }
 
 
-
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.clear();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,10 +77,11 @@ public class Notifications extends BaseFragment implements NotificationsAdapter.
         }
         // Set title bar
         ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("Notifications");
-
+        //((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle("Hello");
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("Noti_Cnt", MODE_PRIVATE).edit();
         editor.clear();
         editor.apply();
+        setHasOptionsMenu(true);
 
         /*realm = Realm.getDefaultInstance();
         realmModel = realm.where(RealmModel.class).findAllAsync();*/
@@ -94,7 +99,7 @@ public class Notifications extends BaseFragment implements NotificationsAdapter.
                     ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                      else {
 
-                         ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.CHANNELS, new ChannelFragment(), false);
+                         ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.CHANNELS, new ViewPager_Category(), false);
                      }
                 }
                 return true;

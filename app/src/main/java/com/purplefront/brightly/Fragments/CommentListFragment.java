@@ -51,8 +51,8 @@ public class CommentListFragment extends BaseFragment {
         }
 
         //setTitle(set_name);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(channel_name);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
+        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle(channel_name);
+        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(set_name);
 
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();

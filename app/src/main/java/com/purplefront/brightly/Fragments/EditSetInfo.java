@@ -3,12 +3,8 @@ package com.purplefront.brightly.Fragments;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,13 +28,10 @@ import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.NotificationsModel;
-import com.purplefront.brightly.Modules.SetInfoSharedResponse;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.Util;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -76,25 +69,19 @@ public class EditSetInfo extends BaseFragment {
     RelativeLayout toggle_contr;
 
     RealmModel user_obj;
+    String level2_title_singular;
+    boolean isCardDtlPage;
 
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-
-        if (Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
-            inflater.inflate(R.menu.edit_set_menu, menu);
-
-        } /*else if (share_access.equals("1")) {
-            inflater.inflate(R.menu.edit_set_other, menu);
-        }*/
-    }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        menu.clear();
+        MenuInflater inflater = getActivity().getMenuInflater();
+        if (Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
+            inflater.inflate(R.menu.edit_set_menu, menu);
 
+        }
     }
 
 
@@ -109,7 +96,7 @@ public class EditSetInfo extends BaseFragment {
         ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
 //        toolbar=(Toolbar)rootView.findViewById(R.id.toolbar);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-
+        level2_title_singular = ((BrightlyNavigationActivity) getActivity()).appVarModuleObj.getLevel2title().getSingular();
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -120,6 +107,7 @@ public class EditSetInfo extends BaseFragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             isNotification = bundle.getBoolean("isNotification", false);
+            isCardDtlPage = bundle.getBoolean("isCardDtlPage", false);
         }
 
         if (isNotification) {
@@ -135,7 +123,8 @@ public class EditSetInfo extends BaseFragment {
 
         } else {
 
-            chl_list_obj = bundle.getParcelable("model_obj");
+            //chl_list_obj = bundle.getParcelable("model_obj");
+            chl_list_obj = ((BrightlyNavigationActivity) getActivity()).glob_chl_list_obj;
             channel_id = chl_list_obj.getChannel_id();
             channel_name = chl_list_obj.getChannel_name();
             Created_By = chl_list_obj.getCreated_by();
@@ -196,7 +185,9 @@ public class EditSetInfo extends BaseFragment {
 
         edit_setName.setText(set_name);
         edit_setDescription.setText(set_description);
-
+        edit_setDescription.setHint(level2_title_singular + " Description");
+        edit_setName.setHint(level2_title_singular + " Name");
+        btn_editSet.setText("Edit " + level2_title_singular);
         clear_edit_text_focus(edit_setName);
         clear_edit_text_focus(edit_setDescription);
 
@@ -206,7 +197,7 @@ public class EditSetInfo extends BaseFragment {
             edit_setName.setEnabled(false);
             edit_setDescription.setEnabled(false);
             //   setTitle("Set Info");
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Set Info");
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle(level2_title_singular + " Info");
 
 
           /*  shared_listview.setLayoutManager(new LinearLayoutManager(this));
@@ -216,7 +207,7 @@ public class EditSetInfo extends BaseFragment {
         } else {
 
 
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Edit Set Info");
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle("Edit " + level2_title_singular + " Info");
 
         }
 
@@ -259,11 +250,11 @@ public class EditSetInfo extends BaseFragment {
 
 
         // Check if all strings are null or not
-        if (set_name.equals("") || set_name.length() == 0
-                || set_description.equals("") || set_description.length() == 0) {
+        if (set_name.trim().equals("") || set_name.trim().length() == 0
+        ) {
 
             new CustomToast().Show_Toast(getActivity(), edit_setName,
-                    "Both fields are required.");
+                    level2_title_singular + " name is required");
         }
 
         // Else do signup or do your stuff
@@ -279,7 +270,7 @@ public class EditSetInfo extends BaseFragment {
         alertDialog.setTitle("Confirm Delete....");
 
         // Setting Dialog Message
-        alertDialog.setMessage("You are about to delete the Set. All the information contained in the Sets will be lost. ");
+        alertDialog.setMessage("You are about to delete the " + level2_title_singular + ". All the information contained in the " + level2_title_singular + " will be lost. ");
 
         // Setting Icon to Dialog
         alertDialog.setIcon(R.drawable.error);
@@ -419,9 +410,12 @@ public class EditSetInfo extends BaseFragment {
             Bundle bundle=new Bundle();
             bundle.putParcelable("model_obj", chl_list_obj);
             ((BrightlyNavigationActivity)getActivity()).onFragmentCall(Util.Set_List,fragment,false);*/
-            showShortToast(getActivity(), "Set " + set_name + " is Deleted");
+            showShortToast(getActivity(), level2_title_singular + " " + set_name + " is deleted");
             //   ((BrightlyNavigationActivity)getActivity()).Don
-            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
+            if (isCardDtlPage)
+                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
+            else
+                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
 
 
         } else {
@@ -504,10 +498,14 @@ public class EditSetInfo extends BaseFragment {
                 setsListModel.setDescription(set_description);
             }
             CardDetailFragment Card_dtl_frag = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
-            Card_dtl_frag.chl_list_obj = chl_list_obj;
-            Card_dtl_frag.setsListModel = setsListModel;
-            Card_dtl_frag.notificationsModel = notificationsModel;
-            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+            if (Card_dtl_frag != null) {
+                Card_dtl_frag.chl_list_obj = chl_list_obj;
+                Card_dtl_frag.setsListModel = setsListModel;
+                Card_dtl_frag.notificationsModel = notificationsModel;
+                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+            } else
+                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+
         } else {
             dismissProgress();
 //            showLongToast(getActivity(), message);

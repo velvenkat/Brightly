@@ -2,8 +2,12 @@ package com.purplefront.brightly.API;
 
 import com.purplefront.brightly.Modules.AddChannelResponse;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.AppVarModule;
 import com.purplefront.brightly.Modules.CardsListResponse;
 import com.purplefront.brightly.Modules.ChannelListResponse;
+import com.purplefront.brightly.Modules.ChatListResponse;
+import com.purplefront.brightly.Modules.CommentsListResponse;
+import com.purplefront.brightly.Modules.CommentsModel;
 import com.purplefront.brightly.Modules.DeleteChannelResponse;
 import com.purplefront.brightly.Modules.EditProfileResponse;
 import com.purplefront.brightly.Modules.MyProfileResponse;
@@ -38,23 +42,30 @@ public interface RestApiMethods {
 
     //Register or SignUp
     @POST("users/newregister.php")
-    Call<SignUpResponse> getSignup(@Query("name") String name, @Query("email_id") String email_id, @Query("mobile_no") String mobile_no, @Query("company_name") String company_name, @Query("password") String password, @Query("token") String token, @Query("os") String os_type);
+    Call<SignUpResponse> getSignup(@Query("name") String name, @Query("mobile_no") String mobile_no, @Query("password") String password, @Query("email_id") String email, @Query("token") String token, @Query("os") String os_type);
 
     //SignIn
     @POST("users/newlogin.php")
-    Call<SignInResponse> getSignIn(@Query("mobile_no") String mobile_no, @Query("password") String password, @Query("token") String token, @Query("os") String os_type);
+    Call<SignInResponse> getSignIn(@Query("mobile_no") String mobile_no, @Query("password") String Password, @Query("token") String token, @Query("os") String os_type);
 
     //ForgotPassword
-    @POST("users/forgot_password.php")
-    Call<AddMessageResponse> getForgetPassword(@Query("email_id") String email_id);
+    @POST("users/verify_phone.php")
+    Call<AddMessageResponse> getForgetPassword_1(@Query("mobile_no") String mobileNo);
+
+    @POST("users/forgot_password_otp.php")
+    Call<AddMessageResponse> getForgetPassword_2(@Query("mobile_no") String mobileNo, @Query("otp") String otp, @Query("password") String password);
+
 
     //Validate OTP
     @POST("users/validateotp.php")
-    Call<AddMessageResponse> getValidateOtp(@Query("user_id") String user_id, @Query("otp") String otp);
+    Call<SignInResponse> getValidateOtp(@Query("mobile_no") String mobile_no, @Query("otp") String otp);
 
     //Resend OTP
     @POST("users/resendotp.php")
     Call<AddMessageResponse> getResendOtp(@Query("user_id") String user_id, @Query("mobile_no") String mobile_no);
+
+    @POST("users/resendotp.php")
+    Call<AddMessageResponse> getResendOtp(@Query("mobile_no") String mobile_no);
 
 
     //ChannelsList
@@ -78,11 +89,11 @@ public interface RestApiMethods {
 
     //SetList
     @POST("sets/list_set.php")
-    Call<SetListResponse> getMySetsList(@Query("user_id") String user_id, @Query("channel_id") String channel_id);
+    Call<SetListResponse> getMySetsList(@Query("user_id") String user_id, @Query("channel_id") String channel_id, @Query("type") String type);
 
     //Add Sets
     @POST("sets/add_set.php")
-    Call<AddMessageResponse> getAddSet(@Query("user_id") String user_id, @Query("channel_id") String channel_id, @Query("set_name") String set_name, @Query("set_description") String set_description);
+    Call<AddMessageResponse> getAddSet(@Query("user_id") String user_id, @Query("channel_id") String channel_id, @Query("set_name") String set_name, @Query("set_description") String set_description, @Query("channel_name") String channel_name);
 
     //Update Sets
     @POST("sets/update_set.php")
@@ -95,7 +106,6 @@ public interface RestApiMethods {
     //Toggle Share Link
 
     /**
-     *
      * @param set_id
      * @param toggle_value 0 means not allow 1 means  allow to share link
      * @return
@@ -174,6 +184,29 @@ public interface RestApiMethods {
 
     //Comments Set
     @POST("comment/add_comment.php")
-    Call<AddMessageResponse> getSetComments(@Query("user_id") String user_id, @Query("set_id") String set_id, @Query("comment") String comment);
+    Call<AddMessageResponse> getCardComments(@Query("user_id") String user_id, @Query("card_id") String set_id, @Query("comment") String comment);
 
+    @POST("appvariables/getappvar.php")
+    Call<AppVarModule> getAppVariable();
+
+    @POST("cards/share_cards.php")
+    Call<AddMessageResponse> call_share_card(@Query("user_id") String usr_id, @Query("channel_id") String chl_id, @Query("card_id") String card_id, @Query("org_set_id") String set_id, @Query("phone_no") String mob_no, @Query("names") String names);
+
+    @POST("cards/share_cards.php")
+    Call<AddMessageResponse> call_share_card_without_chl(@Query("user_id") String usr_id, @Query("channel_name") String chl_name, @Query("card_id") String card_id, @Query("org_set_id") String set_id, @Query("phone_no") String mob_no, @Query("names") String names);
+
+    @POST("cards/set_from_cards.php")
+    Call<SetListResponse> call_set_from_cards(@Query("user_id") String usr_id, @Query("card_id") String card_id, @Query("org_set_id") String set_id,@Query("set_name") String set_name);
+
+    @POST("cards/set_from_cards.php")
+    Call<AddMessageResponse> call_set_from_cards_without_chl(@Query("user_id") String usr_id, @Query("channel_name") String chl_name, @Query("card_id") String card_id, @Query("org_set_id") String set_id, @Query("set_name") String set_Name, @Query("set_description") String description);
+
+    @POST("comment/list_comment.php")
+    Call<CommentsListResponse> call_comment_list(@Query("card_id") String card_id, @Query("user_id") String user_Id,@Query("set_id") String set_id);
+
+    @POST("sets/set_default_name.php")
+    Call<AddMessageResponse> call_create_def_set(@Query("user_id") String user_id);
+
+    @POST("cards/chatlist.php")
+    Call<ChatListResponse> call_chat_list(@Query("user_id") String user_id,@Query("set_id") String set_id,@Query("card_id") String card_id);
 }

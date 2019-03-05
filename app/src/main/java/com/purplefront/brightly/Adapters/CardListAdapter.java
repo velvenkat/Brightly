@@ -3,6 +3,7 @@ package com.purplefront.brightly.Adapters;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.generic.RoundingParams;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.Fragments.CardList;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.R;
@@ -22,10 +32,12 @@ import java.util.List;
 
 public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHolder> {
 
-    private ProgressDialog dialog;
     String image_name;
     String image_id;
-
+    public String audio_def_image;
+    public String file_def_image;
+    public String uTube_def_image;
+    public String def_image;
     List<CardsListModel> cardsListModels;
     Context scrn_context;
 
@@ -58,8 +70,8 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         isSelToDel = value;
 
     }
-    public boolean isSelToDel()
-    {
+
+    public boolean isSelToDel() {
         return isSelToDel;
     }
 
@@ -82,13 +94,11 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     public void onBindViewHolder(@NonNull CardListAdapter.ViewHolder holder, int position) {
 
         CardsListModel cardsListModel = cardsListModels.get(position);
-        if(SelectedPos==position){
-            if(isCardHighlight){
+        if (SelectedPos == position) {
+            if (isCardHighlight) {
                 holder.itemView.setBackgroundColor(scrn_context.getResources().getColor(R.color.light_gery));
             }
-        }
-        else
-        {
+        } else {
             holder.cardView.setBackgroundColor(scrn_context.getResources().getColor(R.color.white));
         }
         if (cardsListModel.getTitle() != null) {
@@ -113,68 +123,104 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
             holder.chkbx_del_set.setChecked(false);
         }
 
-
+        String img_url;
         switch (cardsListModel.getType()) {
-            case "image":
 
-                Glide.with(scrn_context)
+            case "image":
+                img_url = cardsListModel.getUrl();
+                /*Glide.with(scrn_context)
                         .load(cardsListModel.getUrl())
                         .placeholder(R.drawable.progress_icon)
                         .fitCenter()
-                        /*.transform(new CircleTransform(HomeActivity.this))
-                        .override(50, 50)*/
+                        *//*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*//*
                         .into(holder.image_cardImage);
-
+*/
                 break;
             case "audio":
 
+                img_url = audio_def_image;
 
-                Glide.with(scrn_context)
+  /*              Glide.with(scrn_context)
                         .load(R.drawable.audio_icon)
                         .placeholder(R.drawable.progress_icon)
                         .fitCenter()
-                        /*.transform(new CircleTransform(HomeActivity.this))
-                        .override(50, 50)*/
+                        *//*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*//*
                         .into(holder.image_cardImage);
-
+*/
                 break;
             case "video":
+                img_url = uTube_def_image;
 
 //                holder.image_cardImage.setPadding(0,20,0,20);
 
-                Glide.with(scrn_context)
+  /*              Glide.with(scrn_context)
                         .load(R.drawable.youtube_icon)
                         .placeholder(R.drawable.progress_icon)
                         .fitCenter()
-                        /*.transform(new CircleTransform(HomeActivity.this))
-                        .override(50, 50)*/
+                        *//*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*//*
                         .into(holder.image_cardImage);
-
+*/
                 break;
             case "file":
+                img_url = file_def_image;
 
-
-                Glide.with(scrn_context)
+                /*Glide.with(scrn_context)
                         .load(R.drawable.file_icon)
                         .placeholder(R.drawable.progress_icon)
                         .fitCenter()
-                        /*.transform(new CircleTransform(HomeActivity.this))
-                        .override(50, 50)*/
+                        *//*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*//*
                         .into(holder.image_cardImage);
-
+*/
                 break;
             default:
-                Glide.with(scrn_context)
+                img_url = def_image;
+                /*Glide.with(scrn_context)
                         .load(R.drawable.image_icon)
                         .placeholder(R.drawable.progress_icon)
                         .centerCrop()
-                        /*.transform(new CircleTransform(HomeActivity.this))
-                        .override(50, 50)*/
-                        .into(holder.image_cardImage);
+                        *//*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*//*
+                        .into(holder.image_cardImage);*/
                 break;
         }
+        if (img_url != null) {
+            ResizeOptions mResizeOptions = new ResizeOptions(100, 100);
+            RoundingParams roundingParams = new RoundingParams();
+            roundingParams.setRoundAsCircle(true);
+
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(scrn_context.getResources());
+            builder.setProgressBarImage(R.drawable.loader);
+
+            builder.setProgressBarImage(
+                    new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+            builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = builder
+                    .setFadeDuration(100)
+                    .build();
+
+            holder.image_cardImage.setHierarchy(hierarchy);
 
 
+            final ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(img_url))
+                            .setResizeOptions(mResizeOptions)
+
+                            .build();
+            holder.image_cardImage.setImageRequest(imageRequest);
+        } else {
+            Glide.with(scrn_context)
+                    .load(R.drawable.image_icon)
+                    .placeholder(R.drawable.progress_icon)
+                    .centerCrop()
+                    /*.transform(new CircleTransform(HomeActivity.this))
+                    .override(50, 50)*/
+                    .into(holder.image_cardImage);
+        }
        /* holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -185,14 +231,13 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         });*/
 
 
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 //                Toast.makeText(scrn_context, "Working", Toast.LENGTH_SHORT).show();
 
-                 if (isSelToDel) {
+                if (isSelToDel) {
                     mListener.onSelect(position, cardsListModel);
                 } else {
                     mListener.onCardClick(position);
@@ -212,7 +257,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
         TextView text_cardName;
         TextView text_cardDescription;
-        ImageView image_cardImage;
+        SimpleDraweeView image_cardImage;
         CheckBox chkbx_del_set;
         CardView cardView;
 
@@ -223,7 +268,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
             text_cardName = itemView.findViewById(R.id.text_cardName);
             text_cardDescription = itemView.findViewById(R.id.text_cardDescription);
             chkbx_del_set = itemView.findViewById(R.id.chk_card_sel);
-            cardView=itemView.findViewById(R.id.cardVw_card_list);
+            cardView = itemView.findViewById(R.id.cardVw_card_list);
         }
     }
 

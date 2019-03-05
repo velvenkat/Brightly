@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_pgrContr"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.CardDetailFragment">
@@ -12,23 +12,36 @@
         android:id="@+id/viewPager_Cards"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        >
-    </android.support.v4.view.ViewPager>
+        android:background="@color/white"></android.support.v4.view.ViewPager>
+
+    <ImageView
+        android:id="@+id/img_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/left_arrow" />
+
+    <ImageView
+        android:id="@+id/img_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/next_arrow" />
 
     <TextView
         android:id="@+id/pager_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/sub_title"
-        android:textStyle="italic"
-        android:layout_margin="@dimen/dimen_30"
-        android:padding="@dimen/dimen_2"
-        android:background="@drawable/edit_text_bg"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
+        android:layout_margin="@dimen/dimen_30"
+        android:background="@drawable/edit_text_bg"
+        android:padding="@dimen/dimen_2"
         android:textColor="@color/btn_login"
-        />
+        android:textSize="@dimen/sub_title"
+        android:textStyle="italic" />
 
     <TextView
         android:id="@+id/view_nodata"
@@ -38,28 +51,24 @@
         android:gravity="center"
         android:textColor="@color/black"
         android:textSize="@dimen/dimen_20"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 
     <ImageView
         android:id="@+id/image_createCard"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_margin="@dimen/dimen_20"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/dimen_20"
         android:background="@drawable/circular_image_drawable"
-        android:src="@drawable/add_image_white"/>
+        android:src="@drawable/add_image_white" />
 
     <ImageView
         android:id="@+id/image_Comment"
         android:layout_width="65dp"
         android:layout_height="65dp"
-        android:layout_margin="@dimen/dimen_20"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/circular_image_drawable"
-        android:visibility="gone"
-        android:src="@drawable/ic_comment"/>
+        android:layout_margin="@dimen/dimen_20" />
 </RelativeLayout>

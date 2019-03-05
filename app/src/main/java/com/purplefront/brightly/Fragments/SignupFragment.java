@@ -1,18 +1,15 @@
 package com.purplefront.brightly.Fragments;
 
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +33,10 @@ import com.purplefront.brightly.Activities.Login;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.AppVarModule;
+import com.purplefront.brightly.Modules.SignInResponse;
 import com.purplefront.brightly.Modules.SignUpResponse;
+import com.purplefront.brightly.OTPService.OTPReaderCustom;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.Util;
@@ -48,7 +48,6 @@ import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Response;
 import swarajsaaj.smscodereader.interfaces.OTPListener;
-import swarajsaaj.smscodereader.receivers.OtpReader;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,20 +59,17 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     private View view;
     Context mContext;
     private static FragmentManager fragmentManager;
-    private EditText editText_name, editText_companyname, editText_email, editText_phone, reg_password, reg_confirmPassword;
+    private EditText editText_name, editText_phone, editText_email;
     private Button btn_signUp;
     private TextView textView_signIn;
     private static Animation shakeAnimation;
-
+    String password;
     String getName;
-    String getCompanyName;
-    String getEmail;
     String getPhoneNumber;
-    String getPassword;
-    String getConfirmPassword;
+    String getUser_Email;
     String message;
-    String otp_msg;
-    String otp_resonse;
+    String otp_msg[];
+    //  String otp_resonse;
 
     Realm realm;
 
@@ -85,10 +81,13 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     String deviceToken;
 
     EditText edit_otp;
+    EditText edit_pwd;
+    EditText edit_confm_pwd;
     Button btn_Verify;
     TextView text_resend, resend_in;
     ImageView close_dialog;
     String otp;
+    AppVarModule appVarModuleObj;
 
 
     public SignupFragment() {
@@ -101,15 +100,17 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_signup, container, false);
+        edit_pwd = view.findViewById(R.id.regr_password);
+        edit_confm_pwd = view.findViewById(R.id.regr_cnfrm_password);
         realm = Realm.getDefaultInstance();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
-
+        appVarModuleObj = getArguments().getParcelable("app_var_obj");
         // Load ShakeAnimation
         shakeAnimation = AnimationUtils.loadAnimation(getActivity(),
                 R.anim.shake);
 
-        requestRuntimePermissions(Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS);
+        //   requestRuntimePermissions(Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS);
 
         initViews();
         setListeners();
@@ -131,11 +132,9 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     // Initialize all views
     private void initViews() {
         editText_name = (EditText) view.findViewById(R.id.registration_name);
-        editText_companyname = (EditText) view.findViewById(R.id.registration_companyname);
-        editText_email = (EditText) view.findViewById(R.id.registration_email);
+
         editText_phone = (EditText) view.findViewById(R.id.registration_phonenumber);
-        reg_password = (EditText) view.findViewById(R.id.reg_password);
-        reg_confirmPassword = (EditText) view.findViewById(R.id.reg_confirmPassword);
+        editText_email = (EditText) view.findViewById(R.id.registration_emailid);
 
         btn_signUp = (Button) view.findViewById(R.id.signupBtn);
         textView_signIn = (TextView) view.findViewById(R.id.text_signin);
@@ -171,7 +170,8 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
             case R.id.text_signin:
 
                 // Replace login fragment
-                new Login().replaceLoginFragment();
+                // new Login().replaceLoginFragment();
+                ((Login) getActivity()).getSupportFragmentManager().popBackStackImmediate();
                 break;
         }
 
@@ -182,27 +182,41 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
         // Get all edittext texts
         getName = editText_name.getText().toString();
-        getCompanyName = editText_companyname.getText().toString();
-        getEmail = editText_email.getText().toString();
-        getPhoneNumber = editText_phone.getText().toString();
-        getPassword = reg_password.getText().toString();
-        getConfirmPassword = reg_confirmPassword.getText().toString();
 
+        getPhoneNumber = editText_phone.getText().toString();
+        getUser_Email = editText_email.getText().toString();
+        password = edit_pwd.getText().toString();
+        String confrm_passwd = edit_confm_pwd.getText().toString();
         // Pattern match for email id
         Pattern p = Pattern.compile(Util.regEx);
-        Matcher m = p.matcher(getEmail);
+        Matcher m = p.matcher(getUser_Email);
 
         // Check if all strings are null or not
-        if (getName.equals("") || getName.length() == 0
-                || getCompanyName.equals("") || getCompanyName.length() == 0
-                || getEmail.equals("") || getEmail.length() == 0
-                || getPhoneNumber.equals("") || getPhoneNumber.length() == 0
-                || getPassword.equals("") || getPassword.length() == 0) {
+        if (getName.trim().equals("")
+
+                || getPhoneNumber.trim().equals("") || password.trim().equals("")
+                || password.trim().equals("") || confrm_passwd.trim().equals("")
+                || getUser_Email.trim().equals("")) {
 
             new CustomToast().Show_Toast(getActivity(), view,
-                    "All fields are required.");
+                    "All fields are required");
+            if (getName.trim().equals(""))
+                editText_name.requestFocus();
+            else if (getPhoneNumber.trim().equals(""))
+                editText_phone.requestFocus();
+            else if (getUser_Email.trim().equals(""))
+                editText_email.requestFocus();
+            else if (password.trim().equals(""))
+                edit_pwd.requestFocus();
+            else if (confrm_passwd.trim().equals(""))
+                edit_confm_pwd.requestFocus();
 
             btn_signUp.setClickable(true);
+
+        } else if (!password.equals(confrm_passwd)) {
+            new CustomToast().Show_Toast(getActivity(), view,
+                    "Password mismatch");
+            edit_pwd.requestFocus();
 
         }
 
@@ -215,15 +229,11 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         }
 
         // Check for phonenumber field is empty or not
-        else if (getPhoneNumber.equals("") || getPhoneNumber.length() != 10) {
+        else if (getPhoneNumber.trim().equals("") || getPhoneNumber.trim().length() != 10) {
             editText_phone.startAnimation(shakeAnimation);
             new CustomToast().Show_Toast(getActivity(), view,
-                    "Enter Valid Phone Number.");
+                    "Enter valid phone number");
 
-            btn_signUp.setEnabled(true);
-        } else if (!getPassword.equals(getConfirmPassword)) {
-            new CustomToast().Show_Toast(getActivity(), view,
-                    "Password didn't match");
             btn_signUp.setEnabled(true);
         }
 
@@ -242,7 +252,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
                 showProgress();
-                Call<SignUpResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignup(getName, getEmail, getPhoneNumber, getCompanyName, getPassword, deviceToken, "android");
+                Call<SignUpResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignup(getName, getPhoneNumber, password, getUser_Email, deviceToken, "android");
                 callRegisterUser.enqueue(new ApiCallback<SignUpResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<SignUpResponse> response, boolean isSuccess, String message) {
@@ -290,7 +300,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(view.getContext());
         View mView = getLayoutInflater().inflate(R.layout.dialog_otp, null);
 
-        OtpReader.bind(this, "611332");
+        OTPReaderCustom.bind(this, "HP-Bright");
 
         edit_otp = (EditText) mView.findViewById(R.id.edit_otp);
         btn_Verify = (Button) mView.findViewById(R.id.btn_Verify);
@@ -374,7 +384,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
                     otp = edit_otp.getText().toString();
 
-                    if (otp_resonse.length() == 6) {
+                    if (otp.length() == 6) {
                         getValidateOtp();
                        /* dialog.dismiss();
                         timer.cancel();
@@ -393,17 +403,6 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
     }
 
-    private void requestRuntimePermissions(String... permissions) {
-        for (String perm : permissions) {
-
-            if (ContextCompat.checkSelfPermission(getActivity(), perm) != PackageManager.PERMISSION_GRANTED) {
-
-                ActivityCompat.requestPermissions(getActivity(), new String[]{perm}, PERMISSION_REQUEST_ID);
-
-            }
-        }
-    }
-
 
     /**
      * @param signUpResponse
@@ -414,7 +413,6 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         companyName = signInResponse.getCompany_name();
         Email = signInResponse.getEmail();*/
 
-        otp_resonse = signUpResponse.getOtp();
         message = signUpResponse.getMessage();
         phoneNumber = signUpResponse.getMobile();
         User_ID = signUpResponse.getId();
@@ -485,7 +483,6 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     private void setResendOtp(AddMessageResponse addMessageResponse) {
 
         String message = addMessageResponse.getMessage();
-        String otp_resonse = addMessageResponse.getOtp();
         if (message.equals("success")) {
 
             showLongToast(getActivity(), "OTP has been Sent");
@@ -502,11 +499,11 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getValidateOtp(User_ID, otp);
-                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
+                Call<SignInResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getValidateOtp(getPhoneNumber, otp);
+                callRegisterUser.enqueue(new ApiCallback<SignInResponse>(getActivity()) {
                     @Override
-                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
-                        AddMessageResponse addMessageResponse = response.body();
+                    public void onApiResponse(Response<SignInResponse> response, boolean isSuccess, String message) {
+                        SignInResponse addMessageResponse = response.body();
                         dismissProgress();
                         if (isSuccess) {
 
@@ -542,9 +539,15 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
-    private void setValidateOtp(AddMessageResponse addMessageResponse) {
+    private void setValidateOtp(SignInResponse addMessageResponse) {
 
         String message = addMessageResponse.getMessage();
+        message = addMessageResponse.getMessage();
+        phoneNumber = addMessageResponse.getMobile();
+        User_ID = addMessageResponse.getId();
+        UserName = addMessageResponse.getName();
+        User_Email = addMessageResponse.getEmail();
+        User_CompanyName = addMessageResponse.getCompany_name();
 
         if (message.equals("success")) {
             realm.beginTransaction();
@@ -562,8 +565,13 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
             realmModel.setUser_CompanyName(User_CompanyName);
             realm.commitTransaction();
             showLongToast(getActivity(), "Welcome " + UserName);
-            frwdAnimIntent(getActivity(), BrightlyNavigationActivity.class, realmModel);
-
+            //  frwdAnimIntent(getActivity(), BrightlyNavigationActivity.class, realmModel);
+            Intent intent = new Intent(getActivity(), BrightlyNavigationActivity.class);
+            intent.putExtra("app_var_obj", appVarModuleObj);
+            if (realmModel != null)
+                intent.putExtra("user_obj", realmModel);
+            startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.right_enter, R.anim.left_out);
             getActivity().finish();
 
         } else {
@@ -574,11 +582,12 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void otpReceived(String messageText) {
 
-        Toast.makeText(getActivity(), "OTP : " + messageText, Toast.LENGTH_LONG).show();
-        otp_msg = messageText;
+        if (getActivity() != null)
+            Toast.makeText(getActivity(), "OTP : " + messageText, Toast.LENGTH_LONG).show();
+        otp_msg = messageText.split("is");
         if (otp_msg != null) {
             edit_otp.setText("");
-            edit_otp.setText(otp_msg);
+            edit_otp.setText(otp_msg[1].trim());
         }
 
     }

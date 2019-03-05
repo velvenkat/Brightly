@@ -5,10 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/edt_srch_catg"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/edit_text_background"
+            android:drawableRight="@android:drawable/ic_menu_search"
+            android:hint="Search "
+            android:padding="@dimen/dimen_5" />
+
+
+        <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#efefef"
         android:orientation="vertical">
+
 
 
         <TextView
@@ -27,7 +46,7 @@
             android:id="@+id/channels_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_12"
+            android:layout_marginTop="@dimen/dimen_5"
             android:background="#00ffffff"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
@@ -40,13 +59,13 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="bottom|right"
-
             android:layout_margin="@dimen/dimen_20"
+            android:background="@drawable/circular_image_drawable"
             android:src="@drawable/add_image_white"
-
 
 
             />
     </FrameLayout>
+    </LinearLayout>
 </android.support.v4.widget.SwipeRefreshLayout>
 

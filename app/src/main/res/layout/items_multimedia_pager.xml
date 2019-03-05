@@ -1,137 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_card"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    >
+    android:focusableInTouchMode="true">
 
-    <LinearLayout
+    <ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_2"
-        android:paddingBottom="@dimen/dimen_100"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_temp"
+        android:fitsSystemWindows="true">
 
-        <ImageView
-            android:id="@+id/image_cardImage"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"
-            android:visibility="visible"
-            android:src="@drawable/no_image_available"/>
-
-        <TextView
-            android:id="@+id/file_cardLink"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:visibility="gone"
-            android:gravity="center"
-            android:textColor="#ff6060"
-            android:textSize="@dimen/font_20"
-            android:linksClickable="true"
-            android:autoLink="all"
-            />
-
-        <com.purplefront.brightly.Utils.RichLinkViewTelegram
-            android:layout_marginTop="16dp"
-            android:id="@+id/preview"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:visibility="gone"
-            android:id="@+id/frame_youtube"
-            >
-        </FrameLayout>
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:id="@+id/rl_audio_player"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="@dimen/dimen_20">
-
-            <ImageView
-                android:id="@+id/img_play_stop"
-
-                android:layout_width="50dp"
-
-                android:layout_height="50dp"
-                android:src="@drawable/play_rec" />
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/img_play_stop">
-
-                <TextView
-                    android:id="@+id/txt_PlayProgTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:layout_marginLeft="10dp"
-
-                    android:text="Loading.." />
-
-                <SeekBar
-                    android:id="@+id/seek_audio_rec"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:layout_below="@+id/txt_PlayProgTime"
-                    android:layout_marginLeft="-20dp"
-                    android:layout_marginRight="@dimen/dimen_20"
-                    android:background="@null"
-                    android:clickable="false"
-                    android:progress="50"
-                    android:progressDrawable="@drawable/seek_layer"
-                    android:thumb="@null" />
-            </RelativeLayout>
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/text_cardName"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/dimen_8"
-            android:text="No data Available"
-            android:gravity="center"
-            android:lines="1"
-            android:maxLines="1"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:background="@color/white"
-            android:textSize="@dimen/mediumtextsize"
-            android:visibility="visible"
-            />
-
-        <TextView
-            android:id="@+id/text_cardDescription"
+        <LinearLayout
+            android:id="@+id/ll_card_contr"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/dimen_4"
-            android:layout_margin="@dimen/dimen_8"
-            android:layout_gravity="center"
-            android:text="No data Available"
-            android:autoLink="web"
-            android:textColorLink="@color/btn_login"
-            android:linksClickable="true"
-            android:gravity="start|end"
-            android:textColor="@color/black"
-            android:background="@color/white"
-            android:textSize="@dimen/smalltextSize"
-            android:visibility="visible"
-            />
+            android:layout_margin="@dimen/dimen_2"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/dimen_100">
 
-    </LinearLayout>
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/image_cardImage"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/no_image_available"
+                android:visibility="visible" />
 
-</ScrollView>
+            <TextView
+                android:id="@+id/file_cardLink"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:autoLink="all"
+                android:gravity="center"
+                android:linksClickable="true"
+                android:textColor="#ff6060"
+                android:textSize="@dimen/font_20"
+                android:visibility="gone" />
+
+            <com.purplefront.brightly.Utils.RichLinkViewTelegram
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone" />
+
+            <FrameLayout
+                android:id="@+id/frame_youtube"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:visibility="gone"></FrameLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_audio_player"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_20"
+                android:layout_marginTop="10dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/img_play_stop"
+
+                    android:layout_width="50dp"
+
+                    android:layout_height="50dp"
+                    android:src="@drawable/play_rec" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/img_play_stop">
+
+                    <TextView
+                        android:id="@+id/txt_PlayProgTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginLeft="10dp"
+
+                        android:text="Loading.." />
+
+                    <SeekBar
+                        android:id="@+id/seek_audio_rec"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_below="@+id/txt_PlayProgTime"
+                        android:layout_marginLeft="-20dp"
+                        android:layout_marginRight="@dimen/dimen_20"
+                        android:background="@null"
+                        android:clickable="false"
+                        android:progress="50"
+                        android:progressDrawable="@drawable/seek_layer"
+                        android:thumb="@null" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/text_cardName"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/dimen_8"
+                android:background="@color/white"
+                android:gravity="center"
+                android:lines="1"
+                android:maxLines="1"
+                android:text="No data Available"
+                android:textColor="@color/black"
+                android:textSize="@dimen/mediumtextsize"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/text_cardDescription"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/dimen_8"
+                android:autoLink="web"
+                android:background="@color/white"
+                android:gravity="start|end"
+                android:linksClickable="true"
+                android:minHeight="400dp"
+                android:padding="@dimen/dimen_4"
+                android:text="No data Available"
+                android:textColor="@color/black"
+                android:textColorLink="@color/btn_login"
+                android:textSize="@dimen/smalltextSize"
+                android:visibility="visible" />
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_temp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible">
+
+    </Button>
+</RelativeLayout>

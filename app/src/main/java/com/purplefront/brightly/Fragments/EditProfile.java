@@ -1,7 +1,6 @@
 package com.purplefront.brightly.Fragments;
 
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -23,22 +22,27 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
-import com.purplefront.brightly.API.ApiCallback;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.RestApiMethods;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.CustomToast;
-import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.EditProfileResponse;
+import com.purplefront.brightly.Modules.GeneralVarModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.CircleTransform;
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
-import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.Util;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -56,8 +60,6 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import retrofit2.Call;
-import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -77,7 +79,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
     int PICK_IMAGE_REQ = 77;
 
     Realm realm;
-    RealmResults<RealmModel> realmModel;
+    RealmResults<RealmModel> realmModel_list;
 
     String user_ID;
     String userName = "";
@@ -88,6 +90,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
     String image_old = "";
     String image_name = "";
     RealmModel user_obj;
+
 
     public EditProfile() {
         // Required empty public constructor
@@ -103,13 +106,14 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
         // Set title bar
         setHasOptionsMenu(true);
         context = getContext();
+        realm = Realm.getDefaultInstance();
         ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("Edit Profile");
 
         ((BrightlyNavigationActivity) getActivity()).permissionResultInterfaceObj = this;
         //((BrightlyNavigationActivity) getActivity()).toggle.setDrawerIndicatorEnabled(true);
 
-        realm = Realm.getDefaultInstance();
-        realmModel = realm.where(RealmModel.class).findAllAsync();
+
+        realmModel_list = realm.where(RealmModel.class).findAllAsync();
 
         initViews();
         clear_edit_text_focus(input_email);
@@ -143,8 +147,8 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
         input_phone = (EditText) rootView.findViewById(R.id.input_phone);
 
 
-        realmModel.load();
-        for (RealmModel model : realmModel) {
+        realmModel_list.load();
+        for (RealmModel model : realmModel_list) {
             user_ID = model.getUser_Id();
             input_name.setText(model.getUser_Name());
             input_phone.setText(model.getUser_PhoneNumber());
@@ -158,14 +162,48 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
                 image_name = model.getImage_name();
             else
                 image_name = "";
-            if (!model.getImage().isEmpty()) {
-
-                Glide.with(getActivity())
-                        .load(model.getImage())
+            String prof_img_url = null;
+            if (model.getImage() != null && !model.getImage().trim().equals("")) {
+                prof_img_url = model.getImage();
+            } else {
+                GeneralVarModel prof_model = ((BrightlyNavigationActivity) getActivity()).appVarModuleObj.getProf_default_img();
+                if (prof_model != null) {
+                    prof_img_url = prof_model.getFetch_key();
+                }
+            }
+            if (prof_img_url != null) {
+                /*Glide.with(getActivity())
+                        .load(imageProfile)
                         .centerCrop()
                         .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)
-                        .into(Image_profile);
+                        .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
+*/
+                RoundingParams roundingParams = RoundingParams.fromCornersRadius(5f);
+                //roundingParams.setBorder(color, 1.0f);
+                roundingParams.setRoundAsCircle(true);
+                ResizeOptions mResizeOptions = new ResizeOptions(150, 150);
+                GenericDraweeHierarchyBuilder builder =
+                        new GenericDraweeHierarchyBuilder(this.getResources());
+                builder.setProgressBarImage(R.drawable.loader);
+                builder.setRoundingParams(roundingParams);
+                builder.setProgressBarImage(
+                        new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+                builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+                GenericDraweeHierarchy hierarchy = builder
+                        .setFadeDuration(100)
+                        .build();
+
+                Image_profile.setHierarchy(hierarchy);
+
+
+                final ImageRequest imageRequest =
+                        ImageRequestBuilder.newBuilderWithSource(Uri.parse(prof_img_url))
+                                .setResizeOptions(mResizeOptions)
+
+                                .build();
+                //  Image_profile.getHierarchy().setRoundingParams(roundingParams);
+                Image_profile.setImageRequest(imageRequest);
             } else {
                 Glide.with(getActivity())
                         .load(R.drawable.default_user_image)
@@ -215,10 +253,10 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
         Matcher m = p.matcher(userEmail);
 
         // Check if all strings are null or not
-        if (userName.equals("") || userName.length() == 0
-                || userCompanyName.equals("") || userCompanyName.length() == 0
-                || userEmail.equals("") || userEmail.length() == 0
-                || phoneNumber.equals("") || phoneNumber.length() == 0) {
+        if (userName.trim().equals("")
+
+                || userEmail.trim().equals("")
+                || phoneNumber.trim().equals("")) {
 
             new CustomToast().Show_Toast(getActivity(), rootView,
                     "All fields are required.");
@@ -238,12 +276,14 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
 
     }
 
+
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.clear();
+        MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.editprofile_menu, menu);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -312,64 +352,43 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
 
     private void setEditProfileCredentials(EditProfileResponse editProfileResponse) {
 
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        // delete all realm objects
-        realm.deleteAll();
+        String message = editProfileResponse.getMessage();
 
-        //commit realm changes
-        realm.commitTransaction();
-
-        phoneNumber = editProfileResponse.getMobile();
-        userName = editProfileResponse.getName();
-        userCompanyName = editProfileResponse.getCompany_name();
-        imageProfile = editProfileResponse.getImage();
-        userEmail = editProfileResponse.getEmail();
-        image_name = editProfileResponse.getImage_name();
-
-        if (phoneNumber != null) {
+        if (message.equals("success")) {
 
             realm.beginTransaction();
-            RealmModel realmModel = realm.createObject(RealmModel.class);
-            realmModel.setUser_Id(user_ID);
-            realmModel.setUser_Name(userName);
-            realmModel.setUser_Email(userEmail);
-            realmModel.setUser_PhoneNumber(phoneNumber);
-            realmModel.setUser_CompanyName(userCompanyName);
-            realmModel.setImage(imageProfile);
-            realmModel.setImage_name(image_name);
+            // delete all realm objects
+            realm.deleteAll();
+
+            //commit realm changes
             realm.commitTransaction();
+            //  Realm realm2 = Realm.getDefaultInstance();
+            phoneNumber = editProfileResponse.getMobile();
+            userName = editProfileResponse.getName();
+            userCompanyName = editProfileResponse.getCompany_name();
+            imageProfile = editProfileResponse.getImage();
+            userEmail = editProfileResponse.getEmail();
+            image_name = editProfileResponse.getImage_name();
+            ((BrightlyNavigationActivity) getActivity()).set_prof_hdr_image(imageProfile);
+            if (phoneNumber != null) {
 
-            input_name.setText(realmModel.getUser_Name());
-            input_phone.setText(realmModel.getUser_PhoneNumber());
-            input_email.setText(realmModel.getUser_Email());
-            input_company.setText(realmModel.getUser_CompanyName());
+                realm.beginTransaction();
+                RealmModel realmModel = realm.createObject(RealmModel.class);
+                realmModel.setUser_Id(user_ID);
+                realmModel.setUser_Name(userName);
+                realmModel.setUser_Email(userEmail);
+                realmModel.setUser_PhoneNumber(phoneNumber);
+                //   Toast.makeText(getContext(),"com_res"+userCompanyName,Toast.LENGTH_LONG).show();
+                realmModel.setUser_CompanyName(userCompanyName);
+                realmModel.setImage(imageProfile);
+                realmModel.setImage_name(image_name);
+                realm.commitTransaction();
 
-//            ((BrightlyNavigationActivity)getActivity()).setUserModel(realmModel);
-
-            if (!imageProfile.isEmpty()) {
-
-                Glide.with(getActivity())
-                        .load(imageProfile)
-                        .centerCrop()
-                        .transform(new CircleTransform(getActivity()))
-//                            .override(60, 60)
-                        .into(Image_profile);
-            } else {
-                Glide.with(getActivity())
-                        .load(R.drawable.default_user_image)
-                        .centerCrop()
-                        .transform(new CircleTransform(getActivity()))
-//                            .override(60, 60)
-                        .into(Image_profile);
-            }
-
-            String message = editProfileResponse.getMessage();
-
-            if (message.equals("success")) {
                 ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
             } else {
-                showLongToast(getActivity(), message);
+                // showLongToast(getActivity(), message);
+                new CustomToast().Show_Toast(getActivity(), rootView,
+                        message);
             }
         }
     }

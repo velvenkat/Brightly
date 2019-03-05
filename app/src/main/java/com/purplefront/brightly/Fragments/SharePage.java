@@ -1,19 +1,14 @@
 package com.purplefront.brightly.Fragments;
 
 import android.app.Dialog;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,11 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
@@ -34,6 +27,7 @@ import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.NotificationsModel;
+import com.purplefront.brightly.Modules.SetListResponse;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -55,7 +49,7 @@ public class SharePage extends BaseFragment {
     String set_name = "";
     String userId;
     String set_id = "";
-    String share_link;
+    String share_link = "";
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
     NotificationsModel notificationsModel;
@@ -63,6 +57,9 @@ public class SharePage extends BaseFragment {
     RealmModel user_obj;
     boolean isScrnSetList;
     LinearLayout ll_PublicLinkContr;
+    boolean isCardShare;
+    // String card_shr_card_id;
+    //  String card_shr_set_name, card_shr_set_desc;
 
     View rootView;
 
@@ -71,12 +68,18 @@ public class SharePage extends BaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share Set");
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle("Share Set");
             setBackKeyHandler();
             if (isScrnSetList) {
                 ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
             }
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.clear();
     }
 
     @Nullable
@@ -85,6 +88,8 @@ public class SharePage extends BaseFragment {
         rootView = inflater.inflate(R.layout.activity_share_page, container, false);
         ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = false;
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
+        setHasOptionsMenu(true);
+        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
         share_inApp = (Button) rootView.findViewById(R.id.share_inApp);
         share_aLink = (Button) rootView.findViewById(R.id.share_aLink);
         userId = user_obj.getUser_Id();
@@ -99,12 +104,18 @@ public class SharePage extends BaseFragment {
         TextView txtCapShrAccess = (TextView) rootView.findViewById(R.id.txtCapShrAccess);
         ll_PublicLinkContr = (LinearLayout) rootView.findViewById(R.id.ll_public_link_contr);
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share Set");
+        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle("Share Set");
         Bundle bundle = getArguments();
 
         if (bundle != null) {
             isNotification = bundle.getBoolean("isNotification", false);
             isScrnSetList = bundle.getBoolean("isScrnSetList", false);
+            isCardShare = bundle.getBoolean("isCardShare", false);
+            if (isCardShare) {
+              /*  card_shr_set_name = bundle.getString("card_shr_set_name");
+                card_shr_set_desc = bundle.getString("card_shr_set_desc");*/
+                //  card_shr_card_id = bundle.getString("card_shr_card_id");
+            }
             if (isScrnSetList) {
                 ((BrightlyNavigationActivity) getActivity()).DisableBackBtn = true;
             }
@@ -116,6 +127,7 @@ public class SharePage extends BaseFragment {
             set_description = notificationsModel.getNotificationsSetDetail().getDescription();
             set_name = notificationsModel.getNotificationsSetDetail().getName();
             set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
+
             share_link = notificationsModel.getNotificationsSetDetail().getShare_link();
             if (notificationsModel.getNotificationsSetDetail().getWeb_sharing().equalsIgnoreCase("0")) {
                 //share_aLink.setEnabled(false);
@@ -131,11 +143,13 @@ public class SharePage extends BaseFragment {
 
         } else {
 
-            chl_list_obj = bundle.getParcelable("model_obj");
+            //  chl_list_obj = bundle.getParcelable("model_obj");
+            chl_list_obj = ((BrightlyNavigationActivity) getActivity()).glob_chl_list_obj;
             setsListModel = bundle.getParcelable("setsListModel");
             set_description = setsListModel.getDescription();
             set_name = setsListModel.getSet_name();
             set_id = setsListModel.getSet_id();
+
             share_link = setsListModel.getShare_link();
             if (setsListModel.getWeb_sharing().equalsIgnoreCase("0")) {
                 // share_aLink.setEnabled(false);
@@ -168,22 +182,93 @@ public class SharePage extends BaseFragment {
         share_aLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent share = new Intent(Intent.ACTION_SEND);
-                share.setType("text/plain");
-                share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                if (!isCardShare) {
+                    Intent share = new Intent(Intent.ACTION_SEND);
+                    share.setType("text/plain");
+                    share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 
-                // Add data to the intent, the receiving app will decide
-                // what to do with it.
-                share.putExtra(Intent.EXTRA_SUBJECT, "Brightly Set Share link");
-                share.putExtra(Intent.EXTRA_TEXT, share_link);
+                    // Add data to the intent, the receiving app will decide
+                    // what to do with it.
+                    share.putExtra(Intent.EXTRA_SUBJECT, "Brightly Set Share link");
+                    share.putExtra(Intent.EXTRA_TEXT, share_link);
 
-                startActivity(Intent.createChooser(share, "Share link!"));
+                    startActivity(Intent.createChooser(share, "Share link!"));
+                } else {
+                    //  share_link = "";
+                    if (share_link.trim().equals("")) {
+                        //   call_api_card_share(card_shr_card_id, chl_list_obj.getChannel_id(), false);
+                    } else {
+                        Intent share = new Intent(Intent.ACTION_SEND);
+                        share.setType("text/plain");
+                        share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
+                        // Add data to the intent, the receiving app will decide
+                        // what to do with it.
+                        share.putExtra(Intent.EXTRA_SUBJECT, "Brightly Set Share link");
+                        share.putExtra(Intent.EXTRA_TEXT, share_link);
+
+                        startActivity(Intent.createChooser(share, "Share link!"));
+                    }
+                }
             }
         });
 
         setBackKeyHandler();
 
         return rootView;
+    }
+
+    public void call_api_card_share(String CardIds, String chl_id, boolean isCreateSet) {
+        try {
+            Call<SetListResponse> callRegisterUser;
+            if (CheckNetworkConnection.isOnline(getContext())) {
+                showProgress();
+
+
+                callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_set_from_cards(userId, chl_id, CardIds, setsListModel.getSet_id());
+
+                //else
+                //callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_share_card(userId, chl_id, CardIds, setsListModel.getSet_id(), "9566099458", "venkat", set_name, description);
+                callRegisterUser.enqueue(new ApiCallback<SetListResponse>(getActivity()) {
+                    @Override
+                    public void onApiResponse(Response<SetListResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
+                        SetListResponse message_resObj = response.body();
+                        if (message_resObj.getMessage().trim().equals("success")) {
+                            //Toast.makeText(getContext(), ((BrightlyNavigationActivity) getActivity()).SET_SINGULAR + " " + set_name + " successfully created", Toast.LENGTH_LONG).show();
+                            //  ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().popBackStackImmediate();
+                            share_link = message_resObj.getSet_obj().getShare_link();
+                            Intent share = new Intent(Intent.ACTION_SEND);
+                            share.setType("text/plain");
+                            share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
+                            // Add data to the intent, the receiving app will decide
+                            // what to do with it.
+                            share.putExtra(Intent.EXTRA_SUBJECT, "Brightly Set Share link");
+                            share.putExtra(Intent.EXTRA_TEXT, message_resObj.getSet_obj().getShare_link());
+
+                            startActivity(Intent.createChooser(share, "Share link!"));
+                        }
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                });
+            } /*else {
+
+                dismissProgress();
+            }*/ else {
+                Toast.makeText(getContext(), "Check network connection", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
     }
 
     public void setBackKeyHandler() {
@@ -232,7 +317,10 @@ public class SharePage extends BaseFragment {
                 String mob_no = edt_no.getText().toString();
                 if (mob_no.trim().length() == 10 && !name.trim().equals("")) {
                     mBottomSheetDialog.dismiss();
+
                     getShareSet(name, mob_no);
+
+
                 } else {
                     if (mob_no.trim().equals("")) {
                         Toast.makeText(getContext(), "Please enter the 10-digit mobile number", Toast.LENGTH_LONG).show();
@@ -250,10 +338,13 @@ public class SharePage extends BaseFragment {
     private void getShareSet(String name, String mob_no) {
 
         try {
-
+            Call<AddMessageResponse> callRegisterUser;
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getShareSet(userId, set_id, mob_no, name);
+                if (!isCardShare)
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getShareSet(userId, set_id, mob_no, name);
+                else
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getShareSet(userId, set_id, mob_no, name);
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -264,7 +355,11 @@ public class SharePage extends BaseFragment {
                                 dismissProgress();
                                 //  setAddSetCredentials(addMessageResponse);
                                 Toast.makeText(getContext(), addMessageResponse.getMessage(), Toast.LENGTH_LONG).show();
-                                if (isScrnSetList)
+                                if (isCardShare) {
+                                    ((BrightlyNavigationActivity) getActivity()).DontRun = true;
+                                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
+
+                                } else if (isScrnSetList)
                                     ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                                 else {
                                     ShareSettings parent_frag = (ShareSettings) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Set_Share_settings);
@@ -349,13 +444,28 @@ public class SharePage extends BaseFragment {
                                 if (isNotification) {
                                     bundle1.putBoolean("isNotification", true);
                                     bundle1.putParcelable("notfy_modl_obj", notificationsModel);
+                                    if (isCardShare) {
+                                        bundle1.putBoolean("isCardShare", isCardShare);
+                                        //   bundle1.putString("card_shr_card_id", card_shr_card_id);
+                                      /*  bundle1.putString("card_shr_set_name", card_shr_set_name);
+                                        bundle1.putString("card_shr_set_desc", card_shr_set_desc);*/
+
+                                    }
                                 } else {
                                     bundle1.putBoolean("isNotification", false);
-                                    bundle1.putParcelable("model_obj", chl_list_obj);
+                                    //    bundle1.putParcelable("model_obj", chl_list_obj);
                                     bundle1.putBoolean("isScrnSetList", isScrnSetList);
                                     bundle1.putParcelable("setsListModel", setsListModel);
+                                    if (isCardShare) {
+                                        bundle1.putBoolean("isCardShare", isCardShare);
+                                        //bundle1.putString("card_shr_card_id", card_shr_card_id);
+                                        /*bundle1.putString("card_shr_set_name", card_shr_set_name);
+                                        bundle1.putString("card_shr_set_desc", card_shr_set_desc);
+*/
+                                    }
                                 }
                                 fragment.setArguments(bundle1);
+                                //if (!isCardShare)
                                 ((BrightlyNavigationActivity) getActivity()).isHide_frag = true;
                                 ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.share_with_contact, fragment, true);
 

@@ -9,6 +9,31 @@ public class AddMessageResponse {
     @Expose
     private String message;
 
+    public String getDefault_name() {
+        return default_name;
+    }
+
+    public void setDefault_name(String default_name) {
+        this.default_name = default_name;
+    }
+
+    public String getShare_link() {
+        return share_link;
+    }
+
+    public void setShare_link(String share_link) {
+        this.share_link = share_link;
+    }
+
+    @SerializedName("set_default_name")
+    @Expose
+    private String default_name;
+
+    @SerializedName("share_link")
+    @Expose
+    public
+    String share_link;
+
     @SerializedName("otp")
     @Expose
     private String otp;

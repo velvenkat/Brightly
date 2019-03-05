@@ -220,7 +220,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
                     //Fragment card_dtl_frag=new CardDetailFragment();
                     Bundle bundle = new Bundle();
-                    bundle.putParcelable("model_obj", chl_list_obj);
+                   // bundle.putParcelable("model_obj", chl_list_obj);
                     bundle.putParcelable("setsListModel", setsListModel);
                     bundle.putBoolean("isNotification", false);
                     bundle.putString("chl_name", chl_list_obj.getChannel_name());

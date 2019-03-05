@@ -4,10 +4,10 @@
     android:id="@+id/cardVw_card_list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/dimen_2"
     android:layout_marginLeft="@dimen/dimen_8"
-    android:layout_marginRight="@dimen/dimen_8"
     android:layout_marginTop="@dimen/dimen_8"
+    android:layout_marginRight="@dimen/dimen_8"
+    android:layout_marginBottom="@dimen/dimen_2"
     app:cardBackgroundColor="@color/white"
     app:cardElevation="@dimen/dimen_4">
 
@@ -16,16 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_2">
 
-        <CheckBox
-            android:id="@+id/chk_card_sel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:focusable="false"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true" />
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/image_cardImage"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -39,7 +31,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="@dimen/dimen_10"
             android:layout_marginTop="@dimen/dimen_8"
-            android:layout_toLeftOf="@+id/chk_card_sel"
+            android:layout_toLeftOf="@+id/rl_contr_img_set"
             android:layout_toRightOf="@id/image_cardImage"
             android:lines="1"
             android:maxLines="1"
@@ -58,7 +50,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="@dimen/dimen_10"
             android:layout_marginTop="@dimen/dimen_8"
-            android:layout_toLeftOf="@+id/chk_card_sel"
+            android:layout_toLeftOf="@+id/rl_contr_img_set"
             android:layout_toRightOf="@id/image_cardImage"
             android:lines="2"
             android:maxLines="2"
@@ -68,6 +60,38 @@
             android:textSize="@dimen/smalltextSize"
             android:visibility="visible" />
 
+        <RelativeLayout
+            android:id="@+id/rl_contr_img_set"
+            android:layout_width="45dp"
+            android:layout_height="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="3dp">
+
+            <CheckBox
+                android:id="@+id/chk_card_sel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:clickable="false"
+                android:focusable="false"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@+id/img_set_menu"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:focusable="true"
+
+                android:visibility="invisible"
+
+
+                app:srcCompat="@drawable/menu" />
+        </RelativeLayout>
     </RelativeLayout>
 
 

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="#efefef">
 
     <EditText
         android:id="@+id/edt_srch_set"
@@ -13,25 +13,11 @@
         android:layout_height="50dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:padding="@dimen/dimen_5"
         android:layout_marginRight="10dp"
         android:background="@drawable/edit_text_background"
         android:drawableRight="@android:drawable/ic_menu_search"
-        android:hint="Search sets" />
-
-    <!-- <TextView
-         android:layout_below="@+id/edt_srch_set"
-         android:layout_width="wrap_content"
-         android:id="@+id/txtHintReorder"
-         android:textColor="@color/black"
-         android:textSize="@dimen/font_12"
-         android:layout_centerHorizontal="true"
-         android:visibility="gone"
-         android:layout_marginTop="@dimen/dimen_4"
-         android:drawablePadding="@dimen/dimen_6"
-         android:drawableRight="@mipmap/ic_drag_drop"
-         android:text="Drag and Drop to Reorder"
-         android:layout_height="wrap_content" />-->
+        android:hint="Search sets"
+        android:padding="@dimen/dimen_5" />
 
 
     <RelativeLayout
@@ -84,11 +70,12 @@
     <TextView
         android:id="@+id/view_nodata"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/set_del_contr"
+        android:layout_centerVertical="true"
         android:gravity="center"
         android:text="@string/no_sets_available"
-        android:textColor="@color/black"
+
         android:textSize="@dimen/dimen_20"
         android:visibility="gone" />
 
@@ -96,38 +83,42 @@
         android:id="@+id/chk_sel_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/view_nodata"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/set_del_contr"
         android:text="Select All"
         android:visibility="gone" />
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/chk_sel_all">
+        android:layout_below="@+id/chk_sel_all"
+        android:background="#efefef"
+        android:orientation="vertical">
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/channelSet_listview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/dimen_12"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:background="#00ffffff"
+            android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
-            android:paddingBottom="@dimen/dimen_100"
-            android:visibility="visible" />
-
-    </ScrollView>
+            android:paddingBottom="90dp" />
 
 
-    <ImageView
-        android:id="@+id/image_createChannelSet"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/dimen_20"
-        android:layout_weight="2"
-        android:background="@drawable/circular_image_drawable"
-        android:src="@drawable/add_image_white" />
+        <ImageView
+            android:id="@+id/image_createChannelSet"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="@dimen/dimen_20"
+
+            android:background="@drawable/circular_image_drawable"
+            android:src="@drawable/add_image_white" />
+
+        />
+    </FrameLayout>
 
 
 </RelativeLayout>

@@ -1,14 +1,17 @@
 package com.purplefront.brightly.Fragments;
 
-import android.opengl.Visibility;
+import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +22,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,10 +34,13 @@ import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Adapters.CardListAdapter;
 import com.purplefront.brightly.Application.RealmModel;
+import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CardsListResponse;
+import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.NotificationsModel;
+import com.purplefront.brightly.Modules.SetListResponse;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -68,28 +77,42 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     boolean isReorder;
     boolean is_on_set_chg_chk_status = false; //SELECT ALL CHECK BOX CHANGE BASED ON SET SELECTION
     SetsListModel setsListModel;
+    boolean isCardShare = false;
     View rootView;
     NotificationsModel notificationsModel;
     int CurPagrPos;
     boolean isNotification;
     RealmModel user_obj;
+    String choosed_catg_id = "";
     String set_id_toCreateCard;
     CardDetailFragment parent_frag_Card_dtl;
+    ChannelListModel chl_list_obj;
+    List<ChannelListModel> channelListModels = new ArrayList<>();
+
+    ArrayList<String> catg_name_list = new ArrayList<>();
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        MenuInflater inflater = getActivity().getMenuInflater();
+
+        menu.clear();
         if (isReorder) {
-            MenuItem del_menu = menu.findItem(R.id.action_multi_sel);
+            inflater.inflate(R.menu.delmenucard, menu);
+            MenuItem del_menu = menu.findItem(R.id.actiondel);
 
             if (cardsListModels.size() == 0) {
                 del_menu.setVisible(false);
                 txtHintReorder.setVisibility(View.GONE);
             } else {
                 del_menu.setVisible(true);
-                txtHintReorder.setVisibility(View.VISIBLE);
+                // txtHintReorder.setVisibility(View.VISIBLE);
             }
+        } else {
+            txtHintReorder.setVisibility(View.GONE);
         }
+
+
     }
 
     @Nullable
@@ -104,111 +127,131 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 */
-        setHasOptionsMenu(true);
-        Bundle bundle = getArguments();
-        userId = user_obj.getUser_Id();
-        isNotification = bundle.getBoolean("isNotification", false);
-        set_id_toCreateCard = bundle.getString("set_id_toCreateCard", null); //Create card from existing set
-
-        parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
-        if (isNotification) {
-            notificationsModel = bundle.getParcelable("notfy_modl_obj");
-            if (notificationsModel != null) {
-                set_name = notificationsModel.getNotificationsSetDetail().getName();
-                set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
-                chl_name = notificationsModel.getChannel_name();
-            }
+        boolean dontRun = ((BrightlyNavigationActivity) getActivity()).DontRun;
+        if (dontRun) {
+            ((BrightlyNavigationActivity) getActivity()).DontRun = false;
+        } else {
+            setHasOptionsMenu(true);
+            Bundle bundle = getArguments();
+            userId = user_obj.getUser_Id();
+            isCardShare = bundle.getBoolean("isCardShare", false);
+            isNotification = bundle.getBoolean("isNotification", false);
+            set_id_toCreateCard = bundle.getString("set_id_toCreateCard", null); //Create card from existing set
+            if (set_id_toCreateCard == null)
+                chl_list_obj = ((BrightlyNavigationActivity) getActivity()).glob_chl_list_obj;
+            else
+                chl_list_obj = bundle.getParcelable("chsed_catg");
+            parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
+            catg_name_list = new ArrayList<>();
+            catg_name_list.add(0, "Select");
+            if (isNotification) {
+                notificationsModel = bundle.getParcelable("notfy_modl_obj");
+                if (notificationsModel != null) {
+                    set_name = notificationsModel.getNotificationsSetDetail().getName();
+                    set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
+                    chl_name = notificationsModel.getChannel_name();
+                }
             /*channel_id = notificationsModel.getChannel_id();
             set_description = notificationsModel.getNotificationsSetDetail().getDescription();
             Created_By = notificationsModel.getNotificationsSetDetail().getCreated_by();
             card_order_position = notificationsModel.getCard_order_position();*/
 
 
-        } else {
+            } else {
 
-            setsListModel = bundle.getParcelable("setsListModel");
-            isReorder = bundle.getBoolean("re_order", false);
-            chl_name = bundle.getString("chl_name");
-            set_name = setsListModel.getSet_name();
-            set_id = setsListModel.getSet_id();
-        }
-        //setTitle(set_name);
-        if (isReorder) {
-            txtHintReorder.setVisibility(View.VISIBLE);
-        }
-        CurPagrPos = bundle.getInt("card_position");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(set_name);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(chl_name);
-        view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
-        card_listview = (RecyclerView) rootView.findViewById(R.id.card_listview);
-        del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
-        btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
-        btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
-        chk_sel_all = (CheckBox) rootView.findViewById(R.id.chk_sel_all);
-        txtItemSel = (TextView) rootView.findViewById(R.id.txtCntSelected);
-        //  img_mutli_sel = (ImageView) rootView.findViewById(R.id.menu_multi_sel);
+                setsListModel = bundle.getParcelable("setsListModel");
+                isReorder = bundle.getBoolean("re_order", false);
+                chl_name = bundle.getString("chl_name");
+                set_name = setsListModel.getSet_name();
+                set_id = setsListModel.getSet_id();
+            }
+            //setTitle(set_name);
+            if (isReorder) {
+                txtHintReorder.setVisibility(View.VISIBLE);
+            }
+            CurPagrPos = bundle.getInt("card_position");
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle(set_name);
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(chl_name);
+            view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
+            card_listview = (RecyclerView) rootView.findViewById(R.id.card_listview);
+            del_contr = (RelativeLayout) rootView.findViewById(R.id.set_del_contr);
+            btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
+            btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
+            chk_sel_all = (CheckBox) rootView.findViewById(R.id.chk_sel_all);
+            txtItemSel = (TextView) rootView.findViewById(R.id.txtCntSelected);
+            //  img_mutli_sel = (ImageView) rootView.findViewById(R.id.menu_multi_sel);
 
-        setDlgListener(this);
-        chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            setDlgListener(this);
 
-                if (is_on_set_chg_chk_status) {
+            chk_sel_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                    is_on_set_chg_chk_status = false;
-                } else {
-                    del_sel_id = new ArrayList<>();
-                    list_Created_by = new ArrayList<>();
-                    if (isChecked) {
-                        chk_sel_all.setText("Unselect all");
-                        btn_delete.setEnabled(true);
+                    if (is_on_set_chg_chk_status) {
 
-                        for (int i = 0; i < cardsListModels.size(); i++) {
-                            CardsListModel modelObj = cardsListModels.get(i);
-                            modelObj.setDelSel(true);
-                            del_sel_id.add(modelObj.getCard_id());
-                            list_Created_by.add(modelObj.getCreated_by());
-
-                            cardsListModels.remove(i);
-                            cardsListModels.add(i, modelObj);
-
-                        }
-                        txtItemSel.setText(del_sel_id.size() + " items selected");
+                        is_on_set_chg_chk_status = false;
                     } else {
-                        chk_sel_all.setText("Select all");
-                        btn_delete.setEnabled(false);
-                        for (int i = 0; i < cardsListModels.size(); i++) {
-                            CardsListModel modelObj = cardsListModels.get(i);
-                            modelObj.setDelSel(false);
-                            cardsListModels.remove(i);
-                            cardsListModels.add(i, modelObj);
+                        del_sel_id = new ArrayList<>();
+                        list_Created_by = new ArrayList<>();
+                        if (isChecked) {
+                            chk_sel_all.setText("Unselect all");
+                            //   btn_delete.setEnabled(true);
+
+                            for (int i = 0; i < cardsListModels.size(); i++) {
+                                CardsListModel modelObj = cardsListModels.get(i);
+                                modelObj.setDelSel(true);
+                                del_sel_id.add(modelObj.getCard_id());
+                                list_Created_by.add(modelObj.getCreated_by());
+
+                                cardsListModels.remove(i);
+                                cardsListModels.add(i, modelObj);
+
+                            }
+                            txtItemSel.setText(del_sel_id.size() + " items selected");
+                        } else {
+                            chk_sel_all.setText("Select all");
+                            //  btn_delete.setEnabled(false);
+                            for (int i = 0; i < cardsListModels.size(); i++) {
+                                CardsListModel modelObj = cardsListModels.get(i);
+                                modelObj.setDelSel(false);
+                                cardsListModels.remove(i);
+                                cardsListModels.add(i, modelObj);
+                            }
+                            txtItemSel.setText("");
                         }
-                        txtItemSel.setText("");
                     }
+                    cardListAdapter.notifyDataSetChanged();
                 }
-                cardListAdapter.notifyDataSetChanged();
-            }
-        });
+            });
 
 
-        btn_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            btn_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (del_sel_id.size() > 0) {
+                        strDelSelId = android.text.TextUtils.join(",", del_sel_id);
+                        strDelCrtdBy = android.text.TextUtils.join(",", list_Created_by);
+                        if (!isCardShare) {
 
-                strDelSelId = android.text.TextUtils.join(",", del_sel_id);
-                strDelCrtdBy = android.text.TextUtils.join(",", list_Created_by);
-                if (set_id_toCreateCard != null) {
-                    //showAlertDialog("You are about to delete selected Cards. All the information contained in the Cards will be lost.", "Confirm Delete...", "Delete", "Cancel");
-                    call_copy_card(strDelSelId);
-                } else
-                    showAlertDialog("You are about to delete selected Cards. All the information contained in the Cards will be lost.", "Confirm Delete...", "Delete", "Cancel");
-                // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
-            }
-        });
+                            if (set_id_toCreateCard != null) {
+                                //showAlertDialog("You are about to delete selected Cards. All the information contained in the Cards will be lost.", "Confirm Delete...", "Delete", "Cancel");
+                                call_copy_card(strDelSelId);
+                            } else
+                                showAlertDialog("You are about to delete selected " + ((BrightlyNavigationActivity) getActivity()).CARD_PLURAL + ". All the information contained in the" + ((BrightlyNavigationActivity) getActivity()).CARD_PLURAL + " will be lost.", "Confirm Delete...", "Delete", "Cancel");
+                            // Toast.makeText(MyChannelsSet.this,"Set Id:"+csv,Toast.LENGTH_LONG).show();
+                        } else {
+                            // Card Share
+                            //         set_CreateSetDlg(strDelSelId, false);
+                            get_call_create_default_set();
+                        }
+                    } else
+                        Toast.makeText(getContext(), "Please select " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR, Toast.LENGTH_LONG).show();
+                }
+            });
 
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            btn_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
             /*    getSupportActionBar().show();
                 del_contr.setVisibility(View.GONE);
                 del_sel_id=new ArrayList<>();
@@ -224,122 +267,140 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                 channelsSetAdapter.set_SelToDel(false);
                 channelsSetAdapter.notifyDataSetChanged();
             */
-                if (set_id_toCreateCard != null) {
-                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
-                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
-                } else {
-                    reset_view();
-                    for (int i = 0; i < cardsListModels.size(); i++) {
-                        CardsListModel modelObj = cardsListModels.get(i);
-                        if (modelObj.isDelSel()) {
-                            modelObj.setDelSel(false);
-                            cardsListModels.remove(i);
-                            cardsListModels.add(i, modelObj);
-                        }
-                    }
-                    cardListAdapter.set_SelToDel(false);
-                    cardListAdapter.notifyDataSetChanged();
-                    if (isReorder)
-                        ith.attachToRecyclerView(card_listview);
 
-                }
-            }
-        });
-
-
-        if (isReorder) {
-            ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
-
-                int dragFrom = -1;
-                int dragTo = -1;
-
-                @Override
-                public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                    return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
-                            0);
-                }
-
-                @Override
-                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-
-
-                    int fromPosition = viewHolder.getAdapterPosition();
-                    int toPosition = target.getAdapterPosition();
-
-
-                    if (dragFrom == -1) {
-                        dragFrom = fromPosition;
-                    }
-                    dragTo = toPosition;
-
-                    //channelsSetAdapter.onItemMove(fromPosition, toPosition);
-                    Collections.swap(cardsListModels, fromPosition, toPosition);
-                    // and notify the adapter that its dataset has changed
-                    cardListAdapter.notifyItemMoved(fromPosition, toPosition);
-                    cardListAdapter.notifyItemChanged(fromPosition);
-                    cardListAdapter.notifyItemChanged(toPosition);
-                    return true;
-
-                }
-
-                private void reallyMoved(int from, int to) {
-                    // I guessed this was what you want...
-                    call_card_reorder();
-                }
-
-                @Override
-                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-                }
-
-                @Override
-                public boolean isLongPressDragEnabled() {
-                    return true;
-                }
-
-                @Override
-                public boolean isItemViewSwipeEnabled() {
-                    return false;
-                }
-
-                @Override
-                public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                    super.clearView(recyclerView, viewHolder);
-
-                    if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
-                        reallyMoved(dragFrom, dragTo);
-                    }
-
-                    dragFrom = dragTo = -1;
-                }
-
-            };
-            // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
-            ith = new ItemTouchHelper(dragCallback);
-            ith.attachToRecyclerView(card_listview);
-
-        }
-
-        getCardsLists();
-        rootView.setFocusableInTouchMode(true);
-        rootView.requestFocus();
-        rootView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
-                    if (set_id_toCreateCard == null) {
-                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
-                        ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
-                    } else {
+                    if (set_id_toCreateCard != null) {
                         ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
                         ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
+                    } else {
+                        reset_view();
+                        for (int i = 0; i < cardsListModels.size(); i++) {
+                            CardsListModel modelObj = cardsListModels.get(i);
+                            if (modelObj.isDelSel()) {
+                                modelObj.setDelSel(false);
+                                cardsListModels.remove(i);
+                                cardsListModels.add(i, modelObj);
+                            }
+                        }
+                        cardListAdapter.set_SelToDel(false);
+                        cardListAdapter.notifyDataSetChanged();
+                        if (isReorder)
+                            ith.attachToRecyclerView(card_listview);
 
                     }
+                    if (isCardShare) {
+                        ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                    }
+                    //}
+                    /*else {
+                        //Create Set
+                        if (del_sel_id.size() > 0) {
+                            strDelSelId = android.text.TextUtils.join(",", del_sel_id);
+                            strDelCrtdBy = android.text.TextUtils.join(",", list_Created_by);
+                            set_CreateSetDlg(strDelSelId, true);
+                        } else {
+                            Toast.makeText(getContext(), "Please select " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR, Toast.LENGTH_LONG).show();
+                        }
+                    }*/
                 }
-                return true;
-            }
-        });
+            });
 
+
+            if (isReorder) {
+                ItemTouchHelper.Callback dragCallback = new ItemTouchHelper.Callback() {
+
+                    int dragFrom = -1;
+                    int dragTo = -1;
+
+                    @Override
+                    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                        return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                                0);
+                    }
+
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+
+
+                        int fromPosition = viewHolder.getAdapterPosition();
+                        int toPosition = target.getAdapterPosition();
+
+
+                        if (dragFrom == -1) {
+                            dragFrom = fromPosition;
+                        }
+                        dragTo = toPosition;
+
+                        //channelsSetAdapter.onItemMove(fromPosition, toPosition);
+                        Collections.swap(cardsListModels, fromPosition, toPosition);
+                        // and notify the adapter that its dataset has changed
+                        cardListAdapter.notifyItemMoved(fromPosition, toPosition);
+                        cardListAdapter.notifyItemChanged(fromPosition);
+                        cardListAdapter.notifyItemChanged(toPosition);
+                        return true;
+
+                    }
+
+                    private void reallyMoved(int from, int to) {
+                        // I guessed this was what you want...
+                        call_card_reorder();
+                    }
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+                    }
+
+                    @Override
+                    public boolean isLongPressDragEnabled() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isItemViewSwipeEnabled() {
+                        return false;
+                    }
+
+                    @Override
+                    public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                        super.clearView(recyclerView, viewHolder);
+
+                        if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+                            reallyMoved(dragFrom, dragTo);
+                        }
+
+                        dragFrom = dragTo = -1;
+                    }
+
+                };
+                // Create an `ItemTouchHelper` and attach it to the `RecyclerView`
+                ith = new ItemTouchHelper(dragCallback);
+                ith.attachToRecyclerView(card_listview);
+
+            }
+
+            getCardsLists();
+        /*    if (isCardShare)
+                get_my_catg();*/
+
+            rootView.setFocusableInTouchMode(true);
+            rootView.requestFocus();
+            rootView.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
+                        if (set_id_toCreateCard == null) {
+                            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+                        } else {
+                            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
+
+                        }
+                    }
+                    return true;
+                }
+            });
+        }
         return rootView;
     }
 
@@ -349,13 +410,17 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
             del_contr.setVisibility(View.VISIBLE);
             txtHintReorder.setVisibility(View.GONE);
             txtItemSel.setText("");
-            btn_delete.setEnabled(false);
+            //   btn_delete.setEnabled(false);
             chk_sel_all.setVisibility(View.VISIBLE);
             if (set_id_toCreateCard != null) {
                 btn_delete.setText("Done");
                 btn_cancel.setText("Back");
-            }
-            if (isReorder)
+            } else if (isCardShare) {
+                btn_delete.setText("Share");
+                btn_delete.setTextColor(Color.BLACK);
+                // btn_cancel.setVisibility(View.INVISIBLE);
+                btn_cancel.setText("Cancel");
+            } else if (isReorder)
                 ith.attachToRecyclerView(null);
             cardListAdapter.set_SelToDel(true);
             cardListAdapter.notifyDataSetChanged();
@@ -367,6 +432,181 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
         }
 
 
+    }
+
+    public void set_CreateSetDlg(String new_set_name) {
+        final Dialog mBottomSheetDialog = new Dialog(getActivity(), R.style.MaterialDialogSheet);
+        mBottomSheetDialog.setContentView(R.layout.dlg_create_set); // your custom view.
+        mBottomSheetDialog.setCancelable(true);
+        mBottomSheetDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        mBottomSheetDialog.getWindow().setGravity(Gravity.CENTER);
+        mBottomSheetDialog.show();
+        Button btn_cset_dlg = mBottomSheetDialog.getWindow().findViewById(R.id.btn_createSet);
+        ImageView img_cancel = mBottomSheetDialog.getWindow().findViewById(R.id.img_close);
+        img_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        EditText dlg_set_name = mBottomSheetDialog.getWindow().findViewById(R.id.create_setName);
+
+        dlg_set_name.setHint("Name");
+        dlg_set_name.setText(new_set_name);
+        /*EditText set_desc = mBottomSheetDialog.getWindow().findViewById(R.id.create_setDescription);
+        set_desc.setHint(" Description");*/
+
+        btn_cset_dlg.setText("Create " + ((BrightlyNavigationActivity) getActivity()).SET_SINGULAR);
+        btn_cset_dlg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = dlg_set_name.getText().toString();
+                //      String desc = set_desc.getText().toString();
+                if (!name.trim().equals("")) {
+                    mBottomSheetDialog.dismiss();
+                    call_set_from_cards(strDelSelId, name);
+                    //                  }
+                } else
+                    new CustomToast().Show_Toast(getActivity(), v,
+                            "Set name is required");
+            }
+        });
+
+    }
+
+
+    public void get_call_create_default_set() {
+        try {
+
+            if (CheckNetworkConnection.isOnline(getContext())) {
+                showProgress();
+
+                Toast.makeText(getContext(), "UserId" + user_obj.getUser_Id(), Toast.LENGTH_LONG).show();
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_create_def_set(user_obj.getUser_Id());
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
+
+                        AddMessageResponse crt_set_resp = response.body();
+                        if (isSuccess) {
+                            if (crt_set_resp.getMessage().equals("success")) {
+
+                                set_CreateSetDlg(crt_set_resp.getDefault_name());
+                            }
+                        } else {
+                            showLongToast(getActivity(), message);
+
+                        }
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+
+                    }
+                });
+            } else {
+
+                dismissProgress();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
+
+    }
+  /*  private void get_my_catg() {
+
+        try {
+
+            if (CheckNetworkConnection.isOnline(getContext())) {
+
+                Call<ChannelListResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getMyChannelsList(user_obj.getUser_Id(), "my");
+                callRegisterUser.enqueue(new ApiCallback<ChannelListResponse>(getActivity()) {
+                    @Override
+                    public void onApiResponse(Response<ChannelListResponse> response, boolean isSuccess, String message) {
+                        ChannelListResponse channelListResponse = response.body();
+
+                        if (isSuccess) {
+
+                            if (channelListResponse != null && channelListResponse.getChannels() != null && channelListResponse.getChannels().size() != 0) {
+                                //  swipeRefresh.setRefreshing(true);
+                                channelListModels.clear();
+                                channelListModels = channelListResponse.getChannels();
+
+                                for (ChannelListModel model : channelListModels) {
+                                    catg_name_list.add(model.getChannel_name());
+                                }
+
+
+                            } else {
+                                // swipeRefresh.setRefreshing(false);
+
+                            }
+
+                        } else {
+                            showLongToast(getActivity(), message);
+
+                            //     swipeRefresh.setRefreshing(true);
+                        }
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        // swipeRefresh.setRefreshing(true);
+                    }
+                });
+            } else {
+              *//*  else
+                    dismissProgress();*//*
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            //swipeRefresh.setRefreshing(true);
+        }
+
+
+    }*/
+
+    public void call_api_card_share(String CardIds, String chl_id, boolean isCreateSet, String set_name, String description) {
+        try {
+            Call<AddMessageResponse> callRegisterUser;
+            if (CheckNetworkConnection.isOnline(getContext())) {
+                showProgress();
+
+                callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_share_card(userId, "noname", CardIds, setsListModel.getSet_id(), set_name, description);
+                //else
+                //callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_share_card(userId, chl_id, CardIds, setsListModel.getSet_id(), "9566099458", "venkat", set_name, description);
+                callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
+                    @Override
+                    public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
+                        AddMessageResponse message_resObj = response.body();
+                        if (message_resObj.getMessage().trim().equals("success")) {
+                            Toast.makeText(getContext(), ((BrightlyNavigationActivity) getActivity()).SET_SINGULAR + " " + set_name + " successfully created", Toast.LENGTH_LONG).show();
+                            ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().popBackStackImmediate();
+                        }
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            Toast.makeText(getContext(), "Check network connection", Toast.LENGTH_LONG).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
     }
 
     public void call_card_reorder() {
@@ -392,7 +632,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                         ((BrightlyNavigationActivity) getActivity()).isCardRefresh = true;
                         parent_frag_Card_dtl.cardsListModels = new ArrayList<>(cardsListModels);
                         parent_frag_Card_dtl.Card_CurrentPos = 0;
-                        Toast.makeText(getContext(), "Cards Successfully Reordered", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), ((BrightlyNavigationActivity) getActivity()).CARD_PLURAL + " Successfully Reordered", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -426,18 +666,10 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
 
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-        if (isReorder) {
-            inflater.inflate(R.menu.del_menu, menu);
-        }
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_multi_sel) {
+        if (item.getItemId() == R.id.actiondel) {
 
             multi_sel_actions();
         }
@@ -497,12 +729,19 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                         if (isSuccess) {
 
                             if (cardsListResponse != null && cardsListResponse.getData() != null && cardsListResponse.getData().size() != 0) {
-
+                                if (isReorder) {
+                                    txtHintReorder.setVisibility(View.VISIBLE);
+                                } else
+                                    txtHintReorder.setVisibility(View.GONE);
                                 cardsListModels = cardsListResponse.getData();
 
                                 parent_frag_Card_dtl.cardsListModels = new ArrayList<>(cardsListModels);
                                 parent_frag_Card_dtl.Card_CurrentPos = 0;
                                 setAdapter(cardsListModels);
+                                if (isCardShare) {
+                                    multi_sel_actions();
+                                }
+
                                 if (set_id_toCreateCard != null) {
                                     multi_sel_actions();
                                 }
@@ -513,7 +752,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                                 parent_frag_Card_dtl.Card_CurrentPos = 0;
                                 card_listview.setVisibility(View.GONE);
                                 view_nodata.setVisibility(View.VISIBLE);
-                                Toast.makeText(getContext(), "Card is not available", Toast.LENGTH_LONG).show();
+                                //       Toast.makeText(getContext(), "Card is not available", Toast.LENGTH_LONG).show();
                                 ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                                 cardsListModels = new ArrayList<>();
                             }
@@ -548,6 +787,10 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     private void setAdapter(List<CardsListModel> cardsListModels) {
         card_listview.setLayoutManager(new GridLayoutManager(getContext(), 1));
         cardListAdapter = new CardListAdapter(getContext(), cardsListModels, this);
+        cardListAdapter.audio_def_image = ((BrightlyNavigationActivity) getActivity()).CARD_AUDIO_IMAGE;
+        cardListAdapter.file_def_image = ((BrightlyNavigationActivity) getActivity()).CARD_FILE_IMAGE;
+        cardListAdapter.uTube_def_image = ((BrightlyNavigationActivity) getActivity()).CARD_UTUBE_IMAGE;
+        cardListAdapter.def_image = ((BrightlyNavigationActivity) getActivity()).CARD_DEF_IMAGE;
         card_listview.setAdapter(cardListAdapter);
         card_listview.getLayoutManager().scrollToPosition(CurPagrPos);
         cardListAdapter.isCardHighlight = true;
@@ -599,7 +842,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                 i++;
             }
             if (del_sel_id.size() == 0) {
-                btn_delete.setEnabled(false);
+                //   btn_delete.setEnabled(false);
                 txtItemSel.setText("");
                 chk_sel_all.setText("Select all");
                 is_on_set_chg_chk_status = true;
@@ -617,7 +860,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                 chk_sel_all.setChecked(true);
             }
             txtItemSel.setText(del_sel_id.size() + " items selected");
-            btn_delete.setEnabled(true);
+            //  btn_delete.setEnabled(true);
         }
         cardsListModels.remove(position);
 
@@ -660,7 +903,7 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
                             if (deleteSetResponse != null) {
 
                                 if (deleteSetResponse.getMessage().equalsIgnoreCase("success")) {
-                                    Toast.makeText(getContext(), "Selected Card(s) Deleted Successfully", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), "Selected " + ((BrightlyNavigationActivity) getActivity()).CARD_PLURAL + " Deleted Successfully", Toast.LENGTH_LONG).show();
                                     reset_view();
                                     getCardsLists();
                                     if (isReorder)
@@ -701,5 +944,83 @@ public class CardList extends BaseFragment implements BaseFragment.alert_dlg_int
     public void negative_btn_clicked() {
 
     }
+
+
+    public void call_set_from_cards(String CardIds, String new_set_name) {
+        try {
+            Call<SetListResponse> callRegisterUser;
+            if (CheckNetworkConnection.isOnline(getContext())) {
+                showProgress();
+
+
+                callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_set_from_cards(userId, CardIds, set_id, new_set_name);
+
+                //else
+                //callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).call_share_card(userId, chl_id, CardIds, setsListModel.getSet_id(), "9566099458", "venkat", set_name, description);
+                callRegisterUser.enqueue(new ApiCallback<SetListResponse>(getActivity()) {
+                    @Override
+                    public void onApiResponse(Response<SetListResponse> response, boolean isSuccess, String message) {
+                        dismissProgress();
+                        SetListResponse message_resObj = response.body();
+                        if (message_resObj.getMessage().trim().equals("success")) {
+                            //Toast.makeText(getContext(), ((BrightlyNavigationActivity) getActivity()).SET_SINGULAR + " " + set_name + " successfully created", Toast.LENGTH_LONG).show();
+                            //  ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().popBackStackImmediate();
+                            /*share_link = message_resObj.getSet_obj().getShare_link();
+                            Intent share = new Intent(Intent.ACTION_SEND);
+                            share.setType("text/plain");
+                            share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
+                            // Add data to the intent, the receiving app will decide
+                            // what to do with it.
+                            share.putExtra(Intent.EXTRA_SUBJECT, "Brightly Set Share link");
+                            share.putExtra(Intent.EXTRA_TEXT, message_resObj.getSet_obj().getShare_link());
+
+                            startActivity(Intent.createChooser(share, "Share link!"));*/
+                          /*  Bundle bundle = new Bundle();
+                            bundle.putBoolean("isCardShare", true);
+                            if (isNotification) {
+                                bundle.putBoolean("isNotification", true);
+                                bundle.putParcelable("notfy_modl_obj", notificationsModel);
+                            }
+                            bundle.putString("card_shr_card_id", strDelSelId);
+                            //bundle.putString("card_shr_chl_id", choosed_catg_id);
+                          *//*  bundle.putString("card_shr_set_name", name);
+                            bundle.putString("card_shr_set_desc", desc);*//*
+                            bundle.putParcelable("setsListModel", setsListModel);
+                            Fragment frag_shr_setngs = new SharePage();
+                            frag_shr_setngs.setArguments(bundle);
+                            ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.share_page, frag_shr_setngs, true);
+*/
+                            Fragment frag_shr_setngs = new SharePage();
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable("setsListModel", message_resObj.getSet_obj());
+                            bundle.putBoolean("isCardShare", isCardShare);
+                            frag_shr_setngs.setArguments(bundle);
+                            ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.share_page, frag_shr_setngs, true);
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onApiFailure(boolean isSuccess, String message) {
+
+                        dismissProgress();
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                });
+            } /*else {
+
+                dismissProgress();
+            }*/ else {
+                Toast.makeText(getContext(), "Check network connection", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            dismissProgress();
+        }
+    }
+
 
 }

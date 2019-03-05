@@ -1,9 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -22,14 +20,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
-import com.purplefront.brightly.API.ApiCallback;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.RestApiMethods;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
@@ -39,12 +42,9 @@ import com.purplefront.brightly.CustomToast;
 import com.purplefront.brightly.Modules.AddMessageResponse;
 import com.purplefront.brightly.Modules.ContactShare;
 import com.purplefront.brightly.Modules.SetEntryModel;
-import com.purplefront.brightly.Modules.UpdateChannelResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
-import com.purplefront.brightly.Utils.PermissionUtil;
-import com.purplefront.brightly.Utils.Util;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -57,8 +57,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -70,7 +68,7 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
     View frag_rootView;
     EditText create_cardName;
     EditText create_cardDescription;
-    ImageView image_cardImage;
+    SimpleDraweeView image_cardImage;
     ResizeOptions img_resize_opts;
     ImageChooser_Crop imgImageChooser_crop;
     Button btn_createCard;
@@ -107,12 +105,13 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
 //        Bundle bundle=getArguments();
 
 
-        image_cardImage = (ImageView) frag_rootView.findViewById(R.id.image_cardImage);
+        image_cardImage = (SimpleDraweeView) frag_rootView.findViewById(R.id.image_cardImage);
         create_cardName = (EditText) frag_rootView.findViewById(R.id.create_cardName);
         create_cardDescription = (EditText) frag_rootView.findViewById(R.id.create_cardDescription);
         btn_createCard = (Button) frag_rootView.findViewById(R.id.btn_createCard);
 
-
+        create_cardName.setHint(((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " name");
+        create_cardDescription.setHint(((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " description");
         clear_edit_text_focus(create_cardDescription);
         clear_edit_text_focus(create_cardName);
 
@@ -146,7 +145,7 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
 
         ((BrightlyNavigationActivity) getActivity()).permissionResultInterfaceObj = this;
         if (!isCreateCard) {
-            btn_createCard.setText("UPDATE CARD");
+            btn_createCard.setText("UPDATE " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR);
             create_cardName.setText(setEntryModelObj.getCard_name());
             create_cardDescription.setText(setEntryModelObj.getCard_description());
             if (!Created_by.equalsIgnoreCase(userId)) {
@@ -158,12 +157,13 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
             if (setEntryModelObj.getType().equalsIgnoreCase("image")) {
                 load_def_img = false;
 
-                Glide.with(getActivity())
+               /* Glide.with(getActivity())
                         .load(setEntryModelObj.getCard_multimedia_url())
                         .centerCrop()
-                        /*.transform(new CircleTransform(HomeActivity.this))
-                        .override(50, 50)*/
-                        .into(image_cardImage);
+                        *//*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*//*
+                        .into(image_cardImage);*/
+                set_image(setEntryModelObj.getCard_multimedia_url());
                /* RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 //  layoutParams.setMargins(0,0,0,0);
                 image_cardImage.setLayoutParams(layoutParams);*/
@@ -182,7 +182,7 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
 
             }
         } else {
-            btn_createCard.setText("CREATE CARD");
+            btn_createCard.setText("CREATE " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR);
         }
         if (load_def_img) {
            /* Glide.with(getActivity())
@@ -191,9 +191,9 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
                     *//*.transform(new CircleTransform(HomeAct/ivity.this))
                     .override(50, 50)*//*
                     .into(image_cardImage);*/
-            image_cardImage.setImageResource(R.drawable.no_image_available);
+            //  image_cardImage.setImageResource(R.drawable.no_image_available);
 
-
+            set_image(((BrightlyNavigationActivity) getActivity()).CARD_CREATE_IMAGE);
             /*RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             //  layoutParams.setMargins(0,0,0,0);
             layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);*/
@@ -246,17 +246,52 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
         return frag_rootView;
     }
 
+    public void set_image(String URL) {
+        String img_url = URL;
+        ResizeOptions resizeOptions = new ResizeOptions(350, 250);
+        if (img_url != null && !img_url.trim().equals("")) {
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(getContext().getResources());
+            builder.setProgressBarImage(R.drawable.loader);
+
+            builder.setProgressBarImage(
+                    new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+            builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = builder
+                    .setFadeDuration(100)
+                    .build();
+
+            image_cardImage.setHierarchy(hierarchy);
+
+
+            final ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(img_url))
+                            .setResizeOptions(resizeOptions)
+
+                            .build();
+            image_cardImage.setImageRequest(imageRequest);
+
+        } else {
+            Glide.with(getContext())
+                    .load(R.drawable.no_image_available)
+                    .centerCrop()
+                    /*.transform(new CircleTransform(HomeActivity.this))
+                    .override(50, 50)*/
+                    .into(image_cardImage);
+        }
+
+    }
 
     public void imageChooserIntent() {
 
         //if (PermissionUtil.hasPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, getContext(), BrightlyNavigationActivity.PERMISSION_REQ_CODE_IMAGE)) {
-            imgImageChooser_crop = new ImageChooser_Crop(getActivity());
-            Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
-            if (intent == null) {
-                //PermissionUtil.
-            } else {
-                startActivityForResult(intent, PICK_IMAGE_REQ);
-            }
+        imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+        Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
+        if (intent == null) {
+            //PermissionUtil.
+        } else {
+            startActivityForResult(intent, PICK_IMAGE_REQ);
+        }
         //}
     }
 
@@ -327,11 +362,11 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
         card_description = create_cardDescription.getText().toString();
 
         // Check if all strings are null or not
-        if (card_name.equals("") || card_name.length() == 0
-                || card_description.equals("") || card_description.length() == 0) {
+        if (card_name.trim().equals("")) {
+            //  || card_description.equals("") || card_description.length() == 0) {
 
             new CustomToast().Show_Toast(getActivity(), create_cardName,
-                    "Both fields are required.");
+                    "Card name is required.");
         } else if (encoded_string.equals("") || encoded_string.length() == 0 || encoded_string.equalsIgnoreCase("image_to_text")) {
            /* new CustomToast().Show_Toast(getActivity(), image_cardImage,
                     "Image is required.");*/
@@ -477,8 +512,8 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
     private void getAddCards() {
 
 
-            if (CheckNetworkConnection.isOnline(getActivity())) {
-                showProgress();
+        if (CheckNetworkConnection.isOnline(getActivity())) {
+            showProgress();
                 /*Call<AddMessageResponse> callRegisterUser;
                 if (isCreateCard) {
                     callRegisterUser = RetrofitInterface.getRestApiMethods(getActivity()).getAddCardsList(type, userId, set_id, card_name, card_description, encoded_string, image_name);
@@ -487,71 +522,70 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {*/
-                if (isCreateCard) {
-                    RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
-                    CompositeDisposable mCompositeDisposable = new CompositeDisposable();
-                    mCompositeDisposable.add(requestInterface.getAddCardsList(type, userId, set_id, card_name, card_description, encoded_string, image_name)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeOn(Schedulers.io())
-                            .subscribeWith(new DisposableObserver<AddMessageResponse>() {
-                                @Override
-                                public void onNext(AddMessageResponse genResModel) {
+            if (isCreateCard) {
+                RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
+                CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+                mCompositeDisposable.add(requestInterface.getAddCardsList(type, userId, set_id, card_name, card_description, encoded_string, image_name)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribeWith(new DisposableObserver<AddMessageResponse>() {
+                            @Override
+                            public void onNext(AddMessageResponse genResModel) {
 
-                                    dismissProgress();
+                                dismissProgress();
 
-                                    if (genResModel != null) {
+                                if (genResModel != null) {
 
-                                        setAddSetCredentials(genResModel);
+                                    setAddSetCredentials(genResModel);
 
 
-                                    }
                                 }
+                            }
 
-                                @Override
-                                public void onError(Throwable e) {
-                                    dismissProgress();
-                                    Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            @Override
+                            public void onError(Throwable e) {
+                                dismissProgress();
+                                Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                dismissProgress();
+                            }
+                        }));
+            } else {
+                RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
+                CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+                mCompositeDisposable.add(requestInterface.getUpdateCardsList(type, userId, set_id, setEntryModelObj.getCard_id(), card_name, card_description, encoded_string, image_name)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribeWith(new DisposableObserver<AddMessageResponse>() {
+                            @Override
+                            public void onNext(AddMessageResponse genResModel) {
+
+                                dismissProgress();
+
+                                if (genResModel != null) {
+
+                                    setAddSetCredentials(genResModel);
+
+
                                 }
+                            }
 
-                                @Override
-                                public void onComplete() {
-                                    dismissProgress();
-                                }
-                            }));
-                }
-                else{
-                    RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
-                    CompositeDisposable mCompositeDisposable = new CompositeDisposable();
-                    mCompositeDisposable.add(requestInterface.getUpdateCardsList(type, userId, set_id, setEntryModelObj.getCard_id(), card_name, card_description, encoded_string, image_name)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeOn(Schedulers.io())
-                            .subscribeWith(new DisposableObserver<AddMessageResponse>() {
-                                @Override
-                                public void onNext(AddMessageResponse genResModel) {
+                            @Override
+                            public void onError(Throwable e) {
+                                dismissProgress();
+                                Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
 
-                                    dismissProgress();
-
-                                    if (genResModel != null) {
-
-                                        setAddSetCredentials(genResModel);
-
-
-                                    }
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-                                    dismissProgress();
-                                    Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                }
-
-                                @Override
-                                public void onComplete() {
-                                    dismissProgress();
-                                }
-                            }));
-                }
+                            @Override
+                            public void onComplete() {
+                                dismissProgress();
+                            }
+                        }));
             }
+        }
 
     }
 
@@ -585,9 +619,9 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
             //Fragment fragment=new CardDetailFragment();
             if (isCreateCard) {
-                showShortToast(getActivity(), "Card " + card_name + " has been Created.");
+                showShortToast(getActivity(), ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " " + card_name + " has been Created.");
             } else {
-                showShortToast(getActivity(), "Card " + card_name + " has been Updated.");
+                showShortToast(getActivity(), ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " " + card_name + " has been Updated.");
             }
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
         } else {

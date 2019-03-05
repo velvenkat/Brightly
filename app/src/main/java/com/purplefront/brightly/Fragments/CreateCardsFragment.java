@@ -1,6 +1,5 @@
 package com.purplefront.brightly.Fragments;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -9,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,7 +28,6 @@ import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.Modules.SetEntryModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
-import com.purplefront.brightly.Utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +35,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class CreateCardsFragment extends BaseFragment implements  BaseFragment.alert_dlg_interface {
+public class CreateCardsFragment extends BaseFragment implements BaseFragment.alert_dlg_interface {
 
     String set_id;
     String set_name;
@@ -47,7 +44,7 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
     private TabLayout tabs_creatCard;
     private ViewPager viewpager_creatCard;
     String Created_By;
-    boolean isCreate_Crd=false;
+    boolean isCreate_Crd = false;
     CardsListModel cardModelObj;
     ChannelListModel chl_list_obj;
     SetsListModel setsListModel;
@@ -60,9 +57,9 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView=inflater.inflate(R.layout.activity_create_cards,container,false);
+        rootView = inflater.inflate(R.layout.activity_create_cards, container, false);
         setHasOptionsMenu(true);
-        user_obj=((BrightlyNavigationActivity)getActivity()).getUserModel();
+        user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
 /*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -70,13 +67,14 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
         getSupportActionBar().setDisplayShowHomeEnabled(true);*/
 
         setDlgListener(this);
-        Bundle bundle =getArguments();
-        isCreate_Crd=bundle.getBoolean("isCreate_Crd",false);
+        Bundle bundle = getArguments();
+        isCreate_Crd = bundle.getBoolean("isCreate_Crd", false);
 
-        chl_list_obj=bundle.getParcelable("model_obj");
+        //  chl_list_obj = bundle.getParcelable("model_obj");
+        chl_list_obj = ((BrightlyNavigationActivity) getActivity()).glob_chl_list_obj;
         Created_By = chl_list_obj.getCreated_by();
 
-        setsListModel=bundle.getParcelable("setsListModel");
+        setsListModel = bundle.getParcelable("setsListModel");
         set_id = setsListModel.getSet_id();
         set_name = setsListModel.getSet_name();
 
@@ -85,11 +83,12 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
         setEntryModel.setSet_id(set_id);
         setEntryModel.setSet_name(set_name);
         //setEntryModel.setUserId(userId);
-        if(!isCreate_Crd) {
+        if (!isCreate_Crd) {
             //setTitle("Edit Card Info");
-          //  actionBarUtilObj.setTitle("Edit Card Info");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Edit Card Info");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(null);
+            //  actionBarUtilObj.setTitle("Edit Card Info");
+
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle("Edit " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " Info");
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(null);
             if (Created_By != null) {
                 cardModelObj = bundle.getParcelable("Card_Dtls");
                 if (cardModelObj != null) {
@@ -101,16 +100,14 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
                     setEntryModel.setType(cardModelObj.getType());
                 }
             }
-        }
-        else
-        {
+        } else {
 
-          //  actionBarUtilObj.setTitle("Create Card");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Create Card");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(null);
+            //  actionBarUtilObj.setTitle("Create Card");
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle("Create " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR);
+            ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setSubtitle(null);
         }
 
-        viewpager_creatCard = (ViewPager)rootView. findViewById(R.id.viewpager_creatCard);
+        viewpager_creatCard = (ViewPager) rootView.findViewById(R.id.viewpager_creatCard);
 
         setupViewPager(viewpager_creatCard);
         tabs_creatCard = (TabLayout) rootView.findViewById(R.id.tabs_creatCard);
@@ -125,7 +122,7 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
                     //         getActivity().finish();
-                    ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                     return true;
                 }
                 return false;
@@ -170,7 +167,7 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
             bundle.putBoolean("isCreate", false);
             bundle.putString("created_by", Created_By);
         }
-        bundle.putParcelable("set_entry_obj",setEntryModel);
+        bundle.putParcelable("set_entry_obj", setEntryModel);
 
 
         Fragment create_imgType = new ImageType();
@@ -194,8 +191,8 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
         create_fileType.setArguments(bundle);
         adapter.addFrag(create_fileType, "file");
         viewpager_creatCard.setAdapter(adapter);
-        if(!isCreate_Crd) {
-            int pos=-1;
+        if (!isCreate_Crd) {
+            int pos = -1;
             switch (cardModelObj.getType()) {
                 case "image":
                     pos = 0;
@@ -219,14 +216,13 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
             case R.id.delete:
 
-                showAlertDialog("Your about to delete the Card, the information contained in the Card will be lost", "Confirm Delete....", "Delete", "Cancel");
+                showAlertDialog("Your about to delete the "+((BrightlyNavigationActivity)getActivity()).CARD_SINGULAR+", the information contained in the "+((BrightlyNavigationActivity)getActivity()).CARD_SINGULAR+" will be lost", "Confirm Delete....", "Delete", "Cancel");
 
                 return true;
             default:
@@ -265,7 +261,7 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
     }
 
 
-    @Override
+   /* @Override
     public void onCreateOptionsMenu(Menu menu,MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         menu.clear(); // Remove all existing items from the menu, leaving it empty as if it had just been created.
@@ -275,14 +271,26 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
 
         }
     }
+*/
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.clear(); // Remove all existing items from the menu, leaving it empty as if it had just been created.
+        MenuInflater inflater = getActivity().getMenuInflater();
+        if (!isCreate_Crd) {
+            inflater.inflate(R.menu.delete, menu);
+
+
+        }
+    }
 
     public void getDeleteCard() {
         try {
 
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteCard(set_id,user_obj.getUser_Id(),cardModelObj.getCreated_by(),cardModelObj.getCard_id());
+                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getDeleteCard(set_id, user_obj.getUser_Id(), cardModelObj.getCreated_by(), cardModelObj.getCard_id());
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -327,8 +335,7 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
 
         String message = deleteSetResponse.getMessage();
 
-        if(message.equals("success"))
-        {
+        if (message.equals("success")) {
             /*Intent intent = new Intent(CreateCardsFragment.this, MySetCards.class);
             intent.putExtra("model_obj", chl_list_obj);
             intent.putExtra("setsListModel", setsListModel);
@@ -336,19 +343,15 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);*/
-            showShortToast(getActivity(), "Card "+cardModelObj.getName()+" is Deleted");
-            ((BrightlyNavigationActivity)getActivity()).onFragmentBackKeyHandler(true);
+            showShortToast(getActivity(), ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " " + cardModelObj.getTitle() + " is deleted");
+            ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
             /*onBackPressed();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
 
-        }
-        else {
+        } else {
             showLongToast(getActivity(), message);
         }
     }
-
-
-
 
 
     @Override
@@ -360,7 +363,6 @@ public class CreateCardsFragment extends BaseFragment implements  BaseFragment.a
     public void negative_btn_clicked() {
 
     }
-
 
 
 }

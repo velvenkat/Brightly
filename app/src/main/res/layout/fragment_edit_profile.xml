@@ -15,7 +15,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/dimen_20"
         android:contentDescription="@string/nav_header_desc"
-        android:background="@drawable/default_user_image"
+
         />
 
     <android.support.design.widget.TextInputLayout
@@ -28,15 +28,15 @@
             android:id="@+id/input_name"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginBottom="@dimen/dimen_12"
             android:layout_marginLeft="@dimen/dimen_20"
             android:layout_marginRight="@dimen/dimen_20"
-            android:textColor="@color/black"
+            android:layout_marginBottom="@dimen/dimen_12"
             android:hint="@string/nav_header_title"
+            android:inputType="textCapSentences"
             android:paddingLeft="@dimen/dimen_10"
             android:singleLine="true"
-            android:textSize="@dimen/mediumtextsize"
-            android:inputType="textCapSentences" />
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -44,24 +44,24 @@
         android:id="@+id/input_layout_phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_marginTop="@dimen/dimen_12">
+        android:layout_marginTop="@dimen/dimen_12"
+        android:visibility="gone">
 
         <EditText
             android:id="@+id/input_phone"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginBottom="@dimen/dimen_12"
             android:layout_marginLeft="@dimen/dimen_20"
             android:layout_marginRight="@dimen/dimen_20"
+            android:layout_marginBottom="@dimen/dimen_12"
             android:clickable="false"
             android:cursorVisible="false"
-            android:textColor="@color/black"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:hint="@string/phone_number"
             android:paddingLeft="@dimen/dimen_10"
             android:singleLine="true"
+            android:textColor="@color/black"
             android:textSize="@dimen/mediumtextsize" />
 
     </android.support.design.widget.TextInputLayout>
@@ -77,15 +77,15 @@
             android:id="@+id/input_email"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginBottom="@dimen/dimen_12"
             android:layout_marginLeft="@dimen/dimen_20"
             android:layout_marginRight="@dimen/dimen_20"
-            android:textColor="@color/black"
+            android:layout_marginBottom="@dimen/dimen_12"
             android:hint="@string/user_emial"
+            android:inputType="textEmailAddress"
             android:paddingLeft="@dimen/dimen_10"
             android:singleLine="true"
-            android:textSize="@dimen/mediumtextsize"
-            android:inputType="textEmailAddress" />
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -101,13 +101,13 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="@dimen/dimen_20"
-            android:layout_marginRight="@dimen/dimen_20"
             android:layout_marginTop="@dimen/dimen_12"
-            android:textColor="@color/black"
+            android:layout_marginRight="@dimen/dimen_20"
             android:hint="@string/user_companyname"
             android:inputType="textCapSentences"
             android:paddingLeft="@dimen/dimen_10"
             android:singleLine="true"
+            android:textColor="@color/black"
             android:textSize="@dimen/mediumtextsize" />
 
     </android.support.design.widget.TextInputLayout>

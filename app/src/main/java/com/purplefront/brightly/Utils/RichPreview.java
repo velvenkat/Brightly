@@ -159,6 +159,9 @@ public class RichPreview {
                 e.printStackTrace();
                 return "No response received from " + url + " please check your internet or address entered ";
                 // responseListener.onError(new Exception("No Html Received from " + url + " Check your Internet " + e.getLocalizedMessage()));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "No response received from " + url + " please check your internet or address entered ";
             }
             return null;
         }

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/dimen_20"
     android:orientation="vertical"
+    android:padding="@dimen/dimen_20"
     tools:context=".Fragments.SignupFragment">
 
     <TextView
@@ -14,12 +14,10 @@
         android:padding="@dimen/dimen10"
         android:text="@string/registration"
         android:textColor="@color/black"
-        android:textSize="@dimen/title"
-        />
+        android:textSize="@dimen/title" />
 
     <EditText
         android:id="@+id/registration_name"
-        android:singleLine="true"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dimen_20"
@@ -29,42 +27,13 @@
         android:hint="@string/user_name"
         android:inputType="textPersonName"
         android:padding="@dimen/dimen_10"
-        android:textColor="@color/black"
-        android:textSize="@dimen/mediumtextsize" />
-
-    <EditText
-        android:id="@+id/registration_companyname"
+        android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_20"
-        android:background="@drawable/edit_text_background"
-        android:drawablePadding="@dimen/dimen_8"
-        android:gravity="center_vertical"
-        android:hint="@string/user_companyname"
-        android:inputType="textPersonName"
-        android:padding="@dimen/dimen_10"
-        android:textColor="@color/black"
-        android:textSize="@dimen/mediumtextsize" />
-
-    <EditText
-        android:id="@+id/registration_email"
-        android:singleLine="true"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_20"
-        android:background="@drawable/edit_text_background"
-        android:drawablePadding="@dimen/dimen_8"
-        android:gravity="center_vertical"
-        android:hint="@string/user_emial"
-        android:inputType="textEmailAddress"
-        android:padding="@dimen/dimen_10"
         android:textColor="@color/black"
         android:textSize="@dimen/mediumtextsize" />
 
     <EditText
         android:id="@+id/registration_phonenumber"
-        android:singleLine="true"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dimen_20"
@@ -75,12 +44,28 @@
         android:inputType="number"
         android:maxLength="10"
         android:padding="@dimen/dimen_10"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
         android:textColor="@color/black"
         android:textSize="@dimen/mediumtextsize" />
 
     <EditText
-        android:id="@+id/reg_password"
+        android:id="@+id/registration_emailid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_20"
+        android:background="@drawable/edit_text_background"
+        android:drawablePadding="@dimen/dimen_8"
+        android:gravity="center_vertical"
+        android:hint="@string/user_emial"
+        android:padding="@dimen/dimen_10"
+        android:selectAllOnFocus="true"
         android:singleLine="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/mediumtextsize" />
+
+    <EditText
+        android:id="@+id/regr_password"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dimen_20"
@@ -89,28 +74,29 @@
         android:gravity="center_vertical"
         android:hint="@string/password"
         android:inputType="textPassword"
-        android:maxLength="10"
         android:padding="@dimen/dimen_10"
+
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
         android:textColor="@color/black"
         android:textSize="@dimen/mediumtextsize" />
 
     <EditText
-        android:id="@+id/reg_confirmPassword"
-        android:singleLine="true"
+        android:id="@+id/regr_cnfrm_password"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dimen_20"
         android:background="@drawable/edit_text_background"
         android:drawablePadding="@dimen/dimen_8"
-        android:gravity="center_vertical"
-        android:hint="@string/confirm_password"
         android:inputType="textPassword"
-        android:maxLength="10"
+        android:gravity="center_vertical"
+        android:hint="Confirm Password"
         android:padding="@dimen/dimen_10"
+        android:selectAllOnFocus="true"
+
+        android:singleLine="true"
         android:textColor="@color/black"
         android:textSize="@dimen/mediumtextsize" />
-
-
 
     <Button
         android:id="@+id/signupBtn"
@@ -121,15 +107,13 @@
         android:padding="3dp"
         android:text="@string/signup"
         android:textColor="@color/white"
-        android:textSize="@dimen/mediumtextsize"
-        />
+        android:textSize="@dimen/mediumtextsize" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_marginTop="@dimen/dimen_16"
-        >
+        android:gravity="center">
 
         <TextView
             android:id="@+id/text_oldUser"
@@ -147,9 +131,9 @@
             android:layout_toRightOf="@id/text_oldUser"
             android:padding="@dimen/dimen_5"
             android:text="@string/signin"
-            android:textStyle="bold"
             android:textColor="@color/btn_login"
-            android:textSize="@dimen/mediumtextsize" />
+            android:textSize="@dimen/mediumtextsize"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

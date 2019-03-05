@@ -2,19 +2,17 @@ package com.purplefront.brightly.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,9 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -36,11 +32,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.generic.RoundingParams;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -50,17 +54,21 @@ import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.BadgeDrawable;
 import com.purplefront.brightly.Fragments.CardDetailFragment;
 import com.purplefront.brightly.Fragments.CardList;
-import com.purplefront.brightly.Fragments.ChannelFragment;
 import com.purplefront.brightly.Fragments.EditSetInfo;
-import com.purplefront.brightly.Fragments.ListAllCategory;
 import com.purplefront.brightly.Fragments.MyProfile;
 import com.purplefront.brightly.Fragments.Notifications;
+import com.purplefront.brightly.Fragments.SetPagerFragment;
 import com.purplefront.brightly.Fragments.SharePage;
 import com.purplefront.brightly.Fragments.ShareSettings;
+import com.purplefront.brightly.Fragments.ViewPager_Category;
 import com.purplefront.brightly.Modules.AddMessageResponse;
+import com.purplefront.brightly.Modules.AppVarModule;
+import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ContactShare;
+import com.purplefront.brightly.Modules.GeneralVarModel;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.NotificationsResponse;
+import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.CircleTransform;
@@ -69,8 +77,10 @@ import com.purplefront.brightly.Utils.Util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import io.realm.Realm;
@@ -100,6 +110,22 @@ public class BrightlyNavigationActivity extends BaseActivity
     public static final int PERMISSION_REQ_CODE_AUDIO = 101;
     public static final int PERMISSION_REQ_CODE_CONTACT = 102;
     public static final int PERMISSION_REQ_CODE_IMAGE = 103;
+    public String SET_SINGULAR = "";
+    public String SET_PLURAL = "";
+    public String CATEGORY_SINGULAR = "";
+    public String SET_DEF_IMAGE = "";
+    public String CARD_DEF_IMAGE = "";
+    public String CARD_AUDIO_IMAGE = "";
+    public String CARD_FILE_IMAGE = "";
+    public String CARD_UTUBE_IMAGE = "";
+    public String CATG_DEF_IMAGE = "";
+    public String CATEGORY_PLURAL = "";
+    public String CARD_SINGULAR = "";
+    public String CARD_PLURAL = "";
+    public String HAVING_COMMENT_IMG = "";
+    public String NO_COMMENT_IMG = "";
+    public String SHARE_DEF_IMAGE = "";
+    public String SHARE_SETTING_IMG = "";
     RealmResults<RealmModel> realmModel;
 
     public String userId;
@@ -115,17 +141,23 @@ public class BrightlyNavigationActivity extends BaseActivity
     boolean isNotification = false;
     View target_menu;
 
+    TextView txtVersion;
     boolean isCardNotification = false;
     public boolean isUTubePlayerFullScreen = false;
     public NavigationView navigationView;
     public TextView headerText_Name;
     public TextView headerText_Phone;
-    public ImageView headerImage_Profile;
+    public SimpleDraweeView headerImage_Profile;
     public boolean isCardClicked = false;
     public int card_toPosition = 0;
     public YouTubePlayer uTubePlayer;
     public boolean isHide_frag = false;
     boolean isPerReqCalled = false;
+    public AppVarModule appVarModuleObj;
+    public ChannelListModel glob_chl_list_obj;
+    public SetsListModel glob_set_list_obj;
+    public String CARD_CREATE_IMAGE;
+
 
     /**
      * isCardRefresh flag is needed to refresh card from CardList page to CardDetail called
@@ -139,6 +171,7 @@ public class BrightlyNavigationActivity extends BaseActivity
     public boolean DisableBackBtn = true;  //Default should be true
     public boolean DontRun = false;
     public boolean isRevoked;
+    NotificationsModel nfy_model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,8 +188,17 @@ public class BrightlyNavigationActivity extends BaseActivity
         toolbar.inflateMenu(R.menu.my_channel);
         setSupportActionBar(toolbar);
         target_menu = (toolbar.findViewById(R.id.action_bell));
+        txtVersion = (TextView) findViewById(R.id.txtVersion);
+        PackageInfo pInfo = null;
+        String version = "";
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            version = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
-
+        txtVersion.setText("Version:" + pInfo.versionName);
         setActionBarTitle(Title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -165,6 +207,8 @@ public class BrightlyNavigationActivity extends BaseActivity
         contactShares = new ArrayList<>();
 
         user_obj = getIntent().getParcelableExtra("user_obj");
+        appVarModuleObj = getIntent().getParcelableExtra("app_var_obj");
+
         if (user_obj == null) {
             realm = Realm.getDefaultInstance();
             realmModel = realm.where(RealmModel.class).findAllAsync();
@@ -204,9 +248,102 @@ public class BrightlyNavigationActivity extends BaseActivity
 
         frag_container = (FrameLayout) findViewById(R.id.frag_container);
 
+        nfy_model = getIntent().getParcelableExtra("notfy_modl_obj");
 
+
+      /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });*/
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        toggle.setDrawerIndicatorEnabled(true);
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        headerText_Name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Name);
+        headerText_Name.setText(userName);
+        headerText_Phone = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Number);
+        headerText_Phone.setText(userPhone);
+        headerImage_Profile = (SimpleDraweeView) navigationView.getHeaderView(0).findViewById(R.id.image_profile);
+
+        set_prof_hdr_image(userPicture);
+
+
+        //getChannelsLists();
+//        MaterialShowcaseView.resetSingleUse(BrightlyNavigationActivity.this, SHOWCASE_ID);
+//        ShowcaseSingle();
+        //MultipleShowcase();
+        View drawerIcon = toolbar.getChildAt(2);
+        Map<String, Object> d = new HashMap<>();
+        d.put("view", target_menu);
+        d.put("cont_txt", "Here all types of Shared Set,Cards Notifications shown");
+        d.put("dis_txt", "GOT IT");
+        ArrayList<Map<String, Object>> multipleShowCaseList = new ArrayList<>();
+        multipleShowCaseList.add(d);
+
+        d = new HashMap<>();
+        d.put("view", drawerIcon);
+        d.put("cont_txt", "Click here and you will get options to navigate to other sections.");
+        d.put("dis_txt", "GOT IT");
+        multipleShowCaseList.add(d);
+
+
+        MultipleShowcase(multipleShowCaseList);
+        if (appVarModuleObj != null) {
+            setDynamicValues();
+        } else
+            getAppVar();
+    }
+
+    public void setDynamicValues() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toggle.syncState();
+        toggle.setDrawerIndicatorEnabled(true);
+
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        SET_PLURAL = appVarModuleObj.getLevel2title().getPlural();
+        SET_SINGULAR = appVarModuleObj.getLevel2title().getSingular();
+        CARD_CREATE_IMAGE = appVarModuleObj.getLevel3_default_create_image().getFetch_key();
+        CATEGORY_PLURAL = appVarModuleObj.getLevel1title().getPlural();
+        CATEGORY_SINGULAR = appVarModuleObj.getLevel1title().getSingular();
+        CARD_PLURAL = appVarModuleObj.getLevel3title().getPlural();
+        SHARE_DEF_IMAGE = appVarModuleObj.getSharepic().getFetch_key();
+        SHARE_SETTING_IMG = appVarModuleObj.getShare_setting_img().getFetch_key();
+        CARD_SINGULAR = appVarModuleObj.getLevel3title().getSingular();
+        SET_DEF_IMAGE = appVarModuleObj.getLevel2_default_img().getFetch_key();
+        CARD_DEF_IMAGE = appVarModuleObj.getLevel3_default_img().getFetch_key();
+        CARD_AUDIO_IMAGE = appVarModuleObj.getLevel3_audio_img().getFetch_key();
+        CARD_UTUBE_IMAGE = appVarModuleObj.getLevel3_youtube_img().getFetch_key();
+        CARD_FILE_IMAGE = appVarModuleObj.getLevel3_file_img().getFetch_key();
+        CATG_DEF_IMAGE = appVarModuleObj.getLevel1_default_img().getFetch_key();
+        HAVING_COMMENT_IMG = appVarModuleObj.getComment_img().getFetch_key();
+        NO_COMMENT_IMG = appVarModuleObj.getUncomment_img().getFetch_key();
+
+        Menu Navigation_Menu = navigationView.getMenu();
+
+        List<GeneralVarModel> menu_var_obj = appVarModuleObj.getMenu();
+        int i = 0;
+        int group_id = 111;
+
+        for (GeneralVarModel menu_Items : menu_var_obj) {
+            String Title = !menu_Items.getPlural().equals("") ? menu_Items.getPlural() : menu_Items.getSingular();
+            Navigation_Menu.add(group_id, 1001 + i, 100 + i, Title);
+            i++;
+            if (i == 2) {
+                group_id++;
+            }
+        }
         if (isNotification) {
-            NotificationsModel nfy_model = getIntent().getParcelableExtra("notfy_modl_obj");
+
             if (isCardNotification) {
 
                 Fragment card_frag = new CardDetailFragment();
@@ -235,7 +372,7 @@ public class BrightlyNavigationActivity extends BaseActivity
 
             Bundle bundle = new Bundle();
             bundle.putString("type", type);
-            Fragment chl_frag = new ChannelFragment();
+            Fragment chl_frag = new ViewPager_Category();
             chl_frag.setArguments(bundle);
             /*fragmentManager
                     .beginTransaction()
@@ -248,39 +385,53 @@ public class BrightlyNavigationActivity extends BaseActivity
             onFragmentCall(Util.CHANNELS, chl_frag, false);
         }
 
+        navigationView.setNavigationItemSelectedListener(this);
+    }
 
-      /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+    public void set_prof_hdr_image(String imgUrl) {
+        ResizeOptions mResizeOptions = new ResizeOptions(75, 75);
+        RoundingParams roundingParams = new RoundingParams();
+        roundingParams.setRoundAsCircle(true);
+        String prof_img_url = null;
+        if (imgUrl != null) {
+            prof_img_url = imgUrl;
+        } else {
+            if (appVarModuleObj.getProf_default_img() != null)
+                prof_img_url = appVarModuleObj.getProf_default_img().getFetch_key();
+        }
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        toggle.setDrawerIndicatorEnabled(true);
-
-
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        headerText_Name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Name);
-        headerText_Name.setText(userName);
-        headerText_Phone = (TextView) navigationView.getHeaderView(0).findViewById(R.id.User_Number);
-        headerText_Phone.setText(userPhone);
-        headerImage_Profile = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.image_profile);
-        if (userPicture != null) {
-
-            Glide.with(getApplicationContext())
+        if (prof_img_url != null && !prof_img_url.trim().equals("")) {
+            /*Glide.with(getApplicationContext())
                     .load(userPicture)
                     .centerCrop()
                     .transform(new CircleTransform(BrightlyNavigationActivity.this))
 //                        .override(50, 50)
-                    .into(headerImage_Profile);
+                    .into(headerImage_Profile);*/
+
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(this.getResources());
+            builder.setProgressBarImage(R.drawable.loader);
+            builder.setRoundingParams(roundingParams);
+            builder.setProgressBarImage(
+                    new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+            builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = builder
+                    .setFadeDuration(100)
+                    .build();
+
+            headerImage_Profile.setHierarchy(hierarchy);
+
+
+            final ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(prof_img_url))
+                            .setResizeOptions(mResizeOptions)
+
+                            .build();
+            headerImage_Profile.setImageRequest(imageRequest);
+
+
         } else {
+
             Glide.with(getApplicationContext())
                     .load(R.drawable.default_user_image)
                     .centerCrop()
@@ -289,35 +440,54 @@ public class BrightlyNavigationActivity extends BaseActivity
                     .into(headerImage_Profile);
         }
 
-
-        navigationView.setNavigationItemSelectedListener(this);
-
-        //getChannelsLists();
-//        MaterialShowcaseView.resetSingleUse(BrightlyNavigationActivity.this, SHOWCASE_ID);
-//        ShowcaseSingle();
-//        MultipleShowcase();
     }
 
+    private void getAppVar() {
+
+        if (CheckNetworkConnection.isOnline(this)) {
+
+            Call<AppVarModule> callRegisterUser = RetrofitInterface.getRestApiMethods(this).getAppVariable();
+            callRegisterUser.enqueue(new ApiCallback<AppVarModule>(this) {
+                @Override
+                public void onApiResponse(Response<AppVarModule> response, boolean isSuccess, String message) {
+                    if (isSuccess) {
+                        appVarModuleObj = response.body();
+                        setDynamicValues();
+                    } else {
+                        Toast.makeText(BrightlyNavigationActivity.this, message, Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onApiFailure(boolean isSuccess, String message) {
+                    Toast.makeText(BrightlyNavigationActivity.this, message, Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, "Check your internet connection", Toast.LENGTH_LONG).show();
+        }
+    }
 
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setSubtitle(null);
     }
-  /*  private void ShowcaseSingle() {
+
+    public void ShowcaseSingle(View target, String content_text, String dismiss_text) {
 
 
         // single example
         new MaterialShowcaseView.Builder(this)
                 .setTarget(target)
-                .setDismissText("GOT IT")
+                .setDismissText(dismiss_text)
                 .setDismissTextColor(R.color.black)
-                .setContentText("This is some amazing feature you should know about")
+                .setContentText(content_text)
                 .setDelay(1000) // optional but starting animations immediately in onCreate can make them choppy
                 .singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
                 .show();
-    }*/
+    }
 
-    private void MultipleShowcase() {
+    private void MultipleShowcase(ArrayList<Map<String, Object>> target) {
 // sequence example
         ShowcaseConfig config = new ShowcaseConfig();
         config.setDelay(1000); // half second between each showcase view
@@ -325,13 +495,21 @@ public class BrightlyNavigationActivity extends BaseActivity
         config.setContentTextColor(Color.WHITE);
         config.setDismissTextColor(Color.CYAN);
 
+       /* Map<String, Object> c = new HashMap<>();
+        c.put("view", target_menu);
+        c.put("cont_txt", content_text);
+        c.put("dis_txt", dismiss_text);
+        target_menu = (View) c.get("view");
+        dismiss_text = (String) c.get("cont_txt");*/
+
         MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
 
         sequence.setConfig(config);
-
-        sequence.addSequenceItem(target_menu,
-                "Here all types of Set, Cards Notifications shown", "GOT IT");
-
+        for (int i = 0; i < target.size(); i++) {
+            Map<String, Object> showCaseMap = target.get(i);
+            sequence.addSequenceItem((View) showCaseMap.get("view"),
+                    (String) showCaseMap.get("cont_txt"), (String) showCaseMap.get("dis_txt"));
+        }
        /* sequence.addSequenceItem(image_createChannel,
                 "Click this to Create a Channel", "GOT IT");
 */
@@ -456,7 +634,7 @@ public class BrightlyNavigationActivity extends BaseActivity
         // Add data to the intent, the receiving app will decide
         // what to do with it.
         share.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.share_msg_subject));
-        String url = "https://play.google.com/store/apps/details?id=com.purplefront.brightly";
+        String url = "http://brightlyapp.com/download.php";
         share.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_msg_text) + "\n " + url);
         startActivity(Intent.createChooser(share, "Share link!"));
     }
@@ -478,13 +656,54 @@ public class BrightlyNavigationActivity extends BaseActivity
         icon.setDrawableByLayerId(R.id.ic_badge, badge);
     }
 
+    /*@Override
+    public boolean onNavigationItemSelected(MenuItem item){
+
+      return true;
+    }*/
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         boolean isChannelScrn = false;
-        if (id == R.id.nav_profile) {
+        /*else if (id == R.id.nav_list_all_catg) {
+
+            onFragmentCall(Util.List_All_Catg, new ListAllCategory(), false);
+
+        }*//* else if (id == R.id.nav_mysubscription) {
+
+            type = "subscribe";
+            isChannelScrn = true;
+            //setActionBarTitle("Shared With Me");
+
+        }*/
+        if (id == 1001) {   //View By Category
+
+            type = "all";
+            isChannelScrn = true;
+            //setActionBarTitle("My Channels");
+
+
+        } else if (id == 1002) { //View by Set
+
+            type = "all";
+            isChannelScrn = false;
+            Fragment set_frag = new SetPagerFragment();
+
+
+            /*fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.right_enter, R.anim.left_out)
+                    .replace(R.id.frag_container, new ChannelFragment(),
+                            Util.CHANNELS).commit();*/
+            onFragmentCall(Util.Set_List, set_frag, false);
+
+//            setActionBarTitle("All Channels");
+
+
+        } else if (id == 1003) {  //Profile Screen
 
             /*fragmentManager
                     .beginTransaction()
@@ -492,34 +711,10 @@ public class BrightlyNavigationActivity extends BaseActivity
                     .replace(R.id.frag_container, new MyProfile(),
                             Util.My_Profile).commit();
 */
-
-            onFragmentCall(Util.My_Profile, new MyProfile(), false);
+            MyProfile myProfile = new MyProfile();
+            onFragmentCall(Util.My_Profile, myProfile, false);
             // Handle the camera action
-        } /*else if (id == R.id.nav_list_all_catg) {
-
-            onFragmentCall(Util.List_All_Catg, new ListAllCategory(), false);
-
-        }*/ else if (id == R.id.nav_mysubscription) {
-
-            type = "subscribe";
-            isChannelScrn = true;
-            //setActionBarTitle("Shared With Me");
-
-        } else if (id == R.id.nav_myChannels) {
-
-            type = "my";
-            isChannelScrn = true;
-            //setActionBarTitle("My Channels");
-
-
-        } else if (id == R.id.nav_allChannels) {
-
-            type = "all";
-            isChannelScrn = true;
-//            setActionBarTitle("All Channels");
-
-
-        } else if (id == R.id.nav_notifications) {
+        } else if (id == 1004) {   //Notification Screen
 
             /*fragmentManager
                     .beginTransaction()
@@ -537,21 +732,21 @@ public class BrightlyNavigationActivity extends BaseActivity
             onFragmentCall(Util.NOTIFICATIONS, nfy_fragment, false);
 
 
-        } else if (id == R.id.nav_about) {
+        } else if (id == 1005) { //Invite
+
+            shareTextUrl();
+
+        } else if (id == 1006) {  //About APP
 
 
             showLongToast(BrightlyNavigationActivity.this, "Comming Soon");
 
-        } else if (id == R.id.nav_invite) {
-
-            shareTextUrl();
-
-        } else if (id == R.id.nav_logout) {
+        } else if (id == 1007) {  //Logout
             showLogOutDialog();
 
         }
         if (isChannelScrn) {
-            Fragment fragment = new ChannelFragment();
+            Fragment fragment = new ViewPager_Category();
 
             Bundle bundle = new Bundle();
             bundle.putString("type", type);
@@ -619,6 +814,11 @@ public class BrightlyNavigationActivity extends BaseActivity
                         public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
                             dismissProgress();
                             Toast.makeText(BrightlyNavigationActivity.this, "Logged Out", Toast.LENGTH_LONG).show();
+                            // finishIntent(BrightlyNavigationActivity.this, Login.class);
+                            Intent intent = new Intent(BrightlyNavigationActivity.this, Login.class);
+                            intent.putExtra("app_var_obj", appVarModuleObj);
+                            startActivity(intent);
+                            finish();
                         }
 
                         @Override
@@ -643,7 +843,7 @@ public class BrightlyNavigationActivity extends BaseActivity
 
                 }
             });*/
-                finishIntent(BrightlyNavigationActivity.this, Login.class);
+
 
                 // Write your code here to invoke YES event
 //                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
@@ -833,6 +1033,7 @@ public class BrightlyNavigationActivity extends BaseActivity
         }
 
         if (DisableHomeBtn) {
+
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             toggle.setDrawerIndicatorEnabled(true);
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -878,7 +1079,7 @@ public class BrightlyNavigationActivity extends BaseActivity
         transaction.setCustomAnimations(R.anim.right_enter, R.anim.left_out);
         if (isHide_frag) {
             isHide_frag = false;
-            if (call_fragment instanceof ChannelFragment || call_fragment instanceof EditSetInfo || call_fragment instanceof ShareSettings || call_fragment instanceof CardList) {
+            if (call_fragment instanceof ViewPager_Category || call_fragment instanceof EditSetInfo || call_fragment instanceof ShareSettings || call_fragment instanceof CardList) {
                 Fragment card_dtl_frag = fragmentManager.findFragmentByTag(Util.view_card);
                 transaction.hide(card_dtl_frag);
                 transaction.addToBackStack(tag);

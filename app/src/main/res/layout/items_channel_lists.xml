@@ -1,75 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/channel_layout"
     android:layout_width="match_parent"
-    android:layout_height="140dp"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:layout_above="@+id/textView_channelName"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="@dimen/dimen_4"
+    app:cardUseCompatPadding="true">
 
-    <android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/channel_layout"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_above="@+id/textView_channelName"
-        android:layout_marginLeft="@dimen/dimen_8"
-        android:layout_marginRight="@dimen/dimen_8"
-        app:cardElevation="@dimen/dimen_8">
+        android:layout_height="match_parent"
+        android:background="#ffffff">
 
-        <RelativeLayout
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/imageView_channelImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/dimen_5">
-
-            <ImageView
-                android:id="@+id/imageView_channelImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="22dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                android:src="@drawable/no_image_available" />
-
-            <ImageView
-                android:id="@+id/shared_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignTop="@+id/imageView_channelImage"
-                android:layout_margin="@dimen/dimen_4"
-                android:src="@drawable/shared_icon"
-                android:visibility="visible" />
-
-            <TextView
-                android:id="@+id/textView_channelCount"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/imageView_channelImage"
-                android:layout_margin="@dimen/dimen_4"
-                android:background="@drawable/dot_rounded_bg"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:text="0"
-                android:textColor="@color/btn_login"
-                android:textSize="@dimen/microtextSize"
-                android:visibility="visible" />
+            android:layout_height="wrap_content"
 
 
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY" />
 
-    <TextView
-        android:id="@+id/textView_channelName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/shared_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignTop="@+id/imageView_channelImage"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="@dimen/dimen_4"
+            android:src="@drawable/shareit"
+            android:visibility="visible" />
 
-        android:layout_marginTop="@dimen/dimen_1"
-        android:fontFamily="sans-serif"
-        android:gravity="bottom|center_horizontal"
-        android:maxLines="2"
-        android:text="Channel Name"
-        android:textColor="@color/black"
-        android:textSize="@dimen/microtextSize"
-        android:textStyle="normal"
-        android:visibility="visible" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/textView_channelCount"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignTop="@+id/imageView_channelImage"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/dimen_4"
+            android:background="@drawable/dot_rounded_bg"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@color/btn_login"
+            android:textSize="@dimen/microtextSize"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/textView_channelName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/imageView_channelImage"
+            android:layout_marginTop="@dimen/dimen_1"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="Channel Name"
+            android:textColor="@color/black"
+            android:textSize="@dimen/microtextSize"
+            android:textStyle="normal"
+            android:visibility="visible" />
+
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
+
 

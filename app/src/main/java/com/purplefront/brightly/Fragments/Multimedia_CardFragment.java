@@ -3,6 +3,7 @@ package com.purplefront.brightly.Fragments;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,16 +11,27 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
@@ -62,25 +74,34 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     ChannelListModel chl_list_obj;
     boolean isNotification;
     String card_pos;
+    LinearLayout ll_card_contr;
     ProgressDialog file_progress = null;
+    RelativeLayout scroll_card;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.items_multimedia_pager, container, false);
-
-
+        scroll_card = (RelativeLayout) rootView.findViewById(R.id.scroll_card);
+        ll_card_contr = rootView.findViewById(R.id.ll_card_contr);
         userObj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         Bundle bundle = getArguments();
         //  setHasOptionsMenu(true);
         cardModelObj = bundle.getParcelable("card_mdl_obj");
-        chl_list_obj = bundle.getParcelable("model_obj");
+        //  chl_list_obj = bundle.getParcelable("model_obj");
+        chl_list_obj = ((BrightlyNavigationActivity) getActivity()).glob_chl_list_obj;
         setsListModelObj = bundle.getParcelable("setListModel");
         notificationsModelObj = bundle.getParcelable("notfy_modl_obj");
         isNotification = bundle.getBoolean("isNotification");
         card_pos = bundle.getString("card_position");
 
+        ll_card_contr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                parent_frag_Card_dtl.showBottomNavigation();
+            }
+        });
         //setCreatedBy=bundle.getString("set_createdby");
         //channel_name=bundle.getString("chl_name");
         parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
@@ -88,20 +109,33 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
 
         TextView text_cardName;
         TextView text_cardDescription;
-        ImageView image_cardImage;
+        SimpleDraweeView image_cardImage;
 
 
         // Locate the TextViews in viewpager_item.xml
         text_cardName = (TextView) rootView.findViewById(R.id.text_cardName);
         rl_audio_player = (RelativeLayout) rootView.findViewById(R.id.rl_audio_player);
         text_cardDescription = (TextView) rootView.findViewById(R.id.text_cardDescription);
-        image_cardImage = (ImageView) rootView.findViewById(R.id.image_cardImage);
+        image_cardImage = (SimpleDraweeView) rootView.findViewById(R.id.image_cardImage);
         frame_youtube = (FrameLayout) rootView.findViewById(R.id.frame_youtube);
         img_audio_play_stop = (ImageView) rootView.findViewById(R.id.img_play_stop);
         audio_seek_bar = (SeekBar) rootView.findViewById(R.id.seek_audio_rec);
         txt_PlayProgTime = (TextView) rootView.findViewById(R.id.txt_PlayProgTime);
         file_cardLink = (TextView) rootView.findViewById(R.id.file_cardLink);
         richLinkView1 = (RichLinkViewTelegram) rootView.findViewById(R.id.preview);
+
+        text_cardName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                parent_frag_Card_dtl.showBottomNavigation();
+            }
+        });
+        scroll_card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                parent_frag_Card_dtl.showBottomNavigation();
+            }
+        });
 
         //mPreview=new Preview(getContext());
 
@@ -112,6 +146,12 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         if (cardModelObj.getDescription() != null) {
             text_cardDescription.setText(cardModelObj.getDescription());
             text_cardDescription.setMovementMethod(LinkMovementMethod.getInstance());
+            text_cardDescription.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    parent_frag_Card_dtl.showBottomNavigation();
+                }
+            });
         }
         if (cardModelObj.getType().equalsIgnoreCase("image")) {
             image_cardImage.setVisibility(View.VISIBLE);
@@ -123,13 +163,14 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             if (!cardModelObj.getUrl().isEmpty() && cardModelObj.getUrl() != null) {
 
 
-                Glide.with(getContext())
+               /* Glide.with(getContext())
                         .load(cardModelObj.getUrl())
                         .placeholder(R.drawable.card_progress_loading)
                         .centerCrop()
-                        /*.transform(new CircleTransform(HomeActivity.this))
-                        .override(50, 50)*/
-                        .into(image_cardImage);
+                        *//*.transform(new CircleTransform(HomeActivity.this))
+                        .override(50, 50)*//*
+                        .into(image_cardImage);*/
+                load_card_image(cardModelObj.getUrl(), image_cardImage, false);
 
                 image_cardImage.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -139,15 +180,16 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                         LayoutInflater inflater = LayoutInflater.from(getActivity());
                         View imgEntryView = inflater.inflate(R.layout.dialog_fullscreen, null);
                         final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen); //default fullscreen titlebar
-                        ImageView img = (ImageView) imgEntryView.findViewById(R.id.usericon_large);
+                        SimpleDraweeView img = (SimpleDraweeView) imgEntryView.findViewById(R.id.usericon_large);
 
-                        Glide.with(getContext())
+                     /*   Glide.with(getContext())
                                 .load(cardModelObj.getUrl())
 //                                .placeholder(R.drawable.card_progress_loading)
                                 .fitCenter()
-                                /*.transform(new CircleTransform(HomeActivity.this))
-                                .override(50, 50)*/
-                                .into(img);
+                                *//*.transform(new CircleTransform(HomeActivity.this))
+                                .override(50, 50)*//*
+                                .into(img);*/
+                        load_card_image(cardModelObj.getUrl(), img, true);
 
                         dialog.setContentView(imgEntryView);
                         dialog.show();
@@ -270,7 +312,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                         //new CustomToast().Show_Toast(getContext(), richLinkView1, e.getMessage());
                         richLinkView1.setVisibility(View.GONE);
                         file_cardLink.setVisibility(View.VISIBLE);
-                      //  file_cardLink.setTextColor(Color.argb(0, 100, 20, 20));
+                        //  file_cardLink.setTextColor(Color.argb(0, 100, 20, 20));
                         file_cardLink.setText(e.getMessage());
                     }
                 });
@@ -333,6 +375,14 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             }
         });
 */
+      /*  rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                parent_frag_Card_dtl.showBottomNavigation();
+            }
+        });*/
         return rootView;
     }
 
@@ -491,6 +541,37 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 return super.onOptionsItemSelected(item);
         }
     }*/
+
+
+    public void load_card_image(String URL, SimpleDraweeView imgView, boolean isFullScreen) {
+        String img_url = URL;
+        ResizeOptions resizeOptions = new ResizeOptions(350, 250);
+        if (img_url != null && !img_url.trim().equals("")) {
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(getContext().getResources());
+            builder.setProgressBarImage(R.drawable.loader);
+            if (isFullScreen)
+                builder.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+            builder.setProgressBarImage(
+                    new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+            builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = builder
+                    .setFadeDuration(100)
+                    .build();
+
+            imgView.setHierarchy(hierarchy);
+
+
+            final ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(img_url))
+                            //.setResizeOptions(resizeOptions)
+
+                            .build();
+            imgView.setImageRequest(imageRequest);
+
+        }
+
+    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {

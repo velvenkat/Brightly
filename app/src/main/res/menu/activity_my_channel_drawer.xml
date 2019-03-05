@@ -9,16 +9,16 @@
         android:checkableBehavior="none">
 
         <item
-            android:id="@+id/nav_allChannels"
-            android:title="@string/all_channels" />
+            android:id="@+id/nav_view_by_catg"
+            android:title="@string/view_by_catg" />
 
         <item
-            android:id="@+id/nav_myChannels"
-            android:title="@string/my_channels" />
+            android:id="@+id/nav_view_by_set"
+            android:title="@string/view_by_set" />
 
-        <item
+        <!--<item
             android:id="@+id/nav_mysubscription"
-            android:title="@string/my_subscription" />
+            android:title="@string/my_subscription" />-->
        
     </group>
 

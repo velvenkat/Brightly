@@ -1,25 +1,33 @@
 package com.purplefront.brightly.Fragments;
 
 
-import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.generic.RoundingParams;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Application.RealmModel;
+import com.purplefront.brightly.Modules.GeneralVarModel;
 import com.purplefront.brightly.Modules.MyProfileResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
@@ -36,10 +44,10 @@ import retrofit2.Response;
  */
 public class MyProfile extends BaseFragment implements View.OnClickListener {
 
-    View view;
+    View rootView;
     private static FragmentManager fragmentManager;
-    private EditText input_email, input_company;
-    private ImageView Image_profile;
+    private TextView input_email, input_company;
+    private SimpleDraweeView Image_profile;
     private TextView User_Name, User_Phone;
     FloatingActionButton edit_profile;
 
@@ -66,45 +74,52 @@ public class MyProfile extends BaseFragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_my_profile, container, false);
+        rootView = inflater.inflate(R.layout.fragment_my_profile, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         fragmentManager = getActivity().getSupportFragmentManager();
         // Set title bar
         ((BrightlyNavigationActivity) getActivity()).setActionBarTitle("My Profile");
-
+        setHasOptionsMenu(true);
         realm = Realm.getDefaultInstance();
         realmModel = realm.where(RealmModel.class).findAllAsync();
 
         initViews();
 
-        view.setFocusableInTouchMode(true);
-        view.requestFocus();
-        view.setOnKeyListener(new View.OnKeyListener() {
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+        rootView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
                     //         getActivity().finish();
                     ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
-                    return true;
+                    //return true;
                 }
-                return false;
+
+                return true;
             }
         });
 
-        return view;
+        return rootView;
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.clear();
     }
 
     // Initiate Views
     private void initViews() {
 
 
-        edit_profile = (FloatingActionButton) view.findViewById(R.id.edit_profile);
+        edit_profile = (FloatingActionButton) rootView.findViewById(R.id.edit_profile);
         edit_profile.setOnClickListener(this);
-        input_email = (EditText) view.findViewById(R.id.input_email);
-        input_company = (EditText) view.findViewById(R.id.input_company);
-        Image_profile = (ImageView) view.findViewById(R.id.Image_profile);
-        User_Name = (TextView) view.findViewById(R.id.User_Name);
-        User_Phone = (TextView) view.findViewById(R.id.User_Phone);
+        input_email = (TextView) rootView.findViewById(R.id.input_email);
+        input_company = (TextView) rootView.findViewById(R.id.input_company);
+        Image_profile = (SimpleDraweeView) rootView.findViewById(R.id.Image_profile);
+        User_Name = (TextView) rootView.findViewById(R.id.User_Name);
+        User_Phone = (TextView) rootView.findViewById(R.id.User_Phone);
 
 
         realmModel.load();
@@ -113,23 +128,60 @@ public class MyProfile extends BaseFragment implements View.OnClickListener {
             user_ID = model.getUser_Id();
             User_Name.setText(model.getUser_Name());
             User_Phone.setText(model.getUser_PhoneNumber());
+            //Toast.makeText(getContext(), "Prof_init" + model.getUser_CompanyName(), Toast.LENGTH_LONG).show();
             input_company.setText(model.getUser_CompanyName());
+            // input_company.postInvalidate();
+
             input_email.setText(model.getUser_Email());
-            imageProfile = model.getImage();
+
+            //input_email.postInvalidate();
+            //imageProfile = model.getImage();
 
 
             ((BrightlyNavigationActivity) getActivity()).headerText_Name.setText(model.getUser_Name());
             ((BrightlyNavigationActivity) getActivity()).headerText_Phone.setText(model.getUser_PhoneNumber());
-         
+            String prof_img_url = null;
             if (model.getImage() != null && !model.getImage().trim().equals("")) {
-
-                Glide.with(getActivity())
+                prof_img_url = model.getImage();
+            } else {
+                GeneralVarModel prof_model = ((BrightlyNavigationActivity) getActivity()).appVarModuleObj.getProf_default_img();
+                if (prof_model != null) {
+                    prof_img_url = prof_model.getFetch_key();
+                }
+            }
+            if (prof_img_url != null) {
+                /*Glide.with(getActivity())
                         .load(imageProfile)
                         .centerCrop()
                         .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)
                         .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
+*/
+                RoundingParams roundingParams = RoundingParams.fromCornersRadius(5f);
+                //roundingParams.setBorder(color, 1.0f);
+                roundingParams.setRoundAsCircle(true);
+                ResizeOptions mResizeOptions = new ResizeOptions(150, 150);
+                GenericDraweeHierarchyBuilder builder =
+                        new GenericDraweeHierarchyBuilder(this.getResources());
+                builder.setProgressBarImage(R.drawable.loader);
+                builder.setRoundingParams(roundingParams);
+                builder.setProgressBarImage(
+                        new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+                builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+                GenericDraweeHierarchy hierarchy = builder
+                        .setFadeDuration(100)
+                        .build();
 
+                Image_profile.setHierarchy(hierarchy);
+
+
+                final ImageRequest imageRequest =
+                        ImageRequestBuilder.newBuilderWithSource(Uri.parse(prof_img_url))
+                                .setResizeOptions(mResizeOptions)
+
+                                .build();
+                //  Image_profile.getHierarchy().setRoundingParams(roundingParams);
+                Image_profile.setImageRequest(imageRequest);
             } else {
                 Glide.with(getActivity())
                         .load(R.drawable.default_user_image)
@@ -139,6 +191,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener {
                         .into(Image_profile);
             }
 
+/*
 
             if (model.getImage() != null && !model.getImage().trim().equals("")) {
 
@@ -154,9 +207,12 @@ public class MyProfile extends BaseFragment implements View.OnClickListener {
                         .load(R.drawable.default_user_image)
                         .centerCrop()
                         .transform(new CircleTransform(getActivity()))
-                        /*.override(50, 50)*/
+                        */
+            /*.override(50, 50)*//*
+
                         .into(Image_profile);
             }
+*/
 
         }
 

@@ -3,9 +3,7 @@ package com.purplefront.brightly.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
@@ -13,9 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -34,7 +30,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RestApiMethods;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
@@ -48,7 +43,6 @@ import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
 import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.TimeFormat;
-import com.purplefront.brightly.Utils.Util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -62,8 +56,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -171,10 +163,13 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
         clear_edit_text_focus(create_cardDescription);
         clear_edit_text_focus(create_cardName);
         audio_player_initialize(audio_seek_bar, txt_PlayProgTime, img_play_stop);
+        create_cardName.setHint(((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " name");
+        create_cardDescription.setHint(((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " description");
         ((BrightlyNavigationActivity) getActivity()).permissionResultInterfaceObj = this;
         if (isCreateScreen) {
             rl_audio_player.setVisibility(View.GONE);
             text_audioFile.setVisibility(View.VISIBLE);
+            btn_createCard.setText("CREATE " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR);
         } else {
             if (!CreatedBy.equalsIgnoreCase(userId)) {
 
@@ -182,11 +177,11 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
             if (setEntryModel.getType().equalsIgnoreCase("audio")) {
                 rl_audio_player.setVisibility(View.VISIBLE);
                 text_audioFile.setVisibility(View.GONE);
-                setMediaPlayer(null, setEntryModel.getCard_multimedia_url(),false);
+                setMediaPlayer(null, setEntryModel.getCard_multimedia_url(), false);
             }
             create_cardName.setText(setEntryModel.getCard_name());
             create_cardDescription.setText(setEntryModel.getCard_description());
-            btn_createCard.setText("UPDATE CARD");
+            btn_createCard.setText("UPDATE " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR);
         }
 
 
@@ -302,21 +297,28 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
     }
 */
     public void Rec_finish() {
-        countDownTimer.cancel();
-        if (myAudioRecorder != null) {
-            myAudioRecorder.stop();
-            myAudioRecorder.release();
-            text_audioFile.setVisibility(View.GONE);
-            rl_audio_player.setVisibility(View.VISIBLE);
+        try {
+
+
+            countDownTimer.cancel();
+            if (myAudioRecorder != null) {
+
+                myAudioRecorder.stop();
+                myAudioRecorder.release();
+                text_audioFile.setVisibility(View.GONE);
+                rl_audio_player.setVisibility(View.VISIBLE);
         /*    Bundle bundle = new Bundle();
             bundle.putString("filePath", tempMp3File.getAbsolutePath());
             bundle.putString("PetID", PetId);
             bundle.putString("PetImage", PetIMG);
             bundle.putString("scrn_from","Rec_voice");
         */    // fragmentCall_mainObj.Fragment_call(this,new Create_PetActivity(), "act_crt", bundle);
-            rec_contr.setVisibility(View.GONE);
-            crt_contr.setVisibility(View.VISIBLE);
-            setMediaPlayer(null, tempMp3File.getAbsolutePath(),true);
+                rec_contr.setVisibility(View.GONE);
+                crt_contr.setVisibility(View.VISIBLE);
+                setMediaPlayer(null, tempMp3File.getAbsolutePath(), true);
+            }
+        } catch (Exception w) {
+            w.printStackTrace();
         }
     }
 
@@ -393,7 +395,7 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }*/
-                setMediaPlayer(audio_uri, null,true);
+                setMediaPlayer(audio_uri, null, true);
                 //Toast.makeText(getContext(), "Audio URI" + audio_uri, Toast.LENGTH_SHORT).show();
             }
         }
@@ -527,11 +529,11 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
         }
 
         // Check if all strings are null or not
-        if (card_name.equals("") || card_name.length() == 0
-                || card_description.equals("") || card_description.length() == 0) {
-
+        if (card_name.trim().equals(""))
+        //|| card_description.equals("") || card_description.length() == 0) {
+        {
             new CustomToast().Show_Toast(getActivity(), create_cardName,
-                    "Both fields are required.");
+                    "Card name is required.");
         } else if (encoded_string.equals("") || encoded_string.length() == 0) {
 
             if (setEntryModel.getType().equalsIgnoreCase("audio")) {
@@ -718,9 +720,9 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
 
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
             if (isCreateScreen) {
-                showShortToast(getActivity(), "Card " + card_name + " has been Created.");
+                showShortToast(getActivity(), ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " " + card_name + " has been Created.");
             } else {
-                showShortToast(getActivity(), "Card " + card_name + " has been Updated.");
+                showShortToast(getActivity(), ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " " + card_name + " has been Updated.");
             }
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
         } else {

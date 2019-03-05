@@ -16,6 +16,18 @@ public class SetListResponse {
     @Expose
     private ArrayList<SetsListModel> sets = null;
 
+    public SetsListModel getSet_obj() {
+        return set_obj;
+    }
+
+    public void setSet_obj(SetsListModel set_obj) {
+        this.set_obj = set_obj;
+    }
+
+    @SerializedName("set_details")
+    @Expose
+    private SetsListModel set_obj = null;
+
     public String getMessage() {
         return message;
     }

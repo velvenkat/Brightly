@@ -1,13 +1,11 @@
 package com.purplefront.brightly.Fragments;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,7 +70,7 @@ public class YoutubeType extends BaseFragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_youtube_type, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
-        txt_youtube_steps=(TextView)rootView.findViewById(R.id.youtube_steps);
+        txt_youtube_steps = (TextView) rootView.findViewById(R.id.youtube_steps);
         Bundle bundle = getArguments();
         setEntryModel = bundle.getParcelable("set_entry_obj");
         isCreateCard = bundle.getBoolean("isCreate");
@@ -88,12 +86,14 @@ public class YoutubeType extends BaseFragment {
         clear_edit_text_focus(create_cardDescription);
         clear_edit_text_focus(create_cardName);
         clear_edit_text_focus(create_cardURL);
-
+        create_cardName.setHint(((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " name");
+        create_cardDescription.setHint(((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " description");
         if (isCreateCard) {
             txt_youtube_steps.setVisibility(View.VISIBLE);
+            btn_createCard.setText("CREATE " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR);
         } else {
             txt_youtube_steps.setVisibility(View.GONE);
-            btn_createCard.setText("UPDATE CARD");
+            btn_createCard.setText("UPDATE " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR);
             create_cardName.setText(setEntryModel.getCard_name());
             create_cardDescription.setText(setEntryModel.getCard_description());
             if (setEntryModel.getType().equalsIgnoreCase("video"))
@@ -144,17 +144,16 @@ public class YoutubeType extends BaseFragment {
         Matcher m = p.matcher(image_name);
 
         // Check if all strings are null or not
-        if (card_name.equals("") || card_name.length() == 0
-                || card_description.equals("") || card_description.length() == 0) {
+        if (card_name.trim().equals(""))
+        //  || card_description.equals("") || card_description.length() == 0) {
+        {
             new CustomToast().Show_Toast(getActivity(), create_cardName,
-                    "All fields are required.");
+                    "Card name is required.");
 
         } else if (image_name.equals("") || image_name.length() == 0) {
             new CustomToast().Show_Toast(getActivity(), create_cardURL,
                     "Youtube Link is required.");
-        }
-
-        else if (!m.find()) {
+        } else if (!m.find()) {
             new CustomToast().Show_Toast(getActivity(), create_cardURL,
                     "Valid Youtube Link is required.");
 
@@ -228,13 +227,10 @@ public class YoutubeType extends BaseFragment {
            /* getActivity().setResult(Activity.RESULT_OK);
             getActivity().finish();
             getActivity().overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
-            if(isCreateCard)
-            {
-                showShortToast(getActivity(), "Card "+card_name+" has been Created.");
-            }
-            else
-            {
-                showShortToast(getActivity(), "Card "+card_name+" has been Updated.");
+            if (isCreateCard) {
+                showShortToast(getActivity(), ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " " + card_name + " has been Created.");
+            } else {
+                showShortToast(getActivity(), ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " " + card_name + " has been Updated.");
             }
             ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
         } else {

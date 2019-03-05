@@ -3,7 +3,6 @@ package com.purplefront.brightly.Fragments;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -12,8 +11,6 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -91,7 +88,12 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
     RealmModel user_obj;
     View rootView;
     boolean isScrnSetList;
-
+    boolean isCardShare;
+    //String card_shre_Org_set_id;
+ /*   String card_shr_create_set_name;
+    String card_shr_create_set_desc;*/
+    //String card_shr_card_id;
+    // String card_shr_prev_catg_id = "";
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
@@ -137,6 +139,7 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
         if (bundle != null) {
             isNotification = bundle.getBoolean("isNotification", false);
             isScrnSetList = bundle.getBoolean("isScrnSetList", false);
+            isCardShare = bundle.getBoolean("isCardShare", false);
         }
 
         if (isNotification) {
@@ -145,17 +148,36 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
             set_name = notificationsModel.getNotificationsSetDetail().getName();
             set_id = notificationsModel.getNotificationsSetDetail().getSet_id();
             share_link = notificationsModel.getNotificationsSetDetail().getShare_link();
+            if (isCardShare) {
+                //  card_shr_card_id = bundle.getString("card_shr_card_id");
+                //  card_shr_prev_catg_id = bundle.getString("card_shr_chl_id");
+              /*  card_shr_create_set_name = bundle.getString("card_shr_set_name");
+                card_shr_create_set_desc = bundle.getString("card_shr_set_desc");*/
+
+            }
         } else {
-            chl_list_obj = bundle.getParcelable("model_obj");
+            //chl_list_obj = bundle.getParcelable("model_obj");
+            chl_list_obj = ((BrightlyNavigationActivity) getActivity()).glob_chl_list_obj;
             setsListModel = bundle.getParcelable("setsListModel");
             set_description = setsListModel.getDescription();
             set_name = setsListModel.getSet_name();
             set_id = setsListModel.getSet_id();
             share_link = setsListModel.getShare_link();
+            if (isCardShare) {
+                //card_shr_card_id = bundle.getString("card_shr_card_id");
+                //  card_shr_prev_catg_id = bundle.getString("card_shr_chl_id");
+             /*   card_shr_create_set_name = bundle.getString("card_shr_set_name");
+                card_shr_create_set_desc = bundle.getString("card_shr_set_desc");*/
+
+            }
         }
+
+        // card_shre_Org_set_id = bundle.getString("org_set_id");
+        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+
         userId = user_obj.getUser_Id();
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share with Contacts");
+        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle("Share with contacts");
 
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -167,7 +189,7 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
             contactShares = gson.fromJson(json, type);
 
 
-            if (contactShares.size() > 0)
+            if (contactShares != null && contactShares.size() > 0)
                 setConatcts(contactShares);
         } else {
             view_nodata.setVisibility(View.VISIBLE);
@@ -191,7 +213,7 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
             public void onClick(View view) {
                 if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_CONTACTS)
                         == PackageManager.PERMISSION_GRANTED) {
-//                    getAllContacts();
+//                     getAllContacts();
                     view_nodata.setVisibility(View.GONE);
                     LoadContact loadContact = new LoadContact();
                     loadContact.execute();
@@ -241,7 +263,10 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
-                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
+                    if (!isCardShare)
+                        ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false);
+                    else
+                        ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
                     return true;
                 }
                 return false;
@@ -306,10 +331,18 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
     private void getShareSet() {
 
         try {
-
+            Call<AddMessageResponse> callRegisterUser;
             if (CheckNetworkConnection.isOnline(getContext())) {
                 showProgress();
-                Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getShareSet(userId, set_id, split_num, split_name);
+                if (!isCardShare)
+                    callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getShareSet(userId, set_id, split_num, split_name);
+                else {
+                    //CARD SHARE
+                    if (!isNotification)
+                        callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getShareSet(userId, set_id, split_num, split_name);
+                    else
+                        callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getShareSet(userId, set_id, split_num, split_name);
+                }
                 callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
                     @Override
                     public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
@@ -370,12 +403,17 @@ public class ShareWithContacts extends BaseFragment implements BrightlyNavigatio
             finish();
             overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
             showLongToast(getActivity(), addMessageResponse.getMessage());
-            if (!isScrnSetList) {
-                ShareSettings parent_frag = (ShareSettings) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Set_Share_settings);
-                parent_frag.isShareSetChgd = true;
-                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false, 2);
+            if (!isCardShare) {
+                if (!isScrnSetList) {
+                    ShareSettings parent_frag = (ShareSettings) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.Set_Share_settings);
+                    parent_frag.isShareSetChgd = true;
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(false, 2);
+                } else {
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
+                }
             } else {
-                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 2);
+                ((BrightlyNavigationActivity) getActivity()).DontRun = true;
+                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true, 3);
             }
         } else {
             showLongToast(getActivity(), message);

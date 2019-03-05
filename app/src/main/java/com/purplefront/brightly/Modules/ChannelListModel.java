@@ -41,7 +41,6 @@ public class ChannelListModel implements Parcelable {
     private String shared_time;
 
 
-
     protected ChannelListModel(Parcel in) {
         channel_id = in.readString();
         channel_name = in.readString();
@@ -120,17 +119,6 @@ public class ChannelListModel implements Parcelable {
     @Expose
     private String created_date;
 
-
-    public ChannelListModel(String channel_id, String channel_name, String description, String cover_image, String image_name, String total_set_count, String shared_by, String shared_time) {
-        this.channel_id = channel_id;
-        this.channel_name = channel_name;
-        this.description = description;
-        this.cover_image = cover_image;
-        this.image_name = image_name;
-        this.total_set_count = total_set_count;
-        this.shared_by = shared_by;
-        this.shared_time = shared_time;
-    }
 
     public String getChannel_id() {
         return channel_id;

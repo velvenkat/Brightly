@@ -24,7 +24,7 @@ public class ViewCardFragmentPagerAdapter extends FragmentStatePagerAdapter
     String userId;
     String set_name;
     Context glob_con;
-    public Multimedia_CardFragment primary;
+    //public Multimedia_CardFragment primary;
 
 
     public ViewCardFragmentPagerAdapter(Context context, FragmentManager fm, List<Fragment> cardsList_frag, String set_id, String userId, String set_name) {
@@ -39,7 +39,7 @@ public class ViewCardFragmentPagerAdapter extends FragmentStatePagerAdapter
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
         super.setPrimaryItem(container, position, object);
-        primary = (Multimedia_CardFragment) object;
+      //  primary = (Multimedia_CardFragment) object;
     }
 
     @Override

@@ -40,11 +40,23 @@ public class CardsListModel implements Parcelable {
     @Expose
     private String created_by;
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    @SerializedName("comment")
+    @Expose
+    private String comment;
+
 
     @SerializedName("type")
     @Expose
     private String type;
-    private boolean isDelSel=false;
+    private boolean isDelSel = false;
 
     public boolean isDelSel() {
         return isDelSel;
@@ -54,7 +66,7 @@ public class CardsListModel implements Parcelable {
         isDelSel = delSel;
     }
 
-    public CardsListModel(){
+    public CardsListModel() {
 
     }
 

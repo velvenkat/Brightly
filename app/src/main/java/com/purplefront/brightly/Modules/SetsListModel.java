@@ -15,20 +15,10 @@ public class SetsListModel implements Parcelable{
     @Expose
     private String set_id;
 
-    public String getWeb_sharing() {
-        return web_sharing;
-    }
-
-    public void setWeb_sharing(String web_sharing) {
-        this.web_sharing = web_sharing;
-    }
-
-    @SerializedName("web_sharing")
-    @Expose
-    private String web_sharing;
-
     protected SetsListModel(Parcel in) {
         set_id = in.readString();
+        chl_model_obj = in.readParcelable(ChannelListModel.class.getClassLoader());
+        web_sharing = in.readString();
         share_access = in.readString();
         set_name = in.readString();
         description = in.readString();
@@ -51,6 +41,31 @@ public class SetsListModel implements Parcelable{
             return new SetsListModel[size];
         }
     };
+
+    public String getWeb_sharing() {
+        return web_sharing;
+    }
+
+    public void setWeb_sharing(String web_sharing) {
+        this.web_sharing = web_sharing;
+    }
+
+
+    @SerializedName("channel_details")
+    @Expose
+    private ChannelListModel chl_model_obj;
+
+    @SerializedName("web_sharing")
+    @Expose
+    private String web_sharing;
+
+    public ChannelListModel getChl_model_obj() {
+        return chl_model_obj;
+    }
+
+    public void setChl_model_obj(ChannelListModel chl_model_obj) {
+        this.chl_model_obj = chl_model_obj;
+    }
 
     /**
      * 0 Share Access false
@@ -108,18 +123,7 @@ public class SetsListModel implements Parcelable{
 
     private boolean isDelSel=false;
 
-    public SetsListModel(String set_id, String set_name, String description, String thumbnail, String share_link, ArrayList<SharedDataModel> shared_data, boolean isDelSel, String total_card_count, String shared_by,String shareAccess) {
-        this.set_id = set_id;
-        this.set_name = set_name;
-        this.description = description;
-        this.thumbnail = thumbnail;
-        this.share_link = share_link;
-        this.shared_data = shared_data;
-        this.isDelSel = isDelSel;
-        this.total_card_count = total_card_count;
-        this.shared_by = shared_by;
-        this.share_access=shareAccess;
-    }
+
 
     public String getSet_id() {
         return set_id;
@@ -194,6 +198,8 @@ public class SetsListModel implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(set_id);
+        dest.writeParcelable(chl_model_obj, flags);
+        dest.writeString(web_sharing);
         dest.writeString(share_access);
         dest.writeString(set_name);
         dest.writeString(description);

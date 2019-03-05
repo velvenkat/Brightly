@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnCancel"
+        android:background="@drawable/rounded_menu_list">
+
+        <ImageView
+            android:id="@+id/img_close"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/cancel_icon" />
+
+
+        <EditText
+            android:layout_below="@+id/img_close"
+            android:id="@+id/create_setName"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:layout_marginBottom="@dimen/dimen_5"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center_vertical"
+            android:hint="@string/set_name"
+            android:inputType="textCapSentences"
+            android:maxLength="40"
+            android:padding="@dimen/dimen_4"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize" />
+
+
+
+
+        <Button
+            android:id="@+id/btn_createSet"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/create_setName"
+            android:layout_margin="@dimen/dimen_8"
+            android:background="@drawable/login_btn_background"
+            android:padding="3dp"
+            android:text="@string/create_set"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mediumtextsize" />
+    </RelativeLayout>
+</RelativeLayout>
