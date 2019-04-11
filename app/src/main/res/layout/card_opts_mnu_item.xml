@@ -4,7 +4,7 @@
     android:layout_height="90dp"
     android:gravity="center_horizontal">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imgOptions"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -14,9 +14,9 @@
         android:id="@+id/txtOptions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello"
         android:layout_below="@+id/imgOptions"
         android:layout_centerHorizontal="true"
-        android:gravity="center" />
+        android:gravity="center"
+        android:text="Hello" />
 
 </RelativeLayout>

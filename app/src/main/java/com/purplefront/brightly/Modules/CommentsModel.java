@@ -8,6 +8,10 @@ public class CommentsModel {
     @Expose
     public String comment;
 
+    @SerializedName("comment_mode")
+    @Expose
+    public String comment_mode;
+
     @SerializedName("created_by")
     @Expose
     public String created_by;
@@ -27,6 +31,9 @@ public class CommentsModel {
     @SerializedName("id")
     @Expose
     public String card_id;
-
+    
+    @SerializedName("registered_status")
+    @Expose
+    public String registered_status;
 
 }

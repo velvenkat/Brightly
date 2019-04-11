@@ -17,11 +17,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.R;
 import com.victor.loading.rotate.RotateLoading;
 
-import dmax.dialog.SpotsDialog;
 
 /**
  * Created by ponna on 16-01-2018.
@@ -34,7 +41,7 @@ public class RichLinkViewTelegram extends RelativeLayout {
     private MetaData meta;
 
     LinearLayout linearLayout;
-    ImageView imageView;
+    SimpleDraweeView imageView;
     TextView textViewTitle;
     TextView textViewDesp;
     TextView textViewUrl;
@@ -79,7 +86,7 @@ public class RichLinkViewTelegram extends RelativeLayout {
         }
 
         linearLayout = (LinearLayout) findViewById(R.id.rich_link_card);
-        imageView = (ImageView) findViewById(R.id.rich_link_image);
+        imageView = (SimpleDraweeView) findViewById(R.id.rich_link_image);
         textViewTitle = (TextView) findViewById(R.id.rich_link_title);
         textViewDesp = (TextView) findViewById(R.id.rich_link_desp);
         textViewUrl = (TextView) findViewById(R.id.rich_link_url);
@@ -102,13 +109,41 @@ public class RichLinkViewTelegram extends RelativeLayout {
             imageView.setVisibility(GONE);
         } else {
             imageView.setVisibility(VISIBLE);
+/*
 
             Glide.with(getContext())
                     .load(meta.getImageurl())
                     .centerCrop()
-                    /*.transform(new CircleTransform(HomeActivity.this))
-                    .override(50, 50)*/
+                    */
+/*.transform(new CircleTransform(HomeActivity.this))
+                    .override(50, 50)*//*
+
                     .into(imageView);
+
+*/
+
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(getContext().getResources());
+            builder.setProgressBarImage(R.drawable.loader);
+            ResizeOptions mResizeOptions = new ResizeOptions(120, 100);
+            builder.setProgressBarImage(
+                    new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+            builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = builder
+                    .setFadeDuration(100)
+                    .build();
+
+            imageView.setHierarchy(hierarchy);
+
+
+            final ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(meta.getImageurl()))
+                            .setResizeOptions(mResizeOptions)
+
+                            .build();
+            imageView.setImageRequest(imageRequest);
+
+
         }
 
         if (meta.getTitle().isEmpty() || meta.getTitle().equals("")) {

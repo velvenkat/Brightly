@@ -12,6 +12,72 @@ public class NotificationsModel implements Parcelable {
     @Expose
     private String type;
 
+    protected NotificationsModel(Parcel in) {
+        type = in.readString();
+        card_created_by = in.readString();
+        card_id = in.readString();
+        created_by = in.readString();
+        content = in.readString();
+        date_time = in.readString();
+        action = in.readString();
+        channel_id = in.readString();
+        channel_name = in.readString();
+        badge = in.readString();
+        shared_user_profile_pic = in.readString();
+        card_order_position = in.readString();
+        notificationsSetDetail = in.readParcelable(NotificationsSetDetail.class.getClassLoader());
+    }
+
+    public static final Creator<NotificationsModel> CREATOR = new Creator<NotificationsModel>() {
+        @Override
+        public NotificationsModel createFromParcel(Parcel in) {
+            return new NotificationsModel(in);
+        }
+
+        @Override
+        public NotificationsModel[] newArray(int size) {
+            return new NotificationsModel[size];
+        }
+    };
+
+    public String getCard_created_by() {
+        return card_created_by;
+    }
+
+    public void setCard_created_by(String card_created_by) {
+        this.card_created_by = card_created_by;
+    }
+
+    @SerializedName("card_created_by")
+    @Expose
+    private String card_created_by;
+
+    @SerializedName("card_id")
+    @Expose
+    private String card_id;
+
+
+    public String getCard_id() {
+        return card_id;
+    }
+
+    public void setCard_id(String card_id) {
+        this.card_id = card_id;
+    }
+
+    public String getCreated_by() {
+        return created_by;
+    }
+
+    public void setCreated_by(String created_by) {
+        this.created_by = created_by;
+    }
+
+    @SerializedName("created_by")
+    @Expose
+    private String created_by;
+
+
     @SerializedName("content")
     @Expose
     private String content;
@@ -57,30 +123,6 @@ public class NotificationsModel implements Parcelable {
         this.notificationsSetDetail = notificationsSetDetail;
     }
 
-    protected NotificationsModel(Parcel in) {
-        type = in.readString();
-        content = in.readString();
-        date_time = in.readString();
-        action = in.readString();
-        channel_id = in.readString();
-        channel_name = in.readString();
-        badge = in.readString();
-        card_order_position = in.readString();
-        shared_user_profile_pic = in.readString();
-        notificationsSetDetail = in.readParcelable(NotificationsSetDetail.class.getClassLoader());
-    }
-
-    public static final Creator<NotificationsModel> CREATOR = new Creator<NotificationsModel>() {
-        @Override
-        public NotificationsModel createFromParcel(Parcel in) {
-            return new NotificationsModel(in);
-        }
-
-        @Override
-        public NotificationsModel[] newArray(int size) {
-            return new NotificationsModel[size];
-        }
-    };
 
     public String getType() {
         return type;
@@ -162,6 +204,7 @@ public class NotificationsModel implements Parcelable {
         this.notificationsSetDetail = notificationsSetDetail;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -170,14 +213,17 @@ public class NotificationsModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(type);
+        dest.writeString(card_created_by);
+        dest.writeString(card_id);
+        dest.writeString(created_by);
         dest.writeString(content);
         dest.writeString(date_time);
         dest.writeString(action);
         dest.writeString(channel_id);
         dest.writeString(channel_name);
         dest.writeString(badge);
-        dest.writeString(card_order_position);
         dest.writeString(shared_user_profile_pic);
+        dest.writeString(card_order_position);
         dest.writeParcelable(notificationsSetDetail, flags);
     }
 }

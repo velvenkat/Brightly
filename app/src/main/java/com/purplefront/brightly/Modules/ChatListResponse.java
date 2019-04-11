@@ -10,9 +10,9 @@ public class ChatListResponse {
     @Expose
     private String message;
 
-   
-    @SerializedName("contacts")
+
+    @SerializedName("data")
     @Expose
-    private List<ChatContacts> contacts;
+    private List<CommentsModel> contacts;
 
 }

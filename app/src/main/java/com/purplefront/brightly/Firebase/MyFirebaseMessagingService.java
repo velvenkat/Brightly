@@ -21,11 +21,14 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
 import com.purplefront.brightly.Fragments.CardDetailFragment;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.SplashScreen;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -70,6 +73,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String content = remoteMessage.getData().get("data");
         Gson gson = new Gson();
 
+
+
+        /*SharedPreferences.Editor editor1 = getSharedPreferences("Card_ID", MODE_PRIVATE).edit();
+        editor1.putString("JSON_VALUE", json);
+        editor1.apply();*/
+        //editor1.commit();
+
         NotificationsModel gsonObj = gson.fromJson(content, NotificationsModel.class);
 
         String count = gsonObj.getBadge();
@@ -99,18 +109,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             } else if (gsonObj.getAction().equals("revoked")) {
                 intent = new Intent(this, BrightlyNavigationActivity.class);
 //                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
+            } else if (gsonObj.getAction().equals("comment")) {
+                intent = new Intent(this, BrightlyNavigationActivity.class);
+//                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
             } else {
                 intent = new Intent(this, BrightlyNavigationActivity.class);
                 intent.putExtra("isCardNotification", true);
 
             }
 
+            String jsonStr = "Start " + gson.toJson(content) + " End";
            /* intent.putExtra("message_body", remoteMessage.getData().get("body"));
             intent.putExtra("control_unit_sim_number", remoteMessage.getData().get("tag"));
             intent.putExtra("base_unit_id", remoteMessage.getData().get("unit_id"));
             intent.putExtra("title_name", remoteMessage.getData().get("title"));*/
             intent.putExtra("isNotification", true);
             intent.putExtra("notfy_modl_obj", gsonObj);
+            intent.putExtra("Card_id", jsonStr);
 
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -172,6 +187,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 intent = new Intent(this, SplashScreen.class);
                 intent.putExtra("isRevoked", true);
 //                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
+            } else if (gsonObj.getAction().equals("comment")) {
+                intent = new Intent(this, SplashScreen.class);
+//                Toast.makeText(this, "The Set permission has been Revoked.", Toast.LENGTH_SHORT).show();
             } else {
                 intent = new Intent(this, SplashScreen.class);
                 intent.putExtra("isCardNotification", true);
@@ -182,8 +200,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             intent.putExtra("control_unit_sim_number", remoteMessage.getData().get("tag"));
             intent.putExtra("base_unit_id", remoteMessage.getData().get("unit_id"));
             intent.putExtra("title_name", remoteMessage.getData().get("title"));*/
+
+            String jsonStr = "Start " + gson.toJson(content) + " End";
+           /* intent.putExtra("message_body", remoteMessage.getData().get("body"));
+            intent.putExtra("control_unit_sim_number", remoteMessage.getData().get("tag"));
+            intent.putExtra("base_unit_id", remoteMessage.getData().get("unit_id"));
+            intent.putExtra("title_name", remoteMessage.getData().get("title"));*/
             intent.putExtra("isNotification", true);
             intent.putExtra("notfy_modl_obj", gsonObj);
+            intent.putExtra("Card_id", jsonStr);
+
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);

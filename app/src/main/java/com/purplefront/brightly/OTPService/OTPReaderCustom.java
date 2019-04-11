@@ -8,7 +8,7 @@ import android.telephony.SmsMessage;
 import android.text.TextUtils;
 import android.util.Log;
 
-import swarajsaaj.smscodereader.interfaces.OTPListener;
+import com.purplefront.brightly.Activities.Login;
 
 
 public class OTPReaderCustom extends BroadcastReceiver {
@@ -22,7 +22,7 @@ public class OTPReaderCustom extends BroadcastReceiver {
     /**
      * The bound OTP Listener that will be trigerred on receiving message.
      */
-    private static OTPListener otpListener;
+    private static Login.OTPListener otpListener;
 
     /**
      * The Sender number string.
@@ -35,7 +35,7 @@ public class OTPReaderCustom extends BroadcastReceiver {
      * @param listener
      * @param sender
      */
-    public static void bind(OTPListener listener, String sender) {
+    public static void bind(Login.OTPListener listener, String sender) {
         otpListener = listener;
         receiverString = sender;
     }

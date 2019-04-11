@@ -3,9 +3,11 @@ package com.purplefront.brightly.Modules;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 public class SetEntryModel implements Parcelable {
 
- //   String userId;
+    //   String userId;
     String set_id;
     String set_name;
     String card_name = "";
@@ -13,6 +15,28 @@ public class SetEntryModel implements Parcelable {
     String card_description = "";
     String card_multimedia_url = "";
     String image_name = "";
+
+    public static final Creator<SetEntryModel> CREATOR = new Creator<SetEntryModel>() {
+        @Override
+        public SetEntryModel createFromParcel(Parcel in) {
+            return new SetEntryModel(in);
+        }
+
+        @Override
+        public SetEntryModel[] newArray(int size) {
+            return new SetEntryModel[size];
+        }
+    };
+
+    public List<MultipleImageModel> getMultipleImageModelList() {
+        return multipleImageModelList;
+    }
+
+    public void setMultipleImageModelList(List<MultipleImageModel> multipleImageModelList) {
+        this.multipleImageModelList = multipleImageModelList;
+    }
+
+    List<MultipleImageModel> multipleImageModelList;
     String type = "";
 
     public SetEntryModel() {
@@ -29,18 +53,6 @@ public class SetEntryModel implements Parcelable {
         type = in.readString();
     }
 
-    public static final Creator<SetEntryModel> CREATOR = new Creator<SetEntryModel>() {
-        @Override
-        public SetEntryModel createFromParcel(Parcel in) {
-            return new SetEntryModel(in);
-        }
-
-        @Override
-        public SetEntryModel[] newArray(int size) {
-            return new SetEntryModel[size];
-        }
-    };
-
     public String getType() {
         return type;
     }
@@ -49,14 +61,14 @@ public class SetEntryModel implements Parcelable {
         this.type = type;
     }
 
-   /* public String getUserId() {
-        return userId;
-    }
+    /* public String getUserId() {
+         return userId;
+     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-*/
+     public void setUserId(String userId) {
+         this.userId = userId;
+     }
+ */
     public String getSet_id() {
         return set_id;
     }
@@ -112,6 +124,7 @@ public class SetEntryModel implements Parcelable {
     public void setImage_name(String image_name) {
         this.image_name = image_name;
     }
+
 
     @Override
     public int describeContents() {

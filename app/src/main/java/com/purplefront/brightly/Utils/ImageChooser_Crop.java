@@ -30,9 +30,11 @@ public class ImageChooser_Crop {
     Activity call_activity;
     final int PIC_CROP = 11;
 
+    String File_Name;
 
-    public ImageChooser_Crop(Activity activity) {
+    public ImageChooser_Crop(Activity activity, String name) {
         call_activity = activity;
+        File_Name = name + ".png";
     }
 
     public Intent getPickImageChooserIntent() {
@@ -90,15 +92,13 @@ public class ImageChooser_Crop {
     }
 
 
-
-
     private Uri getCaptureImageOutputUri() {
         Uri outputFileUri = null;
         File getImage = call_activity.getExternalCacheDir();
         if (getImage != null) {
-            File file=new File(getImage.getPath(), "profile.png");
+            //  File file = new File(getImage.getPath(), File_Name);
 
-            outputFileUri = Uri.fromFile(new File(getImage.getPath(), "profile.png"));
+            outputFileUri = Uri.fromFile(new File(getImage.getPath(), File_Name));
         }
         return outputFileUri;
     }
@@ -109,21 +109,20 @@ public class ImageChooser_Crop {
             String action = data.getAction();
             isCamera = action != null && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
         }
-        if(!isCamera) {
+        if (!isCamera) {
             if (data.getData() != null) {
                 return data.getData();
             } else {
                 return getCaptureImageOutputUri();
             }
-        }
-        else{
+        } else {
             return getCaptureImageOutputUri();
         }
 
         //return isCamera ? getCaptureImageOutputUri() : data.getData();
     }
 
-    public Intent performCrop(Uri picUri,boolean isShare,int imgW,int imgH) {
+    public Intent performCrop(Uri picUri, boolean isShare, int imgW, int imgH) {
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -141,12 +140,12 @@ public class ImageChooser_Crop {
         // set crop properties here
         cropIntent.putExtra("crop", true);
         // indicate aspect of desired crop
-        cropIntent.putExtra("aspectX", 1);
-        cropIntent.putExtra("aspectY", 1);
+       /* cropIntent.putExtra("aspectX", 1);
+        cropIntent.putExtra("aspectY", 1);*/
        /* cropIntent.putExtra("max-width", imgW);
         cropIntent.putExtra("max-height", imgH);*/
-        /*cropIntent.putExtra("min-width",imgW);
-        cropIntent.putExtra("min-height",imgH);*/
+        cropIntent.putExtra("min-width",imgW);
+        cropIntent.putExtra("min-height",imgH);
 
         // indicate output X and Y
       /*  if(isShare){
@@ -165,7 +164,7 @@ public class ImageChooser_Crop {
         cropIntent.putExtra("outputY", 150);*/
         cropIntent.putExtra("return-data", true);
         cropIntent.putExtra("scaleUpIfNeeded", true);
-       // cropIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG);
+        // cropIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG);
 
         cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         // start the activity - we handle returning     in onActivityResult

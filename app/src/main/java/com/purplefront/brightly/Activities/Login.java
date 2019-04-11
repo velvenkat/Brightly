@@ -49,6 +49,10 @@ public class Login extends AppCompatActivity {
         public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list);
     }
 
+    public interface OTPListener {
+        public void otpReceived(String message);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

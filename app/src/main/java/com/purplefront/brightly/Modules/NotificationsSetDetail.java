@@ -12,6 +12,56 @@ public class NotificationsSetDetail implements Parcelable {
     @Expose
     private String set_id;
 
+    protected NotificationsSetDetail(Parcel in) {
+        set_id = in.readString();
+        comment_created_by = in.readString();
+        comment_card_id = in.readString();
+        name = in.readString();
+        description = in.readString();
+        created_by = in.readString();
+        shared_by = in.readString();
+        share_access = in.readString();
+        share_link = in.readString();
+        web_sharing = in.readString();
+    }
+
+    public static final Creator<NotificationsSetDetail> CREATOR = new Creator<NotificationsSetDetail>() {
+        @Override
+        public NotificationsSetDetail createFromParcel(Parcel in) {
+            return new NotificationsSetDetail(in);
+        }
+
+        @Override
+        public NotificationsSetDetail[] newArray(int size) {
+            return new NotificationsSetDetail[size];
+        }
+    };
+
+    public String getComment_created_by() {
+        return comment_created_by;
+    }
+
+    public void setComment_created_by(String comment_created_by) {
+        this.comment_created_by = comment_created_by;
+    }
+
+    public String getComment_card_id() {
+        return comment_card_id;
+    }
+
+    public void setComment_card_id(String comment_card_id) {
+        this.comment_card_id = comment_card_id;
+    }
+
+    @SerializedName("comment_created_by")
+    @Expose
+    private String comment_created_by;
+
+    @SerializedName("comment_card_id")
+    @Expose
+    private String comment_card_id;
+
+
     @SerializedName("name")
     @Expose
     private String name;
@@ -49,29 +99,6 @@ public class NotificationsSetDetail implements Parcelable {
     @Expose
     private String web_sharing;
 
-
-    protected NotificationsSetDetail(Parcel in) {
-        set_id = in.readString();
-        name = in.readString();
-        description = in.readString();
-        created_by = in.readString();
-        shared_by = in.readString();
-        share_access = in.readString();
-        share_link = in.readString();
-        web_sharing = in.readString();
-    }
-
-    public static final Creator<NotificationsSetDetail> CREATOR = new Creator<NotificationsSetDetail>() {
-        @Override
-        public NotificationsSetDetail createFromParcel(Parcel in) {
-            return new NotificationsSetDetail(in);
-        }
-
-        @Override
-        public NotificationsSetDetail[] newArray(int size) {
-            return new NotificationsSetDetail[size];
-        }
-    };
 
     public String getShare_access() {
         return share_access;
@@ -136,6 +163,7 @@ public class NotificationsSetDetail implements Parcelable {
         this.share_link = share_link;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -144,6 +172,8 @@ public class NotificationsSetDetail implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(set_id);
+        dest.writeString(comment_created_by);
+        dest.writeString(comment_card_id);
         dest.writeString(name);
         dest.writeString(description);
         dest.writeString(created_by);

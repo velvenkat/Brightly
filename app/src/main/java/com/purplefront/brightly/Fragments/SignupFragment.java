@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +40,7 @@ import com.purplefront.brightly.Modules.SignUpResponse;
 import com.purplefront.brightly.OTPService.OTPReaderCustom;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.Util;
 
 import java.util.regex.Matcher;
@@ -47,12 +49,11 @@ import java.util.regex.Pattern;
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Response;
-import swarajsaaj.smscodereader.interfaces.OTPListener;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SignupFragment extends BaseFragment implements View.OnClickListener, OTPListener {
+public class SignupFragment extends BaseFragment implements View.OnClickListener, Login.OTPListener {
 
 
     private static final int PERMISSION_REQUEST_ID = 100;
@@ -110,7 +111,7 @@ public class SignupFragment extends BaseFragment implements View.OnClickListener
         shakeAnimation = AnimationUtils.loadAnimation(getActivity(),
                 R.anim.shake);
 
-        //   requestRuntimePermissions(Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS);
+        PermissionUtil.hasPermission(new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS}, getContext(), 100);
 
         initViews();
         setListeners();

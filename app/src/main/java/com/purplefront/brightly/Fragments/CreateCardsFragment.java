@@ -97,6 +97,7 @@ public class CreateCardsFragment extends BaseFragment implements BaseFragment.al
                     setEntryModel.setCard_description(cardModelObj.getDescription());
                     setEntryModel.setCard_multimedia_url(cardModelObj.getUrl());
                     setEntryModel.setImage_name(cardModelObj.getName());
+                    setEntryModel.setMultipleImageModelList(cardModelObj.getMultiple_img_url());
                     setEntryModel.setType(cardModelObj.getType());
                 }
             }
@@ -141,7 +142,7 @@ public class CreateCardsFragment extends BaseFragment implements BaseFragment.al
 
         // Supplier id for free Version "RcJ1L4mWaZeIe2wRO3ejHOmcSxf2" =====
         final TextView tabTwo = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.custom_tab, null);
-        tabTwo.setText("Video");
+        tabTwo.setText("Youtube");
         // tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_creatCard.getTabAt(1).setCustomView(tabTwo);
 
@@ -154,6 +155,12 @@ public class CreateCardsFragment extends BaseFragment implements BaseFragment.al
         tabFour.setText("File");
         // tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
         tabs_creatCard.getTabAt(3).setCustomView(tabFour);
+
+        final TextView tabFive = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.custom_tab, null);
+        tabFive.setText("Video");
+        // tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_google, 0, 0);
+        tabs_creatCard.getTabAt(4).setCustomView(tabFive);
+
     }
 
     private void setupViewPager(ViewPager viewpager_creatCard) {
@@ -177,7 +184,7 @@ public class CreateCardsFragment extends BaseFragment implements BaseFragment.al
 
         Fragment create_UTubeType = new YoutubeType();
         create_UTubeType.setArguments(bundle);
-        adapter.addFrag(create_UTubeType, "video");
+        adapter.addFrag(create_UTubeType, "Youtube");
 
 //        adapter.addFrag(new YoutubeType(), "youtube");
 
@@ -190,11 +197,18 @@ public class CreateCardsFragment extends BaseFragment implements BaseFragment.al
         Fragment create_fileType = new FileType();
         create_fileType.setArguments(bundle);
         adapter.addFrag(create_fileType, "file");
+
+
+        Fragment create_VideoType = new VideoType();
+        create_VideoType.setArguments(bundle);
+        adapter.addFrag(create_VideoType, "Video");
+
+
         viewpager_creatCard.setAdapter(adapter);
         if (!isCreate_Crd) {
             int pos = -1;
             switch (cardModelObj.getType()) {
-                case "image":
+                case "multiple_images":
                     pos = 0;
                     break;
 
@@ -204,6 +218,10 @@ public class CreateCardsFragment extends BaseFragment implements BaseFragment.al
 
                 case "audio":
                     pos = 2;
+                    break;
+
+                case "video_file":
+                    pos = 4;
                     break;
 
                 case "file":
@@ -222,7 +240,7 @@ public class CreateCardsFragment extends BaseFragment implements BaseFragment.al
 
             case R.id.delete:
 
-                showAlertDialog("Your about to delete the "+((BrightlyNavigationActivity)getActivity()).CARD_SINGULAR+", the information contained in the "+((BrightlyNavigationActivity)getActivity()).CARD_SINGULAR+" will be lost", "Confirm Delete....", "Delete", "Cancel");
+                showAlertDialog("Your about to delete the " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + ", the information contained in the " + ((BrightlyNavigationActivity) getActivity()).CARD_SINGULAR + " will be lost", "Confirm Delete....", "Delete", "Cancel");
 
                 return true;
             default:

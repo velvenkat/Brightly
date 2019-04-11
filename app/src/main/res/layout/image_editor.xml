@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/rl_editor_contr"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/img_paint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/pencil_edit_button" />
+
+        <ImageView
+            android:id="@+id/img_crop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/img_paint"
+            android:src="@drawable/pencil_edit_button" />
+    </RelativeLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/upload_video"
+        android:layout_height="400dp" />
+</RelativeLayout>

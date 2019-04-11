@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.drawable.AutoRotateDrawable;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -41,7 +41,7 @@ import com.purplefront.brightly.Modules.EditProfileResponse;
 import com.purplefront.brightly.Modules.GeneralVarModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
-import com.purplefront.brightly.Utils.CircleTransform;
+
 import com.purplefront.brightly.Utils.ImageChooser_Crop;
 import com.purplefront.brightly.Utils.Util;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -205,12 +205,22 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
                 //  Image_profile.getHierarchy().setRoundingParams(roundingParams);
                 Image_profile.setImageRequest(imageRequest);
             } else {
-                Glide.with(getActivity())
+                /*Glide.with(getActivity())
                         .load(R.drawable.default_user_image)
                         .centerCrop()
                         .transform(new CircleTransform(getActivity()))
-                        /*.override(50, 50)*/
-                        .into(Image_profile);
+                        *//*.override(50, 50)*//*
+                        .into(Image_profile);*/
+
+                Uri uri = new Uri.Builder()
+                        .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
+                        .path(String.valueOf(R.drawable.default_user_image))
+                        .build();
+                final ImageRequest imageRequest2 =
+                        ImageRequestBuilder.newBuilderWithSource(uri)
+
+                                .build();
+                Image_profile.setImageRequest(imageRequest2);
             }
 
         }
@@ -225,7 +235,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
             @Override
             public void onClick(View view) {
                 //  if (PermissionUtil.hasPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, getContext(), BrightlyNavigationActivity.PERMISSION_REQ_CODE_IMAGE)) {
-                imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+                imgImageChooser_crop = new ImageChooser_Crop(getActivity(), "default");
                 Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
                 if (intent == null) {
                     //PermissionUtil.
@@ -418,6 +428,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
                         startActivityForResult(intent, PIC_CROP);*/
                         // for fragment (DO NOT use `getActivity()`)
                         CropImage.activity(picUri)
+                                .setCropMenuCropButtonTitle("Done")
                                 .setMinCropResultSize(200, 200)
                                 .setMaxCropResultSize(bitmap.getWidth(), bitmap.getHeight())
 //                                .setAspectRatio(1, 1)
@@ -447,12 +458,34 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
                         imgPet.setImageDrawable(drawable);
                     }*/
 
-                    Glide.with(getActivity())
+                    /*Glide.with(getActivity())
                             .load(resultUri)
                             .centerCrop()
                             .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)
-                            .into(Image_profile);
+                            .into(Image_profile);*/
+
+                    GenericDraweeHierarchyBuilder builder =
+                            new GenericDraweeHierarchyBuilder(getResources());
+                    builder.setProgressBarImage(R.drawable.loader);
+
+                    builder.setProgressBarImage(
+                            new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+                    builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+                    GenericDraweeHierarchy hierarchy = builder
+                            .setFadeDuration(100)
+                            .build();
+
+                    Image_profile.setHierarchy(hierarchy);
+
+
+                    final ImageRequest imageRequest =
+                            ImageRequestBuilder.newBuilderWithSource(resultUri)
+
+
+                                    .build();
+                    Image_profile.setImageRequest(imageRequest);
+
                     // Call_pet_photo_update();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -498,7 +531,7 @@ public class EditProfile extends BaseFragment implements BrightlyNavigationActiv
 
     @Override
     public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list) {
-        imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+        imgImageChooser_crop = new ImageChooser_Crop(getActivity(), "default");
         Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
         if (intent == null) {
             //PermissionUtil.

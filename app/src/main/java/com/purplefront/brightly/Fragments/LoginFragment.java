@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Fragments;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -38,6 +39,7 @@ import com.purplefront.brightly.Modules.SignInResponse;
 import com.purplefront.brightly.OTPService.OTPReaderCustom;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.Util;
 
 import java.util.ArrayList;
@@ -45,12 +47,12 @@ import java.util.ArrayList;
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Response;
-import swarajsaaj.smscodereader.interfaces.OTPListener;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LoginFragment extends BaseFragment implements View.OnClickListener, OTPListener, Login.PermissionResultInterface {
+public class LoginFragment extends BaseFragment implements View.OnClickListener, Login.OTPListener, Login.PermissionResultInterface {
 
     private View view;
     private static FragmentManager fragmentManager;
@@ -101,7 +103,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         txtForgotPassword.setOnClickListener(this);
         radio_otp.setOnClickListener(this);
 
-     //   requestRuntimePermissions();
+        PermissionUtil.hasPermission(new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS}, getContext(), 100);
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
@@ -115,7 +117,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         return view;
 
     }
-
 
 
     // Initiate Views
@@ -503,7 +504,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         try {
 
             if (CheckNetworkConnection.isOnline(getActivity())) {
-               showProgress();
+                showProgress();
                 if (isOtptoLogin)
                     callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).getSignIn(getPhonenumber, "", deviceToken, "android");
                 else

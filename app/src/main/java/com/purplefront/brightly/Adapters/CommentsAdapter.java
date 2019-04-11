@@ -1,30 +1,14 @@
 package com.purplefront.brightly.Adapters;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.facebook.drawee.drawable.AutoRotateDrawable;
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.purplefront.brightly.Fragments.CardList;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.CommentsModel;
 import com.purplefront.brightly.R;
@@ -36,12 +20,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
     List<CommentsModel> commentsModelListObj;
     Context scrn_contxt;
     Comments_Sel_interface mListener;
+    String user_id;
 
-    public CommentsAdapter(Context context, List<CommentsModel> commentsModelList, Comments_Sel_interface listener) {
+    public CommentsAdapter(Context context, List<CommentsModel> commentsModelList, Comments_Sel_interface listener, String temp_usr_id) {
 
         scrn_contxt = context;
         commentsModelListObj = commentsModelList;
         listener = mListener;
+        user_id = temp_usr_id;
     }
 
     @NonNull
@@ -50,7 +36,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         // Inflate the custom layout
-        View contactView = inflater.inflate(R.layout.item_commtents, parent, false);
+        View contactView = inflater.inflate(R.layout.chat_layout, parent, false);
         // Return a new holder instance
         return new ViewHolder(contactView);
     }
@@ -58,7 +44,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        return position;
 
 
     }
@@ -72,9 +58,17 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
     public void onBindViewHolder(@NonNull CommentsAdapter.ViewHolder holder, int position) {
 
         CommentsModel model_obj = commentsModelListObj.get(position);
-        holder.text_Comments.setText(model_obj.comment);
-        holder.text_CommentBy.setText(model_obj.created_name);
-        holder.text_CrtdDays.setText(model_obj.created_time);
+        if (user_id.equals(model_obj.created_by)) {
+            holder.own_comment.setText(model_obj.comment);
+            holder.text_own_CrtdTime.setText(model_obj.created_time);
+            holder.othr_comt_contr.setVisibility(View.GONE);
+        } else {
+            holder.other_comment.setText(model_obj.comment);
+            holder.other_comtd_by.setText(model_obj.created_name);
+            holder.text_other_crtd_time.setText(model_obj.created_time);
+            holder.own_comt_contr.setVisibility(View.GONE);
+        }
+
     }
 
 
@@ -85,17 +79,25 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView text_Comments;
+        TextView own_comment;
 
-        TextView text_CommentBy;
-        TextView text_CrtdDays;
+        TextView other_comment;
+        TextView text_own_CrtdTime;
+        TextView text_other_crtd_time;
+        RelativeLayout othr_comt_contr, own_comt_contr;
+        TextView other_comtd_by;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            text_Comments = itemView.findViewById(R.id.text_comment);
-            text_CommentBy = itemView.findViewById(R.id.text_comment_by);
-            text_CrtdDays = itemView.findViewById(R.id.txt_comtd_date);
+            own_comment = itemView.findViewById(R.id.own_comment);
+            other_comment = itemView.findViewById(R.id.other_comt);
+            text_own_CrtdTime = itemView.findViewById(R.id.own_crtd_time);
+            text_other_crtd_time = itemView.findViewById(R.id.other_crtd_time);
+            othr_comt_contr = itemView.findViewById(R.id.other_comt_contr);
+            own_comt_contr = itemView.findViewById(R.id.own_comnt_contr);
+            other_comtd_by = itemView.findViewById(R.id.other_comtd_by);
+
 
         }
     }

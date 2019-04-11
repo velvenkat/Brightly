@@ -656,7 +656,7 @@ public class SetsFragment extends BaseFragment implements SetAdapterNew.Set_sel_
                 overridePendingTransition(R.anim.left_enter, R.anim.right_out);*/
                 ((AppCompatActivity) getActivity()).getSupportFragmentManager().popBackStackImmediate();
                 return true;
-            case R.id.action_multi_sel:
+           /* case R.id.action_multi_sel:
 
                 if (setsListModelList.size() > 0) {
                     ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
@@ -667,11 +667,11 @@ public class SetsFragment extends BaseFragment implements SetAdapterNew.Set_sel_
                     chk_sel_all.setText("Select All");
                     del_sel_id = new ArrayList<>();
                     btn_delete.setEnabled(false);
-                    /**
-                     * while reorder uncomment this
-                     */
-                   /* if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
-                        ith.attachToRecyclerView(null);*/
+                    *//**
+             * while reorder uncomment this
+             *//*
+             *//* if (userId.equalsIgnoreCase(chl_list_obj.getCreated_by()))
+                        ith.attachToRecyclerView(null);*//*
                     channelsSetAdapter.set_SelToDel(true);
                     channelsSetAdapter.notifyDataSetChanged();
                     // isMultiSelChoosed=true;
@@ -682,6 +682,7 @@ public class SetsFragment extends BaseFragment implements SetAdapterNew.Set_sel_
                 }
 
                 return true;
+*/
             case 1001://R.id.channelInfo_Edit:
                /* Intent intent = new Intent(SetsFragment.this, EditChannelInfo.class);
                 intent.putExtra("userId", userId);

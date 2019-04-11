@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.drawable.AutoRotateDrawable;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -31,7 +31,7 @@ import com.purplefront.brightly.Modules.GeneralVarModel;
 import com.purplefront.brightly.Modules.MyProfileResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
-import com.purplefront.brightly.Utils.CircleTransform;
+
 import com.purplefront.brightly.Utils.Util;
 
 import io.realm.Realm;
@@ -149,6 +149,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener {
                     prof_img_url = prof_model.getFetch_key();
                 }
             }
+            ResizeOptions mResizeOptions = new ResizeOptions(150, 150);
             if (prof_img_url != null) {
                 /*Glide.with(getActivity())
                         .load(imageProfile)
@@ -160,7 +161,7 @@ public class MyProfile extends BaseFragment implements View.OnClickListener {
                 RoundingParams roundingParams = RoundingParams.fromCornersRadius(5f);
                 //roundingParams.setBorder(color, 1.0f);
                 roundingParams.setRoundAsCircle(true);
-                ResizeOptions mResizeOptions = new ResizeOptions(150, 150);
+
                 GenericDraweeHierarchyBuilder builder =
                         new GenericDraweeHierarchyBuilder(this.getResources());
                 builder.setProgressBarImage(R.drawable.loader);
@@ -183,12 +184,21 @@ public class MyProfile extends BaseFragment implements View.OnClickListener {
                 //  Image_profile.getHierarchy().setRoundingParams(roundingParams);
                 Image_profile.setImageRequest(imageRequest);
             } else {
-                Glide.with(getActivity())
+                /*Glide.with(getActivity())
                         .load(R.drawable.default_user_image)
                         .centerCrop()
                         .transform(new CircleTransform(getActivity()))
-                        /*.override(50, 50)*/
-                        .into(Image_profile);
+                        *//*.override(50, 50)*//*
+                        .into(Image_profile);*/
+                Uri uri = new Uri.Builder()
+                        .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
+                        .path(String.valueOf(R.drawable.default_user_image))
+                        .build();
+                final ImageRequest imageRequest2 =
+                        ImageRequestBuilder.newBuilderWithSource(uri)
+                                .setResizeOptions(mResizeOptions)
+                                .build();
+                Image_profile.setImageRequest(imageRequest2);
             }
 
 /*
@@ -280,22 +290,60 @@ public class MyProfile extends BaseFragment implements View.OnClickListener {
         User_Phone.setText(phoneNumber);
         input_email.setText(userEmail);
         input_company.setText(userCompanyName);
+        ResizeOptions mResizeOptions = new ResizeOptions(150, 150);
 
         if (profileResponse.getImage() != null) {
 
-            Glide.with(getActivity())
-                    .load(imageProfile)
-                    .centerCrop()
-                    .transform(new CircleTransform(getActivity()))
+
+
+                /*Glide.with(getActivity())
+                        .load(imageProfile)
+                        .centerCrop()
+                        .transform(new CircleTransform(getActivity()))
 //                        .override(50, 50)
-                    .into(Image_profile);
+                        .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
+*/
+            RoundingParams roundingParams = RoundingParams.fromCornersRadius(5f);
+            //roundingParams.setBorder(color, 1.0f);
+            roundingParams.setRoundAsCircle(true);
+
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(this.getResources());
+            builder.setProgressBarImage(R.drawable.loader);
+            builder.setRoundingParams(roundingParams);
+            builder.setProgressBarImage(
+                    new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+            builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = builder
+                    .setFadeDuration(100)
+                    .build();
+
+            Image_profile.setHierarchy(hierarchy);
+
+
+            final ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(profileResponse.getImage()))
+                            .setResizeOptions(mResizeOptions)
+
+                            .build();
+            //  Image_profile.getHierarchy().setRoundingParams(roundingParams);
+            Image_profile.setImageRequest(imageRequest);
         } else {
-            Glide.with(getActivity())
-                    .load(R.drawable.default_user_image)
-                    .centerCrop()
-                    .transform(new CircleTransform(getActivity()))
-                    /*.override(50, 50)*/
-                    .into(Image_profile);
+                /*Glide.with(getActivity())
+                        .load(R.drawable.default_user_image)
+                        .centerCrop()
+                        .transform(new CircleTransform(getActivity()))
+                        *//*.override(50, 50)*//*
+                        .into(Image_profile);*/
+            Uri uri = new Uri.Builder()
+                    .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
+                    .path(String.valueOf(R.drawable.default_user_image))
+                    .build();
+            final ImageRequest imageRequest2 =
+                    ImageRequestBuilder.newBuilderWithSource(uri)
+                            .setResizeOptions(mResizeOptions)
+                            .build();
+            Image_profile.setImageRequest(imageRequest2);
         }
 
 

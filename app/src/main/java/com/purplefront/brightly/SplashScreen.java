@@ -2,9 +2,11 @@ package com.purplefront.brightly;
 
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -19,6 +21,8 @@ import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.AppVarModule;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
+
+import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -55,12 +59,28 @@ public class SplashScreen extends AppCompatActivity {
 //        userId = SharedPrefUtils.getString(MyChannel.this, Util.User_Id, "");
 
         if (getIntent() != null) {
+            String action = getIntent().getAction();
+            String type = getIntent().getType();
             isNotification = getIntent().getBooleanExtra("isNotification", false);
             isRevoked = getIntent().getBooleanExtra("isRevoked", false);
-
+            if (Intent.ACTION_SEND.equals(action) && type != null) {
+                if ("text/plain".equals(type)) {
+                    //   handleSendText(intent); // Handle text being sent
+                } else if (type.startsWith("image/")) {
+                    handleSendImage(getIntent()); // Handle single image being sent
+                }
+            } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+                if (type.startsWith("image/")) {
+                    handleSendMultipleImages(getIntent()); // Handle multiple images being sent
+                }
+            } else {
+                // Handle other intents, such as being started from the home screen
+            }
         }
         if (isNotification) {
             isCardNotification = getIntent().getBooleanExtra("isCardNotification", false);
+            String jsonStr = getIntent().getStringExtra("Card_id");
+            //  Toast.makeText(SplashScreen.this, "Json Str:" + jsonStr, Toast.LENGTH_LONG).show();
             nfy_obj = getIntent().getParcelableExtra("notfy_modl_obj");
         }
         try {
@@ -88,6 +108,22 @@ public class SplashScreen extends AppCompatActivity {
         logo_title.startAnimation(myanim);
     }
 
+    void handleSendImage(Intent intent) {
+        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (imageUri != null) {
+            // Update UI to reflect image being shared
+            Toast.makeText(SplashScreen.this, "Image URI:" + imageUri, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    void handleSendMultipleImages(Intent intent) {
+        ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        if (imageUris != null) {
+            // Update UI to reflect multiple images being shared
+            Toast.makeText(SplashScreen.this, "Image URI:" + imageUris.get(0), Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void getAppVar() {
 
         if (CheckNetworkConnection.isOnline(this)) {
@@ -108,11 +144,16 @@ public class SplashScreen extends AppCompatActivity {
 
                                     Intent intent = new Intent(SplashScreen.this, BrightlyNavigationActivity.class);
                                     intent.putExtra("user_obj", model);
+                                    //    Log.e("Coment_notify_user_id", model.getUser_Id());
+                                    // Toast.makeText(SplashScreen.this,ge)
                                     intent.putExtra("app_var_obj", appVarModuleObj);
                                     if (isNotification) {
                                         intent.putExtra("isNotification", true);
                                         intent.putExtra("isRevoked", isRevoked);
                                         intent.putExtra("notfy_modl_obj", nfy_obj);
+
+                                        //    Log.e("Coment_notify_card_id", "Card_id" + nfy_obj.comment_card_id);
+
 
                                         if (isCardNotification) {
                                             intent.putExtra("isCardNotification", true);
@@ -139,7 +180,7 @@ public class SplashScreen extends AppCompatActivity {
 
                 @Override
                 public void onApiFailure(boolean isSuccess, String message) {
-                    Toast.makeText(SplashScreen.this, message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(SplashScreen.this, "Error Params missing v" + message, Toast.LENGTH_LONG).show();
                 }
             });
         } else {

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00ffffff">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_createCard">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:id="@+id/video_contr"
+                android:layout_width="match_parent"
+
+                android:layout_height="250dp">
+               
+                <VideoView
+                    android:id="@+id/video_vw"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/play_pause"
+
+
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center" />
+
+
+                <ImageView
+                    android:id="@+id/img_video_upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/upload_video" />
+            </FrameLayout>
+
+            <EditText
+                android:id="@+id/create_cardName"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@+id/video_contr"
+                android:layout_marginLeft="@dimen/dimen_20"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_20"
+                android:layout_marginBottom="@dimen/dimen_5"
+                android:background="@drawable/edit_text_background"
+
+                android:hint="@string/card_name"
+                android:inputType="textCapSentences"
+                android:maxLength="40"
+                android:padding="@dimen/dimen_4"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/mediumtextsize" />
+
+            <EditText
+                android:id="@+id/create_cardDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/create_cardName"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="@dimen/dimen_20"
+                android:layout_marginTop="@dimen/dimen_5"
+                android:layout_marginRight="@dimen/dimen_20"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:background="@drawable/edit_text_background"
+                android:hint="@string/card_description"
+                android:inputType="textCapSentences|textMultiLine"
+                android:minHeight="120dp"
+                android:padding="@dimen/dimen_4"
+                android:textColor="@color/black"
+                android:textSize="@dimen/mediumtextsize" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_createCard"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/dimen_8"
+        android:background="@drawable/login_btn_background"
+        android:padding="3dp"
+        android:text="@string/create_card"
+        android:textColor="@color/white"
+        android:textSize="@dimen/mediumtextsize" />
+
+</RelativeLayout>

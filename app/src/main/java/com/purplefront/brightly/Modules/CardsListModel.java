@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class CardsListModel implements Parcelable {
 
     @SerializedName("card_id")
@@ -15,6 +17,18 @@ public class CardsListModel implements Parcelable {
     @SerializedName("title")
     @Expose
     private String title;
+
+    public List<MultipleImageModel> getMultiple_img_url() {
+        return multiple_img_url;
+    }
+
+    public void setMultiple_img_url(List<MultipleImageModel> multiple_img_url) {
+        this.multiple_img_url = multiple_img_url;
+    }
+
+    @SerializedName("multiple_images")
+    @Expose
+    private List<MultipleImageModel> multiple_img_url;
 
     @SerializedName("url")
     @Expose
@@ -27,6 +41,18 @@ public class CardsListModel implements Parcelable {
     @SerializedName("name")
     @Expose
     private String name;
+
+    public static final Creator<CardsListModel> CREATOR = new Creator<CardsListModel>() {
+        @Override
+        public CardsListModel createFromParcel(Parcel in) {
+            return new CardsListModel(in);
+        }
+
+        @Override
+        public CardsListModel[] newArray(int size) {
+            return new CardsListModel[size];
+        }
+    };
 
     public String getCreated_by() {
         return created_by;
@@ -88,17 +114,6 @@ public class CardsListModel implements Parcelable {
         type = in.readString();
     }
 
-    public static final Creator<CardsListModel> CREATOR = new Creator<CardsListModel>() {
-        @Override
-        public CardsListModel createFromParcel(Parcel in) {
-            return new CardsListModel(in);
-        }
-
-        @Override
-        public CardsListModel[] newArray(int size) {
-            return new CardsListModel[size];
-        }
-    };
 
     public String getType() {
         return type;
@@ -148,18 +163,22 @@ public class CardsListModel implements Parcelable {
         this.name = name;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(card_id);
-        parcel.writeString(title);
-        parcel.writeString(url);
-        parcel.writeString(description);
-        parcel.writeString(name);
-        parcel.writeString(type);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(card_id);
+        dest.writeString(title);
+        dest.writeString(url);
+        dest.writeString(description);
+        dest.writeString(name);
+        dest.writeString(created_by);
+        dest.writeString(comment);
+        dest.writeString(type);
+        dest.writeByte((byte) (isDelSel ? 1 : 0));
     }
 }

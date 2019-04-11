@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/own_comnt_contr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+
+        android:layout_marginLeft="80dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/chat_own_background"
+
+
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/own_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+
+                android:text="Hello djfh
+jkdjf lhfhkfh kdfhkdhfkhdfk dkfhkd fkkf khfkd  dkfh kdfhkdh fkh dkfhkdhfk d dfkdhfk"
+
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/own_crtd_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/own_comment"
+
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:text="MMM  kkfjdk fjkdfjkjkjdfkj dfjdkjf" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/other_comt_contr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/own_comnt_contr"
+        android:layout_margin="5dp"
+
+
+        android:padding="5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="80dp"
+            android:background="@drawable/edit_text_background"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/other_comtd_by"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+
+                android:text="DD"
+
+
+
+                 />
+
+            <TextView
+                android:id="@+id/other_comt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/other_comtd_by"
+                android:layout_alignParentLeft="true"
+
+                android:text="dfhj fhj shfj hfjdh fjh jdfhjhd fjhjfh jdhfj dhfjh fdj hdjfhjdfh jdh fj hdfj hdfj hjdfhjdfhj djhjhfdj hdjh j dh jd hjdh jh dfj hfdj hj hjh dfjh fj hjf hj fj hfjh dj hj hdfj hfdjh fdj hdfj hfj jfh jhfdjhfhdfdj"
+
+                android:textColor="#000000"
+
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/other_crtd_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_below="@id/other_comt"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:text="Just Now shdjs hdjhdjsh" />
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>

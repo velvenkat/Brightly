@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,9 +32,14 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
@@ -95,6 +101,7 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
     String count;
     String pager_size;
     TextView view_nodata;
+    // public boolean isVideo_Media_ctrl_show;
     String Created_By = "";
     //  String userId;
     String channel_id = "";
@@ -416,7 +423,9 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
     int Cur_PagrPosition;
     int UPDATECARD = 102;
     boolean isAddCardPressed = false;
-    ImageView image_createCard, image_Comment;
+    ImageView image_createCard;
+
+    SimpleDraweeView image_Comment;
     SetsListModel setsListModel;
     ChannelListModel chl_list_obj;
     NotificationsModel notificationsModel;
@@ -513,15 +522,19 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
 
             // chl_list_obj = bundle.getParcelable("model_obj");
             chl_list_obj = ((BrightlyNavigationActivity) getActivity()).glob_chl_list_obj;
-            channel_id = chl_list_obj.getChannel_id();
-            channel_name = chl_list_obj.getChannel_name();
-            Created_By = chl_list_obj.getCreated_by();
+            if (chl_list_obj == null) {
+                ((BrightlyNavigationActivity) getActivity()).onFragmentBackKeyHandler(true);
+            } else {
+                channel_id = chl_list_obj.getChannel_id();
+                channel_name = chl_list_obj.getChannel_name();
+                Created_By = chl_list_obj.getCreated_by();
 
-            setsListModel = bundle.getParcelable("setsListModel");
-            set_description = setsListModel.getDescription();
-            set_name = setsListModel.getSet_name();
-            set_id = setsListModel.getSet_id();
-            share_link = setsListModel.getShare_link();
+                setsListModel = bundle.getParcelable("setsListModel");
+                set_description = setsListModel.getDescription();
+                set_name = setsListModel.getSet_name();
+                set_id = setsListModel.getSet_id();
+                share_link = setsListModel.getShare_link();
+            }
         }
 
         //setTitle(set_name);
@@ -539,15 +552,15 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
             }
         });
         image_createCard = (ImageView) rootView.findViewById(R.id.image_createCard);
-        image_Comment = (ImageView) rootView.findViewById(R.id.image_Comment);
+        image_Comment = (SimpleDraweeView) rootView.findViewById(R.id.image_Comment);
         //  bottom_navigation.setVisibility(View.GONE);
         if (!userObj.getUser_Id().equalsIgnoreCase(Created_By)) {
             image_createCard.setVisibility(View.GONE);
-            image_Comment.setVisibility(View.VISIBLE);
+            // image_Comment.setVisibility(View.VISIBLE);
 
         } else {
             image_createCard.setVisibility(View.VISIBLE);
-            image_Comment.setVisibility(View.GONE);
+            //  image_Comment.setVisibility(View.GONE);
         }
         imgNext.setVisibility(View.GONE);
         imgPrev.setVisibility(View.GONE);
@@ -641,12 +654,12 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
         image_Comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String CardID = cardsListModels.get(Card_CurrentPos).getCard_id();
 
                 String card_created_by = cardsListModels.get(Card_CurrentPos).getCreated_by();
 
                 Bundle bundle_comnt = new Bundle();
-
                 if (userObj.getUser_Id().equals(card_created_by)) {
                     bundle_comnt.putBoolean("isOwnCard", true);
                 } else {
@@ -655,13 +668,20 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
 
                 bundle_comnt.putString("card_id", CardID);
                 bundle_comnt.putString("set_name", set_name);
-                bundle_comnt.putString("set_id",set_id);
+                bundle_comnt.putString("set_id", set_id);
                 bundle_comnt.putString("userId", userObj.getUser_Id());
+                bundle_comnt.putString("card_crtd_by", card_created_by);
                 bundle_comnt.putString("channel_name", channel_name);
-                Fragment cmt_frag = new CommentsFragment();
-                cmt_frag.setArguments(bundle_comnt);
-                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Comments, cmt_frag, true);
+                if (!card_created_by.equals(userObj.getUser_Id())) {
 
+                    Fragment cmt_frag = new CommentsFragment();
+                    cmt_frag.setArguments(bundle_comnt);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Comments, cmt_frag, true);
+                } else {
+                    Fragment cmt_frag = new ChatListFragment();
+                    cmt_frag.setArguments(bundle_comnt);
+                    ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Chat_list, cmt_frag, true);
+                }
 
             }
         });
@@ -971,7 +991,7 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
     }
 
 
-    public void set_menu_icon(MenuItem item, String imgUrl) {
+  /*  public void set_menu_icon(MenuItem item, String imgUrl) {
         Glide.with(this).load(imgUrl).asBitmap().into(new SimpleTarget<Bitmap>(30, 30) {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
@@ -979,8 +999,8 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
             }
         });
     }
-
-    @Override
+*/
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle bundle = new Bundle();
         if (first_mediaPlayerObj != null) {
@@ -997,38 +1017,16 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
         }
         switch (item.getItemId()) {
 
-            case R.id.set_CommentsList:
-                Bundle bundle_list = new Bundle();
-                Fragment cmt_list_frag;
-                if (!isNotification) {
-
-                    bundle_list.putString("set_id", setsListModel.getSet_id());
-                    bundle_list.putString("set_name", setsListModel.getSet_name());
-                    bundle_list.putString("userId", userObj.getUser_Id());
-                    bundle_list.putString("channel_name", chl_list_obj.getChannel_name());
-                    cmt_list_frag = new CommentListFragment();
-                    cmt_list_frag.setArguments(bundle_list);
-
-                } else {
-                    bundle_list.putString("set_id", notificationsModel.getNotificationsSetDetail().getSet_id());
-                    bundle_list.putString("set_name", notificationsModel.getNotificationsSetDetail().getName());
-                    bundle_list.putString("userId", userObj.getUser_Id());
-                    bundle_list.putString("channel_name", notificationsModel.getChannel_name());
-                    cmt_list_frag = new CommentListFragment();
-                    cmt_list_frag.setArguments(bundle_list);
-                }
-                ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Comments_List, cmt_list_frag, true);
-                return true;
 
             case R.id.action_shre_settings:
                 if (isNotification) {
 
-                   /* Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                   *//* Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("notfy_modl_obj", notificationsModel);
                     intent.putExtra("isNotification", true);
                     startActivity(intent);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*//*
 
                     Fragment edit_set_info = new ShareSettings();
                     bundle.putParcelable("notfy_modl_obj", notificationsModel);
@@ -1038,13 +1036,13 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
                     ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Set_Share_settings, edit_set_info, true);
 
                 } else {
-                    /*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                    *//*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("model_obj", chl_list_obj);
                     intent.putExtra("setsListModel", setsListModel);
                     intent.putExtra("isNotification", false);
                     startActivity(intent);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*//*
                     Fragment edit_set_info = new ShareSettings();
                     //  bundle.putParcelable("model_obj", chl_list_obj);
                     bundle.putParcelable("setsListModel", setsListModel);
@@ -1059,12 +1057,12 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
 
                 if (isNotification) {
 
-                   /* Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                   *//* Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("notfy_modl_obj", notificationsModel);
                     intent.putExtra("isNotification", true);
                     startActivity(intent);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*//*
 
                     Fragment edit_set_info = new EditSetInfo();
                     bundle.putParcelable("notfy_modl_obj", notificationsModel);
@@ -1074,13 +1072,13 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
                     ((BrightlyNavigationActivity) getActivity()).onFragmentCall(Util.Edit_Set, edit_set_info, true);
 
                 } else {
-                    /*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
+                    *//*Intent intent = new Intent(CardDetailFragment.this, EditSetInfo.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("model_obj", chl_list_obj);
                     intent.putExtra("setsListModel", setsListModel);
                     intent.putExtra("isNotification", false);
                     startActivity(intent);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*//*
                     Fragment edit_set_info = new EditSetInfo();
                     //  bundle.putParcelable("model_obj", chl_list_obj);
                     bundle.putParcelable("setsListModel", setsListModel);
@@ -1097,7 +1095,7 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
 
 
 
-                   /* Intent intent1 = new Intent(CardDetailFragment.this, CreateCardsFragment.class);
+                   *//* Intent intent1 = new Intent(CardDetailFragment.this, CreateCardsFragment.class);
 
                     intent1.putExtra("userId", userId);
                     intent1.putExtra("setsListModel", setsListModel);
@@ -1107,7 +1105,7 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
 
                     //intent1.putExtra("my_card_bundle",bundle);
                     startActivityForResult(intent1, UPDATECARD);
-                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
+                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);*//*
                 Fragment frag = new CreateCardsFragment();
                 bundle.putParcelable("setsListModel", setsListModel);
                 //  bundle.putParcelable("model_obj", chl_list_obj);
@@ -1120,13 +1118,13 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
                 return true;
             case R.id.card_reorder:
 
-               /* Intent intent2 = new Intent(CardDetailFragment.this, CardList.class);
+               *//* Intent intent2 = new Intent(CardDetailFragment.this, CardList.class);
                 intent2.putExtra("userId", userId);
                 intent2.putExtra("setsListModel", setsListModel);
                 intent2.putExtra("re_order", true);
                 startActivity(intent2);
                 overridePendingTransition(R.anim.right_enter, R.anim.left_out);
-               */
+               *//*
                 Fragment cl_frag = new CardList();
                 Bundle bundle1 = new Bundle();
                 bundle1.putParcelable("setsListModel", setsListModel);
@@ -1162,7 +1160,7 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
 
     @Override
@@ -1193,8 +1191,29 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
 
     }
 
+    public void video_onFullscrreen(boolean isFullScreen) {
+        if (isFullScreen) {
+            image_createCard.setVisibility(View.GONE);
+            image_Comment.setVisibility(View.GONE);
+            pager_count.setVisibility(View.GONE);
+        } else {
+            pager_count.setVisibility(View.VISIBLE);
+            if (!userObj.getUser_Id().equalsIgnoreCase(Created_By)) {
+                image_createCard.setVisibility(View.GONE);
+
+                // image_Comment.setVisibility(View.VISIBLE);
+
+            } else {
+                image_createCard.setVisibility(View.VISIBLE);
+                //  image_Comment.setVisibility(View.GONE);
+            }
+            image_Comment.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     public void setBottomDialog() {
+
         final Dialog mBottomSheetDialog = new Dialog(getActivity(), R.style.MaterialDialogSheet);
         mBottomSheetDialog.setContentView(R.layout.dialog_view_layout); // your custom view.
         mBottomSheetDialog.setCancelable(true);
@@ -1351,6 +1370,7 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
         String isComments = cardsListModels.get(Card_CurrentPos).getComment();
         String card_CreatedBY = cardsListModels.get(Card_CurrentPos).getCreated_by();
         String IMAGEURL = "";
+        IMAGEURL = ((BrightlyNavigationActivity) getActivity()).NO_COMMENT_IMG;
         if (!userObj.getUser_Id().equalsIgnoreCase(card_CreatedBY)) {
             if (isComments.equals("1")) {
                 IMAGEURL = ((BrightlyNavigationActivity) getActivity()).HAVING_COMMENT_IMG;
@@ -1362,19 +1382,43 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
             if (isComments.equals("1")) {
                 IMAGEURL = ((BrightlyNavigationActivity) getActivity()).HAVING_COMMENT_IMG;
             } else {
-                image_Comment.setVisibility(View.GONE);
+                // image_Comment.setVisibility(View.GONE);
             }
         }
         if (!IMAGEURL.equals("")) {
-            Glide.with(getContext())
+           /* Glide.with(getContext())
                     .load(IMAGEURL)
                     .asBitmap()
 
 
 //                    .transform(new CircleTransform(scrn_context))
-                    /*.override(50, 50)*/
-                    .into(image_Comment);
+                    *//*.override(50, 50)*//*
+                    .into(image_Comment);*/
+
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(getContext().getResources());
+            builder.setProgressBarImage(R.drawable.loader);
+            ResizeOptions mResizeOptions = new ResizeOptions(65, 65);
+            builder.setProgressBarImage(
+                    new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+            builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = builder
+                    .setFadeDuration(100)
+                    .build();
+
+            image_Comment.setHierarchy(hierarchy);
+
+
+            final ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(IMAGEURL))
+                            .setResizeOptions(mResizeOptions)
+
+                            .build();
+            image_Comment.setImageRequest(imageRequest);
+
+
         }
+
     }
 
     private void setAdapter(List<CardsListModel> cardsListModels) {
@@ -1409,6 +1453,7 @@ public class CardDetailFragment extends BaseFragment implements CardOptionsMenuA
         }
         cardsPagerAdapter = new ViewCardFragmentPagerAdapter(getContext(), getChildFragmentManager(), cardFragList, set_id, userObj.getUser_Id(), set_name);
         viewPager_Cards.setAdapter(cardsPagerAdapter);
+        viewPager_Cards.setOffscreenPageLimit(2);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override

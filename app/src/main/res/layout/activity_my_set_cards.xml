@@ -64,7 +64,7 @@
         android:background="@drawable/circular_image_drawable"
         android:src="@drawable/add_image_white" />
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/image_Comment"
         android:layout_width="65dp"
         android:layout_height="65dp"

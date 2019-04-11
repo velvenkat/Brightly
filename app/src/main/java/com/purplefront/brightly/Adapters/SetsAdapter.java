@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Adapters;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -19,8 +20,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 
+import com.facebook.common.util.UriUtil;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.Fragments.CardDetailFragment;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.ChannelListModel;
@@ -117,22 +126,58 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
         } else {
             holder.chkbx_del_set.setChecked(false);
         }
+        ResizeOptions mResizeOptions = new ResizeOptions(50, 50);
         if (!setsListModel.getThumbnail().isEmpty()) {
 
-            Glide.with(scrn_contxt)
+           /* Glide.with(scrn_contxt)
                     .load(setsListModel.getThumbnail())
                     .placeholder(R.drawable.progress_icon)
                     .fitCenter()
-                    /*.transform(new CircleTransform(HomeActivity.this))
-                    .override(50, 50)*/
-                    .into(holder.imageView_setImage);
+                    *//*.transform(new CircleTransform(HomeActivity.this))
+                    .override(50, 50)*//*
+                    .into(holder.imageView_setImage);*/
+
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(scrn_contxt.getResources());
+            builder.setProgressBarImage(R.drawable.loader);
+            mResizeOptions = new ResizeOptions(50, 50);
+            builder.setProgressBarImage(
+                    new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+            builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = builder
+                    .setFadeDuration(100)
+                    .build();
+
+            holder.imageView_setImage.setHierarchy(hierarchy);
+
+
+            final ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(setsListModel.getThumbnail()))
+                            .setResizeOptions(mResizeOptions)
+
+                            .build();
+            holder.imageView_setImage.setImageRequest(imageRequest);
+
+
         } else {
-            Glide.with(scrn_contxt)
+           /* Glide.with(scrn_contxt)
                     .load(R.drawable.no_image_available)
                     .centerCrop()
-                    /*.transform(new CircleTransform(HomeActivity.this))
-                    .override(50, 50)*/
-                    .into(holder.imageView_setImage);
+                    *//*.transform(new CircleTransform(HomeActivity.this))
+                    .override(50, 50)*//*
+                    .into(holder.imageView_setImage);*/
+
+            //   ResizeOptions mResizeOptions = new ResizeOptions(50, 50);
+            Uri uri = new Uri.Builder()
+                    .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
+                    .path(String.valueOf(R.drawable.no_image_available))
+                    .build();
+            final ImageRequest imageRequest2 =
+                    ImageRequestBuilder.newBuilderWithSource(uri)
+                            .setResizeOptions(mResizeOptions)
+                            .build();
+            holder.imageView_setImage.setImageRequest(imageRequest2);
+
         }
         if (isCopyCard) {
             holder.img_share.setVisibility(View.GONE);
@@ -220,7 +265,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
                     context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
                     //Fragment card_dtl_frag=new CardDetailFragment();
                     Bundle bundle = new Bundle();
-                   // bundle.putParcelable("model_obj", chl_list_obj);
+                    // bundle.putParcelable("model_obj", chl_list_obj);
                     bundle.putParcelable("setsListModel", setsListModel);
                     bundle.putBoolean("isNotification", false);
                     bundle.putString("chl_name", chl_list_obj.getChannel_name());
@@ -242,7 +287,7 @@ public class SetsAdapter extends RecyclerView.Adapter<SetsAdapter.ViewHolder> {
 
         TextView textView_setName;
         // TextView textView_setCount;
-        ImageView imageView_setImage;
+        SimpleDraweeView imageView_setImage;
         //  RelativeLayout channel_layout;
         CheckBox chkbx_del_set;
         ImageView img_info, img_share;

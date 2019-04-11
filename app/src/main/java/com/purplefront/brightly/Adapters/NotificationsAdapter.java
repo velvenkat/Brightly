@@ -2,7 +2,7 @@ package com.purplefront.brightly.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -16,16 +16,25 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.facebook.common.util.UriUtil;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.Fragments.CardDetailFragment;
+import com.purplefront.brightly.Fragments.CommentsFragment;
 import com.purplefront.brightly.Modules.NotificationsModel;
 import com.purplefront.brightly.Modules.NotificationsSetDetail;
 import com.purplefront.brightly.R;
-import com.purplefront.brightly.Utils.CircleTransform;
+
 
 import java.util.List;
 
-public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder>{
+public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder> {
 
     List<NotificationsModel> notificationsModels;
     Activity context;
@@ -36,15 +45,16 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     String userId;
     String channel_id = "";
     MessagePassInterface mListener;
+    ResizeOptions mResizeOptions = new ResizeOptions(120, 100);
 
 
-    public NotificationsAdapter(MessagePassInterface listener,FragmentActivity activity, List<NotificationsModel> notificationsModels, String user_ID) {
+    public NotificationsAdapter(MessagePassInterface listener, FragmentActivity activity, List<NotificationsModel> notificationsModels, String user_ID) {
 
         this.context = activity;
         this.userId = user_ID;
         this.notificationsModels = notificationsModels;
         inflater = (LayoutInflater.from(context));
-        mListener=listener;
+        mListener = listener;
     }
 
     @NonNull
@@ -62,18 +72,17 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     public void onBindViewHolder(@NonNull NotificationsAdapter.ViewHolder holder, int position) {
 
         NotificationsModel notificationsModel = notificationsModels.get(position);
+
         channel_id = notificationsModel.getChannel_id();
 
         if (notificationsModel.getContent() != null) {
             holder.notification_content.setText(notificationsModel.getContent());
         }
 
-        if(notificationsModel.getAction().equals("deleted")  || notificationsModel.getAction().equals("revoked")) {
+        if (notificationsModel.getAction().equals("deleted") || notificationsModel.getAction().equals("revoked")) {
 
             holder.notification_content.setTextColor(context.getResources().getColor(R.color.orange_color));
-        }
-        else
-        {
+        } else {
             holder.notification_content.setTextColor(context.getResources().getColor(R.color.black));
         }
 
@@ -84,21 +93,52 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         if (!notificationsModel.getShared_user_profile_pic().isEmpty()) {
 
-            Glide.with(context)
+            /*Glide.with(context)
                     .load(notificationsModel.getShared_user_profile_pic())
                     .placeholder(R.drawable.progress_icon)
                     .fitCenter()
-                   .transform(new CircleTransform(context))
-                    /*.override(50, 50)*/
-                    .into(holder.notification_Image);
+                    .transform(new CircleTransform(context))
+                    *//*.override(50, 50)*//*
+                    .into(holder.notification_Image);*/
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(context.getResources());
+            builder.setProgressBarImage(R.drawable.loader);
+            mResizeOptions = new ResizeOptions(50, 50);
+            builder.setProgressBarImage(
+                    new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+            builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = builder
+                    .setFadeDuration(100)
+                    .build();
+
+            holder.notification_Image.setHierarchy(hierarchy);
+
+
+            final ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(notificationsModel.getShared_user_profile_pic()))
+                            .setResizeOptions(mResizeOptions)
+
+                            .build();
+            holder.notification_Image.setImageRequest(imageRequest);
+
 
         } else {
-            Glide.with(context)
+          /*  Glide.with(context)
                     .load(R.drawable.default_user_image)
                     .centerCrop()
                     .transform(new CircleTransform(context))
-                    /*.override(50, 50)*/
-                    .into(holder.notification_Image);
+                    *//*.override(50, 50)*//*
+                    .into(holder.notification_Image);*/
+
+            Uri uri = new Uri.Builder()
+                    .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
+                    .path(String.valueOf(R.drawable.default_user_image))
+                    .build();
+            final ImageRequest imageRequest2 =
+                    ImageRequestBuilder.newBuilderWithSource(uri)
+                            .setResizeOptions(mResizeOptions)
+                            .build();
+            holder.notification_Image.setImageRequest(imageRequest2);
         }
 
         notificationsSetDetail = notificationsModel.getNotificationsSetDetail();
@@ -107,31 +147,33 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             @Override
             public void onClick(View view) {
 
-                if((notificationsModel.getType().equals("set")) && notificationsModel.getAction().equals("deleted")) {
+                if ((notificationsModel.getType().equals("set")) && notificationsModel.getAction().equals("deleted")) {
 
                     Toast.makeText(context, "This Set is Deleted...", Toast.LENGTH_SHORT).show();
 
-                }
-                else if((notificationsModel.getType().equals("card")) && notificationsModel.getAction().equals("deleted")) {
+                } else if ((notificationsModel.getType().equals("card")) && notificationsModel.getAction().equals("deleted")) {
 
                     Toast.makeText(context, "This Card is Deleted...", Toast.LENGTH_SHORT).show();
 
-                }
-                else if(notificationsModel.getAction().equals("revoked"))
-                {
+                } else if (notificationsModel.getAction().equals("revoked")) {
                     Toast.makeText(context, notificationsModel.getNotificationsSetDetail().getName() + " set permission has been Revoked.", Toast.LENGTH_SHORT).show();
-                }
-
-                else
-                {
+                } else if (notificationsModel.getAction().equals("comment")) {
+                    Fragment fragment = new CommentsFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("userId", userId);
+                    bundle.putParcelable("notfy_modl_obj", notificationsModel);
+                    bundle.putBoolean("isNotification", true);
+                    fragment.setArguments(bundle);
+                    mListener.onMessagePass(fragment);
+                } else {
                     /*Intent intent = new Intent(context, CardDetailFragment.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("notfy_modl_obj", notificationsModel);
                     intent.putExtra("isNotification", true);
                     context.startActivity(intent);
                     context.overridePendingTransition(R.anim.right_enter, R.anim.left_out);*/
-                    Fragment fragment=new CardDetailFragment();
-                    Bundle bundle =new Bundle();
+                    Fragment fragment = new CardDetailFragment();
+                    Bundle bundle = new Bundle();
                     bundle.putParcelable("notfy_modl_obj", notificationsModel);
                     bundle.putBoolean("isNotification", true);
                     fragment.setArguments(bundle);
@@ -152,7 +194,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         TextView notification_content;
         TextView notification_dateTime;
-        ImageView notification_Image;
+        SimpleDraweeView notification_Image;
         RelativeLayout notification_layout;
 
         public ViewHolder(View itemView) {
@@ -165,7 +207,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
     }
 
-    public interface MessagePassInterface{
+    public interface MessagePassInterface {
         public void onMessagePass(Fragment fragment);
     }
 }

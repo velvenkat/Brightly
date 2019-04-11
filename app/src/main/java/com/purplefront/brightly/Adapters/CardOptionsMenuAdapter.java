@@ -1,6 +1,7 @@
 package com.purplefront.brightly.Adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +10,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.Modules.OptionsModel;
 import com.purplefront.brightly.R;
 
@@ -20,9 +29,9 @@ public class CardOptionsMenuAdapter extends RecyclerView.Adapter<CardOptionsMenu
     public ArrayList<OptionsModel> models_list;
     OptsMenuInterface mListener;
 
-    public CardOptionsMenuAdapter(Context context,OptsMenuInterface listener) {
+    public CardOptionsMenuAdapter(Context context, OptsMenuInterface listener) {
         scrn_contxt = context;
-        mListener=listener;
+        mListener = listener;
     }
 
     @NonNull
@@ -41,17 +50,38 @@ public class CardOptionsMenuAdapter extends RecyclerView.Adapter<CardOptionsMenu
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               mListener.onOptsMenuSelected(models_list.get(position).Opts_Type);
+                mListener.onOptsMenuSelected(models_list.get(position).Opts_Type);
             }
         });
-        Glide.with(scrn_contxt)
+        /*Glide.with(scrn_contxt)
                 .load(models_list.get(position).img_url)
                 .asBitmap()
                 .placeholder(R.drawable.progress_icon)
 
 //                    .transform(new CircleTransform(scrn_context))
-                /*.override(50, 50)*/
-                .into(holder.imageOptions);
+                *//*.override(50, 50)*//*
+                .into(holder.imageOptions);*/
+        GenericDraweeHierarchyBuilder builder =
+                new GenericDraweeHierarchyBuilder(scrn_contxt.getResources());
+        builder.setProgressBarImage(R.drawable.loader);
+        ResizeOptions mResizeOptions = new ResizeOptions(50, 50);
+        builder.setProgressBarImage(
+                new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+        builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+        GenericDraweeHierarchy hierarchy = builder
+                .setFadeDuration(100)
+                .build();
+
+        holder.imageOptions.setHierarchy(hierarchy);
+
+
+        final ImageRequest imageRequest =
+                ImageRequestBuilder.newBuilderWithSource(Uri.parse(models_list.get(position).img_url))
+                        .setResizeOptions(mResizeOptions)
+
+                        .build();
+        holder.imageOptions.setImageRequest(imageRequest);
+
     }
 
     @Override
@@ -60,7 +90,7 @@ public class CardOptionsMenuAdapter extends RecyclerView.Adapter<CardOptionsMenu
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageOptions;
+        SimpleDraweeView imageOptions;
         TextView txtOptions;
 
 
@@ -70,7 +100,8 @@ public class CardOptionsMenuAdapter extends RecyclerView.Adapter<CardOptionsMenu
             txtOptions = itemView.findViewById(R.id.txtOptions);
         }
     }
-   public interface OptsMenuInterface{
+
+    public interface OptsMenuInterface {
         public void onOptsMenuSelected(int Type);
-   }
+    }
 }

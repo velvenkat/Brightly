@@ -28,12 +28,12 @@ import com.purplefront.brightly.Utils.CheckNetworkConnection;
 
 import retrofit2.Call;
 import retrofit2.Response;
-import swarajsaaj.smscodereader.interfaces.OTPListener;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ForgotPassword extends BaseFragment implements View.OnClickListener, OTPListener {
+public class ForgotPassword extends BaseFragment implements View.OnClickListener, Login.OTPListener {
 
     private View view;
     //  private EditText emailId;
@@ -437,7 +437,7 @@ public class ForgotPassword extends BaseFragment implements View.OnClickListener
         String message = addMessageResponse.getMessage();
         dialog.dismiss();
         if (message.equalsIgnoreCase("success")) {
-            Toast.makeText(getContext(),"Password reset successfully",Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Password reset successfully", Toast.LENGTH_LONG).show();
             ((Login) getActivity()).getSupportFragmentManager().popBackStackImmediate();
         }
     }

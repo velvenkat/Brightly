@@ -30,7 +30,7 @@ public class Util {
 	public static final String share_page= "share_page";
 	public static final String share_with_contact= "share_with_contact";
 	public static final String Comments= "Comments";
-	public static final String Comments_List= "Comments_List";
+	public static final String Chat_list= "Chat_List";
 
 
 	// User Details

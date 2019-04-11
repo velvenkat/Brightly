@@ -35,7 +35,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.drawable.AutoRotateDrawable;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -54,6 +54,7 @@ import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.BadgeDrawable;
 import com.purplefront.brightly.Fragments.CardDetailFragment;
 import com.purplefront.brightly.Fragments.CardList;
+import com.purplefront.brightly.Fragments.CommentsFragment;
 import com.purplefront.brightly.Fragments.EditSetInfo;
 import com.purplefront.brightly.Fragments.MyProfile;
 import com.purplefront.brightly.Fragments.Notifications;
@@ -71,7 +72,7 @@ import com.purplefront.brightly.Modules.NotificationsResponse;
 import com.purplefront.brightly.Modules.SetsListModel;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
-import com.purplefront.brightly.Utils.CircleTransform;
+
 import com.purplefront.brightly.Utils.PermissionUtil;
 import com.purplefront.brightly.Utils.Util;
 
@@ -157,7 +158,7 @@ public class BrightlyNavigationActivity extends BaseActivity
     public ChannelListModel glob_chl_list_obj;
     public SetsListModel glob_set_list_obj;
     public String CARD_CREATE_IMAGE;
-
+    String Card_ID;
 
     /**
      * isCardRefresh flag is needed to refresh card from CardList page to CardDetail called
@@ -181,7 +182,9 @@ public class BrightlyNavigationActivity extends BaseActivity
         isNotification = getIntent().getBooleanExtra("isNotification", false);
         isCardNotification = getIntent().getBooleanExtra("isCardNotification", false);
         isRevoked = getIntent().getBooleanExtra("isRevoked", false);
+        Card_ID = getIntent().getStringExtra("Card_id");
 
+        //Toast.makeText(BrightlyNavigationActivity.this, "Card_id " + Card_ID, Toast.LENGTH_LONG).show();
         fragmentManager = getSupportFragmentManager();
         setDlgListener(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -225,6 +228,13 @@ public class BrightlyNavigationActivity extends BaseActivity
                 }
 
             }
+        } else {
+            userId = user_obj.getUser_Id();
+            userName = user_obj.getUser_Name();
+            userPhone = user_obj.getUser_PhoneNumber();
+            userPicture = user_obj.getImage();
+            deviceToken = user_obj.getDeviceToken();
+
         }
 
         if (PermissionUtil.hasPermission(new String[]{Manifest.permission.READ_CONTACTS}, BrightlyNavigationActivity.this, PERMISSION_REQ_CODE_CONTACT)) {
@@ -352,6 +362,14 @@ public class BrightlyNavigationActivity extends BaseActivity
                 bundle.putParcelable("notfy_modl_obj", nfy_model);
                 card_frag.setArguments(bundle);
                 onFragmentCall(Util.view_card, card_frag, false);
+            } else if (nfy_model.getAction().equals("comment")) {
+                Fragment fragment = new CommentsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("userId", user_obj.getUser_Id());
+                bundle.putParcelable("notfy_modl_obj", nfy_model);
+                bundle.putBoolean("isNotification", true);
+                fragment.setArguments(bundle);
+                onFragmentCall(Util.Comments, fragment, false);
             } else {
                 Fragment nfy_frag = new Notifications();
             /*fragmentManager
@@ -431,13 +449,23 @@ public class BrightlyNavigationActivity extends BaseActivity
 
 
         } else {
-
+/*
             Glide.with(getApplicationContext())
                     .load(R.drawable.default_user_image)
                     .centerCrop()
                     .transform(new CircleTransform(BrightlyNavigationActivity.this))
-                    /*.override(50, 50)*/
-                    .into(headerImage_Profile);
+                    *//*.override(50, 50)*//*
+                    .into(headerImage_Profile);*/
+            Uri uri = new Uri.Builder()
+                    .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
+                    .path(String.valueOf(R.drawable.default_user_image))
+                    .build();
+            final ImageRequest imageRequest2 =
+                    ImageRequestBuilder.newBuilderWithSource(uri)
+                            .setResizeOptions(mResizeOptions)
+                            .build();
+            headerImage_Profile.setImageRequest(imageRequest2);
+
         }
 
     }
@@ -460,7 +488,7 @@ public class BrightlyNavigationActivity extends BaseActivity
 
                 @Override
                 public void onApiFailure(boolean isSuccess, String message) {
-                    Toast.makeText(BrightlyNavigationActivity.this, message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(BrightlyNavigationActivity.this, "Error Params missing v" + message, Toast.LENGTH_LONG).show();
                 }
             });
         } else {

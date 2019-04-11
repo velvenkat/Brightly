@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,7 +30,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.facebook.common.util.UriUtil;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.purplefront.brightly.API.ApiCallback;
 import com.purplefront.brightly.API.RetrofitInterface;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
@@ -40,7 +48,7 @@ import com.purplefront.brightly.Modules.ChannelListModel;
 import com.purplefront.brightly.Modules.ChannelListResponse;
 import com.purplefront.brightly.R;
 import com.purplefront.brightly.Utils.CheckNetworkConnection;
-import com.purplefront.brightly.Utils.CircleTransform;
+
 import com.purplefront.brightly.Utils.Util;
 
 import java.util.ArrayList;
@@ -211,8 +219,10 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
 
                 getActivity()).headerText_Phone.setText(userPhone);
 
+        ResizeOptions mResizeOptions = new ResizeOptions(75, 75);
         if (userPicture != null) {
 
+/*
             Glide.with(getActivity())
                     .load(userPicture)
                     .centerCrop()
@@ -224,10 +234,55 @@ public class ChannelFragment extends BaseFragment implements MyChannelsAdapter.C
                     .load(R.drawable.default_user_image)
                     .centerCrop()
                     .transform(new CircleTransform(getActivity()))
-                    /*.override(50, 50)*/
+                    */
+            /*.override(50, 50)*//*
+
                     .into(((BrightlyNavigationActivity) getActivity()).headerImage_Profile);
         }
+*/
 
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(getContext().getResources());
+            builder.setProgressBarImage(R.drawable.loader);
+            // mResizeOptions = new ResizeOptions(50, 50);
+            builder.setProgressBarImage(
+                    new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+            builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = builder
+                    .setFadeDuration(100)
+                    .build();
+
+            ((BrightlyNavigationActivity) getActivity()).headerImage_Profile.setHierarchy(hierarchy);
+
+
+            final ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(userPicture))
+                            .setResizeOptions(mResizeOptions)
+
+                            .build();
+            ((BrightlyNavigationActivity) getActivity()).headerImage_Profile.setImageRequest(imageRequest);
+
+
+        } else {
+           /* Glide.with(scrn_contxt)
+                    .load(R.drawable.no_image_available)
+                    .centerCrop()
+                    *//*.transform(new CircleTransform(HomeActivity.this))
+                    .override(50, 50)*//*
+                    .into(holder.imageView_setImage);*/
+
+            //   ResizeOptions mResizeOptions = new ResizeOptions(50, 50);
+            Uri uri = new Uri.Builder()
+                    .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
+                    .path(String.valueOf(R.drawable.default_user_image))
+                    .build();
+            final ImageRequest imageRequest2 =
+                    ImageRequestBuilder.newBuilderWithSource(uri)
+                            .setResizeOptions(mResizeOptions)
+                            .build();
+            ((BrightlyNavigationActivity) getActivity()).headerImage_Profile.setImageRequest(imageRequest2);
+
+        }
 
         view_nodata = (TextView) rootView.findViewById(R.id.view_nodata);
         channels_listview = (RecyclerView) rootView.findViewById(R.id.channels_listview);

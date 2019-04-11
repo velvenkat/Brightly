@@ -65,7 +65,6 @@
                 android:src="@drawable/pencil_edit_button"
                 />
             <ImageView
-                android:id="@+id/access_chooser"
                 android:layout_width="@dimen/dimen_12"
                 android:layout_height="@dimen/dimen_12"
                 android:layout_marginTop="@dimen/dimen_2"

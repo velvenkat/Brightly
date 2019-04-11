@@ -80,8 +80,8 @@
 
             <ImageView
                 android:id="@+id/img_set_menu"
-                android:layout_width="match_parent"
-                android:layout_height="16dp"
+                android:layout_width="50dp"
+                android:layout_height="22dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:clickable="true"

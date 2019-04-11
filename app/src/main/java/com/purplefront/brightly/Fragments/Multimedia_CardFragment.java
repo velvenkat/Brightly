@@ -1,29 +1,40 @@
 package com.purplefront.brightly.Fragments;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
-import com.bumptech.glide.Glide;
+
 import com.facebook.drawee.drawable.AutoRotateDrawable;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -36,6 +47,7 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.purplefront.brightly.Activities.BrightlyNavigationActivity;
+import com.purplefront.brightly.Adapters.SlidingImage_Adapter;
 import com.purplefront.brightly.Application.RealmModel;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.Modules.ChannelListModel;
@@ -46,10 +58,16 @@ import com.purplefront.brightly.Utils.RichLinkViewTelegram;
 import com.purplefront.brightly.Utils.Util;
 import com.purplefront.brightly.Utils.ViewListener;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import uk.co.senab.photoview.PhotoViewAttacher;
 
+import com.viewpagerindicator.CirclePageIndicator;
 
-public class Multimedia_CardFragment extends BaseFragment implements YouTubePlayer.OnInitializedListener {
+import org.w3c.dom.Text;
+
+public class Multimedia_CardFragment extends BaseFragment implements SlidingImage_Adapter.SlideImageCLicked, YouTubePlayer.OnInitializedListener {
     View rootView;
     RichLinkViewTelegram richLinkView1;
     CardsListModel cardModelObj;
@@ -62,8 +80,13 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     String DEVELOPER_KEY = "AIzaSyDPwTq4xr0Fq-e1z0tDEBaj3qgAgi5VJ44";
     ImageView img_audio_play_stop;
     SeekBar audio_seek_bar;
+    FrameLayout fl_video_contr;
+    FullScreenMediaController customMediaController;
     TextView txt_PlayProgTime;
     TextView file_cardLink;
+    VideoView video_vw;
+    private boolean isFullScreen_videoVw;
+    int currentPage;
     RealmModel userObj;
     boolean isFileLoaded = false;
     // String setCreatedBy,channel_name;
@@ -72,11 +95,23 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     NotificationsModel notificationsModelObj;
     SetsListModel setsListModelObj;
     ChannelListModel chl_list_obj;
+    TextView text_cardName;
+    TextView text_cardDescription;
+    ImageView img_play_pause_video;
     boolean isNotification;
     String card_pos;
+    int NUM_PAGES;
+    Runnable buffer_updaterunnable;
+    Timer swipeTimer;
+    TextView txtBuffer;
     LinearLayout ll_card_contr;
     ProgressDialog file_progress = null;
     RelativeLayout scroll_card;
+    LinearLayout ll_image_card_contr;
+    ViewPager mPager;
+    View btn_temp;
+    CirclePageIndicator indicator;
+    Handler buffer_handler;
 
 
     @Nullable
@@ -85,6 +120,16 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         rootView = inflater.inflate(R.layout.items_multimedia_pager, container, false);
         scroll_card = (RelativeLayout) rootView.findViewById(R.id.scroll_card);
         ll_card_contr = rootView.findViewById(R.id.ll_card_contr);
+        ll_image_card_contr = rootView.findViewById(R.id.ll_image_card_contr);
+        mPager = (ViewPager) rootView.findViewById(R.id.pager);
+        video_vw = rootView.findViewById(R.id.video_vw);
+        btn_temp = (View) rootView.findViewById(R.id.btn_temp);
+        txtBuffer = rootView.findViewById(R.id.txt_buffer);
+        img_play_pause_video = rootView.findViewById(R.id.play_pause);
+        fl_video_contr = rootView.findViewById(R.id.video_contr);
+        CirclePageIndicator indicator = (CirclePageIndicator)
+                rootView.findViewById(R.id.indicator);
+
         userObj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
         Bundle bundle = getArguments();
         //  setHasOptionsMenu(true);
@@ -95,6 +140,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         notificationsModelObj = bundle.getParcelable("notfy_modl_obj");
         isNotification = bundle.getBoolean("isNotification");
         card_pos = bundle.getString("card_position");
+
 
         ll_card_contr.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,16 +153,15 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
         parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
         parent_frag_Card_dtl.isYouTubeInitializing = true;
 
-        TextView text_cardName;
-        TextView text_cardDescription;
-        SimpleDraweeView image_cardImage;
+
+        SimpleDraweeView image_audioImage;
 
 
         // Locate the TextViews in viewpager_item.xml
         text_cardName = (TextView) rootView.findViewById(R.id.text_cardName);
         rl_audio_player = (RelativeLayout) rootView.findViewById(R.id.rl_audio_player);
         text_cardDescription = (TextView) rootView.findViewById(R.id.text_cardDescription);
-        image_cardImage = (SimpleDraweeView) rootView.findViewById(R.id.image_cardImage);
+        image_audioImage = (SimpleDraweeView) rootView.findViewById(R.id.image_audio_image);
         frame_youtube = (FrameLayout) rootView.findViewById(R.id.frame_youtube);
         img_audio_play_stop = (ImageView) rootView.findViewById(R.id.img_play_stop);
         audio_seek_bar = (SeekBar) rootView.findViewById(R.id.seek_audio_rec);
@@ -137,6 +182,20 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             }
         });
 
+
+        video_vw.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+
+                customMediaController.show();
+
+
+                return true;
+            }
+
+
+        });
         //mPreview=new Preview(getContext());
 
         if (cardModelObj.getTitle() != null) {
@@ -153,77 +212,153 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 }
             });
         }
-        if (cardModelObj.getType().equalsIgnoreCase("image")) {
-            image_cardImage.setVisibility(View.VISIBLE);
+        if (cardModelObj.getType().equalsIgnoreCase("multiple_images")) {
+            ll_image_card_contr.setVisibility(View.VISIBLE);
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
+            fl_video_contr.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
             richLinkView1.setVisibility(View.GONE);
 
-            if (!cardModelObj.getUrl().isEmpty() && cardModelObj.getUrl() != null) {
+            mPager.setAdapter(new SlidingImage_Adapter(getContext(), cardModelObj.getMultiple_img_url(), this));
 
 
-               /* Glide.with(getContext())
-                        .load(cardModelObj.getUrl())
-                        .placeholder(R.drawable.card_progress_loading)
-                        .centerCrop()
-                        *//*.transform(new CircleTransform(HomeActivity.this))
-                        .override(50, 50)*//*
-                        .into(image_cardImage);*/
-                load_card_image(cardModelObj.getUrl(), image_cardImage, false);
+            indicator.setViewPager(mPager);
 
-                image_cardImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+            final float density = getResources().getDisplayMetrics().density;
 
+//Set circle indicator radius
+            indicator.setRadius(5 * density);
 
-                        LayoutInflater inflater = LayoutInflater.from(getActivity());
-                        View imgEntryView = inflater.inflate(R.layout.dialog_fullscreen, null);
-                        final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen); //default fullscreen titlebar
-                        SimpleDraweeView img = (SimpleDraweeView) imgEntryView.findViewById(R.id.usericon_large);
+            NUM_PAGES = cardModelObj.getMultiple_img_url().size();
 
-                     /*   Glide.with(getContext())
-                                .load(cardModelObj.getUrl())
-//                                .placeholder(R.drawable.card_progress_loading)
-                                .fitCenter()
-                                *//*.transform(new CircleTransform(HomeActivity.this))
-                                .override(50, 50)*//*
-                                .into(img);*/
-                        load_card_image(cardModelObj.getUrl(), img, true);
-
-                        dialog.setContentView(imgEntryView);
-                        dialog.show();
-
-                        imgEntryView.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View paramView) {
-//                                dialog.cancel();
-                                PhotoViewAttacher photoAttacher;
-                                photoAttacher = new PhotoViewAttacher(img);
-                                photoAttacher.update();
-                            }
-                        });
-
+            // Auto start of viewpager
+            final Handler handler = new Handler();
+            final Runnable Update = new Runnable() {
+                public void run() {
+                    if (currentPage == NUM_PAGES) {
+                        currentPage = 0;
                     }
-                });
+                    mPager.setCurrentItem(currentPage++, true);
+                }
+            };
+            swipeTimer = new Timer();
+            swipeTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    handler.post(Update);
+                }
+            }, 3000, 3000);
 
-            } else {
-                Glide.with(getContext())
-                        .load(R.drawable.no_image_available)
-                        .centerCrop()
-                        /*.transform(new CircleTransform(HomeActivity.this))
-                        .override(50, 50)*/
-                        .into(image_cardImage);
-            }
+            // Pager listener over indicator
+            indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+                @Override
+                public void onPageSelected(int position) {
+                    currentPage = position;
+
+                }
+
+                @Override
+                public void onPageScrolled(int pos, float arg1, int arg2) {
+
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int pos) {
+
+                }
+            });
+
+
         } else if (cardModelObj.getType().equalsIgnoreCase("text")) {
-            image_cardImage.setVisibility(View.GONE);
+            ll_image_card_contr.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.GONE);
+            image_audioImage.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
+            fl_video_contr.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
             richLinkView1.setVisibility(View.GONE);
-        } else if (cardModelObj.getType().equalsIgnoreCase("video")) {
-            image_cardImage.setVisibility(View.GONE);
-            frame_youtube.setVisibility(View.VISIBLE);
+        } else if (cardModelObj.getType().equalsIgnoreCase("video_file")) {
+            ll_image_card_contr.setVisibility(View.GONE);
+            frame_youtube.setVisibility(View.GONE);
+            img_play_pause_video.setBackground(getContext().getResources().getDrawable(R.drawable.play_btn));
+            image_audioImage.setVisibility(View.GONE);
+
+            //video_vw.invalidate();
+            customMediaController = new FullScreenMediaController(getContext());
+            video_vw.setMediaController(customMediaController);
+
+
+            customMediaController.setAnchorView(fl_video_contr);
+
+
+            //     video_vw.setZOrderOnTop(true);
+            video_vw.setVideoURI(Uri.parse(cardModelObj.getUrl()));
+            video_vw.requestFocus();
+
+            video_vw.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    setBufferUpdateListener(mp);
+                    mp.setLooping(true);
+                    mp.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+                        @Override
+                        public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+                            img_play_pause_video.setVisibility(View.VISIBLE);
+                            video_vw.seekTo(1);
+                            video_vw.pause();
+
+                            if (!isFullScreen_videoVw) {
+                                text_cardDescription.setVisibility(View.VISIBLE);
+                                text_cardName.setVisibility(View.VISIBLE);
+                                parent_frag_Card_dtl.video_onFullscrreen(false);
+                            }
+
+                            // customMediaController.show();
+                        }
+                    });
+                }
+
+            });
+            video_vw.start();
+
+            img_play_pause_video.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (video_vw.isPlaying()) {
+                        img_play_pause_video.setBackground(getContext().getResources().getDrawable(R.drawable.play_btn));
+                        video_vw.pause();
+                    } else {
+                        img_play_pause_video.setBackground(getContext().getResources().getDrawable(R.drawable.pause));
+                        video_vw.start();
+                    }
+                }
+            });
+
+
+            video_vw.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    //vidView.start();
+                    txtBuffer.setVisibility(View.GONE);
+                    img_play_pause_video.setBackground(getContext().getResources().getDrawable(R.drawable.play_btn));
+                }
+            });
+
             rl_audio_player.setVisibility(View.GONE);
+            fl_video_contr.setVisibility(View.VISIBLE);
+            file_cardLink.setVisibility(View.GONE);
+            richLinkView1.setVisibility(View.GONE);
+
+
+        } else if (cardModelObj.getType().equalsIgnoreCase("video")) {
+            ll_image_card_contr.setVisibility(View.GONE);
+            frame_youtube.setVisibility(View.VISIBLE);
+            fl_video_contr.setVisibility(View.GONE);
+            rl_audio_player.setVisibility(View.GONE);
+            image_audioImage.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
             richLinkView1.setVisibility(View.GONE);
             youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
@@ -260,21 +395,24 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 }
             });
         } else if (cardModelObj.getType().equalsIgnoreCase("audio")) {
-            image_cardImage.setVisibility(View.VISIBLE);
+            ll_image_card_contr.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.VISIBLE);
             file_cardLink.setVisibility(View.GONE);
+            fl_video_contr.setVisibility(View.GONE);
             richLinkView1.setVisibility(View.GONE);
-            image_cardImage.setImageResource(R.drawable.audio_hdr_img);
-            image_cardImage.getLayoutParams().height = 360;
+            image_audioImage.setVisibility(View.VISIBLE);
+            image_audioImage.setImageResource(R.drawable.audio_hdr_img);
+            image_audioImage.getLayoutParams().height = 360;
 
             audio_player_initialize(audio_seek_bar, txt_PlayProgTime, img_audio_play_stop);
             MediaPlayer mp = setMediaPlayer(null, cardModelObj.getUrl(), false);
             parent_frag_Card_dtl.setGlob_mediaPlayerObj(mp);
         } else if (cardModelObj.getType().equalsIgnoreCase("file")) {
-
-            image_cardImage.setVisibility(View.GONE);
+            image_audioImage.setVisibility(View.GONE);
+            ll_image_card_contr.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.GONE);
+            fl_video_contr.setVisibility(View.GONE);
             rl_audio_player.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
             richLinkView1.setVisibility(View.VISIBLE);
@@ -341,7 +479,7 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                     .centerCrop()
                     *//*.transform(new CircleTransform(HomeAct/ivity.this))
                     .override(50, 50)*//*
-                    .into(image_cardImage);*/
+                    .into(image_audioImage);*/
 
            /* file_cardLink.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -354,6 +492,45 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
                 }
             });*/
         }
+
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP) && isFullScreen_videoVw) {
+                    //
+                    //       getActivity().finish();
+
+                    isFullScreen_videoVw = false;
+                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                    // fullScreen.setImageResource(R.drawable.full_size);
+                    text_cardDescription.setVisibility(View.VISIBLE);
+                    text_cardName.setVisibility(View.VISIBLE);
+                    btn_temp.setVisibility(View.INVISIBLE);
+                    parent_frag_Card_dtl.video_onFullscrreen(false);
+                    fl_video_contr.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
+                    FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 250);
+                    params1.gravity = Gravity.CENTER;
+
+                    params1.bottomMargin = 5;
+                    params1.topMargin = 5;
+                    params1.rightMargin = 5;
+                    params1.leftMargin = 5;
+                    params1.height = 250;
+
+                    video_vw.setLayoutParams(params1);
+
+
+                    return true;
+
+                } else
+                    return false;
+            }
+
+        });
 
         // Add viewpager_item.xml to ViewPager
 /*
@@ -384,6 +561,27 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
             }
         });*/
         return rootView;
+    }
+
+    private void setBufferUpdateListener(MediaPlayer mp) {
+        mp.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                txtBuffer.setText(String.valueOf(percent) + "%");
+                txtBuffer.setVisibility(View.VISIBLE);
+                if (buffer_handler == null)
+                    buffer_handler = new Handler();
+                else
+                    buffer_handler.removeCallbacks(buffer_updaterunnable);
+                buffer_updaterunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        txtBuffer.setVisibility(View.GONE);
+                    }
+                };
+                buffer_handler.postDelayed(buffer_updaterunnable, 2000);
+            }
+        });
     }
 
     /*@Override
@@ -543,6 +741,83 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     }*/
 
 
+    public class FullScreenMediaController extends MediaController {
+
+        private ImageButton fullScreen;
+
+
+        public FullScreenMediaController(Context context) {
+            super(context);
+        }
+
+
+        @Override
+        public void setAnchorView(View view) {
+
+            super.setAnchorView(view);
+
+            //image button for full screen to be added to media controller
+            fullScreen = new ImageButton(super.getContext());
+
+            FrameLayout.LayoutParams params =
+                    new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                            LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+            params.rightMargin = 80;
+            addView(fullScreen, params);
+
+
+            isFullScreen_videoVw = false;
+
+            fullScreen.setImageResource(R.drawable.full_size);
+
+
+            //add listener to image button to handle full screen and exit full screen events
+            fullScreen.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!isFullScreen_videoVw) {
+                        isFullScreen_videoVw = true;
+                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().hide();
+                        parent_frag_Card_dtl.video_onFullscrreen(true);
+                        text_cardDescription.setVisibility(View.GONE);
+                        text_cardName.setVisibility(View.GONE);
+                        fullScreen.setImageResource(R.drawable.full_screen_exit);
+                        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        fl_video_contr.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        btn_temp.setVisibility(GONE);
+
+                        video_vw.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+                    } else {
+                        isFullScreen_videoVw = false;
+                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        fullScreen.setImageResource(R.drawable.full_size);
+                        text_cardDescription.setVisibility(VISIBLE);
+                        text_cardName.setVisibility(VISIBLE);
+                        btn_temp.setVisibility(INVISIBLE);
+                        parent_frag_Card_dtl.video_onFullscrreen(false);
+                        fl_video_contr.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
+                        FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, 250);
+                        params1.gravity = Gravity.CENTER;
+
+                        params1.bottomMargin = 5;
+                        params1.topMargin = 5;
+                        params1.rightMargin = 5;
+                        params1.leftMargin = 5;
+                        params1.height = 250;
+
+                        video_vw.setLayoutParams(params1);
+
+
+                    }
+
+                }
+            });
+        }
+    }
+
     public void load_card_image(String URL, SimpleDraweeView imgView, boolean isFullScreen) {
         String img_url = URL;
         ResizeOptions resizeOptions = new ResizeOptions(350, 250);
@@ -576,9 +851,18 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+
+
         if (getActivity() != null) {
             parent_frag_Card_dtl = (CardDetailFragment) ((BrightlyNavigationActivity) getActivity()).getSupportFragmentManager().findFragmentByTag(Util.view_card);
 
+        }
+        if (!isVisibleToUser && customMediaController != null && video_vw != null) {
+            video_vw.suspend();
+        }
+
+        if (isVisibleToUser && customMediaController != null && video_vw != null) {
+            video_vw.resume();
         }
 
         if (isVisibleToUser && mediaPlayer != null) {
@@ -682,4 +966,30 @@ public class Multimedia_CardFragment extends BaseFragment implements YouTubePlay
     }
 
 
+    @Override
+    public void onSlideImageClick(int Position) {
+        // load_card_image(cardModelObj.getMultiple_img_url().get(Position).getImg_url(), , true)
+
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        View imgEntryView = inflater.inflate(R.layout.dialog_fullscreen, null);
+        final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen); //default fullscreen titlebar
+        SimpleDraweeView img = (SimpleDraweeView) imgEntryView.findViewById(R.id.usericon_large);
+
+        load_card_image(cardModelObj.getMultiple_img_url().get(Position).getImg_url(), img, true);
+
+        dialog.setContentView(imgEntryView);
+        dialog.show();
+
+        imgEntryView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View paramView) {
+//                                dialog.cancel();
+                PhotoViewAttacher photoAttacher;
+                photoAttacher = new PhotoViewAttacher(img);
+                photoAttacher.setZoomable(true);
+
+                photoAttacher.update();
+            }
+        });
+
+    }
 }

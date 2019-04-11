@@ -28,7 +28,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.facebook.drawee.drawable.AutoRotateDrawable;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -201,9 +200,9 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
         return rootView;
     }
 
-    public void setChl_image(String URL){
+    public void setChl_image(String URL) {
         String img_url;
-        ResizeOptions resizeOptions=new ResizeOptions(450,300);
+        ResizeOptions resizeOptions = new ResizeOptions(450, 300);
         if (URL != null && !URL.trim().equals(""))
             img_url = URL;
         else
@@ -231,15 +230,6 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
 
                             .build();
             imageView_editChannelImage.setImageRequest(imageRequest);
-
-        } else {
-            Glide.with(EditChannelInfo.this)
-                    .load(((BrightlyNavigationActivity) getActivity()).CATG_DEF_IMAGE)
-                    .centerCrop()
-                    /*.transform(new CircleTransform(HomeActivity.this))
-                    .override(50, 50)*/
-                    .into(imageView_editChannelImage);
-
 
         }
 
@@ -294,7 +284,7 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
                                 break;
                             case 0:
 
-                                imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+                                imgImageChooser_crop = new ImageChooser_Crop(getActivity(), "default");
                                 Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
                                 if (intent == null) {
                                     //PermissionUtil.
@@ -488,6 +478,7 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
                         startActivityForResult(intent, PIC_CROP);*/
                         // for fragment (DO NOT use `getActivity()`)
                         CropImage.activity(picUri)
+                                .setCropMenuCropButtonTitle("Done")
                                 .setMinCropResultSize(250, 250)
                                 .setMaxCropResultSize(bitmap.getWidth(), bitmap.getHeight())
 //                                .setAspectRatio(1, 1)
@@ -522,12 +513,34 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
                                     .build();
                     imageView_editChannelImage.setImageRequest(imageRequest2);*/
 
-                    Glide.with(getContext())
+                    /*Glide.with(getContext())
                             .load(resultUri)
                             .fitCenter()
-                            /*.transform(new CircleTransform(HomeActivity.this))
-                            .override(50, 50)*/
-                            .into(imageView_editChannelImage);
+                            *//*.transform(new CircleTransform(HomeActivity.this))
+                            .override(50, 50)*//*
+                            .into(imageView_editChannelImage);*/
+
+                    GenericDraweeHierarchyBuilder builder =
+                            new GenericDraweeHierarchyBuilder(getResources());
+                    builder.setProgressBarImage(R.drawable.loader);
+
+                    builder.setProgressBarImage(
+                            new AutoRotateDrawable(builder.getProgressBarImage(), 1000, true));
+                    builder.setProgressBarImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+                    GenericDraweeHierarchy hierarchy = builder
+                            .setFadeDuration(100)
+                            .build();
+
+                    imageView_editChannelImage.setHierarchy(hierarchy);
+
+
+                    final ImageRequest imageRequest =
+                            ImageRequestBuilder.newBuilderWithSource(resultUri)
+
+
+                                    .build();
+                    imageView_editChannelImage.setImageRequest(imageRequest);
+
                     //   imgPet.getHierarchy().setRoundingParams(roundingParams);
                     // Call_pet_photo_update();
                 } catch (Exception e) {
@@ -642,7 +655,7 @@ public class EditChannelInfo extends BaseFragment implements BrightlyNavigationA
 
     @Override
     public void onPermissionResult_rcd(ArrayList<ContactShare> contact_list) {
-        imgImageChooser_crop = new ImageChooser_Crop(getActivity());
+        imgImageChooser_crop = new ImageChooser_Crop(getActivity(), "default");
         Intent intent = imgImageChooser_crop.getPickImageChooserIntent();
         if (intent == null) {
             //PermissionUtil.

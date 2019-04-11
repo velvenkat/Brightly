@@ -1,7 +1,5 @@
 package com.purplefront.brightly.Adapters;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -11,10 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.drawable.AutoRotateDrawable;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -24,7 +21,6 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.purplefront.brightly.Fragments.CardList;
 import com.purplefront.brightly.Modules.CardsListModel;
 import com.purplefront.brightly.R;
 
@@ -213,13 +209,23 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
                             .build();
             holder.image_cardImage.setImageRequest(imageRequest);
         } else {
-            Glide.with(scrn_context)
+            /*Glide.with(scrn_context)
                     .load(R.drawable.image_icon)
                     .placeholder(R.drawable.progress_icon)
                     .centerCrop()
-                    /*.transform(new CircleTransform(HomeActivity.this))
-                    .override(50, 50)*/
-                    .into(holder.image_cardImage);
+                    *//*.transform(new CircleTransform(HomeActivity.this))
+                    .override(50, 50)*//*
+                    .into(holder.image_cardImage);*/
+            ResizeOptions mResizeOptions = new ResizeOptions(50, 50);
+            Uri uri = new Uri.Builder()
+                    .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
+                    .path(String.valueOf(R.drawable.image_icon))
+                    .build();
+            final ImageRequest imageRequest2 =
+                    ImageRequestBuilder.newBuilderWithSource(uri)
+                            .setResizeOptions(mResizeOptions)
+                            .build();
+            holder.image_cardImage.setImageRequest(imageRequest2);
         }
        /* holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

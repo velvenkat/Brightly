@@ -19,10 +19,14 @@ import com.purplefront.brightly.Modules.SignUpResponse;
 import com.purplefront.brightly.Modules.UpdateChannelResponse;
 
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface RestApiMethods {
@@ -141,6 +145,11 @@ public interface RestApiMethods {
     Call<AddMessageResponse> getAddCardsList_call(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
 
 
+    @Multipart
+    @POST("cards/add_card.php")
+    Call<AddMessageResponse> addRecord(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("title") String title, @Query("description") String description, @Query("name") String name, @Part MultipartBody.Part file);
+
+
     //Set_Reorder
     @POST("sets/display_setorder.php")
     Call<AddMessageResponse> set_reorder_set(@Query("user_id") String user_id, @Query("set_id") String set_id);
@@ -149,7 +158,15 @@ public interface RestApiMethods {
     //Update Card
     @POST("cards/update_card.php")
     @FormUrlEncoded
-    Observable<AddMessageResponse> getUpdateCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("card_id") String card_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name);
+    Observable<AddMessageResponse> getUpdateCardsList(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("card_id") String card_id, @Query("title") String title, @Query("description") String description, @Field("encoded_string") String encoded_string, @Query("name") String name, @Query("remove_img_id") String remove_img_id);
+
+
+    @Multipart
+    @POST("cards/update_card.php")
+    Call<AddMessageResponse> updateRecord(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("card_id") String card_id, @Query("title") String title, @Query("description") String description, @Part MultipartBody.Part file);
+
+    @POST("cards/update_card.php")
+    Call<AddMessageResponse> updateRecord_old(@Query("type") String type, @Query("user_id") String user_id, @Query("set_id") String set_id, @Query("card_id") String card_id, @Query("title") String title, @Query("description") String description, @Query("name") String old_file_name);
 
     //Update Card
     @POST("cards/update_card.php")
@@ -184,7 +201,7 @@ public interface RestApiMethods {
 
     //Comments Set
     @POST("comment/add_comment.php")
-    Call<AddMessageResponse> getCardComments(@Query("user_id") String user_id, @Query("card_id") String set_id, @Query("comment") String comment);
+    Call<AddMessageResponse> getCardComments(@Query("user_id") String user_id, @Query("card_id") String card_id, @Query("set_id") String set_id, @Query("comment") String comment, @Query("replied_to") String reply_to);
 
     @POST("appvariables/getappvar.php")
     Call<AppVarModule> getAppVariable();
@@ -192,21 +209,16 @@ public interface RestApiMethods {
     @POST("cards/share_cards.php")
     Call<AddMessageResponse> call_share_card(@Query("user_id") String usr_id, @Query("channel_id") String chl_id, @Query("card_id") String card_id, @Query("org_set_id") String set_id, @Query("phone_no") String mob_no, @Query("names") String names);
 
-    @POST("cards/share_cards.php")
-    Call<AddMessageResponse> call_share_card_without_chl(@Query("user_id") String usr_id, @Query("channel_name") String chl_name, @Query("card_id") String card_id, @Query("org_set_id") String set_id, @Query("phone_no") String mob_no, @Query("names") String names);
 
     @POST("cards/set_from_cards.php")
-    Call<SetListResponse> call_set_from_cards(@Query("user_id") String usr_id, @Query("card_id") String card_id, @Query("org_set_id") String set_id,@Query("set_name") String set_name);
+    Call<SetListResponse> call_set_from_cards(@Query("user_id") String usr_id, @Query("card_id") String card_id, @Query("org_set_id") String set_id, @Query("set_name") String set_name);
 
-    @POST("cards/set_from_cards.php")
-    Call<AddMessageResponse> call_set_from_cards_without_chl(@Query("user_id") String usr_id, @Query("channel_name") String chl_name, @Query("card_id") String card_id, @Query("org_set_id") String set_id, @Query("set_name") String set_Name, @Query("set_description") String description);
 
     @POST("comment/list_comment.php")
-    Call<CommentsListResponse> call_comment_list(@Query("card_id") String card_id, @Query("user_id") String user_Id,@Query("set_id") String set_id);
+    Call<CommentsListResponse> call_comment_list(@Query("card_id") String card_id, @Query("user_id") String user_Id);
 
     @POST("sets/set_default_name.php")
     Call<AddMessageResponse> call_create_def_set(@Query("user_id") String user_id);
 
-    @POST("cards/chatlist.php")
-    Call<ChatListResponse> call_chat_list(@Query("user_id") String user_id,@Query("set_id") String set_id,@Query("card_id") String card_id);
+
 }

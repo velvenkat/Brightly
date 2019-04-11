@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/btn_temp"
+
         android:fitsSystemWindows="true">
 
         <LinearLayout
@@ -20,14 +21,50 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/dimen_100">
 
+            <LinearLayout
+                android:id="@+id/ll_image_card_contr"
+
+                android:layout_width="fill_parent"
+                android:layout_height="250dp"
+                android:orientation="vertical">
+
+                <!-- Top Sliding Banners -->
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/pager"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_alignParentTop="true" />
+
+                    <com.viewpagerindicator.CirclePageIndicator
+                        android:id="@+id/indicator"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="bottom"
+                        android:padding="10dip"
+                        app:centered="true"
+                        app:fillColor="#FF0000"
+                        app:pageColor="#00FFFFFF"
+                        app:snap="true"
+                        app:strokeColor="#FFFFFF" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
             <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/image_cardImage"
+                android:id="@+id/image_audio_image"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
-                android:src="@drawable/no_image_available"
-                android:visibility="visible" />
+
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/file_cardLink"
@@ -52,6 +89,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:visibility="gone"></FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/video_contr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible">
+
+
+                <VideoView
+                    android:id="@+id/video_vw"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+
+                    android:fitsSystemWindows="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:minHeight="250dp"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/play_pause"
+                    android:layout_width="100dp"
+
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txt_buffer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:layout_marginBottom="20dp"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold" />
+
+            </FrameLayout>
 
             <RelativeLayout
                 android:id="@+id/rl_audio_player"

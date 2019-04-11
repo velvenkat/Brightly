@@ -599,7 +599,7 @@ public class AudioType extends BaseFragment implements BrightlyNavigationActivit
             } else {
                 RestApiMethods requestInterface = RetrofitInterface.getRestApiMethods(getContext());
                 CompositeDisposable mCompositeDisposable = new CompositeDisposable();
-                mCompositeDisposable.add(requestInterface.getUpdateCardsList("audio", userId, set_id, setEntryModel.getCard_id(), card_name, card_description, encoded_string, image_name)
+                mCompositeDisposable.add(requestInterface.getUpdateCardsList("audio", userId, set_id, setEntryModel.getCard_id(), card_name, card_description, encoded_string, image_name,"")
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
                         .subscribeWith(new DisposableObserver<AddMessageResponse>() {
