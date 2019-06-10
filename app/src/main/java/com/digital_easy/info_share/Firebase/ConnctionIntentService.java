@@ -1,5 +1,9 @@
 package com.digital_easy.info_share.Firebase;
 
+<<<<<<< HEAD
+=======
+import android.app.ActivityManager;
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
 import android.app.IntentService;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,6 +15,10 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
+<<<<<<< HEAD
+=======
+import android.util.Log;
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
 
 public class ConnctionIntentService extends IntentService {
     /**
@@ -35,10 +43,30 @@ public class ConnctionIntentService extends IntentService {
         int mBindFlag = Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH ? 0 : Context.BIND_ABOVE_CLIENT;
         //   mContext.bindService(new Intent(mContext, VoiceCommandService.class), mServiceConnection, mBindFlag);
         Intent service = new Intent(mContext, VoiceCommandService.class);
+<<<<<<< HEAD
         startService(service);
         mContext.bindService(new Intent(mContext, VoiceCommandService.class), mServiceConnection, mBindFlag);
     }
 
+=======
+//        if (isMyServiceRunning(VoiceCommandService.class))
+            startService(service);
+        mContext.bindService(new Intent(mContext, VoiceCommandService.class), mServiceConnection, mBindFlag);
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i("Service status", "Running");
+                return true;
+            }
+        }
+        Log.i("Service status", "Not running");
+        return false;
+    }
+
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {

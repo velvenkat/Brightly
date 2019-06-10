@@ -3,6 +3,11 @@ package com.digital_easy.info_share.Firebase;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+<<<<<<< HEAD
+=======
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,13 +21,24 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.Nullable;
+<<<<<<< HEAD
 import android.util.Log;
+=======
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+import android.widget.Toast;
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
 
 import com.digital_easy.info_share.SplashScreen;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+<<<<<<< HEAD
+=======
+import static android.media.AudioAttributes.USAGE_VOICE_COMMUNICATION;
+
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
 public class VoiceCommandService extends Service {
     protected static AudioManager mAudioManager;
     protected SpeechRecognizer mSpeechRecognizer;
@@ -48,6 +64,10 @@ public class VoiceCommandService extends Service {
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         mSpeechRecognizer.setRecognitionListener(new SpeechRecognitionListener());
+<<<<<<< HEAD
+=======
+
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
         mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -73,7 +93,25 @@ public class VoiceCommandService extends Service {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         // turn off beep sound
                         if (!mIsStreamSolo) {
+<<<<<<< HEAD
                             mAudioManager.setStreamSolo(AudioManager.STREAM_VOICE_CALL, true);
+=======
+
+                            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                mAudioManager.requestAudioFocus(new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
+                                        .setAudioAttributes(new AudioAttributes.Builder().setUsage(USAGE_VOICE_COMMUNICATION).build()).build());
+                                mAudioManager.adjustVolume(AudioManager.ADJUST_MUTE, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+                            } else {
+                                mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+                                mAudioManager.setStreamSolo(AudioManager.STREAM_VOICE_CALL, true);
+
+                            }*/
+                            mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+                            mAudioManager.setStreamSolo(AudioManager.STREAM_VOICE_CALL, true);
+                            //  mAudioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_ALLOW_RINGER_MODES);
+                            //  mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
                             mIsStreamSolo = true;
                         }
                     }
@@ -86,7 +124,21 @@ public class VoiceCommandService extends Service {
 
                 case MSG_RECOGNIZER_CANCEL:
                     if (mIsStreamSolo) {
+<<<<<<< HEAD
                         mAudioManager.setStreamSolo(AudioManager.STREAM_VOICE_CALL, false);
+=======
+                        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            mAudioManager.requestAudioFocus(new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
+                                    .setAudioAttributes(new AudioAttributes.Builder().setUsage(USAGE_VOICE_COMMUNICATION).build()).build());
+                            mAudioManager.adjustVolume(AudioManager.ADJUST_UNMUTE, AudioManager.FLAG_PLAY_SOUND);
+                        } else {
+                            mAudioManager.setStreamSolo(AudioManager.STREAM_VOICE_CALL, false);
+                            mAudioManager.setMode(AudioManager.MODE_NORMAL);
+                        }*/
+                        mAudioManager.setStreamSolo(AudioManager.STREAM_VOICE_CALL, false);
+                        mAudioManager.setMode(AudioManager.MODE_NORMAL);
+                        //   mAudioManager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
                         mIsStreamSolo = false;
                     }
                     target.mSpeechRecognizer.cancel();
@@ -130,6 +182,13 @@ public class VoiceCommandService extends Service {
         if (mSpeechRecognizer != null) {
             mSpeechRecognizer.destroy();
         }
+<<<<<<< HEAD
+=======
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("restartservice");
+        broadcastIntent.setClass(this, Restarter.class);
+        this.sendBroadcast(broadcastIntent);
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
     }
 
     @Nullable
@@ -199,6 +258,7 @@ public class VoiceCommandService extends Service {
         @Override
         public void onResults(Bundle results) {
             //Log.d(TAG, "onResults"); //$NON-NLS-1$
+<<<<<<< HEAD
             ArrayList<String> matches = results
                     .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
@@ -209,6 +269,31 @@ public class VoiceCommandService extends Service {
                     Intent intent = new Intent(getApplicationContext(), SplashScreen.class);
                     intent.putExtra("isAudioMatch", true);
                     getApplicationContext().startActivity(intent);
+=======
+
+            //mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+            ArrayList<String> matches = results
+                    .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+
+            boolean isMatched = false;
+            //displaying the first match
+            if (matches != null) {
+                Log.e("Brightly", "Speech_text" + matches.get(0));
+                for (int i = 0; i < matches.size(); i++) {
+                    if (matches.get(i).equalsIgnoreCase("stream being clip it") || matches.get(i).toLowerCase().contains("clip")) {
+                        isMatched = true;
+                        break;
+
+
+                    }
+                }
+                if (isMatched) {
+                    Intent intent = new Intent(getApplicationContext(), SplashScreen.class);
+                    intent.putExtra("isAudioMatch", true);
+                    getApplicationContext().startActivity(intent);
+                } else if (matches != null) {
+                    Toast.makeText(getApplicationContext(), "Not matched" + matches.get(0), Toast.LENGTH_LONG).show();
+>>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
                 }
             }
         }
