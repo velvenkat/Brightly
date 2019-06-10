@@ -8,6 +8,51 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:172180339631:android:58bd66875e9acb19",
+        "android_client_info": {
+          "package_name": "com.digital_easy.info_share"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "172180339631-vfnmv7ffd5263q5gos1uucngvtqi8um5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.digital_easy.info_share",
+            "certificate_hash": "3d504cf4612a8aaaca9bb13fa1bdcbc1712e3d79"
+          }
+        },
+        {
+          "client_id": "172180339631-mqjbd9j07np1jlnlo5fqidkauun3t1vo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA65pFjLdZ79oPYzBCXZgT2H4p3BP7shhI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "172180339631-mqjbd9j07np1jlnlo5fqidkauun3t1vo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "172180339631-n1i15j7n0ltgdu3c1n929hhhjd0m6p5v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.purplefront.Brightly",
+                "app_store_id": "22102018"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:172180339631:android:76fa5c3c9a7e7f4d",
         "android_client_info": {
           "package_name": "com.purplefront.brightly"
@@ -33,11 +78,7 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "172180339631-mqjbd9j07np1jlnlo5fqidkauun3t1vo.apps.googleusercontent.com",
@@ -52,9 +93,6 @@
               }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

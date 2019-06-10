@@ -53,22 +53,44 @@
         android:textSize="@dimen/dimen_20"
         android:visibility="gone" />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
-    <ImageView
-        android:id="@+id/image_createCard"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/dimen_20"
-        android:background="@drawable/circular_image_drawable"
-        android:src="@drawable/add_image_white" />
+        <ImageView
+            android:id="@+id/image_createCard"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
 
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/image_Comment"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/dimen_20" />
+            android:layout_gravity="right|bottom"
+            android:layout_margin="@dimen/dimen_20"
+            android:background="@drawable/circular_image_drawable"
+            android:src="@drawable/add_image_white" />
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/image_Comment"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_gravity="left|bottom"
+            android:layout_margin="@dimen/dimen_20" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/card_listview"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_hdr"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:background="#00ffffff"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+
+            android:visibility="visible">
+
+
+        </android.support.v7.widget.RecyclerView>
+    </FrameLayout>
 </RelativeLayout>

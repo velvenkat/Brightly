@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <!-- <color name="colorPrimary">#FF5722</color>
-    <color name="colorPrimaryDark">#E64A19</color>
-    <color name="colorAccent">#4CAF50</color>-->
+    <!-- <color name="colorPrimary">#FF5722</color>
+     <color name="colorPrimaryDark">#E64A19</color>
+     <color name="colorAccent">#4CAF50</color>-->
 
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#4bb6ef</color>
@@ -14,6 +14,7 @@
     <color name="white">#FFFFFF</color>
     <color name="white_90">#11FFFFFF</color>
     <color name="white_greyish">#EEEEEE</color>
+    <color name="light_blue">#6C8DD5</color>
     <color name="light_gery">#9E9E9E</color>
 
     <color name="btn_login">#4bb6ef</color>
@@ -27,13 +28,13 @@
 
     <color name="yellow_color">#FFFF00</color>
 
-   <color name="md_light_blue_400">#29B6FC</color>
- <color name="md_light_blue_500">#03A9F4</color>
+    <color name="md_light_blue_400">#29B6FC</color>
+    <color name="md_light_blue_500">#03A9F4</color>
 
     <color name="md_white_1000">#ffffff</color>
 
-   <color name="grey_900">#212121</color>
-   <color name="blue_grey_300">#616f76</color>
+    <color name="grey_900">#212121</color>
+    <color name="blue_grey_300">#616f76</color>
 
 
 </resources>

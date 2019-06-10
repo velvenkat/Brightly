@@ -8,7 +8,7 @@
     android:background="#efefef"
     android:orientation="vertical">
 
-    <com.purplefront.brightly.Custom.CustomTabLayout
+    <com.digital_easy.info_share.Custom.CustomTabLayout
         android:id="@+id/tabs_set_type"
         android:layout_width="match_parent"
         android:layout_height="40dp"

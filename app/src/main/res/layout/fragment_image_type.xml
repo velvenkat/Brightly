@@ -18,10 +18,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <RelativeLayout
-                android:layout_width="match_parent"
                 android:id="@+id/rl_editor_contr"
-                android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/img_paint"
@@ -37,9 +39,10 @@
                     android:layout_toLeftOf="@+id/img_paint"
                     android:src="@drawable/pencil_edit_button" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="350dp">
+                android:layout_height="wrap_content">
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/image_createCard"
@@ -56,17 +59,83 @@
 
                     />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/list_thumbnail"
+
+            </RelativeLayout>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_thumbnail"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_below="@+id/image_createCard"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+            </android.support.v7.widget.RecyclerView>
+
+            <LinearLayout
+                android:id="@+id/gallery_contr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/chs_catg_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/image_createCard"
-                    android:layout_centerVertical="true"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:layout_marginLeft="@dimen/dimen_20"
+                    android:text="Choose category" />
 
-                </android.support.v7.widget.RecyclerView>
-            </RelativeLayout>
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dimen_20"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_20"
+                    android:layout_marginBottom="@dimen/dimen_5"
+                    android:background="#c1c1c1"
+                    android:orientation="vertical">
+
+                    <Spinner
+                        android:id="@+id/spinner_catg_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_10"
+                        android:layout_marginBottom="@dimen/dimen_5" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/chs_set_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dimen_20"
+                    android:text="Choose set" />
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dimen_20"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_20"
+                    android:layout_marginBottom="@dimen/dimen_5"
+                    android:background="#c1c1c1"
+                    android:orientation="vertical">
+
+                    <Spinner
+                        android:id="@+id/spinner_set_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_10"
+                        android:layout_marginBottom="@dimen/dimen_5"
+                        android:clickable="false" />
+
+                </LinearLayout>
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/create_cardName"
@@ -85,6 +154,105 @@
                 android:singleLine="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/mediumtextsize" />
+
+            <LinearLayout
+                android:id="@+id/contact_contr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edt_comp_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/dimen_20"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_20"
+                    android:layout_marginBottom="@dimen/dimen_5"
+                    android:background="@drawable/edit_text_background"
+
+                    android:hint="@string/user_companyname"
+                    android:inputType="textCapSentences"
+                    android:maxLength="40"
+                    android:padding="@dimen/dimen_4"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/mediumtextsize" />
+
+                <EditText
+                    android:id="@+id/edt_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/dimen_20"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_20"
+                    android:layout_marginBottom="@dimen/dimen_5"
+                    android:background="@drawable/edit_text_background"
+
+                    android:hint="Title"
+                    android:inputType="textCapSentences"
+                    android:maxLength="40"
+                    android:padding="@dimen/dimen_4"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/mediumtextsize" />
+
+                <EditText
+                    android:id="@+id/edt_mob_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/dimen_20"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_20"
+                    android:layout_marginBottom="@dimen/dimen_5"
+                    android:background="@drawable/edit_text_background"
+
+                    android:hint="Mobile number"
+                    android:inputType="phone"
+
+                    android:padding="@dimen/dimen_4"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/mediumtextsize" />
+
+                <EditText
+                    android:id="@+id/edt_off_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/dimen_20"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_20"
+                    android:layout_marginBottom="@dimen/dimen_5"
+                    android:background="@drawable/edit_text_background"
+
+                    android:hint="Office number"
+                    android:inputType="phone"
+
+                    android:padding="@dimen/dimen_4"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/mediumtextsize" />
+
+                <EditText
+                    android:id="@+id/edt_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/dimen_20"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_20"
+                    android:layout_marginBottom="@dimen/dimen_5"
+                    android:background="@drawable/edit_text_background"
+
+                    android:hint="Email id"
+                    android:inputType="textEmailAddress"
+                    android:maxLength="60"
+                    android:padding="@dimen/dimen_4"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/mediumtextsize" />
+            </LinearLayout>
+
 
             <EditText
                 android:id="@+id/create_cardDescription"

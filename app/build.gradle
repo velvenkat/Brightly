@@ -1,14 +1,19 @@
 apply plugin: 'com.android.application'
+
+apply plugin: 'com.google.gms.google-services'
+
+apply plugin: 'io.fabric'
+
 apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.purplefront.brightly"
+        applicationId "com.digital_easy.info_share"
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 26
-        versionName "1.0.26"
+        versionCode 29
+        versionName "1.0.29"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         /* ndk {
@@ -18,10 +23,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("../brightly_keystore")
-            storePassword "purplefront123"
-            keyAlias "brightly_app"
-            keyPassword "purplefront123"
+            storeFile file("../info_share")
+            storePassword "info_share"
+            keyAlias "info_share"
+            keyPassword "info_share"
         }
     }
     buildTypes {
@@ -37,6 +42,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
+            ext.enableCrashlytics = true
         }
     }
     lintOptions {
@@ -71,9 +77,12 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation 'com.google.firebase:firebase-messaging:17.3.0'
-    implementation 'com.google.firebase:firebase-core:16.0.0'
-    implementation 'com.google.firebase:firebase-crash:16.0.0'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.google.firebase:firebase-crash:16.2.1'
+    // Add dependency
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
+
     testImplementation 'junit:junit:4.12'
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
@@ -83,9 +92,9 @@ dependencies {
     implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
 
-    implementation 'com.facebook.fresco:fresco:1.9.0'
-   /* implementation 'com.github.d-max:spots-dialog:0.7@aar'*/
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
+    implementation 'com.facebook.fresco:fresco:1.13.0'
+    /* implementation 'com.github.d-max:spots-dialog:0.7@aar'*/
+
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.+'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
@@ -103,6 +112,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'fr.avianey.com.viewpagerindicator:library:2.4.1.1@aar'
     implementation 'ja.burhanrashid52:photoeditor:0.3.3'
+    implementation 'com.google.firebase:firebase-appindexing:18.0.0'
 }
 
 afterEvaluate {
@@ -120,7 +130,7 @@ afterEvaluate {
     }
 }
 
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.firebase-crash'
-apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
