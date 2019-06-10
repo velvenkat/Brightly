@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.digital_easy.info_share">
 
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -13,10 +12,6 @@
     <uses-permission android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-<<<<<<< HEAD
-=======
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
->>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -25,7 +20,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -42,34 +36,15 @@
         android:theme="@style/AppTheme"
         tools:ignore="InnerclassSeparator">
 
-<<<<<<< HEAD
-=======
-        <receiver
-            android:name=".Firebase.Restarter"
-            android:enabled="true"
-            android:exported="true"></receiver>
->>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
 
         <receiver
             android:name=".Firebase.AlarmBroadcastReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
-<<<<<<< HEAD
-=======
-
->>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
         <service
             android:name=".Firebase.ConnctionIntentService"
             android:enabled="true"
             android:exported="true"></service>
-<<<<<<< HEAD
-=======
-        <service
-            android:name=".Firebase.ForegroundServiceSample"
-            android:enabled="true"
-            android:exported="true"></service>
-
->>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
         <activity
             android:name="com.digital_easy.info_share.SplashScreen"
             android:exported="true"
@@ -107,7 +82,6 @@
 
                 <data android:mimeType="audio/*" />
 
-<<<<<<< HEAD
             </intent-filter>
             <!-- Define your supported deeplinks -->
             <intent-filter
@@ -130,30 +104,6 @@
             </intent-filter>
 
             <intent-filter>
-=======
-            </intent-filter>
-            <!-- Define your supported deeplinks -->
-            <intent-filter
-                android:autoVerify="true"
-                tools:targetApi="m">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="brightlyapp.com"
-                    android:scheme="http" />
-            </intent-filter>
-            <!-- Required to support search action intents from Google Search -->
-            <intent-filter>
-                <action android:name="com.google.android.gms.actions.SEARCH_ACTION" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <intent-filter>
->>>>>>> 58950c34046f03db5897e96b69e20658a7a83aa0
                 <action android:name="android.intent.action.SEND" />
 
                 <category android:name="android.intent.category.DEFAULT" />
