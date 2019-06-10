@@ -5,14 +5,15 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class AdminSettingsModel {
+public class CardsListResponse {
+
     @SerializedName("message")
     @Expose
     private String message;
 
     @SerializedName("data")
     @Expose
-    private List<AdminSettingsModuleData> settings_data;
+    private List<CardsListModel> data = null;
 
     public String getMessage() {
         return message;
@@ -22,11 +23,11 @@ public class AdminSettingsModel {
         this.message = message;
     }
 
-    public List<AdminSettingsModuleData> getSettings_data() {
-        return settings_data;
+    public List<CardsListModel> getData() {
+        return data;
     }
 
-    public void setSettings_data(List<AdminSettingsModuleData> settings_data) {
-        this.settings_data = settings_data;
+    public void setData(List<CardsListModel> data) {
+        this.data = data;
     }
 }
