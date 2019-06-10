@@ -19,7 +19,7 @@
     android:layout_above="@+id/img_play_stop_rec"
     android:layout_height="wrap_content">
 
-    <com.purplefront.brightly.Custom.SiriWaveView
+    <com.digital_easy.info_share.Custom.SiriWaveView
         android:id="@+id/siriWaveView"
 
         android:layout_width="match_parent"

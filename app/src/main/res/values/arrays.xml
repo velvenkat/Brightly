@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="clip_action">
+        <item>Clipit</item>
+        <item>Clip</item>
+        <item>Record</item>
+        <item>Capture</item>
+    </array>
+
+</resources>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actions>
+    <!--<action intentName="actions.intent.CREATE_TAXI_RESERVATION">-->
+    <!--<fulfillment urlTemplate="intent:#Intent;package=com.digital_easy.info_share;action=com.digital_easy.info_share.SplashScreen{;S.dropoff}=San+Francisco;end">-->
+    <!--<parameter-mapping-->
+    <!--intentParameter="taxiReservation.dropoffLocation.name"-->
+    <!--urlParameter="S.dropoff" />-->
+    <!--</fulfillment>-->
+    <!--<parameter name="taxiReservation.create.name">
+        <entity-set-reference
+            entitySetId="TaxiReserve"
+            urlFilter="*" />
+    </parameter>-->
+
+    <action intentName="actions.intent.clip_window">
+        <!--<fulfillment urlTemplate="http://brightlyapp.com/start{?type}">
+            <parameter-mapping
+                intentParameter="clip_screen_entity"
+                urlParameter="type" />
+        </fulfillment>-->
+        <parameter name="clip_screen_entity">
+            <entity-set-reference
+                entitySetId="clip_screen_entity"
+                urlFilter="http://brightlyapp.com/*" />
+        </parameter>
+    </action>
+    <entity-set entitySetId="clip_screen_entity">
+
+        <!-- For each entity you can specify the name, alternate names and the identifier -->
+        <!-- The identifier is the value that will be added to the action uri. -->
+        <!-- For our sample we map the supported entities with the class FitActivity.Type  -->
+
+        <entity
+            name="Clipping"
+            alternateName="@array/clip_action"
+            identifier="Clipping" />
+
+    </entity-set>
+
+
+</actions>
