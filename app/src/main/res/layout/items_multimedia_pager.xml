@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scroll_card"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true">
 
-    <ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.v4.widget.NestedScrollView
 
+        android:id="@+id/scroll_mv_contr"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/btn_temp"
 
-        android:fitsSystemWindows="true">
+        android:fillViewport="true">
 
         <LinearLayout
             android:id="@+id/ll_card_contr"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/dimen_2"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/dimen_100">
+
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/ll_image_card_contr"
@@ -373,7 +373,7 @@
                 android:background="@color/white"
                 android:gravity="start|end"
                 android:linksClickable="true"
-                android:minHeight="400dp"
+                android:minHeight="600dp"
                 android:padding="@dimen/dimen_4"
                 android:text="No data Available"
                 android:textColor="@color/black"
@@ -382,14 +382,17 @@
                 android:visibility="visible" />
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
-    <Button
-        android:id="@+id/btn_temp"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycle_mv_contr"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:visibility="invisible">
+        android:layout_height="match_parent"
+        
 
-    </Button>
+        android:visibility="gone">
+
+    </android.support.v7.widget.RecyclerView>
+
+
 </RelativeLayout>

@@ -15,8 +15,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitInterface {
 
     private static final String CACHE_DIR = "brightly";
-    private static final String BASE_URL = "http://www.brightlyapp.com/api/"; //Production
-    //private static final String BASE_URL = "http://13.251.35.86/BrightlyDEV/api/";//Development
+    // private static final String BASE_URL = "http://www.brightlyapp.com/api/"; //Production
+    private static final String BASE_URL = "http://13.251.35.86/BrightlyDEV/api/";//Development
     //private static final String BASE_URL = "http://13.251.35.86/BrightlyUAT/api/";
 
     static Retrofit retrofit = null;
@@ -42,6 +42,7 @@ public class RetrofitInterface {
                     .baseUrl(BASE_URL)
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(gson))
+
                     .client(client)
                     .build();
             // Service setup

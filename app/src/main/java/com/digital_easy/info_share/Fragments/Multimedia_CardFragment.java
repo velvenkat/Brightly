@@ -2,7 +2,9 @@ package com.digital_easy.info_share.Fragments;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,6 +25,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -26,20 +34,33 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 
+import com.digital_easy.info_share.Adapters.Blog_Adapter;
+import com.digital_easy.info_share.Modules.BlogResponseModel;
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.AutoRotateDrawable;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
+import com.github.chrisbanes.photoview.PhotoView;
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
@@ -55,14 +76,15 @@ import com.digital_easy.info_share.Utils.RichLinkViewTelegram;
 import com.digital_easy.info_share.Utils.Util;
 import com.digital_easy.info_share.Utils.ViewListener;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import uk.co.senab.photoview.PhotoViewAttacher;
 
+import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView;
 import com.viewpagerindicator.CirclePageIndicator;
 
-public class Multimedia_CardFragment extends BaseFragment implements SlidingImage_Adapter.SlideImageCLicked, YouTubePlayer.OnInitializedListener {
+public class Multimedia_CardFragment extends BaseFragment implements SlidingImage_Adapter.SlideImageCLicked, YouTubePlayer.OnInitializedListener, Blog_Adapter.BlogAdapterListener, LifecycleOwner {
     View rootView;
     RichLinkViewTelegram richLinkView1;
     CardsListModel cardModelObj;
@@ -74,6 +96,7 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
     RelativeLayout rl_audio_player;
     String DEVELOPER_KEY = "AIzaSyDPwTq4xr0Fq-e1z0tDEBaj3qgAgi5VJ44";
     ImageView img_audio_play_stop;
+    Blog_Adapter blog_adapter;
     SeekBar audio_seek_bar;
     FrameLayout fl_video_contr;
     FullScreenMediaController customMediaController;
@@ -105,25 +128,57 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
     RelativeLayout scroll_card;
     LinearLayout ll_image_card_contr;
     ViewPager mPager;
-    View btn_temp;
+    // View btn_temp;
     CirclePageIndicator indicator;
     Handler buffer_handler;
+    NestedScrollView scroll_mv_contr;
+    RecyclerView recycle_mv_contr;
     LinearLayout ll_contacts_contr;
+    BlogResponseModel sel_blog_res_modelObj;
     TextView txtCont_name, txt_Company, txtTitle, txtMob_no, txtOff_no, txtEmail;
+    boolean toggleFullScreen = false;
+    int Scroll_Y_POS;
+    boolean isObserverDone;
+    LifecycleOwner lifecycleOwner;
 
+
+    /*@Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        getActivity().getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+    }*/
+
+    /*@Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getActivity().getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+    }
+*/
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ///  getActivity().getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         rootView = inflater.inflate(R.layout.items_multimedia_pager, container, false);
+
         scroll_card = (RelativeLayout) rootView.findViewById(R.id.scroll_card);
         ll_card_contr = rootView.findViewById(R.id.ll_card_contr);
 
+
         ll_contacts_contr = rootView.findViewById(R.id.ll_contacts_contr);
+        scroll_mv_contr = rootView.findViewById(R.id.scroll_mv_contr);
+        recycle_mv_contr = rootView.findViewById(R.id.recycle_mv_contr);
+        recycle_mv_contr.setLayoutManager(new LinearLayoutManager(getContext()));
         ll_image_card_contr = rootView.findViewById(R.id.ll_image_card_contr);
         mPager = (ViewPager) rootView.findViewById(R.id.pager);
         video_vw = rootView.findViewById(R.id.video_vw);
-        btn_temp = (View) rootView.findViewById(R.id.btn_temp);
+
         txtBuffer = rootView.findViewById(R.id.txt_buffer);
         img_play_pause_video = rootView.findViewById(R.id.play_pause);
         fl_video_contr = rootView.findViewById(R.id.video_contr);
@@ -146,9 +201,261 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
         notificationsModelObj = bundle.getParcelable("notfy_modl_obj");
         isNotification = bundle.getBoolean("isNotification");
         card_pos = bundle.getString("card_position");
+        scroll_mv_contr.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                // do something when Scroll
+                // Toast.makeText(getContext(),"I am Scrolled",Toast.LENGTH_LONG).show();
+                // int ChildCount = scroll_mv_contr.getChildCount();
+                if (scroll_mv_contr.getChildAt(0).getBottom()
+                        <= (scroll_mv_contr.getHeight() + scroll_mv_contr.getScrollY())) {
+                    //scroll view is at bottom
+                    //Toast.makeText(getContext(),"I am Bottom",Toast.LENGTH_LONG).show();
 
+                    if (!isObserverDone) {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (getActivity() != null && scroll_mv_contr.getChildAt(0).getBottom()
+                                        <= (scroll_mv_contr.getHeight() + scroll_mv_contr.getScrollY()))
+                                    getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                                ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                                ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(0).setDuration(600L).start();
+                            }
+
+
+                        }, 500);
+
+
+                    }
+                    isObserverDone = true;
+
+                } else
+                    isObserverDone = false;
+
+                //  scrollView_post.requestFocus();
+
+            }
+        });
+        scroll_mv_contr.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                if (getActivity() != null) {
+                    if (!isObserverDone && scrollY == 0) {
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (getActivity() != null && !isObserverDone && scrollY == 0) {
+                                    /*getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+*/
+                                    getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                                    ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(0).setDuration(600L).start();
+                                }
+                            }
+                        }, 500);
+                        isObserverDone = true;
+
+                    } else {
+                        isObserverDone = false;
+                    }
+                    if (scrollY > oldScrollY) {
+                        // Toast.makeText(getContext(), "Scroll DOWN", Toast.LENGTH_LONG).show();
+                        if (!isObserverDone) {
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (getActivity() != null && !isObserverDone && scrollY > oldScrollY) {
+                                        View decorView = getActivity().getWindow().getDecorView();
+// Hide the status bar.
+                                        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+                                        decorView.setSystemUiVisibility(uiOptions);
+// Remember that you should never show the action bar if the
+// status bar is hidden, so hide that too if necessary.
+                                      /*  ActionBar actionBar = ((BrightlyNavigationActivity) getActivity()).getSupportActionBar();
+                                        actionBar.hide();*/
+                                        ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(-112).setDuration(600L)
+                                                .withEndAction(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().hide();
+                                                    }
+                                                }).start();
+
+                                    }
+                                }
+
+                            }, 500);
+                            isObserverDone = true;
+
+                        } else {
+                            isObserverDone = false;
+                        }
+                    }
+                    if (!isObserverDone && scrollY < oldScrollY) {
+                        //Log.i(TAG, "Scroll UP");
+                        //Toast.makeText(getContext(), "Scroll UP", Toast.LENGTH_LONG).show();
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (getActivity() != null && !isObserverDone && scrollY < oldScrollY) {
+
+                                    View decorView = getActivity().getWindow().getDecorView();
+// Hide the status bar.
+                                    int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+                                    decorView.setSystemUiVisibility(uiOptions);
+                                    ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(-112).setDuration(600L)
+                                            .withEndAction(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().hide();
+                                                }
+                                            }).start();
+
+                                }
+                            }
+                        }, 500);
+                        isObserverDone = true;
+                    } else {
+                        isObserverDone = false;
+                    }
+
+
+                }
+
+            }
+        });
+
+        recycle_mv_contr.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                /*if (newState == RecyclerView.SCROLL_INDICATOR_END) {
+                    getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                    ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(0).setDuration(600L).start();
+                }
+                if (newState == RecyclerView.SCROLL_INDICATOR_TOP) {
+                    getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                    ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(0).setDuration(600L).start();
+                }
+                if (newState == RecyclerView.SCROLL_INDICATOR_START) {
+                    View decorView = getActivity().getWindow().getDecorView();
+// Hide the status bar.
+                    int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+                    decorView.setSystemUiVisibility(uiOptions);
+                    ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(-112).setDuration(600L)
+                            .withEndAction(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().hide();
+                                }
+                            }).start();
+
+                }*/
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+
+                    //Implement code for expanding fragment here
+/*
+                    View decorView = getActivity().getWindow().getDecorView();
+// Hide the status bar.
+                    int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+                    decorView.setSystemUiVisibility(uiOptions);
+                    ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(-112).setDuration(600L)
+                            .withEndAction(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().hide();
+                                }
+                            }).start();*/
+
+
+                }
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                   /* getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                    ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(0).setDuration(600L).start();*/
+                    if (cardModelObj.getData_obj() != null) {
+                        List<BlogResponseModel> list_blogResponseModelObj = cardModelObj.getData_obj();
+                        for (int i = 0; i < list_blogResponseModelObj.size(); i++) {
+                            BlogResponseModel blogResponseModelObj = list_blogResponseModelObj.get(i);
+                            if (blogResponseModelObj.getType() != null && blogResponseModelObj.getType().equals("video")) {
+                                Blog_Adapter.VideoViewHolder holder = (Blog_Adapter.VideoViewHolder) recycle_mv_contr.findViewHolderForAdapterPosition(i);
+                                if (holder != null && holder.customMediaController != null && holder.video_vw != null) {
+                                    holder.video_vw.pause();
+                                    holder.customMediaController.hide();
+                                }
+                            }
+                        }
+                    }
+                    LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int pastVisibleItems = layoutManager.findFirstCompletelyVisibleItemPosition();
+                    int TopPosition = layoutManager.findFirstVisibleItemPosition();
+                    View v = recycle_mv_contr.getLayoutManager().findViewByPosition(0);
+                    if (TopPosition == 0 && (recycle_mv_contr.computeVerticalScrollOffset() < 50)) {
+                        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                        parent_frag_Card_dtl.image_Share.setVisibility(View.VISIBLE);
+                        parent_frag_Card_dtl.image_createCard.setVisibility(View.VISIBLE);
+                        parent_frag_Card_dtl.pager_count.setVisibility(View.VISIBLE);
+                        ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(0).setDuration(600L).start();
+                    } else if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+                        // End of the list is here.
+                        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                        parent_frag_Card_dtl.image_Share.setVisibility(View.VISIBLE);
+                        parent_frag_Card_dtl.image_createCard.setVisibility(View.VISIBLE);
+                        parent_frag_Card_dtl.pager_count.setVisibility(View.VISIBLE);
+                        ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(0).setDuration(600L).start();
+                    } /*else if (visibleItemCount == FirstPosition) {
+                     *//* getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                        ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(0).setDuration(600L).start();*//*
+                    } */ else {
+                        View decorView = getActivity().getWindow().getDecorView();
+// Hide the status bar.
+                        parent_frag_Card_dtl.image_Share.setVisibility(View.GONE);
+                        parent_frag_Card_dtl.image_createCard.setVisibility(View.GONE);
+                        parent_frag_Card_dtl.pager_count.setVisibility(View.GONE);
+                        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+                        decorView.setSystemUiVisibility(uiOptions);
+                        ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(-112).setDuration(600L)
+                                .withEndAction(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().hide();
+                                    }
+                                }).start();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                //   Toast.makeText(getContext(), "Current:" + recycle_mv_contr.computeVerticalScrollOffset(), Toast.LENGTH_LONG).show();
+            }
+        });
 
         ll_card_contr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                parent_frag_Card_dtl.showBottomNavigation();
+            }
+        });
+        recycle_mv_contr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 parent_frag_Card_dtl.showBottomNavigation();
@@ -289,6 +596,7 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
             fl_video_contr.setVisibility(View.GONE);
             file_cardLink.setVisibility(View.GONE);
             richLinkView1.setVisibility(View.GONE);
+            text_cardDescription.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1000));
         } else if (cardModelObj.getType().equalsIgnoreCase("video_file")) {
             ll_image_card_contr.setVisibility(View.GONE);
             frame_youtube.setVisibility(View.GONE);
@@ -598,6 +906,17 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
                     startActivity(browserIntent);
                 }
             });*/
+        } else if ((cardModelObj.getType().equalsIgnoreCase("new_card"))) {
+            scroll_mv_contr.setVisibility(View.GONE);
+            recycle_mv_contr.setVisibility(View.VISIBLE);
+
+            List<BlogResponseModel> blogResponseModelsList = cardModelObj.getData_obj();
+            BlogResponseModel modelObj = new BlogResponseModel();
+            modelObj.setType("");
+            blogResponseModelsList.add(modelObj);
+
+            blog_adapter = new Blog_Adapter(this, blogResponseModelsList, getActivity(), this);
+            recycle_mv_contr.setAdapter(blog_adapter);
         }
 
         rootView.setFocusableInTouchMode(true);
@@ -606,32 +925,43 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
         rootView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP) && isFullScreen_videoVw) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && (event.getAction() == KeyEvent.ACTION_UP)) {
                     //
                     //       getActivity().finish();
+                    if (isFullScreen_videoVw) {
+                        isFullScreen_videoVw = false;
+                    /*((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
+                        // fullScreen.setImageResource(R.drawable.full_size);
+                        text_cardDescription.setVisibility(View.VISIBLE);
+                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                        text_cardName.setVisibility(View.VISIBLE);
 
-                    isFullScreen_videoVw = false;
-                    ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
-                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                    // fullScreen.setImageResource(R.drawable.full_size);
-                    text_cardDescription.setVisibility(View.VISIBLE);
-                    text_cardName.setVisibility(View.VISIBLE);
-                    btn_temp.setVisibility(View.INVISIBLE);
-                    parent_frag_Card_dtl.video_onFullscrreen(false);
-                    fl_video_contr.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
-                    FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 250);
-                    params1.gravity = Gravity.CENTER;
+                        parent_frag_Card_dtl.video_onFullscrreen(false);
+                        fl_video_contr.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
+                        FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 250);
+                        params1.gravity = Gravity.CENTER;
 
-                    params1.bottomMargin = 5;
-                    params1.topMargin = 5;
-                    params1.rightMargin = 5;
-                    params1.leftMargin = 5;
-                    params1.height = 250;
+                        params1.bottomMargin = 5;
+                        params1.topMargin = 5;
+                        params1.rightMargin = 5;
+                        params1.leftMargin = 5;
+                        params1.height = 250;
 
-                    video_vw.setLayoutParams(params1);
+                        video_vw.setLayoutParams(params1);
+
+                        return true;
+
+                    } else if (!((BrightlyNavigationActivity) getActivity()).getSupportActionBar().isShowing()) {
+                        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                        ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().show();
+                        ((BrightlyNavigationActivity) getActivity()).toolbar.animate().translationY(0).setDuration(600L).start();
+                        return true;
 
 
-                    return true;
+                    }
+                    return false;
+
 
                 } else
                     return false;
@@ -690,6 +1020,35 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
             }
         });
     }
+
+
+   /* @Override
+    public void audio_init(SeekBar audio_seekBar, TextView txtPlayProgress, ImageView img_play_stop, String URL) {
+
+        audio_player_initialize(audio_seekBar, txtPlayProgress, img_play_stop);
+        MediaPlayer mp = setMediaPlayer(null, URL, false);
+        parent_frag_Card_dtl.setGlob_mediaPlayerObj(mp);
+    }*/
+
+
+    @Override
+    public void Update_Video_onFullScreen(boolean isFullScreen) {
+        parent_frag_Card_dtl.video_onFullscrreen(isFullScreen);
+        if (isFullScreen) {
+            // btn_temp.setVisibility(View.GONE);
+        } else {
+            //   btn_temp.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void uTube_setLifeCycleObserver(YouTubePlayerView youTubePlayerView) {
+        this.getLifecycle().addObserver(youTubePlayerView);
+    }
+
+
+
+
 
     /*@Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -892,7 +1251,7 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
                         fullScreen.setImageResource(R.drawable.full_screen_exit);
                         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                         fl_video_contr.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                        btn_temp.setVisibility(GONE);
+                        // btn_temp.setVisibility(GONE);
 
                         video_vw.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -903,7 +1262,7 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
                         fullScreen.setImageResource(R.drawable.full_size);
                         text_cardDescription.setVisibility(VISIBLE);
                         text_cardName.setVisibility(VISIBLE);
-                        btn_temp.setVisibility(INVISIBLE);
+                        //btn_temp.setVisibility(INVISIBLE);
                         parent_frag_Card_dtl.video_onFullscrreen(false);
                         fl_video_contr.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
                         FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, 250);
@@ -988,6 +1347,52 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
             if (getActivity() != null)
                 ((BrightlyNavigationActivity) getActivity()).uTubePlayer = null;
         }
+        if (!isVisibleToUser && cardModelObj != null && cardModelObj.getData_obj() != null) {
+            List<BlogResponseModel> list_blogResponseModelObj = cardModelObj.getData_obj();
+            for (int i = 0; i < list_blogResponseModelObj.size(); i++) {
+                BlogResponseModel blogResponseModelObj = list_blogResponseModelObj.get(i);
+                if (blogResponseModelObj.getType() != null && blogResponseModelObj.getType().equals("audio")) {
+                    Blog_Adapter.AudioViewHolder holder = (Blog_Adapter.AudioViewHolder) recycle_mv_contr.findViewHolderForAdapterPosition(i);
+                    if (holder != null && holder.isAudioPlay) {
+                        holder.mediaPlayer.pause();
+                        holder.isAudioPlay = false;
+                        holder.img_play_stop.setImageResource(R.drawable.play_rec);
+                    }
+
+                }
+                if (blogResponseModelObj.getType() != null && blogResponseModelObj.getType().equals("video")) {
+                    Blog_Adapter.VideoViewHolder holder = (Blog_Adapter.VideoViewHolder) recycle_mv_contr.findViewHolderForAdapterPosition(i);
+                    if (holder != null && holder.customMediaController != null && holder.video_vw != null) {
+                        holder.customMediaController.hide();
+                        if (getContext() != null)
+                            img_play_pause_video.setBackground(getContext().getResources().getDrawable(R.drawable.play_btn));
+                        holder.video_vw.pause();
+                    }
+                    if (holder != null && holder.dlg_MediaController != null && holder.dlg_video_vw != null) {
+                        holder.dlg_MediaController.hide();
+                        if (getContext() != null)
+                            img_play_pause_video.setBackground(getContext().getResources().getDrawable(R.drawable.play_btn));
+                        holder.dlg_video_vw.pause();
+                    }
+                }
+                if (blogResponseModelObj.getType() != null && blogResponseModelObj.getType().equals("youtube")) {
+                    Blog_Adapter.ViewHolder holder = (Blog_Adapter.ViewHolder) recycle_mv_contr.findViewHolderForAdapterPosition(i);
+                    if (holder != null) {
+                        if (holder.holder_UTubePlayer != null) {
+                            // Log.v (TAG, "Releasing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
+                            holder.holder_UTubePlayer.pause();
+
+                        }
+                        if (holder.dlg_UTubePlayer != null) {
+                            // Log.v (TAG, "Releasing youtube player, URL : " + getArguments().getString(KeyConstant.KEY_VIDEO_URL));
+                            holder.dlg_UTubePlayer.pause();
+
+                        }
+                    }
+
+                }
+            }
+        }
         if (!isVisibleToUser && mediaPlayer != null) {
 
             //release_media();
@@ -1019,6 +1424,7 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
             youTubePlayerFragment.initialize(DEVELOPER_KEY, this);
         }
 
+
     }
 
     @Override
@@ -1045,8 +1451,9 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
             }
         });
         if (!wasRestored) {
+
             youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
-            youTubePlayer.cueVideo(cardModelObj.getName());
+            youTubePlayer.cueVideo(sel_blog_res_modelObj.getValue());
             // youTubePlayer.loadVideo(image_name);
             youTubePlayer.setShowFullscreenButton(true);
             youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
@@ -1070,6 +1477,21 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
             isAudioPlay = false;
             img_play_stop.setImageResource(R.drawable.play_rec);
         }
+        if (cardModelObj != null && cardModelObj.getData_obj() != null) {
+            for (int i = 0; i < cardModelObj.getData_obj().size(); i++) {
+                BlogResponseModel blogResponseModelObj = cardModelObj.getData_obj().get(i);
+                if (blogResponseModelObj.getType() != null && blogResponseModelObj.getType().equals("audio")) {
+                    Blog_Adapter.AudioViewHolder holder = (Blog_Adapter.AudioViewHolder) recycle_mv_contr.findViewHolderForAdapterPosition(i);
+                    if (holder != null && holder.isAudioPlay) {
+                        holder.mediaPlayer.pause();
+                        holder.isAudioPlay = false;
+                        holder.img_play_stop.setImageResource(R.drawable.play_rec);
+                    }
+
+                }
+            }
+        }
+
     }
 
 
@@ -1080,23 +1502,42 @@ public class Multimedia_CardFragment extends BaseFragment implements SlidingImag
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         View imgEntryView = inflater.inflate(R.layout.dialog_fullscreen, null);
         final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen); //default fullscreen titlebar
-        SimpleDraweeView img = (SimpleDraweeView) imgEntryView.findViewById(R.id.usericon_large);
+        PhotoView img = (PhotoView) imgEntryView.findViewById(R.id.usericon_large);
 
-        load_card_image(cardModelObj.getMultiple_img_url().get(Position).getImg_url(), img, true);
+        // load_card_image(cardModelObj.getMultiple_img_url().get(Position).getImg_url(), img, true);
+        //  img.setImageURI(Uri.parse(cardModelObj.getMultiple_img_url().get(Position).getImg_url()));
+
+        ImageRequest imageRequest = ImageRequestBuilder
+                .newBuilderWithSource(Uri.parse(cardModelObj.getMultiple_img_url().get(Position).getImg_url()))
+                .setAutoRotateEnabled(true)
+                .build();
+
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        final DataSource<CloseableReference<CloseableImage>>
+                dataSource = imagePipeline.fetchDecodedImage(imageRequest, this);
+
+        dataSource.subscribe(new BaseBitmapDataSubscriber() {
+
+            @Override
+            public void onNewResultImpl(@Nullable Bitmap bitmap) {
+                if (dataSource.isFinished() && bitmap != null) {
+                    Log.d("Bitmap", "has come");
+                    Bitmap bmp = Bitmap.createBitmap(bitmap);
+                    img.setImageBitmap(bmp);
+                    dataSource.close();
+                }
+            }
+
+            @Override
+            public void onFailureImpl(DataSource dataSource) {
+                if (dataSource != null) {
+                    dataSource.close();
+                }
+            }
+        }, CallerThreadExecutor.getInstance());
 
         dialog.setContentView(imgEntryView);
         dialog.show();
-
-        imgEntryView.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View paramView) {
-//                                dialog.cancel();
-                PhotoViewAttacher photoAttacher;
-                photoAttacher = new PhotoViewAttacher(img);
-                photoAttacher.setZoomable(true);
-
-                photoAttacher.update();
-            }
-        });
 
     }
 }

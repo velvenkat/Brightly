@@ -171,7 +171,9 @@
             android:label="@string/title_activity_my_channel"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateVisible" /> <!-- [START firebase_service] -->
+
+            android:windowSoftInputMode="stateVisible" />
+        <!-- [START firebase_service] -->
         <service android:name="com.digital_easy.info_share.Utils.ImageUploadService" />
         <service
             android:name="com.digital_easy.info_share.Firebase.MyFirebaseMessagingService"
@@ -189,6 +191,9 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="7afe9d539589ca3d17a8ace6c948eab103a631a5" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

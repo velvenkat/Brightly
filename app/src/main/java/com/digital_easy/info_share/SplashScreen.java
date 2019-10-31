@@ -113,7 +113,15 @@ public class SplashScreen extends AppCompatActivity {
 
 
         //User_ID = SharedPrefUtils.getString(SplashScreen.this, Util.User_Id, "");
-        getAppVar();
+        if (User_ID != null && !User_ID.isEmpty()) {
+            getAppVar();
+        } else {
+            Intent intent = new Intent(SplashScreen.this, Login.class);
+            intent.putExtra("app_var_obj", appVarModuleObj);
+            startActivity(intent);
+            overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+            SplashScreen.this.finish();
+        }
 
         Animation myanim = AnimationUtils.loadAnimation(this, R.anim.mysplashanimation);
         logo_title.startAnimation(myanim);
@@ -167,7 +175,7 @@ public class SplashScreen extends AppCompatActivity {
 
         if (CheckNetworkConnection.isOnline(this)) {
 
-            Call<AppVarModule> callRegisterUser = RetrofitInterface.getRestApiMethods(this).getAppVariable();
+            Call<AppVarModule> callRegisterUser = RetrofitInterface.getRestApiMethods(this).getAppVariable(User_ID);
             callRegisterUser.enqueue(new ApiCallback<AppVarModule>(this) {
                 @Override
                 public void onApiResponse(Response<AppVarModule> response, boolean isSuccess, String message) {
@@ -178,39 +186,31 @@ public class SplashScreen extends AppCompatActivity {
                             @Override
                             public void run() {
 
-                                if (User_ID != null && !User_ID.isEmpty()) {
+
+                                Intent intent = new Intent(SplashScreen.this, BrightlyNavigationActivity.class);
+                                intent.putExtra("user_obj", model);
+                                //    Log.e("Coment_notify_user_id", model.getUser_Id());
+                                // Toast.makeText(SplashScreen.this,ge)
+                                intent.putExtra("app_var_obj", appVarModuleObj);
+                                intent.putExtra("isAudioMatch", isAudioRecorded);
+                                intent.putStringArrayListExtra("uri_list", image_uri_list);
+                                if (isNotification) {
+                                    intent.putExtra("isNotification", true);
+                                    intent.putExtra("isRevoked", isRevoked);
+                                    intent.putExtra("notfy_modl_obj", nfy_obj);
+
+                                    //    Log.e("Coment_notify_card_id", "Card_id" + nfy_obj.comment_card_id);
 
 
-                                    Intent intent = new Intent(SplashScreen.this, BrightlyNavigationActivity.class);
-                                    intent.putExtra("user_obj", model);
-                                    //    Log.e("Coment_notify_user_id", model.getUser_Id());
-                                    // Toast.makeText(SplashScreen.this,ge)
-                                    intent.putExtra("app_var_obj", appVarModuleObj);
-                                    intent.putExtra("isAudioMatch",isAudioRecorded);
-                                    intent.putStringArrayListExtra("uri_list", image_uri_list);
-                                    if (isNotification) {
-                                        intent.putExtra("isNotification", true);
-                                        intent.putExtra("isRevoked", isRevoked);
-                                        intent.putExtra("notfy_modl_obj", nfy_obj);
-
-                                        //    Log.e("Coment_notify_card_id", "Card_id" + nfy_obj.comment_card_id);
-
-
-                                        if (isCardNotification) {
-                                            intent.putExtra("isCardNotification", true);
-                                        }
-
+                                    if (isCardNotification) {
+                                        intent.putExtra("isCardNotification", true);
                                     }
-                                    startActivity(intent);
-                                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);
-                                    SplashScreen.this.finish();
-                                } else {
-                                    Intent intent = new Intent(SplashScreen.this, Login.class);
-                                    intent.putExtra("app_var_obj", appVarModuleObj);
-                                    startActivity(intent);
-                                    overridePendingTransition(R.anim.right_enter, R.anim.left_out);
-                                    SplashScreen.this.finish();
+
                                 }
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.right_enter, R.anim.left_out);
+                                SplashScreen.this.finish();
+
 
                             }
                         }, SPLASH_TIME_OUT);

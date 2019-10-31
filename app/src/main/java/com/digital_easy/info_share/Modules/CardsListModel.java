@@ -9,6 +9,47 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class CardsListModel implements Parcelable {
+    protected CardsListModel(Parcel in) {
+        data_obj = in.createTypedArrayList(BlogResponseModel.CREATOR);
+        contact_name = in.readString();
+        contact_email = in.readString();
+        contact_cell_phone = in.readString();
+        contact_office_phone = in.readString();
+        contact_company = in.readString();
+        card_id = in.readString();
+        title = in.readString();
+        url = in.readString();
+        description = in.readString();
+        name = in.readString();
+        created_by = in.readString();
+        comment = in.readString();
+        type = in.readString();
+        isDelSel = in.readByte() != 0;
+    }
+
+    public static final Creator<CardsListModel> CREATOR = new Creator<CardsListModel>() {
+        @Override
+        public CardsListModel createFromParcel(Parcel in) {
+            return new CardsListModel(in);
+        }
+
+        @Override
+        public CardsListModel[] newArray(int size) {
+            return new CardsListModel[size];
+        }
+    };
+
+    public List<BlogResponseModel> getData_obj() {
+        return data_obj;
+    }
+
+    public void setData_obj(List<BlogResponseModel> data_obj) {
+        this.data_obj = data_obj;
+    }
+
+    @SerializedName("data_obj")
+    @Expose
+    List<BlogResponseModel> data_obj;
 
     //Contact
     @SerializedName("contact_name")
@@ -32,35 +73,6 @@ public class CardsListModel implements Parcelable {
     private String contact_company;
 
 
-    protected CardsListModel(Parcel in) {
-        contact_name = in.readString();
-        contact_email = in.readString();
-        contact_cell_phone = in.readString();
-        contact_office_phone = in.readString();
-        contact_company = in.readString();
-
-        card_id = in.readString();
-        title = in.readString();
-        url = in.readString();
-        description = in.readString();
-        name = in.readString();
-        created_by = in.readString();
-        comment = in.readString();
-        type = in.readString();
-        isDelSel = in.readByte() != 0;
-    }
-
-    public static final Creator<CardsListModel> CREATOR = new Creator<CardsListModel>() {
-        @Override
-        public CardsListModel createFromParcel(Parcel in) {
-            return new CardsListModel(in);
-        }
-
-        @Override
-        public CardsListModel[] newArray(int size) {
-            return new CardsListModel[size];
-        }
-    };
 
     public String getContact_name() {
         return contact_name;
@@ -235,12 +247,12 @@ public class CardsListModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedList(data_obj);
         dest.writeString(contact_name);
         dest.writeString(contact_email);
         dest.writeString(contact_cell_phone);
         dest.writeString(contact_office_phone);
         dest.writeString(contact_company);
- 
         dest.writeString(card_id);
         dest.writeString(title);
         dest.writeString(url);

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/image_createCard"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/dimen_20"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="@dimen/dimen_20"
+        android:layout_marginBottom="@dimen/dimen_5"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+
+        />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:visibility="gone"
+        android:layout_below="@+id/image_createCard"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal">
+
+    </android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>

@@ -8,14 +8,46 @@
     tools:context=".Fragments.EditSetInfo">
 
 
+    <TextView
+        android:id="@+id/txtShareLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_toLeftOf="@+id/share_link_options"
+        android:text="Weblink"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/share_link_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="end"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_yes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yes" />
+
+        <RadioButton
+            android:id="@+id/radio_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No" />
+    </RadioGroup>
+
     <EditText
         android:id="@+id/edit_setName"
         android:layout_width="fill_parent"
         android:layout_height="40dp"
-        android:layout_marginBottom="@dimen/dimen_5"
+        android:layout_below="@+id/txtShareLink"
         android:layout_marginLeft="@dimen/dimen_20"
-        android:layout_marginRight="@dimen/dimen_20"
         android:layout_marginTop="@dimen/dimen_10"
+        android:layout_marginRight="@dimen/dimen_20"
+        android:layout_marginBottom="@dimen/dimen_5"
         android:background="@drawable/edit_text_background"
 
         android:hint="@string/set_name"
@@ -31,10 +63,10 @@
         android:layout_width="fill_parent"
         android:layout_height="100dp"
         android:layout_below="@+id/edit_setName"
-        android:layout_marginBottom="@dimen/dimen_10"
         android:layout_marginLeft="@dimen/dimen_20"
-        android:layout_marginRight="@dimen/dimen_20"
         android:layout_marginTop="@dimen/dimen_20"
+        android:layout_marginRight="@dimen/dimen_20"
+        android:layout_marginBottom="@dimen/dimen_10"
         android:background="@drawable/edit_text_background"
 
         android:hint="@string/set_description"
@@ -50,8 +82,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/edit_setDescription"
         android:layout_marginLeft="@dimen/dimen_16"
-        android:layout_marginRight="@dimen/dimen_16"
         android:layout_marginTop="@dimen/dimen_10"
+        android:layout_marginRight="@dimen/dimen_16"
         android:text="@string/sharing_content_title_text"
         android:textColor="@color/black"
         android:textStyle="bold"

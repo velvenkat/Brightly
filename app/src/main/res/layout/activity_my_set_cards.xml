@@ -73,8 +73,16 @@
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:layout_gravity="left|bottom"
-            android:layout_margin="@dimen/dimen_20" />
+            android:layout_margin="@dimen/dimen_20"
+            android:visibility="gone" />
+       
 
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/image_Share"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_gravity="left|bottom"
+            android:layout_margin="@dimen/dimen_20" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/card_listview"
@@ -88,7 +96,7 @@
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
 
-            android:visibility="visible">
+            android:visibility="gone">
 
 
         </android.support.v7.widget.RecyclerView>

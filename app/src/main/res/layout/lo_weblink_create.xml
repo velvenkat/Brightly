@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginTop="@dimen/dimen_25"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:gravity="center"
+            android:text="@string/paste_file_upload_link_below"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sub_title" />
+
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginTop="@dimen/dimen_20"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:gravity="center_vertical"
+            android:padding="@dimen/dimen_4"
+            android:singleLine="true"
+            android:text="@string/card_file_url_title"
+            android:textColor="@color/black"
+            android:textSize="@dimen/smalltextSize" />
+
+        <EditText
+            android:id="@+id/create_cardURL"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:layout_marginBottom="@dimen/dimen_5"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center_vertical"
+            android:hint="@string/card_file_url_hint"
+            android:inputType="textUri"
+            android:padding="@dimen/dimen_4"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/mediumtextsize" />
+
+
+        <TextView
+            android:id="@+id/file_steps"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_20"
+            android:layout_marginTop="@dimen/dimen_20"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:gravity="center_vertical"
+            android:padding="@dimen/dimen_4"
+            android:text="@string/file_steps"
+            android:textSize="@dimen/smalltextSize" />
+
+
+    </LinearLayout>
+</RelativeLayout>

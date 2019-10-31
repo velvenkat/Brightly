@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
     </style>
 
     <style name="MaterialDialogSheet" parent="@android:style/Theme.Dialog">
@@ -17,6 +18,7 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowAnimationStyle">@style/MaterialDialogSheetAnimation</item>
     </style>
+
     <style name="MaterialDialogSheetAnimation">
         <item name="android:windowEnterAnimation">@anim/popup_show</item>
         <item name="android:windowExitAnimation">@anim/popup_hide</item>

@@ -30,6 +30,8 @@ public class Thumbnail_ImageAdapter extends RecyclerView.Adapter<Thumbnail_Image
     public List<MultipleImageModel> multipleImageModelList;
     public Thumbnail_interface mListener;
     public int adapter_Thumbnail_sel_position = 1;
+    public int adapter_multi_View_sel_pos;
+
 
     @NonNull
     @Override

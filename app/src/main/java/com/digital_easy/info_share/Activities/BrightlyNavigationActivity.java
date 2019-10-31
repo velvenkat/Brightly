@@ -49,6 +49,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -116,7 +117,7 @@ import retrofit2.Response;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
-
+import android.content.pm.PackageManager;
 
 public class BrightlyNavigationActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, BaseActivity.alert_dlg_interface {
@@ -203,11 +204,12 @@ public class BrightlyNavigationActivity extends BaseActivity
     public boolean DontRun = false;
     public boolean isRevoked;
     NotificationsModel nfy_model;
+    public int multiview_sel_Adapter_Pos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_navigation);
 
         isNotification = getIntent().getBooleanExtra("isNotification", false);
@@ -221,7 +223,7 @@ public class BrightlyNavigationActivity extends BaseActivity
 
         }
 
-        Intent service = new Intent(BrightlyNavigationActivity.this, VoiceCommandService.class);
+      /*  Intent service = new Intent(BrightlyNavigationActivity.this, VoiceCommandService.class);
         startService(service);
         mBindFlag = Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH ? 0 : Context.BIND_ABOVE_CLIENT;
 
@@ -233,7 +235,7 @@ public class BrightlyNavigationActivity extends BaseActivity
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 60000, pendingIntent);
         }
-        //Toast.makeText(BrightlyNavigationActivity.this, "Card_id " + Card_ID, Toast.LENGTH_LONG).show();
+      */  //Toast.makeText(BrightlyNavigationActivity.this, "Card_id " + Card_ID, Toast.LENGTH_LONG).show();
         fragmentManager = getSupportFragmentManager();
         setDlgListener(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -612,7 +614,7 @@ public class BrightlyNavigationActivity extends BaseActivity
 
         if (CheckNetworkConnection.isOnline(this)) {
 
-            Call<AppVarModule> callRegisterUser = RetrofitInterface.getRestApiMethods(this).getAppVariable();
+            Call<AppVarModule> callRegisterUser = RetrofitInterface.getRestApiMethods(this).getAppVariable(userId);
             callRegisterUser.enqueue(new ApiCallback<AppVarModule>(this) {
                 @Override
                 public void onApiResponse(Response<AppVarModule> response, boolean isSuccess, String message) {

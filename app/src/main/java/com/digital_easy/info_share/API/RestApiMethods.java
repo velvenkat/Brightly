@@ -9,6 +9,8 @@ import com.digital_easy.info_share.Modules.ChannelListResponse;
 import com.digital_easy.info_share.Modules.CommentsListResponse;
 import com.digital_easy.info_share.Modules.DeleteChannelResponse;
 import com.digital_easy.info_share.Modules.EditProfileResponse;
+import com.digital_easy.info_share.Modules.JSONObjectReqModule;
+import com.digital_easy.info_share.Modules.JSONReqMVModule;
 import com.digital_easy.info_share.Modules.MyProfileResponse;
 import com.digital_easy.info_share.Modules.NotificationsResponse;
 import com.digital_easy.info_share.Modules.SetInfoSharedResponse;
@@ -19,9 +21,13 @@ import com.digital_easy.info_share.Modules.UpdateChannelResponse;
 
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -213,7 +219,7 @@ public interface RestApiMethods {
     Call<AddMessageResponse> getCardComments(@Query("user_id") String user_id, @Query("card_id") String card_id, @Query("set_id") String set_id, @Query("comment") String comment, @Query("replied_to") String reply_to);
 
     @POST("appvariables/getappvar.php")
-    Call<AppVarModule> getAppVariable();
+    Call<AppVarModule> getAppVariable(@Query("user_id") String usr_id);
 
     @POST("cards/share_cards.php")
     Call<AddMessageResponse> call_share_card(@Query("user_id") String usr_id, @Query("channel_id") String chl_id, @Query("card_id") String card_id, @Query("org_set_id") String set_id, @Query("phone_no") String mob_no, @Query("names") String names);
@@ -231,6 +237,19 @@ public interface RestApiMethods {
 
     @POST("admin_settings/list_customization_labels.php")
     Call<AdminSettingsModel> list_custom_label(@Query("user_id") String user_id);
+
+
+    //NEW APIS
+
+    @Multipart
+    @POST("cards/upload_card_files.php")
+    Call<AddMessageResponse> upload_diff_type(@Query("user_id") String user_id, @Query("set_id") String set_id, @Part MultipartBody.Part file);
+
+    @GET("cards/add_new_card.php")
+    Call<ResponseBody> call_create_card(@Query("user_id") String user_id, @Query("flag") String FlagVal, @Query("set_id") String set_id, @Query("data") String jsonBody);
+
+    @GET("cards/add_new_card.php")
+    Call<ResponseBody> call_update_blog(@Query("user_id") String user_id, @Query("flag") String FlagVal, @Query("set_id") String set_id, @Query("data") String jsonBody, @Query("card_id") String card_id);
 
 
 }

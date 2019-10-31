@@ -221,7 +221,7 @@ public class AppVarModule implements Parcelable {
     @Expose
     GeneralVarModel level1_default_img;
 
-    @SerializedName("sharepic")
+    @SerializedName("share_icon")
     @Expose
     GeneralVarModel sharepic;
 

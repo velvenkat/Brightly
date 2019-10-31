@@ -240,10 +240,9 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
                 mediaPlayer.setDataSource(filePath);
             }
             if (!isCreateCard) {
-                txt_PlayProgTime.setVisibility(View.INVISIBLE);
+                //  txt_PlayProgTime.setVisibility(View.INVISIBLE);
                 mediaPlayer.setOnBufferingUpdateListener(this);
-            }
-            else
+            } else
                 audio_seek_bar.setSecondaryProgress(audio_seek_bar.getMax());
             mediaPlayer.prepareAsync();
             mediaFileLengthInMilliseconds = mediaPlayer.getDuration(); // gets the song length in milliseconds from URL
@@ -365,7 +364,7 @@ public class BaseFragment extends Fragment implements MediaPlayer.OnBufferingUpd
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         audio_seek_bar.setSecondaryProgress(percent);
-        if(percent==100){
+        if (percent == 100) {
             txt_PlayProgTime.setVisibility(View.VISIBLE);
         }
     }

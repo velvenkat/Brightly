@@ -16,8 +16,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.digital_easy.info_share.API.ApiCallback;
 import com.digital_easy.info_share.API.RetrofitInterface;
@@ -45,6 +47,7 @@ public class EditSetInfo extends BaseFragment {
     Button btn_editSet;
     TextView text_share_title;
     LinearLayout layout_act_inact;
+    RadioGroup share_link_options;
 
 
     // ImageView share, delete;
@@ -66,6 +69,7 @@ public class EditSetInfo extends BaseFragment {
     SetsListModel setsListModel;
     NotificationsModel notificationsModel;
     View rootView;
+    String access_val;
     RelativeLayout toggle_contr;
 
     RealmModel user_obj;
@@ -90,6 +94,7 @@ public class EditSetInfo extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_edit_set_info, container, false);
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();
+        share_link_options = (RadioGroup) rootView.findViewById(R.id.share_link_options);
         /*toggle_contr = (RelativeLayout) rootView.findViewById(R.id.toggle_contr);
         Switch toggle_share_access = rootView.findViewById(R.id.switch_toggle_access);*/
         setHasOptionsMenu(true);
@@ -194,6 +199,7 @@ public class EditSetInfo extends BaseFragment {
         if (!Created_By.equalsIgnoreCase(user_obj.getUser_Id())) {
 
             btn_editSet.setVisibility(View.GONE);
+            share_link_options.setVisibility(View.GONE);
             edit_setName.setEnabled(false);
             edit_setDescription.setEnabled(false);
             //   setTitle("Set Info");
@@ -206,7 +212,16 @@ public class EditSetInfo extends BaseFragment {
 
         } else {
 
+            if (setsListModel.getWeb_sharing().equalsIgnoreCase("1")) {
 
+
+                share_link_options.check(R.id.radio_yes);
+
+            } else {
+
+
+                share_link_options.check(R.id.radio_no);
+            }
             ((BrightlyNavigationActivity) getActivity()).getSupportActionBar().setTitle("Edit " + level2_title_singular + " Info");
 
         }
@@ -222,6 +237,72 @@ public class EditSetInfo extends BaseFragment {
                 checkValidation();
             }
         });
+
+        share_link_options.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+
+
+                   /* if (isChecked) {
+                        access_val = "1";
+                    } else
+                        access_val = "0";*/
+                switch (checkedId) {
+                    case R.id.radio_no:
+                        access_val = "0";
+                        break;
+                    case R.id.radio_yes:
+                        access_val = "1";
+                        break;
+                }
+                try {
+
+                    if (CheckNetworkConnection.isOnline(getContext())) {
+                        showProgress();
+                        Call<AddMessageResponse> callRegisterUser = RetrofitInterface.getRestApiMethods(getContext()).setToggleShareLink(set_id, access_val);
+                        callRegisterUser.enqueue(new ApiCallback<AddMessageResponse>(getActivity()) {
+                            @Override
+                            public void onApiResponse(Response<AddMessageResponse> response, boolean isSuccess, String message) {
+                                dismissProgress();
+                                AddMessageResponse addMessageResponse = response.body();
+                                if (isSuccess) {
+
+                                    dismissProgress();
+                                    Toast.makeText(getContext(), addMessageResponse.getMessage(), Toast.LENGTH_LONG).show();
+                                    if (!isNotification) {
+                                        setsListModel.setWeb_sharing(access_val);
+                                        CardDetailFragment parent_frag = (CardDetailFragment) getActivity().getSupportFragmentManager().findFragmentByTag(Util.view_card);
+                                        parent_frag.setsListModel = setsListModel;
+                                    } else {
+                                        notificationsModel.getNotificationsSetDetail().setWeb_sharing(access_val);
+                                        CardDetailFragment parent_frag = (CardDetailFragment) getActivity().getSupportFragmentManager().findFragmentByTag(Util.view_card);
+                                        parent_frag.notificationsModel = notificationsModel;
+                                    }
+
+
+                                }
+                            }
+
+                            @Override
+                            public void onApiFailure(boolean isSuccess, String message) {
+
+                                dismissProgress();
+                            }
+                        });
+                    } else {
+
+                        dismissProgress();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                    dismissProgress();
+                }
+            }
+
+        });
+
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
         rootView.setOnKeyListener(new View.OnKeyListener() {

@@ -155,7 +155,7 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
         // Inflate the layout for this fragment
         frag_rootView = inflater.inflate(R.layout.fragment_image_type, container, false);
 
-        recycler_list_thumbnail = (RecyclerView) frag_rootView.findViewById(R.id.list_thumbnail);
+
         spinner_catg_list = (Spinner) frag_rootView.findViewById(R.id.spinner_catg_list);
         spinner_set_list = (Spinner) frag_rootView.findViewById(R.id.spinner_set_list);
         edt_comp_name = (EditText) frag_rootView.findViewById(R.id.edt_comp_name);
@@ -168,6 +168,7 @@ public class ImageType extends BaseFragment implements BrightlyNavigationActivit
         LinearLayoutManager L_manager = new LinearLayoutManager(getContext());
         L_manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         L_manager.setReverseLayout(true);
+        recycler_list_thumbnail = (RecyclerView) frag_rootView.findViewById(R.id.list_thumbnail);
         recycler_list_thumbnail.setLayoutManager(L_manager);
 
         user_obj = ((BrightlyNavigationActivity) getActivity()).getUserModel();

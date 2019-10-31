@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/file_cardLink"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:autoLink="all"
+        android:gravity="center"
+        android:linksClickable="true"
+        android:textColor="#ff6060"
+        android:textSize="@dimen/font_20" />
+
+    <com.digital_easy.info_share.Utils.RichLinkViewTelegram
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="16dp" />
+
+</RelativeLayout>

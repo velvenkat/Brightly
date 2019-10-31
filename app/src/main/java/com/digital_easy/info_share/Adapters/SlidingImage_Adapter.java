@@ -62,7 +62,7 @@ public class SlidingImage_Adapter extends PagerAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onSlideImageClick(position);
+                mListener.onSlideImageClick( position);
             }
         });
         return imageLayout;
@@ -114,7 +114,7 @@ public class SlidingImage_Adapter extends PagerAdapter {
 
 
     public interface SlideImageCLicked {
-        public void onSlideImageClick(int Position);
+        public void onSlideImageClick( int Position);
 
     }
 }
